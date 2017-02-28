@@ -64,6 +64,21 @@ module.exports = {
 					.catch(res.serverError);
 				break;
 
+			case 'PUT':
+				sails.log.silly("PUTTING app data for: " + appid + " on device " + deviceid);
+
+				var newAppData = { forAppID: appid, forDeviceId: deviceid, data: params.data || {} };
+				AppData.update( { forAppId: appid, forDeviceId: deviceid }, newAppData )
+					.then( function ( model ) {
+						if ( !model ) {
+							return res.serverError({error: "unable to update model"});
+						}
+						return res.ok( model );
+					})
+					.catch( res.serverError );
+
+				break;
+
 			default:
 				return res.ok( "Not implemented" );
 
