@@ -1,0 +1,56 @@
+
+//Commented out so pm2 uses process.json. Just in case anything bad happens because pm2 isn't the best rn
+{}/*
+  /**
+   * Application configuration section
+   * http://pm2.keymetrics.io/docs/usage/application-declaration/
+
+  "apps" : [
+
+    // First application
+    {
+      "name"      : "asahi",
+      "script"    : "app.js",
+      "env": {
+        "COMMON_VARIABLE": "true",
+        "NODE_ENV": "production"
+
+      },
+      "env_production" : {
+        "NODE_ENV": "production"
+      },
+      "env_dev": {
+        "NODE_ENV": "dev"
+      }
+    }
+
+  ],
+
+  /**
+   * Deployment section
+   * http://pm2.keymetrics.io/docs/usage/deployment/
+
+  "deploy" : {
+    "production" : {
+      "user" : "cgrigsby", //TODO change this and get it to asahi once ssh decides to cooperate....
+      "host" : "104.131.145.36",
+      "ref"  : "origin/master",
+      "repo" : "git@github.com:Overplay/asahi",
+      "path" : "/opt/asahi",
+      "post-deploy" : "npm install && cd assets && bower update && cd .. && cp /home/asahi/local.js config/ && pm2 startOrRestart ecosystem.json --env production && cd /opt/auto-reload2 && pm2 install ."
+        //^^ won't work right now because master doesn't have ecosystem file
+    },
+    "dev" : {
+      "user" : "cgrigsby", //TODO fix asahi
+      "host" : "104.131.145.36",
+      "ref"  : "origin/develop-cole",
+      "repo" : "git@github.com:Overplay/asahi",
+      "path" : "/opt/asahi",
+      "post-deploy" : "npm install && cd assets && bower update && cd .. && cp /home/asahi/local.js config/ && pm2 startOrRestart ecosystem.json --env dev && cd /opt/auto-reload2 && pm2 install .",
+      //TODO ownership!
+      "env"  : {
+        "NODE_ENV": "dev"
+      }
+    }
+  }  
+}

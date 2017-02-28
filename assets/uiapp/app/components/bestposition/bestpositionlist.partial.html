@@ -1,0 +1,65 @@
+<div class="row" id="top">
+    <div class="col-sm-8 col-sm-offset-2 top30" ng-show="models.length && !loadingData">
+        <input type="text" ng-model="searchTerm" class="form-control" placeholder="Search best position models...">
+    </div>
+    <div class="col-sm-10 col-sm-offset-1 top30">
+        <h3 ng-show="!results.length && !loadingData" style="text-align: center; margin-bottom: 40px">No Best Position Models Found</h3>
+
+        <div ng-show="loadingData" class="text-center">
+            <br>
+            <h5>Loading...</h5>
+            <br>
+            <i class="fa fa-spinner fa-spin fa-pulse fa-fw fa-2x"></i>
+        </div>
+
+        <table class="table table-striped" ng-show="results.length">
+            <thead>
+            <tr>
+                <th><input type="checkbox" ng-change="selectAll()" ng-model="allSelected"></th>
+                <th>Network</th>
+                <th>Program</th>
+                <th>Type</th>
+                <th>Widget Position</th>
+                <th>Crawler Position</th>
+                <th><a class="btn btn-sm btn-warning" ui-sref="bestposition.multiEdit({ids: multiEditIds})" ng-class="{'disabled': !multiEditIds.length}">EDIT SELECTED</a></th>
+            </tr>
+
+            </thead>
+            <tbody>
+            <tr ng-repeat="model in ($parent.results = (models | filter: searchTerm | orderBy: 'network') | startFrom: (currentPage-1)*pageSize | limitTo: pageSize)">
+                <td>
+                    <input type="checkbox" ng-change="selectOne(model.id)" ng-model="model.selected">
+                </td>
+                <td ng-show="!model.network && !model.seriesNetworks.length"> N/A </td>
+                <td ng-show="model.network">{{ model.network }}</td>
+                <td ng-show="model.seriesNetworks.length">
+                    <p ng-repeat="network in model.seriesNetworks | orderBy: '+'">
+                        {{ network }}
+                    </p>
+                </td>
+                <td>{{ model.seriesName || "N/A" }}</td>
+                <td>{{ model.type | capitalize }}</td>
+                <td>{{ model.widgetPosition }}</td>
+                <td>{{ model.crawlerPosition }}</td>
+                <td>
+                    <a class="btn btn-sm btn-warning" ui-sref="bestposition.edit({id: model.id, url: AJPGSUrl})" ng-hide="model.selected">EDIT</a>
+                    <a class="btn btn-sm btn-warning"
+                       ui-sref="bestposition.multiEdit({ids: multiEditIds})"
+                       ng-show="model.selected">EDIT SELECTED</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div style="display:flex;justify-content: center; align-items: center">
+            <uib-pagination total-items="results.length"
+                            ng-model="currentPage"
+                            items-per-page="pageSize"
+                            rotate="true"
+                            max-size="8"
+                            boundary-link-numbers="true"
+                            ng-show="results.length > 50"
+                            ng-change="goToTableTop()"></uib-pagination>
+        </div>
+
+    </div>
+</div>

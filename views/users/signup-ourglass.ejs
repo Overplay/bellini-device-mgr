@@ -1,0 +1,263 @@
+<style>
+    body {
+        background: #202020;
+    }
+
+    .box {
+        width: 50%;
+        padding: 20px 50px 20px 50px;
+        background: #195180;
+        border-radius: 5px;
+        margin: 50px auto;
+    }
+
+    or {
+        color: white;
+        font-size: 200%;
+        padding: 10px 10px;
+        vertical-align: text-top;
+        display: inline;
+
+    }
+
+    h1 {
+        color: white;
+        margin-bottom: 50px;
+    }
+
+    .alertbubble {
+        background: #ff6666;
+        border-radius: 3px;
+        color: white;
+        width: 100%;
+        margin-top: 10px;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .popin {
+        animation: grow .5s ease-out;
+        transform: scale(0.98);
+    }
+
+    @keyframes grow {
+        0% {
+            transform: scale(0);
+            opacity: 0;
+        }
+        80% {
+            transform: scale(1);
+        }
+        100% {
+            transform: scale(0.98);
+            opacity: 1;
+        }
+    }
+
+    /* when hiding the picture */
+    .ng-hide-add {
+        animation: 0.5s flipOutX ease;
+    }
+
+    /* when showing the picture */
+    .ng-hide-remove {
+        animation: 0.5s flipInX ease;
+    }
+
+    /* ANIMATIONS (FROM ANIMATE.CSS) ======================== */
+    /* flip in */
+    @keyframes flipInX {
+        0% {
+            transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+            transition-timing-function: ease-in;
+            opacity: 0;
+        }
+
+        40% {
+            transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+            transition-timing-function: ease-in;
+        }
+
+        60% {
+            transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+            opacity: 1;
+        }
+
+        80% {
+            transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+        }
+
+        100% {
+            transform: perspective(400px);
+        }
+    }
+
+    @keyframes flipOutX {
+        0% {
+            -webkit-transform: perspective(400px);
+            -moz-transform: perspective(400px);
+            -ms-transform: perspective(400px);
+            -o-transform: perspective(400px);
+            transform: perspective(400px);
+        }
+        20% {
+            -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+            -moz-transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+            -ms-transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+            -o-transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+            transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+        }
+        40% {
+            -webkit-transform: perspective(400px) rotate3D(1, 0, 0, 10deg);
+            -moz-transform: perspective(400px) rotate3D(1, 0, 0, 10deg);
+            -ms-transform: perspective(400px) rotate3D(1, 0, 0, 10deg);
+            -o-transform: perspective(400px) rotate3D(1, 0, 0, 10deg);
+            transform: perspective(400px) rotate3D(1, 0, 0, 10deg);
+            opacity: 1;;
+        }
+        60% {
+            -webkit-transform: perspective(400px) rotate3D(1, 0, 0, -20deg);
+            -moz-transform: perspective(400px) rotate3D(1, 0, 0, -20deg);
+            -ms-transform: perspective(400px) rotate3D(1, 0, 0, -20deg);
+            -o-transform: perspective(400px) rotate3D(1, 0, 0, -20deg);
+            transform: perspective(400px) rotate3D(1, 0, 0, -20deg);
+        }
+        100% {
+            -webkit-transform: perspective(400px) rotate3D(1, 0, 0, 90deg);
+            -moz-transform: perspective(400px) rotate3D(1, 0, 0, 90deg);
+            -ms-transform: perspective(400px) rotate3D(1, 0, 0, 90deg);
+            -o-transform: perspective(400px) rotate3D(1, 0, 0, 90deg);
+            transform: perspective(400px) rotate3D(1, 0, 0, 90deg);
+            opacity: 0;
+        }
+    }
+
+    /* light speed out */
+    @keyframes lightSpeedOut {
+        0% {
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateX(10%) skewX(30deg);
+            opacity: 0;
+        }
+    }
+
+</style>
+
+<div style="background: url(/images/hourglass-nebula.jpg) fixed no-repeat center; background-size: cover; min-height: 100vh;">
+
+    <img style="margin: auto; display: block; max-width: 30vw; padding: 50px 0" src="/images/ourglass-white.png"/>
+
+    <div class="container-fluid popin" ng-app="signupApp" ng-controller="signupController">
+        <% if (typeof data !== 'undefined') { %>
+        <div ng-init="getData( '<%= data %>' )"></div>
+        <% } %>
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-2" style="background: rgba(1,1,1,0.5); padding: 30px;">
+                <h1>{{form.title}}</h1>
+                <form ng-if="form.show" ng-submit="signup()" name="form" role="form">
+                    <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
+                    <input style="display:none" type="text" name="fakeusernameremembered"/>
+                    <input style="display:none" type="password" name="fakepasswordremembered"/>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group" ng-class="{ 'has-error' : !form.firstName.$valid && form.firstName.$touched, 'has-success' : form.firstName.$valid}">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                    <input type="text" class="form-control" placeholder="First Name" name="firstName"
+                                           ng-model="user.firstName" autofocus required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" ng-class="{ 'has-error' : !form.lastName.$valid && form.lastName.$touched, 'has-success' : form.lastName.$valid }">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                    <input type="text" class="form-control" placeholder="Last Name" name="lastName"
+                                           ng-model="user.lastName" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group" ng-class="{ 'has-success' : user.mobilePhone && form.mobilePhone.$valid && form.mobilePhone.$dirty, 'has-error': !form.mobilePhone.$valid && form.mobilePhone.$touched}">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><i class="glyphicon-earphone glyphicon"></i></span>
+                                    <input type="text" class="form-control" placeholder="Cell Phone (optional)" name="mobilePhone"
+                                           ng-model="user.mobilePhone" ng-pattern="phoneRegex">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group" ng-class="{ 'has-error' : !form.email.$valid && form.email.$touched, 'has-success' : form.email.$valid }">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><i class="glyphicon-envelope glyphicon"></i></span>
+
+                                    <input type="email" class="form-control" placeholder="Email Address" name="email"
+                                           ng-model="auth.email" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="signupType === 'facebook'">
+                        <div class="col-md-12 text-center">
+                            <p style="color:white;"> Password optional: if not provided, you will only be able to log in through Facebook </p>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group" ng-class="{ 'has-error' : (form.password.$touched && (auth.password.length < 8 || !form.password.$valid) && !pwCheck()),
+                                                                'has-success' : (form.password.$valid && auth.password.length > 7) || ((signupType == 'facebook') && auth.password.length == '')}">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+
+                                    <input type="password" class="form-control" placeholder="Password" name="password"
+                                           ng-model="auth.password" ng-required="validate">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" ng-class="{ 'has-error' : form.passwordConfirm.$touched && !pwCheck(), 'has-success' : form.passwordConfirm.$valid && pwCheck() }">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+
+                                    <input type="password" class="form-control" placeholder="Confirm Password" name="passwordConfirm"
+                                           ng-model="auth.passwordConfirm" ng-required="validate">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <button ng-click="create()" id='login' class="btn btn-primary btn-lg top15" ng-disabled="form.$invalid || !pwCheck()">Create Account</button>
+                        <% if (typeof data == 'undefined') { %>
+                        <or>OR</or>
+                        <a class="btn btn-default btn-lg top15" href="/auth/login?type=facebook"><img src="/images/FB-f-Logo__blue_100.png" style="height:25px;">&nbsp;Signup with Facebook</a>
+                        <% } %>
+                        <a  class="btn btn-info btn-lg top15" href="/">Back</a>
+                    </div>
+
+                    <div class="alertbubble" ng-show="ui.error">
+                        {{ ui.errorMessage }}
+                    </div>
+                </form>
+                <button ng-if="!form.show" ng-click="home()" class="btn btn-success btn-lg">Home</button>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<script src="/js/nucleusService/nucleusService.js"></script>
+<script src="/js/views/users/signupapp.js"></script>

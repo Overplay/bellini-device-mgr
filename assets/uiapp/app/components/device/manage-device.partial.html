@@ -1,0 +1,150 @@
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <uib-tabset active="active">
+            <uib-tab heading="More Info">
+                <div class="top15">
+                    <div class="col-sm-6 col-md-12 col-lg-6">
+                        <div class="panel-heading">
+                            <h3>Device Information</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-striped top15">
+                                <tr>
+                                    <td>Name</td>
+                                    <td ng-show="deviceName">{{deviceName}}</td>
+                                    <td ng-hide="deviceName">(Device has no name)</td>
+                                </tr>
+                                <tr>
+                                    <td>Registered</td>
+                                    <td>{{device.createdAt | date: 'medium'}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Venue</td>
+                                    <td><a ui-sref="venue.view({id: device.venue.id})" ng-if="edit">{{device.venue.name}}</a>
+                                        <span ng-if="!edit">{{device.venue.name}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Venue Address</td>
+                                    <td>
+                                        <a ng-href="http://maps.google.com/?q={{addressString(device.venue.address)}}" target="_blank">
+                                            {{addressString(device.venue.address)}}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr ng-if="device.lineupName">
+                                    <td>Lineup</td>
+                                    <td>
+                                        {{ device.lineupName }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-12 col-lg-6">
+                        <div class="panel-heading">
+                            <h3>Heartbeat</h3>
+                        </div>
+                        <div class="panel-body">
+                            <h4 ng-if="!heartbeat.logs.length && !heartbeat.loading">{{ heartbeat.message }}</h4>
+                            <div ng-show="heartbeat.loading" class="text-center">
+                                <h5>Loading heartbeats...</h5>
+                                <br>
+                                <i class="fa fa-spinner fa-spin fa-pulse fa-fw fa-2x"></i>
+                            </div>
+                            <div ng-if="heartbeat.logs.length && !heartbeat.loading">
+                                <form name="heartbeatSelector">
+                                    <select name="select" id="hbSelect" class="form-control"
+                                            ng-options="heartbeat.loggedAt | date:'MMM d, yyyy - H:mm:ss' for heartbeat in heartbeat.logs"
+                                            ng-model="heartbeat.selected"></select>
+                                </form>
+                                <table class="table table-striped top15">
+                                    <tr>
+                                        <td>Device ID</td>
+                                        <td>{{ heartbeat.selected.deviceUniqueId }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Uptime</td>
+                                        <td>{{ heartbeat.selected.message.uptime }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Software Revisions</td>
+                                        <td>Amstel Bright:<br>{{ heartbeat.selected.message.softwareVersions.amstelBright }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Aqui:<br>{{ heartbeat.selected.message.softwareVersions.aqui }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>OS:<br>{{ heartbeat.selected.message.softwareVersions.android }}</td>
+                                    </tr>
+                                    <tr ng-repeat="app in heartbeat.selected.message.installedApps">
+                                        <td>{{ $first ? "Installed Apps" : "" }}</td>
+                                        <td>{{ app }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </uib-tab>
+            <uib-tab heading="Program Guide">
+                <div class="top15">
+                    <div class="col-sm-12">
+                        <div style="display:flex;justify-content:center;align-items:center;margin-top: 20px; margin-bottom: 20px;">
+                            <button class="btn btn-success" ng-click="addLineup()" ng-show="!device.lineupID">
+                                Add Lineup
+                            </button>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-8" ng-show="device.lineupName">
+                            <h3>Lineup Name: {{ device.lineupName }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </uib-tab>
+            <uib-tab heading="Edit Device" ng-if="edit">
+                <div class="top15">
+                    <div class="col-sm-12">
+                        <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary top15" ng-click="update()">
+                            Update
+                        </button>
+                        <button class="btn btn-danger pull-right top15" ng-click="deleteDevice()">
+                            Delete
+                        </button>
+                    </div>
+                    <div class="panel-body col-sm-12 form-horizontal top15">
+                        <form name="form" ng-submit="update()" role="form" ng-if="!code">
+                            <div ng-init="setForm(form);"></div>
+                            <fieldset class="form-group">
+                                <label for="name" class="col-sm-2 control-label">Device Name</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="name" placeholder="Device Name"
+                                           ng-model="device.name" required/>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="form-group">
+                                <label for="location" class="col-sm-2 control-label">Location Within Venue</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="location" placeholder="Location"
+                                           ng-model="device.locationWithinVenue" required/>
+                                </div>
+                            </fieldset>
+                            <fieldset class="form-group" ng-if="user.ownedVenues.length > 1 || venues">
+                                <label for="venue" class="col-sm-2 control-label">Venue</label>
+                                <div class="col-sm-8">
+                                    <select type="text" class="form-control" id="venue"
+                                            ng-model="device.venue" required
+                                            ng-options="listAddress(venue) for venue in {{ venues ? 'venues' : 'user.ownedVenues' }} track by venue.id">
+                                    </select>
+                                </div>
+                            </fieldset>
+                            <button type="submit" ng-show="false"></button>
+                        </form>
+                    </div>
+                </div>
+            </uib-tab>
+        </uib-tabset>
+    </div>
+</div>

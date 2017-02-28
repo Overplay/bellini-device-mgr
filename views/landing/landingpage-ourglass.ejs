@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head ng-controller="landingPageController">
+    <meta charset="UTF-8">
+
+    <title>ourglass</title>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Grab the common JS libs -->
+    <%- partial( '../partials/jsdeps' ) %>
+
+    <!-- Grab the common CSS  -->
+    <%- partial( '../partials/cssdeps' ) %>
+
+    <!-- Import your app, controllers, etc. here. Path needs to be out of /assets/js/views/... -->
+
+    <style>
+        html {
+            background: #000;
+        }
+
+        body {
+            color: white;
+            background: url(/images/landscapes8.jpeg) no-repeat center fixed;
+            background-size: cover;
+            height: 100vh;
+        }
+
+        a {
+            font-size: 20px;
+            color: whitesmoke;
+            display: block;
+        }
+
+        .fade-up {
+            animation: fadeUp 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(100px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+    </style>
+
+</head>
+<body>
+
+<!-- MAIN CONTENT -->
+<div class="container-fluid">
+
+    <!--<div ui-view></div>-->
+    <div class="jumbotron top15 fade-up" style="background: rgba(0,0,0,0.75);">
+        <img style="width: 300px;" src="/images/ourglass-white.png"/>
+        <div class="row">
+
+            <div class="col-md-8">
+                <h2>Ourglass redefines the out-of-home TV
+                    experience with apps and content.</h2>
+            </div>
+            <div class="col-md-4">
+                <% if (authenticated) { %>
+                <a class="btn btn-lg btn-default" href="/ui">Go to dashboard</a>
+                <% } else { %>
+                <a href="login" class="btn btn-block btn-lg btn-info"><span class="glyphicon glyphicon-user"></span>
+                    Login</a>
+                <a href="signup" class="btn btn-block btn-lg btn-success"><span
+                            class="glyphicon glyphicon-pencil"></span>
+                    Sign Up</a>
+
+                <% } %>
+
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+<footer class="footer navbar-fixed-bottom">
+    <div class="container">
+        <p class="text-muted">MASTER BRANCH</p>
+    </div>
+</footer>
+
+</body>
+</html>

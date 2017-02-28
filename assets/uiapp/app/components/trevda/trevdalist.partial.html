@@ -1,0 +1,56 @@
+<div ng-if="!advertisements.length" class="text-center">
+    <h2>No Sponsorships to show</h2>
+    <a class="btn  btn-success" ui-sref="sponsorship.add"><h4>Create One!</h4></a>
+</div>
+
+
+
+<div ng-if="advertisements.length" class="row">
+    <div class="col-sm-10 col-sm-offset-1">
+
+        <div class="col-sm-8 col-sm-offset-2 top30" ng-show="advertisements.length">
+            <input type="text" ng-model="search.name" class="form-control" placeholder="Search sponsorships...">
+        </div>
+        <table class="table table-striped top15">
+            <thead>
+            <tr>
+                <td><b>Name</b></td>
+                <td><b>Description</b></td>
+
+                <td ng-click="toggleSort('reviewed')"
+                    ng-class="{headerSortUp: reverse, headerSortDown: !reverse}"><b>Reviewed</b>
+                </td>
+                <td><b>Pause</b></td>
+
+                <td></td>
+                <td ng-if="admin"></td>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="advertisement in advertisements | orderBy:sort:reverse |filter:search">
+
+                <td>{{advertisement.name}}</td>
+                <td>{{advertisement.description}}</td>
+                <td>{{advertisement.reviewed ? "Yes!" : "Not Yet!"}}</td>
+                <td style="width:20%;">
+                    <button style="width:100%" class="btn btn-sm btn-default" ng-click="pause(advertisement)">
+                        <span class="glyphicon"
+                              ng-class="{'glyphicon-play': advertisement.paused, 'glyphicon-pause': !advertisement.paused}"></span>
+                        {{advertisement.paused ? "Resume" : "Pause"}}
+                    </button>
+                </td>
+                <td width="10%"><a ui-sref="{{infoLink}}"
+                                   class="btn btn-sm btn-success">More Info</a></td>
+                <!--<td><a class="btn btn-sm btn-primary">Pause</a></td>-->
+                <!--<td><a class="btn btn-sm btn-danger">Delete</a></td>-->
+
+                <td ng-if="admin" width="10%"><a ui-sref="sponsorship.adminReview({id: advertisement.id})"
+                                                 class="btn btn-sm btn-warning">Review</a></td>
+
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>

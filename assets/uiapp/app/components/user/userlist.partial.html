@@ -1,0 +1,38 @@
+<div class="row">
+    <h3 ng-if="!users.length" style="text-align: center">No Users</h3>
+
+    <div class="col-sm-8 col-sm-offset-2 top30" ng-show="users.length">
+        <input type="text" ng-model="searchTerm" class="form-control" placeholder="Search users...">
+    </div>
+    <div class="col-sm-10 col-sm-offset-1 top30">
+        <table class="table table-striped" ng-if="users.length">
+            <thead>
+            <tr>
+                <th>Name</th>
+
+                <th>Email</th>
+                <th ng-if="!admin">Manager At</th>
+                <!--<th ng-if="admin">Created</th>-->
+                <th ng-if="admin">Type</th>
+                <th></th>
+
+            </tr>
+            </thead>
+            <tbody> <!--TODO fix view for mobile-->
+            <tr ng-repeat="user in users | orderBy: 'user.lastName' | filter: searchTerm">
+                <td>{{ user.user.firstName }} {{ user.user.lastName }}
+                </td>
+                <td>{{ user.email }}</td>
+                <!--<td ng-if="admin">{{ user.createdAt | date }}</td>-->
+                <td ng-if="admin"><span ng-repeat="t in user.user.roleTypes">{{t}}<br></span></td>
+                <td ng-if="!admin"><span ng-repeat="venue in user.user.managedVenues">{{venue.name}}<br></span></td>
+                <td>
+                    <a ui-sref="{{ admin ? 'user.editUserAdmin({ id: user.id })' : 'user.editUserOwner({ id: user.id })' }}"
+                       class="btn btn-sm btn-warning">EDIT</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+

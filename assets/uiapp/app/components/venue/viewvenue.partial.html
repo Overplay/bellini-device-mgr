@@ -1,0 +1,151 @@
+<style>
+    .angular-google-map-container {
+        height: 450px;
+    }
+</style>
+
+<div class="top15 sidepad10">
+
+    <a ui-sref="{{ admin ? 'venue.adminEdit({id: venue.id})' : 'venue.edit({id: venue.id})'}}"
+       class="btn btn-primary pull-right">Edit</a>
+
+    <a ng-click="showMap = !showMap;" class="btn btn-primary" style="margin-bottom: 15px" ng-init="showMap = true">
+        {{!showMap ? "Show" : "Hide"}} Map
+    </a>
+
+    <div uib-collapse="!showMap">
+        <ui-gmap-google-map center="map.center" zoom="map.zoom">
+            <ui-gmap-marker idKey="map.markerId" coords="map.marker">
+                <ui-gmap-window show="true">
+                    <div style="text-align: center">
+                        <h3>{{ venue.name }}</h3>
+                        <p style="font-size: 14px">{{ map.address }}</p>
+                    </div>
+                </ui-gmap-window>
+            </ui-gmap-marker>
+        </ui-gmap-google-map>
+    </div>
+
+    <h3 ng-show="venue.devices.length">Devices</h3>
+
+    <table class="table table-striped top15" ng-show="venue.devices.length">
+        <thead>
+        <tr>
+            <td>Name</td>
+            <td>Location in Venue</td>
+            <td></td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="device in venue.devices">
+            <td>{{device.name}}</td>
+            <td>{{device.locationWithinVenue}}</td>
+            <td width="10%"><a
+                    ui-sref="{{admin ? 'device.adminManage({id: device.id})' : 'device.ownerManage({id: device.id})'}}"
+                    class="btn btn-sm btn-warning">More
+                Info</a></td>
+        </tr>
+        </tbody>
+    </table>
+    <h3 ng-show="venue.venueManagers.length"> Venue Managers </h3>
+
+    <table class="table table-striped top15" ng-show="venue.venueManagers.length">
+        <thead>
+        <tr>
+            <td>Name</td>
+            <td></td>
+            <td></td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="user in venue.venueManagers">
+            <td>{{user.firstName}} {{user.lastName}}</td>
+            <td>
+                <button class="btn btn-sm btn-danger" ng-click="removeManager(user)">Remove</button>
+            </td>
+            <td width="10%"><a
+                    ui-sref="{{admin ? 'user.editUserAdmin({id: user.auth})' : 'user.editUserOwner({id: user.auth})'}}"
+                    class="btn btn-sm btn-warning">More
+                info</a></td>
+        </tr>
+        </tbody>
+
+    </table>
+    <h3> Venue Owners </h3>
+
+    <table class="table table-striped top15" ng-show="venue.venueOwners.length">
+        <thead>
+        <tr>
+            <td>Name</td>
+            <td></td>
+            <td></td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="user in venue.venueOwners">
+            <td>{{user.firstName}} {{user.lastName}}</td>
+            <td>
+                <button class="btn btn-sm btn-danger" ng-click="removeOwner(user.id)"
+                        ng-if="user.id != uid && venue.venueOwners.length > 1">Remove
+                </button>
+            </td>
+            <td width="10%"><a ui-sref="{{userRoute(user.id)}}" class="btn btn-sm btn-warning">More
+                info</a></td>
+        </tr>
+        </tbody>
+
+    </table>
+    <div>
+        <form name="form" role="form">
+            <div class="form-group"
+                 ng-class="{ 'has-error' : !form.email.$valid && form.email.$touched, 'has-success' : form.email.$valid}">
+                Add Owners and Managers <!--TODO might have to move this to EDIT venue? ?-->
+
+                <div class="input-group ">
+                    <span class="input-group-addon"><i class="glyphicon-envelope glyphicon"></i></span>
+
+                    <input type="email" class="form-control" placeholder="Email Address" name="email"
+                           ng-model="proprietor.email" required><br>
+                </div>
+            </div>
+            <button ng-click="addProprietor('Manager')" ng-disabled="form.$invalid" class="btn btn-sm btn-success">Add
+                Manager
+            </button>
+            <button ng-click="addProprietor('Owner')" ng-disabled="form.$invalid" class="btn btn-sm btn-warning">Add
+                Owner
+            </button>
+        </form>
+
+    </div>
+
+    <h3 style="margin-bottom: 10px">Sponsorships</h3>
+    <p ng-hide="sponsorships.length">No sponsorships have been added to this venue</p>
+    <uib-accordion ng-show="sponsorships.length">
+        <div uib-accordion-group class="panel-default" is-open="status.isOpen" ng-repeat="s in sponsorships | orderBy:'name'">
+            <uib-accordion-heading>
+                {{ s.name }} - <span style="font-size:14px">{{ s.description }}</span>
+                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-up': status.isOpen, 'glyphicon-chevron-down': !status.isOpen }"></i>
+            </uib-accordion-heading>
+            <div>
+                <div class="col-sm-4" style="text-align:center">
+                    <span style="font-weight:bold">Crawler Text</span>
+                    <p ng-hide="s.advert.text[0] + s.advert.text[1] + s.advert.text[2]">None</p>
+                    <ul class="list-group" style="text-align:left">
+                        <li class="list-group-item" ng-repeat="t in s.advert.text track by $index" ng-show="t">{{ t }}</li>
+                    </ul>
+                </div>
+                <div ng-repeat="size in mediaSizes" ng-if="s.advert.media[size]" class="col-sm-4" style="text-align: center">
+                    <b>{{size | capitalize}}</b><br>
+                    <a ng-href="media/download/{{s.advert.media[size]}}" target="_blank"><img
+                            style="width:100%"
+                            class="media-prev"
+                            ng-src="media/download/{{s.advert.media[size]}}"/></a>
+                </div>
+                <div class="col-xs-12 top15">
+                    <button class="btn btn-danger" ng-click="removeSponsorship(s.id)">Remove from venue</button>
+                </div>
+            </div>
+        </div>
+    </uib-accordion>
+    <button class="btn btn-sm btn-success" ng-click="addSponsorship()">Add Sponsorship</button>
+</div> 

@@ -1,0 +1,147 @@
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="n-blue-box">{{ organization.name || "Organization" }}</h2>
+        <uib-tabset active="active">
+            <uib-tab heading="More Info">
+                <div class="top15" style="padding: 20px; border: 2px solid #cacaca; border-radius: 5px;">
+                    <!--<div class="panel-heading">
+                        <h3>Organization Information</h3>
+                    </div>-->
+                    <div class="panel-body">
+                        <table class="table table-striped top15">
+                            <tr>
+                                <td>Name</td>
+                                <td ng-show="organization.name">{{organization.name}}</td>
+                                <td ng-hide="organization.name">(Organization has no name)</td>
+                            </tr>
+                            <tr>
+                                <td>Email</td>
+                                <td><a href="mailto:{{organization.email}}">{{organization.email}}</a></td>
+                            </tr>
+                            <tr>
+                                <td>Phone</td>
+                                <td>{{organization.phone}}</td>
+                            </tr>
+                            <tr>
+                                <td>Website URL</td>
+                                <td><a href="http://{{organization.websiteUrl}}">{{organization.websiteUrl}}</a></td>
+                            </tr>
+                            <tr>
+                                <td>Address</td>
+                                <td>{{organization.address.street}}</td>
+                            </tr>
+                            <tr>
+                                <td>City</td>
+                                <td>{{organization.address.city}}, {{organization.address.state}}
+                                    {{organization.address.zip}}
+                                </td>
+                            </tr>
+                            <tr>
+                            <tr>
+                                <th>Venues</th>
+                                <th></th>
+                            </tr>
+                            <tr ng-repeat="venue in organization.venues"> <!-- TODO make scrollable-->
+                                <td></td>
+                                <td>
+                                    <a ui-sref="venue.manage({ id: venue.id })">
+                                        {{venue.name}}</a>
+                                </td>
+                            </tr>
+                            <!--<tr>
+                                <th>Proprietors</th>
+                                <th></th>
+                            </tr>
+                            <!--<tr ng-repeat="prop in organization.organizationProprietors">
+                                <td></td>
+                                <td>
+                                    <!--//TODO proprietor.owner etc will not be able to admin edit other users -
+                                     decide who this should show for
+
+                                    <a ui-sref="user.editUserAdmin({ id: prop.auth })">{{prop.firstName}}
+                                        {{prop.lastName}}</a>
+                                </td>
+                            </tr>
+                            </td>
+                            </tr>-->
+
+                        </table>
+                    </div>
+                </div>
+
+            </uib-tab>
+            <uib-tab heading="Edit Organization"> <!--TODO only show if user can edit organization (which roles??) -->
+                <div class="top15" style="padding: 20px; border: 2px solid #cacaca; border-radius: 5px;">
+                    <!--<div class="panel-heading">
+                        <h3>Edit Organization</h3>
+                    </div>-->
+                    <div class="panel-body">
+                        <form name="form" ng-submit="update()" role="form">
+                            <fieldset class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name"
+                                       ng-model="organizationUpdate.name" required/>
+                            </fieldset>
+                            <fieldset class="form-group"> <!--TODO format number? -->
+                                <label for="phone">Phone Number</label>
+                                <input type="number" class="form-control" id="phone"
+                                       ng-model="organizationUpdate.phone" required/>
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email"
+                                       ng-model="organizationUpdate.email" required>
+                            </fieldset>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h4>Address</h4>
+                                    <fieldset class="form-group ">
+                                        <label for="street">Street</label>
+                                        <input type="text" class="form-control" id="street"
+                                               ng-model="organizationUpdate.address.street"/>
+                                    </fieldset>
+                                    <div class="row">
+                                        <fieldset class="form-group col-sm-5">
+
+                                            <label for="city">City</label>
+                                            <input type="text" class="form-control" id="city"
+                                                   ng-model="organizationUpdate.address.city"/>
+                                        </fieldset>
+                                        <fieldset class="form-group col-sm-3">
+
+                                            <label for="state">State</label> <!--TODO state dropdown?-->
+                                            <select ng-options="state for state in states" class="form-control"
+                                                    id="state" name="state" required
+                                                    ng-model="organizationUpdate.address.state"></select>
+                                        </fieldset>
+
+                                        <fieldset class="form-group col-sm-4"
+                                                  ng-class="{'has-error' : !form.zip.$valid}">
+
+                                            <label for="zip">Zip Code</label>
+                                            <input type="text" class="form-control" ng-required
+                                                   ng-model="organizationUpdate.address.zip" id="zip" name="zip"
+                                                   ng-pattern="regex"/>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="form-actions">
+
+                                <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary top15">
+                                    Update
+                                </button>
+
+
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </uib-tab>
+
+
+    </div>
+</div>

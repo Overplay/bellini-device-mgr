@@ -1,0 +1,114 @@
+<style>
+
+    .og-secondary-tab-bar {
+        width: 100%;
+        margin-top: -3px;
+        margin-bottom: 5px;
+        display: flex;
+    }
+
+    .og-secondary-tab-bar .btn {
+        width: 50vw;
+        background-color: rgba(12, 184, 215, 0.76);
+        color: #d0d0d0;
+        flex-grow: 1;
+        margin: 0 1px 0 1px;
+    }
+
+    .scroll-area {
+        /*The height must be manually updated determined by the screen size*/
+        height: 66vh;
+        /*height: 65vh;*/
+        /*background-color: green;*/
+        overflow-y: scroll;
+    }
+
+    .current-channel {
+        margin-top: 1vh;
+        /*border: 1px solid hotpink;*/
+    }
+
+    .search-box {
+        margin-top: 1vh;
+        margin-bottom: 0;
+        /*border: 1px solid red;*/
+    }
+
+    .sports-bar {
+        margin-top: -1vh;
+        margin-bottom: 1vh;
+        /*background-color: lightcoral;*/
+        height: 5vh;
+        width: 100%;
+        text-align: center;
+    }
+
+    .sports-logo {
+        display: inline-block;
+        height: 5vh;
+        width: 5vh;
+        background: white;
+        border-radius: 2px;
+    }
+
+</style>
+
+<div class="container">
+    <div class="row" ng-show="!ui.isPaired">
+        <div class="offset-col-1 col-md-10" style="margin-top: 10px;">
+            <p>This Ourglass system is not paired with a satellite or cable box. To control the TV through Ourglass, please pair this system.</p>
+        </div>
+    </div>
+    <div class="row" ng-show="ui.isPaired">
+        <div class="col-md-12">
+            <div class="og-secondary-tab-bar">
+                <a class="btn btn-default" ng-click="refineSearch('all')"
+                   ng-class="{ 'tabon': ui.refineSearch == 'all' }"> ALL </a>
+                <a class="btn btn-default" ng-click="refineSearch('favorites')"
+                   ng-class="{ 'tabon': ui.refineSearch == 'favorites' }"> FAVORITES </a>
+                <a class="btn btn-default" ng-click="refineSearch('sports')"
+                   ng-class="{ 'tabon': ui.refineSearch == 'sports' }"> SPORTS </a>
+                <a class="btn btn-default" ng-click="refineSearch('news')"
+                   ng-class="{ 'tabon': ui.refineSearch == 'news' }"> NEWS </a>
+            </div>
+
+            <div class="current-channel">
+                <station-cell now-playing="nowPlaying" grid="currentChannel"></station-cell>
+            </div>
+
+            <form class="search-box" style="margin-bottom: -1vh;">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="inputStationName" placeholder="Search by anything..."
+                           ng-model="stationSearch" ng-model-options="{ debounce: 100 }">
+                    <button ng-if="stationSearch" style="width: 100%; margin-top: 1vh;" class="btn btn-info" ng-click="clearSearch()">Clear Search</button>
+                </div>
+            </form>
+
+            <div ng-if="ui.refineSearch == 'sports'" class="sports-bar">
+                <img class="sports-logo" ng-click="imageSearch('Warriors')" src="assets/img/warriors.png">
+                <img class="sports-logo" ng-click="imageSearch('SF Giants')" src="assets/img/sfgiants.png">
+                <img class="sports-logo" ng-click="imageSearch('49ers')" src="assets/img/49ers.png">
+                <img class="sports-logo" ng-click="imageSearch('Raiders')" src="assets/img/raiders.png">
+                <img class="sports-logo" ng-click="imageSearch('SJ Sharks')" src="assets/img/sharks.png">
+                <img class="sports-logo" ng-click="imageSearch('Oakland As')" src="assets/img/oakland_as.png">
+                <img class="sports-logo" ng-click="imageSearch('Cal')" src="assets/img/cal.png">
+                <img class="sports-logo" ng-click="imageSearch('SJSU')" src="assets/img/sjsu.png">
+                <img class="sports-logo" ng-click="imageSearch('Stanford')" src="assets/img/stanford.png">
+            </div>
+
+            <div class="scroll-area" scroll-window window-size="30"
+                edge-callback="atEdge"
+                limits="scrollLimits" >
+
+                    <div id="scroller-anchor-top"></div>
+
+                    <station-cell ng-repeat="grid in displayedGrid"
+                                  grid="grid" search="stationSearch"></station-cell>
+
+                    <div id="scroller-anchor-bottom"></div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

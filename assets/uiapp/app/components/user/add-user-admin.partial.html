@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-sm-10 col-sm-offset-1">
+        <!--<p>This page only lets you save the basic info, then you are redirected to a management page.-->
+            <!--Sorry for the 2 step process, but we're getting too much replicated HTML/JS and we need to have-->
+            <!--an intern clean it up :).</p>-->
+        <form>
+            <input style="display:none;" type="text" name="usernamefake" />
+            <input style="display:none;" type="password" name="passwordfake" />
+
+            <fieldset class="form-group">
+                <label for="em">Email</label>
+                <input type="email" class="form-control" id="em" placeholder="Email"
+                       ng-model="user.email">
+            </fieldset>
+            <fieldset class="form-group">
+                <label for="fname">First Name</label>
+                <input type="text" class="form-control" id="fname" placeholder="First Name"
+                       ng-model="user.firstName">
+            </fieldset>
+            <fieldset class="form-group">
+                <label for="lname">Last Name</label>
+                <input type="text" class="form-control" id="lname" placeholder="Last Name"
+                       ng-model="user.lastName">
+            </fieldset>
+            <fieldset class="form-group">
+                <label for="mob">Mobile Number</label>
+                <input type="text" class="form-control" id="mob" placeholder="Mobile #"
+                       ng-model="user.mobilePhone">
+            </fieldset>
+            <hr>
+            <fieldset class="form-group">
+                <label for="adminPwd">Password</label>
+                <input type="password" class="form-control" id="adminPwd" placeholder="New Password"
+                       ng-model="user.password">
+            </fieldset>
+            <button class="btn btn-default" ng-click="addUser()">Add User</button>
+
+
+        </form>
+
+    </div>
+</div>
+
+</div>

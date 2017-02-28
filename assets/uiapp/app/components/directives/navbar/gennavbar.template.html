@@ -1,0 +1,23 @@
+<nav class="navbar navbar-inverse" role="navigation">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <!-- MAK: this implements the responsive hamburger menu on smaller screens as well as places the brand at left. -->
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" ng-init="ui.navCollapsed = true"
+                ng-click="ui.navCollapsed = !ui.navCollapsed">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#"><img src="/images/ourglass-white.png"
+                                              style="max-height: 40px; margin-top: -10px;"/></a>
+    </div>
+
+    <div class="collapse navbar-collapse" uib-collapse="ui.navCollapsed">
+
+        <ul class="nav navbar-nav" nav-tabs menus="menus.left" ui="ui"></ul>
+        <ul class="nav navbar-nav navbar-right" nav-tabs menus="menus.right" ui="ui"></ul>
+
+    </div>
+</nav>
+

@@ -1,0 +1,16 @@
+<div class="jumbotron">
+    <H1>Welcome toExample Page 1</H1>
+    <a ui-sref=".list" class="btn btn-primary">List</a>
+    <a ui-sref=".paragraph" class="btn btn-danger">Paragraph</a>
+</div>
+
+<div>
+    <button type="button" class="btn btn-default" ng-click="isCollapsed = !isCollapsed">Toggle collapse</button>
+    <hr>
+    <div uib-collapse="isCollapsed">
+        <div class="well well-lg">Some content</div>
+    </div>
+</div>
+
+
+<div ui-view></div>

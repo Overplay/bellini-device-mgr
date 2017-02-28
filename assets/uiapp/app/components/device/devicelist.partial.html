@@ -1,0 +1,37 @@
+
+
+<div class="row">
+    <div class="col-sm-8 col-sm-offset-2 top30" ng-show="devices.length">
+        <input type="text" ng-model="searchTerm" class="form-control" placeholder="Search devices...">
+    </div>
+    <div class="col-sm-10 col-sm-offset-1 top30">
+        <h3 ng-if="!devices.length" style="text-align: center; padding-bottom: 10px">No Devices</h3>
+        <table class="table table-striped" ng-if="devices.length">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>UDID</th>
+                <th>Location</th>
+                <th>Venue</th>
+                <th></th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="device in devices | filter:searchTerm">
+                <td>{{ device.name }}</td>
+                <td>{{ device.uniqueId }}</td>
+                <td>{{ device.locationWithinVenue }}</td>
+                <td><span uib-popover-template="'uiapp/app/components/device/address-popover.template.html'"
+                          popover-trigger="mouseenter"
+                          popover-append-to-body="true"
+                          popover-placement="top-left">{{ device.venue.name }}</span>
+                </td>
+                <td>
+                    <a ui-sref="{{ edit }}"
+                       class="btn btn-sm btn-warning">MORE INFO</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

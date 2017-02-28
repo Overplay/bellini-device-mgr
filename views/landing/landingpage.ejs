@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head >
+    <meta charset="UTF-8">
+
+    <title>Ourglass</title>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Grab the common JS libs -->
+    <%- partial( '../partials/jsdeps' ) %>
+
+    <!-- Grab the common CSS  -->
+    <%- partial( '../partials/cssdeps' ) %>
+
+    <!-- Import your app, controllers, etc. here. Path needs to be out of /assets/js/views/... -->
+
+
+</head>
+<body>
+
+<!-- MAIN CONTENT -->
+<div class="container-fluid">
+
+    <!--<div ui-view></div>-->
+    <div class="jumbotron">
+        <h1>Landing Page Via Template
+            <pre>views/landing/landing.ejs</pre>
+        </h1>
+        <!-- Example of how to invoke ejs locals here. The auth stuff comes from authDecorator policy -->
+        <% if (authenticated) { %>
+        <a>Authenticated</a>
+        <% } else { %>
+        <b>Not authenticated</b>
+        <% } %>
+        <br>
+        <% if (admin) { %>
+        <a>Is admin</a>
+        <% } else { %>
+        <b>Is not admin</b>
+        <% } %>
+    </div>
+
+</div>
+
+</body>
+</html>

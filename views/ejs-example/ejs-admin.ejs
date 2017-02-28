@@ -1,0 +1,12 @@
+<script src="/js/views/ejs-example/ejs-example.js"></script>
+
+<div class="container" ng-app="ejsTemplateApp">
+    <div class="row" ng-controller="ejsTemplateController">
+        <div class="jumbotron">
+            <h1><%= __( 'A brand new app.' ) %></h1>
+            <h3>ADMIN! You're looking at: <code><%= view.pathFromApp + '.' + view.ext %></code></h3>
+            <p><%= myMessage %></p>
+            <p>{{ fromAngular }}</p>
+        </div>
+    </div>
+</div>

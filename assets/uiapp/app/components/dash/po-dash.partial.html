@@ -1,0 +1,54 @@
+<div ng-if="venues">
+    <h2 class="text-center">Venues You Own</h2>
+
+    <!--add search function??
+
+    <pre>Model: {{selected | json}}</pre>
+    <input type="text" ng-model="selected" uib-typeahead="v.name as v for v in venueList | filter:$viewValue | limitTo:8" class="form-control">
+
+    -->
+    <div ng-repeat="vens in venues">
+
+        <div class="col-md-6 col-lg-4 text-center" ng-repeat="ven in vens">
+
+            <div class=" text-center dash-panel" ui-sref="venue.view({id: ven.id})">
+                <div style="padding-top: 10px;">
+                    <img class="dash-logo"
+                         ng-src="{{ven.logo ? 'media/download/' + ven.logo : 'images/default-venue.jpg'}}"/>
+                </div>
+                <div class="dash-name">
+                    {{ven.name}}
+                </div>
+                <div>
+                    <div class="dash-address">
+                        {{addressify(ven.address)}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="col-md-6 col-xl-4 text-center" ng-repeat="ven in vens">-->
+
+            <!--<div class=" text-center dash-panel" ui-sref="venue.view({id: ven.id})">-->
+                <!--<div class="row">-->
+                    <!--<div class="col-sm-3 col-md-4">-->
+                        <!--<img class="dash-logo"-->
+                             <!--ng-src="{{ven.logo ? 'media/download/' + ven.logo : 'images/default-venue.jpg'}}"/>-->
+                    <!--</div>-->
+                    <!--<div class="col-sm-9 col-md-8">-->
+                        <!--<div class="dash-name">-->
+                            <!--{{ven.name}}-->
+                        <!--</div>-->
+                        <!--<div>-->
+                            <!--<div class="dash-address">-->
+                                <!--{{addressify(ven.address)}}-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                <!--</div>-->
+
+            <!--</div>-->
+        <!--</div>-->
+    </div>
+</div>

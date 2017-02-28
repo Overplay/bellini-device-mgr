@@ -1,0 +1,25 @@
+<div class="dash-selector">
+    <div class="text-center">
+
+        <br>
+        <ul class="dash-selection">
+            <li ng-repeat="role in roles" ng-class="{'selected-dash': selected==role}">
+                <a ui-sref="dash.{{role.replace('.', '')}}">{{humanize(role) | capitalize}}</a>
+            </li>
+        </ul>
+        <!--<div class="btn-group">
+        ng-model="dashModel" uib-btn-radio="'{{role}}'"
+            <label class="btn btn-primary" ng-model="radioModel" uib-btn-radio="'Left'">Left</label>
+            <label class="btn btn-primary" ng-model="radioModel" uib-btn-radio="'Middle'">Middle</label>
+            <label class="btn btn-primary" ng-model="radioModel" uib-btn-radio="'Right'">Right</label>
+        </div>-->
+    </div>
+
+
+
+
+</div>
+
+
+<!-- subviews of the dashboard  maybe multiple ui-views?? one for each role! then do tabs or dropdown to select-->
+<div ui-view></div>

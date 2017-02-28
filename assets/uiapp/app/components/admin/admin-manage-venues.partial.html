@@ -1,0 +1,19 @@
+<div class="col-md-10 col-md-offset-1">
+    <h2>Venues</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="venue in venues">
+                <td width="40%">{{venue.name}}</td>
+                <td>{{addressify(venue.address)}}</td>
+                <td><a ui-sref="venue.manageVenue({ id: venue.id })" class="btn btn-sm btn-warning">EDIT</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

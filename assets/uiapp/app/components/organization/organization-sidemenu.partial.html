@@ -1,0 +1,17 @@
+<div class="row">
+    <div class="col-md-offset-2 col-md-6">
+        <h1>{{ ui.pageTitle }}</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <ul class="side-menu top30">
+            <li><a ui-sref=".view">Information</a></li>
+            <li><a ui-sref=".edit">Edit</a></li>
+        </ul>
+    </div>
+    <div class="col-md-8 top30" style="border: 1px solid #f0f0f0; border-radius: 3px; padding: 20px;">
+        <h2 class="n-blue-box" ng-if="ui.panelHeading">{{ ui.panelHeading }}</h2>
+        <ui-view></ui-view>
+    </div>
+</div>

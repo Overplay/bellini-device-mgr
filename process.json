@@ -1,0 +1,22 @@
+{
+  "apps" : [{
+    "name"       : "asahi",
+    "script"     : "app.js",
+    "instances": 1,
+    "cwd" : "/opt/asahi",
+    "exec_mode": "fork",
+    "env": {
+      "COMMON_VARIABLE": "true",
+      "NODE_ENV": "development"
+    },
+    "env_production" : {
+      "NODE_ENV": "production"
+    },
+    "autorestart" : true,
+    "vizion": true,
+    "post_update": [
+      "npm install && cd assets && bower update && cd .."
+    ],
+    "watch": false
+  }]
+}

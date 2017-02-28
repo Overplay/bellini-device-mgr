@@ -1,0 +1,38 @@
+
+
+<div class="text-center row">
+    <div class="col-md-6 col-sm-10 col-sm-offset-1 col-md-offset-0">
+        <h2>Site Statistics</h2>
+        <table class="table table-striped top15">
+            <tr>
+                <td>User Count:</td>
+                <td>{{userCount}}</td>
+            </tr>
+            <tr>
+                <td>Device Count:</td>
+                <td>{{deviceCount}}</td>
+            </tr>
+            <tr>
+                <td>Advertisement Count:</td>
+                <td>{{adCount}}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-6 col-sm-10 col-sm-offset-1 col-md-offset-0">
+        <h2>Ads for review</h2>
+
+        <table class="table table-striped top15">
+            <tr ng-if="ads.length" ng-repeat="ad in ads">
+                <td><span style="display:flex;align-items:center;justify-content:center;">{{ad.name}}</span></td>
+                <td>
+                    <button class="btn btn-default" ui-sref="advertisement.adminReview({id: ad.id})">Review</button>
+                </td>
+            </tr>
+            <tr ng-if="!ads.length">
+                <td>No ads to review!</td>
+            </tr>
+        </table>
+    </div>
+
+
+</div>

@@ -1,0 +1,65 @@
+<style>
+    .slm-pick-item {
+        color: teal;
+        padding: 10px 0 10px 5px;
+        margin-left: 0;
+        cursor: pointer;
+    }
+
+    .slm-picked {
+        background: #696969;
+        color: white;
+        transition: all 0.5s;
+    }
+
+    .slm-no-num {
+        list-style-type: none;
+        padding: 10px;
+    }
+</style>
+
+<div class="modal-header">
+    <h3 class="modal-title">Choose sponsorship to add</h3>
+</div>
+<div class="modal-body">
+
+
+<!--<ol class="slm-no-num" style="margin: 10px; border: 1px solid #cacaca;">-->
+    <!--<li ng-repeat="choice in sponsorships" class="slm-pick-item"-->
+        <!--ng-class="{ 'slm-picked': modalUi.currentChoice==$index}"-->
+        <!--ng-click="modalUi.currentChoice = $index">{{ choice.name }} - {{ choice.description }}-->
+    <!--</li>-->
+<!--</ol>-->
+
+<uib-accordion ng-show="modalUi.sponsorships.length">
+    <div uib-accordion-group class="panel-default" is-open="status.isOpen" ng-repeat="s in modalUi.sponsorships">
+        <uib-accordion-heading>
+            <!--<label>-->
+                <!--<input type="checkbox">-->
+            <!--</label>-->
+            {{ s.name }} - <span style="font-size:14px">{{ s.description }}</span>
+            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-up': status.isOpen, 'glyphicon-chevron-down': !status.isOpen }"></i>
+        </uib-accordion-heading>
+        <div>
+            <div class="col-sm-4" style="text-align:center">
+                <span style="font-weight:bold">Crawler Text</span>
+                <ul class="list-group" style="text-align:left">
+                    <li class="list-group-item" ng-repeat="t in s.advert.text track by $index" ng-show="t">{{t}}</li>
+                </ul>
+            </div>
+            <div ng-repeat="size in modalUi.mediaSizes" ng-if="s.advert.media[size]" class="col-sm-4" style="text-align: center">
+                <b>{{size | capitalize}}</b><br>
+                <img style="width:100%"
+                     class="media-prev"
+                     ng-src="media/download/{{s.advert.media[size]}}"/>
+            </div>
+            <div class="col-xs-12 top15">
+                <button class="btn btn-success" type="button" ng-click="ok(s)">Add this sponsorship</button>
+            </div>
+        </div>
+    </div>
+</uib-accordion>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>

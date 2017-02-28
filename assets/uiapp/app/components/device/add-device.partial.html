@@ -1,0 +1,47 @@
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <!--TODO READD ng-submit="submitForCode()"-->
+        <form name="form"  role="form" ng-if="!code" class="form-horizontal">
+            <fieldset class="form-group">
+                <label for="name" class="col-sm-3 control-label">Device Name</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="name" placeholder="ex: Bar Box 8 (BB-8)"
+                    ng-model="device.name" required/>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-group">
+                <label for="location" class="col-sm-3 control-label">Location Within Venue</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="location" placeholder="Location"
+                           ng-model="device.locationWithinVenue" required/>
+                </div>
+            </fieldset>
+            <fieldset class="form-group" ng-if="user.ownedVenues.length || venues.length">
+                <label for="venue" class="col-sm-3 control-label">Venue</label>
+                <div class="col-sm-8">
+                    <select class="form-control" id="venue"
+                            ng-model="device.venue"
+                            ng-options="listAddress(venue) for venue in {{ venues ? 'venues' : 'user.ownedVenues' }} track by venue.id"
+                            required>
+                    </select>
+                </div>
+            </fieldset>
+
+            <div class="form-actions col-sm-11">
+                <button ng-click="testDevice()" type="submit" ng-disabled="form.$invalid" class="btn btn-success pull-left top15">
+                    Create Test Device (without code)
+                </button>
+                <button ng-click="submitForCode()" type="submit" ng-disabled="form.$invalid" class="btn btn-success pull-right top15">
+                    Create Activation Code
+                </button>
+            </div>
+        </form>
+        <div ng-if="code">
+            <h2>Code: {{data.code}}</h2>
+            <h3>Enter this code on your device you would like to register</h3>
+        </div>
+    </div>
+</div>
+
+

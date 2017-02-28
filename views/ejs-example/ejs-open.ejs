@@ -1,0 +1,64 @@
+<script src="/js/views/ejs-example/ejs-example.js"></script>
+
+<div ng-app="ejsTemplateApp">
+
+<!-- Bootstrap Version -->
+
+<div class="container" ng-controller="ejsTemplateController">
+    <div class="row">
+        <div class="jumbotron">
+            <h1>OPEN SESAME! OPEN SESAME!</h1>
+            <h3> You're looking at: <br><code><%= view.pathFromApp + '.' + view.ext %></code></h3>
+            <h3>This is a no-auth page</h3>
+            <p><%= myMessage %></p>
+            <p>{{ fromAngular }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <uib-tabset active="activeJustified" justified="true" style="margin-bottom: 20px;">
+            <uib-tab index="0" heading="Justified">Justified content</uib-tab>
+            <uib-tab index="1" heading="SJ">Short Labeled Justified content</uib-tab>
+            <uib-tab index="2" heading="Long Justified">Long Labeled Justified content</uib-tab>
+        </uib-tabset>
+    </div>
+</div>
+
+<!-- Angular material version
+    <md-content class="md-padding" ng-controller="ejsTemplateController">
+        <div flex-xs flex-gt-xs="100" layout="row">
+            <md-card>
+                <md-card-title>
+                    <md-card-title-text>
+                        <span class="md-headline">OPEN SESAME! OPEN SESAME! You're looking at: <br><code><%= view.pathFromApp + '.' + view.ext %></code></span>
+                        <span class="md-subhead">This is a no-auth page</span>
+                        <p><%= myMessage %></p>
+                        <p>{{ fromAngular }}</p>
+                    </md-card-title-text>
+                    <md-card-title-media>
+                        <div class="md-media-lg card-media"></div>
+                    </md-card-title-media>
+                </md-card-title>
+                <md-card-actions layout="row" layout-align="end center">
+                    <md-button>Action 1</md-button>
+                    <md-button>Action 2</md-button>
+                </md-card-actions>
+            </md-card>
+        </div>
+
+        <div flex-xs flex-gt-xs="100" layout="row">
+            <md-tabs md-dynamic-height md-border-bottom style="width: 600px;">
+                <md-tab ng-repeat="tab in tabs" label="{{tab.title}}">
+                    <md-content class="md-padding">
+                        <h1 class="md-display-2">Tab {{$index}}</h1>
+                        <p>{{tab.content}}</p>
+                    </md-content>
+                </md-tab>
+            </md-tabs>
+        </div>
+
+
+</md-content>
+-->
+
+</div>
+

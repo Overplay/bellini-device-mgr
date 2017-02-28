@@ -1,0 +1,21 @@
+{
+  "appId": "io.ourglass.restest",
+  "appType": "widget",
+  "appName": "Resolution",
+
+  "icon": "settings@3x.png",
+  "iconLabel": "Resolution",
+
+  "primaryColorHex": "#8080ff",
+  "secondaryColorHex": "#4d4dff",
+
+  "height": 40,
+  "width": 10,
+
+  "initialValue": {
+    "parties": []
+  },
+
+  "version": 1.0,
+  "installDate": 1475073632093
+}

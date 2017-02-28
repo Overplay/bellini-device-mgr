@@ -1,0 +1,40 @@
+<form>
+    <fieldset class="form-group">
+        <label for="fname">First Name</label>
+        <input type="text" class="form-control" id="fname" placeholder="First Name"
+               ng-model="user.firstName">
+    </fieldset>
+    <fieldset class="form-group">
+        <label for="lname">Last Name</label>
+        <input type="text" class="form-control" id="lname" placeholder="Last Name"
+               ng-model="user.lastName">
+    </fieldset>
+    <fieldset class="form-group">
+        <label for="mob">Mobile Number</label>
+        <input type="text" class="form-control" id="mob" placeholder="Mobile #"
+               ng-model="user.mobilePhone">
+    </fieldset>
+    <button class="btn btn-default" ng-click="updateUserInfo()">Update My Info</button>
+    <div ng-if="ui.x">
+        <hr>
+        <h3>Admin Settings</h3>
+        <fieldset class="form-group">
+            <label for="adminPwd">Password</label>
+            <input type="password" class="form-control" id="adminPwd" placeholder="New Password"
+                   ng-model="user.newPwd">
+        </fieldset>
+        <button class="btn btn-default" ng-click="adminPwdChange()">Change User's Password</button>
+        <p class="top15"><strong>User Role</strong></p>
+        <h3>NEED TO DEAL WITH ROLES!!</h3>
+        <!--
+        <div ng-repeat="role in roles">
+            <input type="checkbox" ng-model="role.selected"/>&nbsp;{{ role.roleKey}}
+        </div>
+        <button class="btn btn-default top15" ng-click="adminAuthLevelChange()">Change User Roles
+        </button>
+        -->
+
+
+    </div>
+
+</form>

@@ -1,0 +1,19 @@
+<!-- page for testing registration
+in reality this will be done on the box
+-->
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>Register a Device</h2>
+        <form>
+            <input type="text" class="form-control" placeholder="Registration Code"
+                   ng-model="device.regCode">
+            <input type="text" class="form-control" placeholder="Name"
+                   ng-model="device.name">
+            <input type="text" class="form-control" placeholder="Location"
+                   ng-model="device.locationWithinVenue">
+            <button ng-click="register()" class="btn btn-primary btn-lg top15">Go</button>
+
+        </form>
+    </div>
+</div>

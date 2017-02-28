@@ -1,0 +1,61 @@
+<div class="top15 col-md-10 col-md-offset-1">
+    <div class="panel-body">
+        <form name="form" ng-submit="update()" role="form">
+            <fieldset class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name"
+                       ng-model="organizationUpdate.name" required/>
+            </fieldset>
+            <fieldset class="form-group"> <!--TODO format number? -->
+                <label for="phone">Phone Number</label>
+                <input type="number" class="form-control" id="phone"
+                       ng-model="organizationUpdate.phone" required/>
+            </fieldset>
+            <fieldset class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email"
+                       ng-model="organizationUpdate.email" required>
+                </input>
+            </fieldset>
+            <div class="row">
+                <div class="col-sm-12">
+                    <h4>Address</h4>
+                    <fieldset class="form-group ">
+                        <label for="street">Street</label>
+                        <input type="text" class="form-control" id="street"
+                               ng-model="organizationUpdate.address.street"/>
+                    </fieldset>
+                    <div class="row">
+                        <fieldset class="form-group col-sm-5">
+
+                            <label for="city">City</label>
+                            <input type="text" class="form-control" id="city"
+                                   ng-model="organizationUpdate.address.city"/>
+                        </fieldset>
+                        <fieldset class="form-group col-sm-3">
+
+                            <label for="state">State</label> <!--TODO state dropdown?-->
+                            <select ng-options="state for state in states" class="form-control"
+                                    id="state" name="state" required
+                                    ng-model="organizationUpdate.address.state"></select>
+                        </fieldset>
+
+                        <fieldset class="form-group col-sm-4"
+                                  ng-class="{'has-error' : !form.zip.$valid}">
+
+                            <label for="zip">Zip Code</label>
+                            <input type="text" class="form-control" ng-required
+                                   ng-model="organizationUpdate.address.zip" id="zip" name="zip"
+                                   ng-pattern="regex"/>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary top15">
+                    Update
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

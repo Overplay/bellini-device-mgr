@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-10">
+            <!--<h4>SYSTEM</h4>-->
+            <form style="margin-top: 10px;">
+                <div class="form-group">
+                    <label for="inputName">System Name</label>
+                    <input type="text" class="form-control" id="inputName" placeholder="Name" ng-model="system.name">
+                </div>
+                <div class="form-group">
+                    <label for="inputLocation">Location in Venue</label>
+                    <input type="text" class="form-control" id="inputLocation" placeholder="Location"
+                           ng-model="system.locationWithinVenue">
+                </div>
+
+            </form>
+            <button class="btn btn-warning" style="width: 100%;" ng-click="updateSystemName()">UPDATE</button>
+            <p>&nbsp;</p>
+            <a class="btn btn-danger" style="width: 100%; margin-top: 10px;" ui-sref="register">
+                REGISTER WITH VENUE
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

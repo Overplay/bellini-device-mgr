@@ -1,0 +1,108 @@
+<style>
+    /*.img-input-holder .panel-body {*/
+        /*border: 1px solid red;*/
+    /*}*/
+
+    /*.img-input-holder img {*/
+        /*border: 1px solid firebrick;*/
+        /*display: inline-block;*/
+
+    /*}*/
+
+    .img-input-holder p {
+        display: inline-block;
+        color: #505050;
+        margin-left: 20px;
+        width: 300px;
+    }
+
+    .img-input-holder button {
+        position: relative;
+        left: 0;
+    }
+
+    .warning-popup {
+        background-color: #ff777d;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .img-input-holder.ng-hide-add {
+        animation: 0.3s lightSpeedOut ease;
+    }
+
+    /* when showing the picture */
+    .img-input-holder.ng-hide-remove {
+        /*animation: 0.5s shrink ease;*/
+        animation: 0.5s flipInX ease;
+    }
+
+    /* ANIMATIONS (FROM ANIMATE.CSS) ======================== */
+    /* flip in */
+    @keyframes flipInX {
+        0% {
+            transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+            transition-timing-function: ease-in;
+            opacity: 0;
+        }
+
+        40% {
+            transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+            transition-timing-function: ease-in;
+        }
+
+        60% {
+            transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+            opacity: 1;
+        }
+
+        80% {
+            transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+        }
+
+        100% {
+            transform: perspective(400px);
+        }
+    }
+
+    @keyframes shrink {
+        0% {
+            opacity: 1;
+            transform: scale(1, 1);
+        }
+        100% {
+            transform: scale(1, 0);
+            opacity: 0;
+        }
+    }
+
+    /* light speed out */
+    @keyframes lightSpeedOut {
+        0% {
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateX(10%) skewX(30deg);
+            opacity: 0;
+        }
+    }
+
+</style>
+
+<div class="img-input-holder">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ prompt }}</h3>
+        </div>
+        <div class="panel-body" style="position: relative;" drag-and-drop on-drop="filesDropped">
+            <img ng-src="{{ img.mediaSrc }}" ng-style="img.style" uib-tooltip="Drag and drop image here"/>
+            <p>Drag and drop a JPG or PNG file anywhere in this panel to add or replace the image.
+                {{ exact ? "Image must be the size specified." : ""}}
+                {{ ratio ? "Image must have a " + ratio + " ratio." : ""}}
+                {{ maxSize ? "Image must be no larger than the dimensions specified." : ""}}</p>
+        </div>
+        <div class="warning-popup" ng-show="warning">{{ warning }}</div>
+
+    </div>
+</div>

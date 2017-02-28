@@ -1,0 +1,85 @@
+<div ng-if="!advertisements.length" class="text-center">
+    <h2>No Sponsorships to show</h2>
+    <a class="btn  btn-success" ui-sref="advertisement.add"><h4>Create One!</h4></a>
+</div>
+
+
+<div ng-if="advertisements.length">
+
+
+    <div class="row"> <!--TODO graph heights & loading symbol?-->
+        <div class="col-md-6">
+            <div class="text-center">
+                <h4>Impressions by Sponsorship</h4>
+            </div>
+            <div ng-show="loadingDaily" class="text-center">
+                <br>
+                <h5>Loading...</h5>
+                <br>
+                <i class="fa fa-spinner fa-spin fa-pulse fa-fw"></i>
+            </div>
+            <canvas id="bar" class="chart chart-bar"
+                    chart-data="barData" chart-labels="barLabels"
+                    chart-series="barSeries" chart-options="barOptions">
+            </canvas>
+        </div>
+        <div class="col-md-6">
+            <div class="text-center">
+                <h4>Past Week Total Impressions</h4>
+            </div>
+            <div ng-show="loadingWeekly" class="text-center">
+                <br>
+                <h5>Loading...</h5>
+                <br>
+                <i class="fa fa-spinner fa-spin fa-pulse fa-fw"></i>
+            </div>
+            <canvas id="line" class="chart chart-line"
+                    chart-data="weeklyData" chart-labels="weeklyLabels"
+                    chart-series="weeklySeries" chart-options="weeklyOptions">
+            </canvas>
+        </div>
+
+    </div>
+
+
+    <!--<div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <canvas id="doughnut" class="chart chart-doughnut"
+                    chart-data="data" chart-labels="labels">
+            </canvas>
+        </div>
+        <div class="col-md-3"></div>
+
+    </div>-->
+
+
+    <h2 class="text-center">Your Sponsorships</h2>
+
+
+    <!--add search function??
+
+    <pre>Model: {{selected | json}}</pre>
+    <input type="text" ng-model="selected" uib-typeahead="v.name as v for v in venueList | filter:$viewValue | limitTo:8" class="form-control">
+
+    -->
+
+    <div ng-repeat="ads in advertisements">
+
+        <div class="col-md-6 text-center" ng-repeat="ad in ads">
+
+            <div class=" text-center dash-panel" ui-sref="advertisement.edit({id: ad.id})">
+                <div class="dash-name">
+                    {{ad.name}}
+                </div>
+                <div>
+                    <img height="150" width="150" class="dash-logo"
+                         ng-src="{{ad.advert.media.widget ? 'media/download/' + ad.advert.media.widget : 'images/default-ad.jpg'}}"/>
+                </div>
+                <br>
+
+            </div>
+        </div>
+    </div>
+
+</div>
