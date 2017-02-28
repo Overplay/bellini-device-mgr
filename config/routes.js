@@ -43,6 +43,12 @@ module.exports.routes = {
     locals: { title: 'My Cool Template!', myMessage: 'This is passed to the view, homie!' }
   },
 
+  '/appmodel/:appid/:deviceid': {
+    controller: 'AppDataController',
+    action:     'getAppDataForDevice',
+    skipAssets: true
+  },
+
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

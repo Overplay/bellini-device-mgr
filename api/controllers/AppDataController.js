@@ -23,6 +23,54 @@ module.exports = {
             })
             .catch( res.err )
 		
+	},
+	
+	// TAKES in appid, deviceid, venueid
+	// GET appdata/:appid/:deviceid
+	// GET appdata
+
+	// get /appmodel/:appid/:deviceid
+
+	getAppDataForDevice: function(req, res){
+
+		var params = req.allParams();
+		var appid = params.appid;
+		var deviceid = params.deviceid;
+
+		switch (req.method){
+
+			case 'POST':
+				sails.log.silly("POSTING app data for: "+appid+ ' on device '+deviceid);
+				AppData.findOne({ forAppId: appid, forDeviceId: deviceid })
+					.then(function(model){
+						if (model){
+							return res.badRequest({ error: "model already exists, try a PUT genius!"});
+						}
+
+						var newAppData = { forAppId: appid,
+											forDeviceId: deviceid,
+											data: params.data || {}
+											};
+						AppData.create(newAppData)
+							.then(function(model){
+								if (!model){
+									return res.serverError({error:"could not make model"});
+								}
+								return res.ok(model);
+							})
+							.catch(res.serverError)
+
+					})
+					.catch(res.serverError);
+				break;
+
+			default:
+				return res.ok( "Not implemented" );
+
+		}
+
+
+
 	}
 	
 };
