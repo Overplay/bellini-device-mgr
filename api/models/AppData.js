@@ -19,7 +19,7 @@ module.exports = {
             defaultsTo: ""
         },
 
-        forDeviceId: {
+        forDeviceUDID: {
             type:       "string",
             defaultsTo: ""
         },

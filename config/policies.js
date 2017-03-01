@@ -161,6 +161,6 @@ module.exports.policies = {
     },
 
     // Override this in local.js for testing
-    wideOpen: false
+    wideOpen: true
 
 };

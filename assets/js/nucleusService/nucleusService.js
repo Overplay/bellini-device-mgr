@@ -57,7 +57,7 @@
 
 
                 // return $http.post('http://localhost:2000/auth/login', {email: email, password: pass, type: "local"}) //local required with facebook activated
-                return $http.post( '/bellini/login', { email: email, password: pass, type: "local" } ) //local required with facebook activated
+                return $http.post( '/auth/login', { email: email, password: pass, type: "local" } ) //local required with facebook activated
                     .then( function ( resp ) {
                         $log.debug( "User is authorized." );
                         _authorized = true;

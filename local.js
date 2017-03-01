@@ -85,7 +85,7 @@ module.exports = {
     // environment: process.env.NODE_ENV || 'development',
 
     // Turns off all policies
-    policies: { wideOpen: false },
+    policies: { wideOpen: true },
 
     theme: { themeName: "ourglass" },
 
