@@ -40,19 +40,19 @@ module.exports.bootstrap = function ( cb ) {
 
             var adminUser = {
                 firstName: 'Admin',
-                lastName: 'Pre-installed',
-                metadata: {preinstall: true},
-                roles: [RoleCacheService.roleByName("admin", ''), RoleCacheService.roleByName("user", '')]
+                lastName:  'Pre-installed',
+                metadata:  { preinstall: true },
+                roles:     [ RoleCacheService.roleByName( "admin", '' ), RoleCacheService.roleByName( "user", '' ) ]
             }
 
-            return AdminService.addUser('admin@test.com', 'beerchugs', adminUser, false)
+            return AdminService.addUser( 'admin@test.com', 'beerchugs', adminUser, false )
                 .then( function () { sails.log.debug( "Admin user created." )} )
                 .catch( function () { sails.log.warn( "Admin user NOT created. Probably already existed." )} );
 
         } )
         .then( function () {
 
-            var roles = [ RoleCacheService.roleByName( "admin", '' ) , RoleCacheService.roleByName("user", '')];
+            var roles = [ RoleCacheService.roleByName( "admin", '' ), RoleCacheService.roleByName( "user", '' ) ];
 
             return AdminService.addUser( 'admin2@test.com', 'beerchugs', { roles: roles } )
                 .then( function () { sails.log.debug( "Admin user created." )} )
@@ -69,19 +69,28 @@ module.exports.bootstrap = function ( cb ) {
                 .catch( function () { sails.log.warn( "General user NOT created. Probably already existed." )} );
 
         } )
-
         .then( function () {
+
+            sails.log.silly( "Installing stock apps from bootstrap.js module" );
+            return sails.config.stockapps.install();
+        } )
+
+        .then( function (apps) {
             sails.config.testdata.install();
             sails.log.debug( "Inserts done" );
             return true;
         } )
         .then( function () {
             sails.log.debug( "Bootstrapping SAILS done" );
-        } );
+        } )
+        .catch( function(err){
+        
+            sails.log.error("Something went wrong bootstrapping!");
+        });
 
 
     // It's very important to trigger this callback method when you are finished
     // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
-    
+
     cb();
 };

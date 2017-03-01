@@ -29,7 +29,6 @@ var GLOBAL_UPDATE_TARGET;
         return response.data;
     }
 
-
     angular.module( 'ourglassAPI', [] )
 
     // Advertising service
