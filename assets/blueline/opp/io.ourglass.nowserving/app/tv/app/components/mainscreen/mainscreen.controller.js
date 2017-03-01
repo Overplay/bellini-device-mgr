@@ -2,14 +2,14 @@
  * Created by mkahn on 11/17/16.
  */
 
-app.controller("mainScreenController", function($scope, $log, ogTVModel, $interval){
+app.controller( "mainScreenController", function ( $scope, $log, ogAPI ) {
 
-    $log.debug( "mainScreenController has loaded");
+    $log.debug( "mainScreenController has loaded" );
 
     $scope.ticketNumber = 0;
-    
-    function modelChanged(newValue){
-        
+
+    function modelChanged( newValue ) {
+
         $log.info( "Model changed, yay!" );
         $scope.ticketNumber = newValue.ticketNumber;
         $scope.$apply();
@@ -17,14 +17,16 @@ app.controller("mainScreenController", function($scope, $log, ogTVModel, $interv
 
     function updateFromRemote() {
 
-        ogTVModel.init( {
+        ogAPI.init( {
             appName:      "io.ourglass.nowserving",
-            dataCallback: modelChanged
+            sockets:      true,
+            modelCallback: modelChanged,
+            appType:      'tv'
         } );
 
     }
-    
+
     updateFromRemote();
 
-});
+} );
 

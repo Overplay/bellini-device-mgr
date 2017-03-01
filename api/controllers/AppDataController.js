@@ -99,7 +99,7 @@ module.exports = {
 	
 	
 	// Returns appdata for app for device, or creates and entry from the prototype in the App entry
-	// TODO: Add precondition to make sure Device is in DB  
+	// TODO: Add precondition to make sure Device is in DB
 	initialize: function(req, res){
 	
 	    if (req.method!='POST')
@@ -109,7 +109,7 @@ module.exports = {
         if (!params)
             return res.badRequest( { error: "missing udid or appid" } );
 	
-	    AppData.findOne({ forDeviceId: params.deviceUDID, forAppId: params.appid })
+	    AppData.findOne({ forDeviceUDID: params.deviceUDID, forAppId: params.appid })
             .then( function(model){
                 if (model)
                     return res.ok(model);
@@ -151,7 +151,7 @@ module.exports = {
 				    return res.badRequest({error: "No such model"});
 
                 AppData.subscribe(req, model.id);
-                return res.ok()
+                return res.ok(model)
 
 			})
             .catch(res.serverError);
