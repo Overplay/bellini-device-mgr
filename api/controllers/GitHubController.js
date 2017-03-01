@@ -6,6 +6,7 @@ module.exports = {
 
     push: function( req, res ){
 
+        //It's a test!
         sails.log.debug("GitHub hook hit!");
         
         sails.log.debug(req.body);
