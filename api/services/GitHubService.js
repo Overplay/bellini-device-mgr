@@ -42,6 +42,11 @@ module.exports = {
                 sails.log.silly( ">>>> GitHubService just ran a GitHub pull. Code: " + resp.code );
                 sails.log.silly( ">>>> GitHubService clean exit, gonna update npms and bowers for this project" );
 
+                //Let's edit the template for the footer on the homepage
+                shell.rm('./views/partials/branchinfo.ejs');
+                var footer = '<p>Branch: ['+branch+'] pulled at: '+new Date()+'</p>';
+                shell.echo(footer).to( './views/partials/branchinfo.ejs');
+
                 if (!sails.config.github.updateNpms)
                     return Promise.resolve([]);
 
