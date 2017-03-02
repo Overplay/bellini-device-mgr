@@ -1,66 +1,83 @@
 /**
- * Created by eadams on 10/22/15.
+ * Created by mkahn on 3/1/17.
  */
 var util = require('util');
 var Promise = require('bluebird');
 var _ = require('lodash');
+var shell = require( 'shelljs' );
+var path = require('path');
 
-//No, this require without assignment is not a mistake
-//It's lets us use shell commands like Node commands
-require( 'shelljs/global' ); 
+// module.exports.github = {
+//
+//     repository: 'git@github.com:Overplay/bellini-device-mgr.git',
+//
+//     //Comment this guy out to autodetect
+//     branch: 'master'
+//
+// };
 
-/**
- * Add the config to config/github.js
- *
- *   twilio: {
- *     startupDelay: 10000 // In milliseconds
- *     , loopRestartOnSuccessDelay: (1000 * 60 * 0.5) // In milliseconds
- *     , loopRestartOnFailDelay: (1000 * 60 * 0.5) // In milliseconds
- *     , sweepThresholdHours: 1 //(1/30.0) // In hours
- *     , accountSid: ''
- *     , authToken: ''
- *     , from: "+14089164024"
- *
- *   }
- *
- */
+function execPromise(command){
+    return new Promise( function(resolve, reject){
+        shell.exec( command, function ( code, stdout, stderr ) {
+            var response = { code: code, stdout: stdout, stderr: stderr };
+            code ? reject(response) : resolve(response);
+        });
+    });
+}
 
 module.exports = {
 
-    sendText:  function(phoneNumber, messageObj) {
+    updateFromOrigin:  function(phoneNumber, messageObj) {
 
         if ( !sails.config.github )
-            return false;
+            return new Error('No config/github.js file. Cannot proceed.');
 
-        return new Promise(function (resolve, reject) {
-            if(!sails.config.twilio) {
-                return reject({error: "No twilio Configuration"});
+        var branch = sails.config.github.branch || shell.exec('git rev-parse --abbrev-ref HEAD').stdout;
+        //This runs in the project root folder, but this is here to double check :)
+        var pwd = shell.pwd().stdout;
+        sails.log.silly( ">>>> GitHubService is in folder: " + pwd + " on branch: " + branch );
 
-            }
-            // Twilio Credentials
-            var accountSid = sails.config.twilio.accountSid;
-            var authToken = sails.config.twilio.authToken;
-            var from = sails.config.twilio.from;
+        execPromise('git pull origin '+branch)
+            .then( function(resp){
+                sails.log.silly( ">>>> GitHubService just ran a GitHub pull. Code: " + resp.code );
+                sails.log.silly( ">>>> GitHubService clean exit, gonna update npms and bowers for this project" );
 
-            //require the Twilio module and create a REST client
-            var client = require('twilio')(accountSid, authToken);
+                if (!sails.config.github.updateNpms)
+                    return Promise.resolve([]);
 
-            var body = messageObj;
+                return Promise.all(sails.config.github.updateNpms.map( function(folder){
+                    var fullPath = path.join( pwd, folder );
+                    return execPromise('cd '+fullPath)
+                        .then( function(){ return execPromise('npm update')});
+                }));
+            })
+            .then( function(npmUpdates){
+                sails.log.silly("NPM updates are done. " + npmUpdates.length + " updates were done");
+                if ( !sails.config.github.updateBower )
+                    return Promise.resolve( [] );
 
-            sails.log.verbose('body: ' + util.inspect(body));
+                return Promise.all( sails.config.github.updateBower.map( function ( folder ) {
+                    var fullPath = path.join( pwd, folder );
+                    return execPromise( 'cd ' + fullPath )
+                        .then( function () { return execPromise( 'bower update' )} );
+                } ) );
+            })
+            .then( function ( bowerUpdates ) {
+                sails.log.silly( "Bower updates are done. " + bowerUpdates.length + " updates were done" );
+                sails.log.silly( "All updates done" );
 
-            client.messages.create({
-                to: phoneNumber, // Must be in "+14088885147",
-                from: from,
-                body: body
-            }, function (err, message) {
-                if (err) {
-                    sails.log.error('err: ' + util.inspect(err));
-                    return reject(new verror.VError(err, "twilio Send Message"));
-                } else {
-                    return resolve(message);
-                }
-            });
-        });
+                if (sails.config.github.noPm2Restart)
+                    sails.log.silly( "No pm2 restart flag in github.js, so we're done!" );
+                
+                //TODO this should be more intelligent and not just restart every microservice!
+                shell.exec("pm2 restart all");
+
+            })
+            .catch( function(err){
+                sails.log.error( "Update chain failed!")
+                sails.log.error( err.stderr );
+
+            })
+        
     }
 };

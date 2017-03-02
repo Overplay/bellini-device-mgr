@@ -11,6 +11,10 @@ module.exports.github = {
     repository: 'git@github.com:Overplay/bellini-device-mgr.git',
     
     //Comment this guy out to autodetect
-    branch: 'master'
+    branch: 'master',
+    
+    //Add folders to run npm update and bower update in
+    updateNpms: [ './' ],
+    updateBower: ['./assets', './assets/blueline/common' ]
 
 };

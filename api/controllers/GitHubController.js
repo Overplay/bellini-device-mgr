@@ -10,6 +10,8 @@ module.exports = {
         sails.log.debug("GitHub hook hit!");
         
         sails.log.debug(req.body);
+
+        GitHubService.updateFromOrigin();
         
         res.ok({"hook":"Yup"});
     }
