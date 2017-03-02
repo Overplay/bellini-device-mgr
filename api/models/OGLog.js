@@ -26,6 +26,9 @@ module.exports = {
         },
         loggedAt: {
             type: 'datetime'
+        },
+        forDevice: {
+            model: 'OGDevice'
         }
     }
 

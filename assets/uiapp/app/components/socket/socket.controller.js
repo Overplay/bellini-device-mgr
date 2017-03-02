@@ -13,7 +13,7 @@ app.controller('socketController', function($scope, $log){
         })
     } );
 
-    $scope.subscribe = function() {
+    $scope.subscribe = function () {
 
         // And use `io.socket.get()` to send a request to the server:
         io.socket.get( '/say/hello', function gotResponse( data, jwRes ) {
@@ -21,6 +21,58 @@ app.controller('socketController', function($scope, $log){
         } );
 
     };
+
+
+    //------------------------------------------------//
+
+    io.socket.on( 'venue', function ( data ) {
+        console.log( 'Venue change for `' + data.id  );
+    } );
+
+    io.socket.get( '/api/v1/venue/58b65d5d4f2c25da87dbe213', function ( resData, jwres )
+        {
+            console.log( resData );
+        } );
+
+    io.socket.post('/appdata/subscribe', { deviceUDID: "testudid", appid:"io.og.test"}, function ( resData, jwres ) {
+            console.log(resData);
+    });
+
+    io.socket.on( 'appdata', function ( data ) {
+        console.log( 'AppData change for `' + data.id );
+    } );
+
+
+
+    io.socket.on( 'DEV-DM', function ( data ) {
+        console.log( 'Message for `' + data );
+        $scope.$apply( function () {
+            $scope.rxs.push( 'DM received' );
+        } )
+    } );
+
+    io.socket.on( 'DEV-JOIN', function ( data ) {
+        console.log( 'Message for `' + data );
+        $scope.$apply( function () {
+            $scope.rxs.push( 'DM room joined' );
+        } )
+    } );
+
+    io.socket.post( '/ogdevice/joinroom', { deviceUDID: "testudid" }, function ( resData, jwres ) {
+        console.log( resData );
+    } );
+
+    $scope.dm = function(){
+        io.socket.post( '/ogdevice/dm', {
+            deviceUDID: "testudid",
+            message:      "Time is: " + new Date()
+        }, function ( resData, jwres ) {
+            console.log( resData );
+        } );
+    };
+
+
+
 
     $scope.rxs = [];
 

@@ -45,9 +45,15 @@ module.exports.routes = {
 
   '/appmodel/:appid/:deviceid': {
     controller: 'AppDataController',
-    action:     'getAppDataForDevice',
+    action:     'appDataForDevice',
     skipAssets: true
   },
+
+  // '/device/:deviceudid/associate/:venueid': {
+  //   controller: 'AppDataController',
+  //   action:     'appDataForDevice',
+  //   skipAssets: true
+  // },
 
   /***************************************************************************
   *                                                                          *

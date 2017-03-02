@@ -5,6 +5,16 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+function hasUDIDandAppId(req){
+
+    var params = req.allParams();
+    if ( !params.deviceUDID || !params.appid )
+        return undefined;
+        
+    return params;
+
+}
+
 module.exports = {
 	
 	getAllForApp: function(req, res){
@@ -31,7 +41,7 @@ module.exports = {
 
 	// get /appmodel/:appid/:deviceid
 
-	getAppDataForDevice: function(req, res){
+	appDataForDevice: function(req, res){
 
 		var params = req.allParams();
 		var appid = params.appid;
@@ -98,7 +108,67 @@ module.exports = {
 
 		}
 
+		
+	},
+	
+	
+	// Returns appdata for app for device, or creates and entry from the prototype in the App entry
+	// TODO: Add precondition to make sure Device is in DB
+	initialize: function(req, res){
+	
+	    if (req.method!='POST')
+	        return res.badRequest({error:"bad verb"});
+	        
+        var params = hasUDIDandAppId(req);
+        if (!params)
+            return res.badRequest( { error: "missing udid or appid" } );
+	
+	    AppData.findOne({ forDeviceUDID: params.deviceUDID, forAppId: params.appid })
+            .then( function(model){
+                if (model)
+                    return res.ok(model);
+                    
+                App.findOne({ appId: params.appid })
+                    .then(function(app){
+                        if (!app)
+                            return res.badRequest({error:"no such app"});
+                        AppData.create({ forAppId: params.appid, forDeviceUDID: params.deviceUDID, data: app.defaultModel })
+                            .then(res.ok)
+                            .catch(res.serverError);
+                    })
+                    .catch( res.serverError );
+            })
+            .catch(res.serverError);
+	
+	},
+	
+	// WEBSOCKETS subscription method. Must be called over sockets
+	subscribe: function(req, res){
 
+		if ( !req.isSocket ) {
+			return res.badRequest({error: "Sockets only, sonny"});
+		}
+
+		if (req.method!='POST')
+			return res.badRequest({ error: "That's not how to subscribe, sparky!"});
+			
+		//OK, we need a deviceUDID
+		var params = req.allParams();
+
+		if (!params.appid || !params.deviceUDID )
+			return res.badRequest({ error: "Missing params"});
+
+		AppData.findOne({ forDeviceUDID: params.deviceUDID, forAppId: params.appid })
+			.then( function(model){
+
+				if (!model)
+				    return res.badRequest({error: "No such model"});
+
+                AppData.subscribe(req, model.id);
+                return res.ok(model)
+
+			})
+            .catch(res.serverError);
 
 	}
 	

@@ -29,7 +29,6 @@ var GLOBAL_UPDATE_TARGET;
         return response.data;
     }
 
-
     angular.module( 'ourglassAPI', [] )
 
     // Advertising service
@@ -91,7 +90,7 @@ var GLOBAL_UPDATE_TARGET;
 
         } )
 
- 
+
         /***************************
          *
          * Common (mobile and TV) app service
@@ -100,11 +99,12 @@ var GLOBAL_UPDATE_TARGET;
         .factory( 'ogAPI', function ( $http, $log, $interval ) {
 
             //local variables
+            var _usingSockets;
 
             // unique name, like io.ourglass.cralwer
             var _appName;
             var _appType;
-            
+
             var _lockKey;
 
             // Data callback when data on AB has changed
@@ -117,9 +117,9 @@ var GLOBAL_UPDATE_TARGET;
 
             var service = { model: {} };
 
-            function updateModel( newData){
+            function updateModel( newData ) {
                 service.model = newData;
-                if (_dataCb) _dataCb( service.model );
+                if ( _dataCb ) _dataCb( service.model );
                 return service.model;
             }
 
@@ -129,18 +129,18 @@ var GLOBAL_UPDATE_TARGET;
             }
 
             function getDataForAppAndLock() {
-                return $http.get( API_PATH + 'appdata/' + _appName + "?lock")
+                return $http.get( API_PATH + 'appdata/' + _appName + "?lock" )
                     .then( stripData );
             }
 
             service.init = function ( params, poll ) {
 
-                if (!params.appType){
+                if ( !params.appType ) {
                     throw new Error( "appType parameter missing and is required." );
                 }
 
                 _appType = params.appType;
-                $log.debug( "Init called for app type: "+ _appType);
+                $log.debug( "Init called for app type: " + _appType );
 
                 if ( !params.appName ) {
                     throw new Error( "appName parameter missing and is required." );
@@ -149,22 +149,64 @@ var GLOBAL_UPDATE_TARGET;
                 _appName = params.appName;
                 $log.debug( "Init for app: " + _appName );
 
+                _usingSockets = params.sockets;
+
                 _dataCb = params.modelCallback;
 
-                if ( _appType=='tv'){
+                $http.post( '/appdata/initialize', { appid: _appName, deviceUDID: 'testudid' } )
+                    .then( function ( data ) {
+                        $log.debug( "Model init complete" );
+                        //updateIfChanged( data );
+                        phase2init(params);
+                    } )
+                    .catch(function(err){
+                        $log.error("Could not initialize!!");
+                        //TODO init should return a promise since this can fail if the appid is wrong!
+
+                    });
+            }
+
+            function phase2init(params){
+
+
+                if ( _appType == 'tv' ) {
 
                     if ( !params.modelCallback ) {
                         throw new Error( "modelCallback parameter missing and is required for tv mode." );
                     }
 
-                    // Set the global update target in the global namespace. This is called by JS injected from Android.
-                    // NOTE: This used to check for the model actually changing before doing the callback. But with the
-                    // JS injection technique, this method is only called in response to a POST by another app on AB.
-                    GLOBAL_UPDATE_TARGET = updateModel;
-                    $log.debug( "Setting global update target: " + GLOBAL_UPDATE_TARGET );
+                    if ( _usingSockets ) {
+
+                        $log.debug( "Using websockets on BlueLine. Yay!!!" );
+
+                        //TODO this needs to be done regardless of mode or TV, COntrol. Move this call!
+
+                        io.socket.post( '/appdata/subscribe', {
+                            deviceUDID: "testudid",
+                            appid:      _appName
+                        }, function ( resData, jwres ) {
+                            console.log( resData );
+                        } );
+
+                        io.socket.on( 'appdata', function ( data ) {
+                            _dataCb(data.data.data);
+                            console.log( 'AppData change for `' + data);
+                        } );
+
+                    } else {
+
+                        // Set the global update target in the global namespace. This is called by JS injected from
+                        // Android. NOTE: This used to check for the model actually changing before doing the callback.
+                        // But with the JS injection technique, this method is only called in response to a POST by
+                        // another app on AB.
+                        GLOBAL_UPDATE_TARGET = updateModel;
+                        $log.debug( "Setting global update target: " + GLOBAL_UPDATE_TARGET );
 
 
-                } else if ( _appType=='mobile'){
+                    }
+
+
+                } else if ( _appType == 'mobile' ) {
 
                     if ( poll && !params.modelCallback ) {
                         throw new Error( "modelCallback parameter missing and is required for polling." );
@@ -179,12 +221,12 @@ var GLOBAL_UPDATE_TARGET;
                     }
 
                 } else {
-                    throw new Error("Illegal app type. Must be 'mobile' or 'tv'");
+                    throw new Error( "Illegal app type. Must be 'mobile' or 'tv'" );
                 }
 
             };
 
-            service.getTweets = function(){
+            service.getTweets = function () {
                 return $http.get( API_PATH + 'scrape/' + _appName )
                     .then( stripData );
             }
@@ -200,27 +242,27 @@ var GLOBAL_UPDATE_TARGET;
             };
 
             service.save = function () {
-                var postModel = _.cloneDeep(service.model);
+                var postModel = _.cloneDeep( service.model );
                 postModel.lockKey = _lockKey || 0;
                 return $http.post( API_PATH + 'appdata/' + _appName, postModel );
             };
 
             service.loadModel = function () {
                 return getDataForApp()
-                    .then( updateModel);
+                    .then( updateModel );
             };
-            
-            service.loadModelAndLock = function(){
+
+            service.loadModelAndLock = function () {
                 return getDataForAppAndLock()
-                    .then( function(model){
-                        if (!model.hasOwnProperty('lockKey'))
-                            throw new Error("Could not acquire lock");
-                            
+                    .then( function ( model ) {
+                        if ( !model.hasOwnProperty( 'lockKey' ) )
+                            throw new Error( "Could not acquire lock" );
+
                         _lockKey = model.lockKey;
                         model.lockKey = undefined;
                         return model;
-                    })
-                    .then(updateModel);
+                    } )
+                    .then( updateModel );
             };
 
             /**
@@ -266,20 +308,20 @@ var GLOBAL_UPDATE_TARGET;
             }
 
             /**
-             * 
+             *
              * @param email should be { to: emailAddr, emailbody: text }
              * @returns {HttpPromise}
              */
-            service.sendSpam = function(email){
+            service.sendSpam = function ( email ) {
                 return $http.post( API_PATH + 'spam', email );
             }
 
 
-            service.proxyGet = function( targetHost, appId ){
-                return $http.get( API_PATH + 'appdataproxy/'+appId+"?remote="+targetHost)
-                    .then(function(resp){
+            service.proxyGet = function ( targetHost, appId ) {
+                return $http.get( API_PATH + 'appdataproxy/' + appId + "?remote=" + targetHost )
+                    .then( function ( resp ) {
                         return resp.data;
-                    });
+                    } );
             }
 
             /**
@@ -290,7 +332,7 @@ var GLOBAL_UPDATE_TARGET;
                 $log.debug( "Beginning data polling" );
                 _intervalRef = $interval( function () {
                     $http.get( API_PATH + 'appdata/' + _appName )
-                        .then(stripData)
+                        .then( stripData )
                         .then( updateIfChanged )
                         .catch( function ( err ) {
                             $log.error( "Error polling model data!" );
@@ -337,14 +379,14 @@ var GLOBAL_UPDATE_TARGET;
 
         } )
 
- 
+
         .factory( 'ogProgramGuide', function ( $http, $log, $interval ) {
 
             var service = {};
 
             service.getNowAndNext = function () {
                 return $http.get( API_PATH + 'tv/currentgrid' )
-                    .then(stripData);
+                    .then( stripData );
             }
 
             service.changeChannel = function ( channelNum ) {

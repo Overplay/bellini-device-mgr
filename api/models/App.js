@@ -8,6 +8,17 @@
 module.exports = {
 
   attributes: {
+  
+    appId: {
+      type: 'string',
+      required: 'true',
+      unique: 'true'
+    },
+    
+    defaultModel: {
+      type: 'json',
+      defaultsTo: {}
+    }
 
   }
 };

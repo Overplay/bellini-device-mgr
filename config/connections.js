@@ -70,7 +70,7 @@ module.exports.connections = {
     },
     // user: 'username',
     // password: 'password',
-    database: 'asahi'
+    database: 'belldevmgr'
   },
 
   /***************************************************************************
