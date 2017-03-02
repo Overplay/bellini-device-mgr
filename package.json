@@ -53,7 +53,9 @@
     "waterlock-local-auth": "colegrigsby/waterlock-local-auth-1",
     "yelp": "^1.0.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "^3.2.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
