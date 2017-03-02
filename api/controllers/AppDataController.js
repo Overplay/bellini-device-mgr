@@ -40,6 +40,7 @@ module.exports = {
 	// GET appdata
 
 	// get /appmodel/:appid/:deviceid
+	// http://localhost:2001/appmodel/:erik/:12345?
 
 	appDataForDevice: function(req, res){
 
@@ -50,7 +51,7 @@ module.exports = {
 		switch (req.method){
 
 			case 'POST':
-				sails.log.silly("POSTING app data for: "+appid+ ' on device '+deviceid);
+				sails.log.silly("POSTING app data for: " + appid + ' on device ' + deviceid);
 				AppData.findOne({ forAppId: appid, forDeviceId: deviceid })
 					.then(function(model){
 						if (model){
@@ -78,16 +79,38 @@ module.exports = {
 				sails.log.silly("PUTTING app data for: " + appid + " on device " + deviceid);
 
 				var newAppData = { forAppID: appid, forDeviceId: deviceid, data: params.data || {} };
-				AppData.update( { forAppId: appid, forDeviceId: deviceid }, newAppData )
-					.then( function ( model ) {
-						if ( !model ) {
-							return res.serverError({error: "unable to update model"});
+				AppData.findOne({ forAppId: appid, forDeviceId: deviceid })
+					.then(function ( model ) {
+						if ( !model ){
+							return res.badRequest({ error: "model does not exist, try a POST"});
 						}
-						return res.ok( model );
+
+						AppData.update( { forAppId: appid, forDeviceId: deviceid }, newAppData )
+							.then( function ( model ) {
+								if ( !model ) {
+									return res.serverError({error: "unable to update model"});
+								}
+								return res.ok( model );
+							})
+							.catch( res.serverError );
 					})
-					.catch( res.serverError );
+					.catch(res.serverError);
 
 				break;
+
+            case 'GET':
+                sails.log.silly("GETTING app data for: " + appid + " on device " + deviceid);
+
+                AppData.findOne({ forAppId: appid, forDeviceId: deviceid })
+                    .then( function( model ) {
+                        if ( !model ) {
+                            return res.badRequest({error: "model does not exist!"});
+                        }
+                        return res.ok( model )
+                    })
+                    .catch(res.serverError);
+
+                break;
 
 			default:
 				return res.ok( "Not implemented" );
