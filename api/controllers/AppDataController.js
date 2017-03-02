@@ -79,6 +79,20 @@ module.exports = {
 
 				break;
 
+            case 'GET':
+                sails.log.silly("GETTING app data for: " + appid + " on device " + deviceid);
+
+                AppData.findOne({ forAppId: appid, forDeviceId: deviceid })
+                    .then( function( model ) {
+                        if ( !model ) {
+                            return res.badRequest({error: "model does not exist!"});
+                        }
+                        return res.ok( model )
+                    })
+                    .catch(res.serverError);
+
+                break;
+
 			default:
 				return res.ok( "Not implemented" );
 
