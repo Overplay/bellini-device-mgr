@@ -15,12 +15,12 @@ var baseUrl = "https://swapi.co/api";
 //     });
 // });
 
-describe("return Luke", function () {
+describe("return Luke Skywalker from swapi", function () {
     it('return luke', function ( done ) {
         request.get({url: baseUrl + '/people/1/' },
             function (error, response, body) {
                     expect(response.statusCode).to.equal(200);
-                    console.log(body);
+                    // console.log(body);
                 done();
             });
     });

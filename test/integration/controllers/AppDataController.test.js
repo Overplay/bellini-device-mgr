@@ -8,20 +8,17 @@ var should = require('should');
 var request = require('request');
 var util = require('util');
 
-var baseUrl = "https://swapi.co/api";
-
-// describe('A basic test', function () {
-//     it('it should pass when everything is okay', function () {
-//         expect(true).to.be.true;
-//     });
-// });
+var baseUrl = "https://localhost:2001";
 
 describe("return new test - describe statement", function () {
     it('return new test - it statement', function ( done ) {
-        request.get({url: baseUrl + '/people/1/' },
+        var appid = "/erikdev";
+        var deviceid = "/1234";
+
+        request.get({url: baseUrl + '/appmodel' + appid + deviceid},
             function (error, response, body) {
-                expect(response.statusCode).to.equal(200);
-                console.log(body);
+                // expect(response.statusCode).to.equal(200);
+                // console.log(error);
                 done();
             });
     });
