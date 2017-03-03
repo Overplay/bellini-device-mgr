@@ -3,6 +3,7 @@
 <head ng-controller="landingPageController">
     <meta charset="UTF-8">
 
+    <link rel="shortcut icon" type="image/png" href="images/favicon-16x16.png"/>
     <title>ourglass</title>
 
     <!-- Viewport mobile tag for sensible mobile support -->
@@ -23,7 +24,7 @@
 
         body {
             color: white;
-            background: url(/images/landscapes8.jpeg) no-repeat center fixed;
+            background: url(/images/venice1.jpg) no-repeat center fixed;
             background-size: cover;
             height: 100vh;
         }
@@ -63,8 +64,8 @@
         <div class="row">
 
             <div class="col-md-8">
-                <h2>Ourglass redefines the out-of-home TV
-                    experience with apps and content.</h2>
+                <h2>Bellini Device Manager</h2>
+                <i>Enjoy the peachy goodness!</i>
             </div>
             <div class="col-md-4">
                 <% if (authenticated) { %>
@@ -72,9 +73,9 @@
                 <% } else { %>
                 <a href="login" class="btn btn-block btn-lg btn-info"><span class="glyphicon glyphicon-user"></span>
                     Login</a>
-                <a href="signup" class="btn btn-block btn-lg btn-success"><span
-                            class="glyphicon glyphicon-pencil"></span>
-                    Sign Up</a>
+                <!--<a href="signup" class="btn btn-block btn-lg btn-success"><span-->
+                            <!--class="glyphicon glyphicon-pencil"></span>-->
+                    <!--Sign Up</a>-->
 
                 <% } %>
 
@@ -87,7 +88,7 @@
 </div>
 <footer class="footer navbar-fixed-bottom">
     <div class="container">
-        <p class="text-muted">MASTER BRANCH</p>
+        <%- partial('../partials/branchinfo') %>
     </div>
 </footer>
 
