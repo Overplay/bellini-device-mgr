@@ -26,4 +26,9 @@ module.exports.log = {
 
   level: 'silent'
 
+//  this has been changed to make testing less obnoxious .
+//  I have written a stack overflow question asking how this
+//  can be turned off only when using Mocha. We'll see what happens.
+//      -Erik
+
 };
