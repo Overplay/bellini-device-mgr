@@ -12,10 +12,17 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 
     $stateProvider
 
-        .state( 'socket', {
-                url: '/socket',
+        .state( 'sockettest', {
+                url: '/sockettest',
                 templateUrl: '/uiapp/app/components/socket/socket.partial.html',
                 controller:  'socketController'
+            }
+        )
+
+        .state( 'sockets', {
+                url:         '/sockets',
+                templateUrl: '/uiapp/app/components/socket/socketdash.partial.html',
+                controller:  'socketDashController'
             }
         )
                              

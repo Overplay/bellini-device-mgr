@@ -1,6 +1,22 @@
 /**
  * Created by mkahn on 1/16/17.
  */
+ 
+ 
+ app.controller("socketDashController", function($scope, $log, $http ){
+
+
+     $http.get( '/socketconnection/rooms' )
+         .then(function(resp){
+            $scope.rooms = resp.data;
+         })
+         .catch(function(err){
+            $log.error("Couldn't get rooms.");
+         })
+ 
+ 
+ 
+ });
 
 app.controller('socketController', function($scope, $log){
 

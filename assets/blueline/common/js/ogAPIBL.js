@@ -59,62 +59,81 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
         }
     }
 
+    function isRunningInAndroid(){
+        return window.OGSystem;
+    }
+
     angular.module( 'ourglassAPI', [] )
 
     // Advertising service
-        .factory( 'ogAds', function ( $http, $log, $q ) {
+        .factory( 'ogAds', function ( $http, $log ) {
+
+            var _forceAllAds = true;
 
             var _currentAd;
+            var _adRotation = [];
+            var _adIndex = 0;
+
+            var urlForAllAds = '/proxysponsor/all';
+            var urlForVenueAds = '/proxysponsor/venue/';
+
             var service = {};
+
+            function processNewAds(newAds){
+                $log.debug("ogAds loaded "+newAds.length+ " ads. Enjoy!");
+                _adRotation = newAds;
+                _adIndex = 0;
+                return _adRotation;
+            }
+
+            service.refreshAds = function(){
+                var url = ( getOGSystem().venue && !_forceAllAds ) ? (urlForVenueAds + getOGSystem().venue) : urlForAllAds;
+                return $http.get(url)
+                    .then(stripData)
+                    .then(processNewAds)
+            }
 
             service.getNextAd = function () {
 
-                return $http.get( API_PATH + "ad" )
-                    .then( function ( data ) {
-                        _currentAd = data.data;
-                        return _currentAd;
-                    } )
+                if (!_adRotation.length)
+                    return null;
+
+                _adIndex = (_adIndex+1) % _adRotation.length;
+                return _adRotation[_adIndex];
 
             }
 
-            service.getCurrentAd = function () {
-
-                if ( _currentAd ) {
-                    return $q.resolve( _currentAd )
-                } else {
-                    return service.getNextAd();
-                }
-
-            }
 
             service.getImgUrl = function ( adType ) {
 
-                if ( _currentAd && _currentAd[ adType + 'Url' ] ) {
-                    return _currentAd[ adType + 'Url' ]
+                if ( _adRotation.length ) {
+                    // TODO this needs more checking or a try catch because it can blow up if an ad does not have
+                    // a particular kind (crawler, widget, etc.
+                    var ad = _adRotation[_adIndex];
+                    return ad.mediaBaseUrl + ad.advert.media[adType];
+
                 } else {
 
                     switch ( adType ) {
 
                         case "crawler":
-                            return "/www/common/img/oglogo_crawler_ad.png";
+                            return "/blueline/common/img/oglogo_crawler_ad.png";
 
                         case "widget":
-                            return "/www/common/img/oglogo_widget_ad.png";
+                            return "/blueline/common/img/oglogo_widget_ad.png";
 
                         default:
                             throw Error( "No such ad type: " + adType );
 
                     }
-
                 }
+            };
 
-            }
+            service.setForceAllAds = function(alwaysGetAll){
+                _forceAllAds = alwaysGetAll;
+            };
 
-            // Pre-load the first ad
-            service.getCurrentAd()
-                .then( function () {
-                    $log.debug( "ogAds: advert loaded during startup" )
-                } )
+            service.refreshAds(); // load 'em to start!
 
             return service;
 
@@ -137,14 +156,11 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
 
             var _lockKey;
 
-            // Data callback when data on AB has changed
+            // Data callback when data on BL has changed
             var _dataCb;
-
-            // Used for control side only, if it wants polling
-            var _pollInterval;
-            var _intervalRef;
-            var DEFAULT_POLL_INTERVAL = 500;
-
+            // Message callback when a DM is sent from BL
+            var _msgCb;
+            
             var service = { model: {} };
 
             function updateModel( newData ) {
@@ -163,8 +179,14 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
                     .then( stripData );
             }
 
-            service.init = function ( params, poll ) {
+            service.init = function ( params ) {
 
+                if (!params)
+                    throw new Error("try using some params, sparky");
+
+                _usingSockets = params.sockets || true;
+
+                // Check the app type
                 if ( !params.appType ) {
                     throw new Error( "appType parameter missing and is required." );
                 }
@@ -172,6 +194,7 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
                 _appType = params.appType;
                 $log.debug( "Init called for app type: " + _appType );
 
+                // Check the app name
                 if ( !params.appName ) {
                     throw new Error( "appName parameter missing and is required." );
                 }
@@ -179,21 +202,21 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
                 _appName = params.appName;
                 $log.debug( "Init for app: " + _appName );
 
-                _usingSockets = params.sockets;
-
                 _dataCb = params.modelCallback;
+                if (!_dataCb)
+                    $log.warn("You didn't specify a modelCallback, so you won't get one!");
 
-                $http.post( '/appdata/initialize', { appid: _appName, deviceUDID: 'testudid' } )
+                _msgCb = params.messageCallback;
+                if ( !_dataCb )
+                    $log.warn( "You didn't specify a messageCallback, so you won't get one!" );
+
+                return $http.post( '/appdata/initialize', { appid: _appName, deviceUDID: getOGSystem().udid } )
                     .then( function ( data ) {
                         $log.debug( "Model init complete" );
                         //updateIfChanged( data );
                         phase2init(params);
                     } )
-                    .catch(function(err){
-                        $log.error("Could not initialize!!");
-                        //TODO init should return a promise since this can fail if the appid is wrong!
-
-                    });
+                    
             }
 
             function phase2init(params){
