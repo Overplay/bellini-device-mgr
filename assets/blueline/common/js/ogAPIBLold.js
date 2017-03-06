@@ -1,6 +1,7 @@
 /**
  *
- * ogAPI rewritten for Beta Architecture
+ * ogAPI2, a refactor of ogAPO
+ * Based on work created by ethan on 8/31/16.
  *
  *
  * USAGE:
@@ -10,53 +11,22 @@
  */
 
 
-/**
- * Global variable set from the Android side when an  OGWebViewFragment starts.
- * As of early March 2017, this code is not working, but that's OK, the shared
- * Java Object method is working, and it's actually better.
- * @type {{}}
- */
-
- // TODO Deprecate
-var OG_SYSTEM_GLOBALS = {};
-
-function SET_SYSTEM_GLOBALS_JSON(jsonString){
-    OG_SYSTEM_GLOBALS = JSON.parse(jsonString);
-    OG_SYSTEM_GLOBALS.updatedAt = new Date();
-}
-
+// This variable has to be in the global namespace so that the TV-side
+// Javascript injection for updates works.
+var GLOBAL_UPDATE_TARGET;
 
 (function ( window, angular, undefined ) {
 
+    var API_PATH = '/api/';
+    var DATA_UPDATE_METHOD = 'objectEquality';
+
+    var TWITTER_LANGUAGE = 'en';
+    var TWITTER_RESULT_TYPE = 'popular';
+    var TWITTER_INCLUDE_ENTITIES = 'false';
 
     //Helper with chaining Angular $http
     function stripData( response ) {
         return response.data;
-    }
-
-    /**
-     * This relies on the addJsonInterface on the Android side!
-     * @returns {any}
-     */
-    function getOGSystem(){
-
-        if (window.OGSystem)
-            return JSON.parse( window.OGSystem.getSystemInfo() );
-
-        // TODO some of this mock data should be modifiable during debug
-        return {
-            abVersionCode: 99,
-            abVersionName: '9.9.99',
-            osVersion: "9.9.9.",
-            randomFactoid: "This is mock data",
-            name: 'Simulato',
-            wifiMacAddress: '00:11:22:33',
-            outputRes: { height: 1080, width: 1920 },
-            udid: 'testy-mc-testerton',
-            venue: 'testvenue',
-            osApiLevel: 99,
-            mock: true
-        }
     }
 
     angular.module( 'ourglassAPI', [] )
@@ -404,9 +374,6 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
                 }
             }
 
-            // New methods for BlueLine Architecture
-
-            service.getOGSystem = getOGSystem;
 
             return service;
 
