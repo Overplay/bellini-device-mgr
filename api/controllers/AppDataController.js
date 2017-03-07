@@ -40,7 +40,7 @@ module.exports = {
 	// GET appdata
 
 	// get /appmodel/:appid/:deviceid
-	// http://localhost:2001/appmodel/:erik/:12345?
+	// http://localhost:2001/appmodel/erik/12345
 
 	appDataForDevice: function(req, res){
 
@@ -112,12 +112,24 @@ module.exports = {
 
                 break;
 
+			case 'DELETE':
+				sails.log.silly("DELETE app data for: " + appid + " on device " + deviceid);
+
+				AppData.destroy({ forAppId: appid, forDeviceId: deviceid})
+					.then(function ( model ) {
+						if ( model.length == 0) {
+							return res.badRequest({error: "model does not exist"});
+						}
+						return res.ok( model );
+					})
+					.catch( res.serverError );
+
+				break;
+
 			default:
 				return res.ok( "Not implemented" );
-
 		}
 
-		
 	},
 	
 	
