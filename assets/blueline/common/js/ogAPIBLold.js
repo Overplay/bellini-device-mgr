@@ -1,6 +1,7 @@
 /**
  *
- * ogAPI rewritten for Beta Architecture
+ * ogAPI2, a refactor of ogAPO
+ * Based on work created by ethan on 8/31/16.
  *
  *
  * USAGE:
@@ -10,130 +11,80 @@
  */
 
 
-/**
- * Global variable set from the Android side when an  OGWebViewFragment starts.
- * As of early March 2017, this code is not working, but that's OK, the shared
- * Java Object method is working, and it's actually better.
- * @type {{}}
- */
-
- // TODO Deprecate
-var OG_SYSTEM_GLOBALS = {};
-
-function SET_SYSTEM_GLOBALS_JSON(jsonString){
-    OG_SYSTEM_GLOBALS = JSON.parse(jsonString);
-    OG_SYSTEM_GLOBALS.updatedAt = new Date();
-}
-
+// This variable has to be in the global namespace so that the TV-side
+// Javascript injection for updates works.
+var GLOBAL_UPDATE_TARGET;
 
 (function ( window, angular, undefined ) {
 
+    var API_PATH = '/api/';
+    var DATA_UPDATE_METHOD = 'objectEquality';
+
+    var TWITTER_LANGUAGE = 'en';
+    var TWITTER_RESULT_TYPE = 'popular';
+    var TWITTER_INCLUDE_ENTITIES = 'false';
 
     //Helper with chaining Angular $http
     function stripData( response ) {
         return response.data;
     }
 
-    /**
-     * This relies on the addJsonInterface on the Android side!
-     * @returns {any}
-     */
-    function getOGSystem(){
-
-        if (window.OGSystem)
-            return JSON.parse( window.OGSystem.getSystemInfo() );
-
-        // TODO some of this mock data should be modifiable during debug
-        return {
-            abVersionCode: 99,
-            abVersionName: '9.9.99',
-            osVersion: "9.9.9.",
-            randomFactoid: "This is mock data",
-            name: 'Simulato',
-            wifiMacAddress: '00:11:22:33',
-            outputRes: { height: 1080, width: 1920 },
-            udid: 'testy-mc-testerton',
-            venue: 'testvenue',
-            osApiLevel: 99,
-            mock: true
-        }
-    }
-
-    function isRunningInAndroid(){
-        return window.OGSystem;
-    }
-
     angular.module( 'ourglassAPI', [] )
 
     // Advertising service
-        .factory( 'ogAds', function ( $http, $log ) {
-
-            var _forceAllAds = true;
+        .factory( 'ogAds', function ( $http, $log, $q ) {
 
             var _currentAd;
-            var _adRotation = [];
-            var _adIndex = 0;
-
-            var urlForAllAds = '/proxysponsor/all';
-            var urlForVenueAds = '/proxysponsor/venue/';
-
             var service = {};
-
-            function processNewAds(newAds){
-                $log.debug("ogAds loaded "+newAds.length+ " ads. Enjoy!");
-                _adRotation = newAds;
-                _adIndex = 0;
-                return _adRotation;
-            }
-
-            service.refreshAds = function(){
-                var url = ( getOGSystem().venue && !_forceAllAds ) ? (urlForVenueAds + getOGSystem().venue) : urlForAllAds;
-                return $http.get(url)
-                    .then(stripData)
-                    .then(processNewAds)
-            }
 
             service.getNextAd = function () {
 
-                if (!_adRotation.length)
-                    return null;
-
-                _adIndex = (_adIndex+1) % _adRotation.length;
-                return _adRotation[_adIndex];
+                return $http.get( API_PATH + "ad" )
+                    .then( function ( data ) {
+                        _currentAd = data.data;
+                        return _currentAd;
+                    } )
 
             }
 
+            service.getCurrentAd = function () {
+
+                if ( _currentAd ) {
+                    return $q.resolve( _currentAd )
+                } else {
+                    return service.getNextAd();
+                }
+
+            }
 
             service.getImgUrl = function ( adType ) {
 
-                if ( _adRotation.length ) {
-                    // TODO this needs more checking or a try catch because it can blow up if an ad does not have
-                    // a particular kind (crawler, widget, etc.
-                    var ad = _adRotation[_adIndex];
-                    return ad.mediaBaseUrl + ad.advert.media[adType];
-
+                if ( _currentAd && _currentAd[ adType + 'Url' ] ) {
+                    return _currentAd[ adType + 'Url' ]
                 } else {
 
                     switch ( adType ) {
 
                         case "crawler":
-                            return "/blueline/common/img/oglogo_crawler_ad.png";
+                            return "/www/common/img/oglogo_crawler_ad.png";
 
                         case "widget":
-                            return "/blueline/common/img/oglogo_widget_ad.png";
+                            return "/www/common/img/oglogo_widget_ad.png";
 
                         default:
                             throw Error( "No such ad type: " + adType );
 
                     }
+
                 }
-            };
 
-            service.setForceAllAds = function(alwaysGetAll){
-                _forceAllAds = alwaysGetAll;
-            };
+            }
 
-            service.refreshAds(); // load 'em to start!
+            // Pre-load the first ad
+            service.getCurrentAd()
+                .then( function () {
+                    $log.debug( "ogAds: advert loaded during startup" )
+                } )
 
             return service;
 
@@ -156,11 +107,14 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
 
             var _lockKey;
 
-            // Data callback when data on BL has changed
+            // Data callback when data on AB has changed
             var _dataCb;
-            // Message callback when a DM is sent from BL
-            var _msgCb;
-            
+
+            // Used for control side only, if it wants polling
+            var _pollInterval;
+            var _intervalRef;
+            var DEFAULT_POLL_INTERVAL = 500;
+
             var service = { model: {} };
 
             function updateModel( newData ) {
@@ -179,14 +133,8 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
                     .then( stripData );
             }
 
-            service.init = function ( params ) {
+            service.init = function ( params, poll ) {
 
-                if (!params)
-                    throw new Error("try using some params, sparky");
-
-                _usingSockets = params.sockets || true;
-
-                // Check the app type
                 if ( !params.appType ) {
                     throw new Error( "appType parameter missing and is required." );
                 }
@@ -194,7 +142,6 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
                 _appType = params.appType;
                 $log.debug( "Init called for app type: " + _appType );
 
-                // Check the app name
                 if ( !params.appName ) {
                     throw new Error( "appName parameter missing and is required." );
                 }
@@ -202,21 +149,21 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
                 _appName = params.appName;
                 $log.debug( "Init for app: " + _appName );
 
+                _usingSockets = params.sockets;
+
                 _dataCb = params.modelCallback;
-                if (!_dataCb)
-                    $log.warn("You didn't specify a modelCallback, so you won't get one!");
 
-                _msgCb = params.messageCallback;
-                if ( !_dataCb )
-                    $log.warn( "You didn't specify a messageCallback, so you won't get one!" );
-
-                return $http.post( '/appdata/initialize', { appid: _appName, deviceUDID: getOGSystem().udid } )
+                $http.post( '/appdata/initialize', { appid: _appName, deviceUDID: 'testudid' } )
                     .then( function ( data ) {
                         $log.debug( "Model init complete" );
                         //updateIfChanged( data );
                         phase2init(params);
                     } )
-                    
+                    .catch(function(err){
+                        $log.error("Could not initialize!!");
+                        //TODO init should return a promise since this can fail if the appid is wrong!
+
+                    });
             }
 
             function phase2init(params){
@@ -427,9 +374,6 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
                 }
             }
 
-            // New methods for BlueLine Architecture
-
-            service.getOGSystem = getOGSystem;
 
             return service;
 

@@ -115,7 +115,7 @@ module.exports = {
         }
 
         if ( req.method != 'POST' )
-            return res.badRequest( { error: "That's not how to subscribe, sparky!" } );
+            return res.badRequest( { error: "That's not how to message, sparky!" } );
 
         //OK, we need a deviceUDID
         var params = req.allParams();
