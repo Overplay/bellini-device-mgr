@@ -24,13 +24,14 @@ module.exports.log = {
   *                                                                          *
   ***************************************************************************/
 
-  level: 'silent'
+  level: 'silly'
 
 //  this has been changed to make testing less obnoxious .
 //  I have written a stack overflow question asking how this
 //  can be turned off only when using Mocha. We'll see what happens.
 //  <UPDATE> I found a partial solution to this issue. -> Pass an
 //           argument in the configuration for the bootstrap file.
+//  <UPDATE> This has been resolved in the bootstrap file.
 //      -Erik
 
 };
