@@ -11,6 +11,7 @@ before(function(done) {
 
     sails.lift({
         // configuration for testing purposes
+        // log: 'silent'  // this should work to silent the sails app logs
     }, function(err) {
         if (err) return done(err);
         // here you can load fixtures, etc.
