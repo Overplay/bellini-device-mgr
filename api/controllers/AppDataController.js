@@ -115,16 +115,12 @@ module.exports = {
 			case 'DELETE':
 				sails.log.silly("DELETE app data for: " + appid + " on device " + deviceid);
 
-				AppData.findOne({ forAppId: appid, forDeviceId: deviceid})
-					.then( function ( model ) {
-						if ( !model ) {
+				AppData.destroy({ forAppId: appid, forDeviceId: deviceid})
+					.then(function ( model ) {
+						if ( model.length == 0) {
 							return res.badRequest({error: "model does not exist"});
 						}
-						AppData.destroy({id: model.id})
-							.then(function ( model ) {
-								return res.ok( model );
-							})
-							.catch( res.serverError );
+						return res.ok( model );
 					})
 					.catch( res.serverError );
 
@@ -132,10 +128,8 @@ module.exports = {
 
 			default:
 				return res.ok( "Not implemented" );
-
 		}
 
-		
 	},
 	
 	
