@@ -24,6 +24,12 @@ var stockApps = [
         defaultModel: {
             "parties": []
         }
+    },
+    {
+        appId:        "io.ourglass.bltest",
+        defaultModel: {
+            mydata: [{ song: "My Milkshake" }, { song: "Mr. ROboto "}]
+        }
     } ];
 
 var self = module.exports.stockapps = {

@@ -17,11 +17,11 @@
  * @type {{}}
  */
 
- // TODO Deprecate
+// TODO Deprecate
 var OG_SYSTEM_GLOBALS = {};
 
-function SET_SYSTEM_GLOBALS_JSON(jsonString){
-    OG_SYSTEM_GLOBALS = JSON.parse(jsonString);
+function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
+    OG_SYSTEM_GLOBALS = JSON.parse( jsonString );
     OG_SYSTEM_GLOBALS.updatedAt = new Date();
 }
 
@@ -38,28 +38,28 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
      * This relies on the addJsonInterface on the Android side!
      * @returns {any}
      */
-    function getOGSystem(){
+    function getOGSystem() {
 
-        if (window.OGSystem)
+        if ( window.OGSystem )
             return JSON.parse( window.OGSystem.getSystemInfo() );
 
         // TODO some of this mock data should be modifiable during debug
         return {
-            abVersionCode: 99,
-            abVersionName: '9.9.99',
-            osVersion: "9.9.9.",
-            randomFactoid: "This is mock data",
-            name: 'Simulato',
+            abVersionCode:  99,
+            abVersionName:  '9.9.99',
+            osVersion:      "9.9.9.",
+            randomFactoid:  "This is mock data",
+            name:           'Simulato',
             wifiMacAddress: '00:11:22:33',
-            outputRes: { height: 1080, width: 1920 },
-            udid: 'testy-mc-testerton',
-            venue: 'testvenue',
-            osApiLevel: 99,
-            mock: true
+            outputRes:      { height: 1080, width: 1920 },
+            udid:           'testy-mc-testerton',
+            venue:          'testvenue',
+            osApiLevel:     99,
+            mock:           true
         }
     }
 
-    function isRunningInAndroid(){
+    function isRunningInAndroid() {
         return window.OGSystem;
     }
 
@@ -79,27 +79,27 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
 
             var service = {};
 
-            function processNewAds(newAds){
-                $log.debug("ogAds loaded "+newAds.length+ " ads. Enjoy!");
+            function processNewAds( newAds ) {
+                $log.debug( "ogAds loaded " + newAds.length + " ads. Enjoy!" );
                 _adRotation = newAds;
                 _adIndex = 0;
                 return _adRotation;
             }
 
-            service.refreshAds = function(){
+            service.refreshAds = function () {
                 var url = ( getOGSystem().venue && !_forceAllAds ) ? (urlForVenueAds + getOGSystem().venue) : urlForAllAds;
-                return $http.get(url)
-                    .then(stripData)
-                    .then(processNewAds)
+                return $http.get( url )
+                    .then( stripData )
+                    .then( processNewAds )
             }
 
             service.getNextAd = function () {
 
-                if (!_adRotation.length)
+                if ( !_adRotation.length )
                     return null;
 
-                _adIndex = (_adIndex+1) % _adRotation.length;
-                return _adRotation[_adIndex];
+                _adIndex = (_adIndex + 1) % _adRotation.length;
+                return _adRotation[ _adIndex ];
 
             }
 
@@ -109,8 +109,8 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
                 if ( _adRotation.length ) {
                     // TODO this needs more checking or a try catch because it can blow up if an ad does not have
                     // a particular kind (crawler, widget, etc.
-                    var ad = _adRotation[_adIndex];
-                    return ad.mediaBaseUrl + ad.advert.media[adType];
+                    var ad = _adRotation[ _adIndex ];
+                    return ad.mediaBaseUrl + ad.advert.media[ adType ];
 
                 } else {
 
@@ -129,7 +129,7 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
                 }
             };
 
-            service.setForceAllAds = function(alwaysGetAll){
+            service.setForceAllAds = function ( alwaysGetAll ) {
                 _forceAllAds = alwaysGetAll;
             };
 
@@ -145,7 +145,7 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
          * Common (mobile and TV) app service
          *
          ***************************/
-        .factory( 'ogAPI', function ( $http, $log, $interval ) {
+        .factory( 'ogAPI', function ( $http, $log, $interval, $q ) {
 
             //local variables
             var _usingSockets;
@@ -160,7 +160,7 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
             var _dataCb;
             // Message callback when a DM is sent from BL
             var _msgCb;
-            
+
             var service = { model: {} };
 
             function updateModel( newData ) {
@@ -181,10 +181,12 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
 
             service.init = function ( params ) {
 
-                if (!params)
-                    throw new Error("try using some params, sparky");
+                if ( !params )
+                    throw new Error( "try using some params, sparky" );
 
                 _usingSockets = params.sockets || true;
+                if ( !_usingSockets )
+                    throw new Error( "You must use websockets in this version of ogAPI!" );
 
                 // Check the app type
                 if ( !params.appType ) {
@@ -203,8 +205,8 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
                 $log.debug( "Init for app: " + _appName );
 
                 _dataCb = params.modelCallback;
-                if (!_dataCb)
-                    $log.warn("You didn't specify a modelCallback, so you won't get one!");
+                if ( !_dataCb )
+                    $log.warn( "You didn't specify a modelCallback, so you won't get one!" );
 
                 _msgCb = params.messageCallback;
                 if ( !_dataCb )
@@ -212,72 +214,55 @@ function SET_SYSTEM_GLOBALS_JSON(jsonString){
 
                 return $http.post( '/appdata/initialize', { appid: _appName, deviceUDID: getOGSystem().udid } )
                     .then( function ( data ) {
-                        $log.debug( "Model init complete" );
-                        //updateIfChanged( data );
-                        phase2init(params);
-                    } )
-                    
-            }
+                        $log.debug( "ogAPI: Model data init complete" );
+                        $log.debug( "ogAPI: Subscribing to model changes" );
+                        return $q( function ( resolve, reject ) {
 
-            function phase2init(params){
+                            io.socket.post( '/appdata/subscribe', {
+                                deviceUDID: getOGSystem().udid,
+                                appid:      _appName
+                            }, function ( resData, jwres ) {
+                                console.log( resData );
+                                if ( jwres.statusCode != 200 ) {
+                                    reject( jwres );
+                                } else {
+                                    $log.debug( "Successfully subscribed to appData" );
+                                    io.socket.on( 'appdata', function ( data ) {
+                                        _dataCb( data.data.data );
+                                        console.log( 'AppData change for `' + data );
+                                    } );
 
+                                    resolve( data );
+                                }
+                            } );
 
-                if ( _appType == 'tv' ) {
+                        });
+                    })
+                    .then( function ( data ) {
+                        $log.debug( "ogAPI: Subscribing to message changes" );
+                        return $q( function ( resolve, reject ) {
 
-                    if ( !params.modelCallback ) {
-                        throw new Error( "modelCallback parameter missing and is required for tv mode." );
-                    }
+                            io.socket.post( '/ogdevice/joinroom', {
+                                deviceUDID: getOGSystem().udid
+                            }, function ( resData, jwres ) {
+                                console.log( resData );
+                                if ( jwres.statusCode != 200 ) {
+                                    reject( jwres );
+                                } else {
+                                    $log.debug( "Successfully joined room for this device" );
+                                    io.socket.on( 'DEV-DM', function ( data ) {
+                                        _msgCb( data.message );
+                                        console.log( 'Message rx for `' + JSON.stringify(data.message) );
+                                    } );
 
-                    if ( _usingSockets ) {
-
-                        $log.debug( "Using websockets on BlueLine. Yay!!!" );
-
-                        //TODO this needs to be done regardless of mode or TV, COntrol. Move this call!
-
-                        io.socket.post( '/appdata/subscribe', {
-                            deviceUDID: "testudid",
-                            appid:      _appName
-                        }, function ( resData, jwres ) {
-                            console.log( resData );
+                                    resolve( data );
+                                }
+                            } );
                         } );
-
-                        io.socket.on( 'appdata', function ( data ) {
-                            _dataCb(data.data.data);
-                            console.log( 'AppData change for `' + data);
-                        } );
-
-                    } else {
-
-                        // Set the global update target in the global namespace. This is called by JS injected from
-                        // Android. NOTE: This used to check for the model actually changing before doing the callback.
-                        // But with the JS injection technique, this method is only called in response to a POST by
-                        // another app on AB.
-                        GLOBAL_UPDATE_TARGET = updateModel;
-                        $log.debug( "Setting global update target: " + GLOBAL_UPDATE_TARGET );
-
-
-                    }
-
-
-                } else if ( _appType == 'mobile' ) {
-
-                    if ( poll && !params.modelCallback ) {
-                        throw new Error( "modelCallback parameter missing and is required for polling." );
-                    }
-
-                    _pollInterval = params.pollInterval || DEFAULT_POLL_INTERVAL;
-
-                    if ( poll ) {
-                        startPolling();
-                    } else {
-                        $log.debug( "Not going to poll for data changes, that's on you!" );
-                    }
-
-                } else {
-                    throw new Error( "Illegal app type. Must be 'mobile' or 'tv'" );
-                }
-
+                    });
+                
             };
+
 
             service.getTweets = function () {
                 return $http.get( API_PATH + 'scrape/' + _appName )
