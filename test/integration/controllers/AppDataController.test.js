@@ -80,7 +80,7 @@ describe("AppDataController Tests", function () {
                 assert.property(res.body, "forAppId", "check for appid property");
                 assert.property(res.body, "forDeviceId", "check for deviceid property");
                 assert.property(res.body, "forAppId", "test", "check appid value");
-                assert.property(res.body, "forDeviceId", 1, "check for deviceid value");
+                assert.property(res.body, "forDeviceId", "1", "check for deviceid value");
 
                 done();
             });
@@ -101,7 +101,7 @@ describe("AppDataController Tests", function () {
                 assert.property(res.body[0], "forAppId", "check for appid property");
                 assert.property(res.body[0], "forDeviceId", "check for deviceid property");
                 assert.property(res.body[0], "forAppId", "test", "check appid value");
-                assert.property(res.body[0], "forDeviceId", 1, "check for deviceid value");
+                assert.property(res.body[0], "forDeviceId", "1", "check for deviceid value");
 
                 assert.deepProperty(res.body[0], "data.red", "check for data.red");
                 assert.deepPropertyVal(res.body[0], "data.red", 20, "check data.red value");
@@ -119,8 +119,8 @@ describe("AppDataController Tests", function () {
                 assert.isObject(res.body, "check for returned body");
                 assert.property(res.body, "forAppId", "check for appid property");
                 assert.property(res.body, "forDeviceId", "check for deviceid property");
-                assert.property(res.body, "forAppId", "test", "check appid value");
-                assert.property(res.body, "forDeviceId", 1, "check for deviceid value");
+                assert.propertyVal(res.body, "forAppId", "test", "check appid value");
+                assert.propertyVal(res.body, "forDeviceId", "1", "check for deviceid value");
 
                 assert.deepProperty(res.body, "data.red", "check for data.red");
                 assert.deepPropertyVal(res.body, "data.red", 20, "check data.red value");
@@ -138,8 +138,8 @@ describe("AppDataController Tests", function () {
                 assert.isObject(res.body[0], "check for returned body");
                 assert.property(res.body[0], "forAppId", "check for appid property");
                 assert.property(res.body[0], "forDeviceId", "check for deviceid property");
-                assert.property(res.body[0], "forAppId", "test", "check appid value");
-                assert.property(res.body[0], "forDeviceId", 1, "check for deviceid value");
+                assert.propertyVal(res.body[0], "forAppId", "test", "check appid value");
+                assert.propertyVal(res.body[0], "forDeviceId", "1", "check for deviceid value");
 
                 done();
             });
@@ -174,8 +174,8 @@ describe("AppDataController Tests", function () {
                 assert.isObject(res.body, "check for returned body");
                 assert.property(res.body, "forAppId", "check for appid property");
                 assert.property(res.body, "forDeviceId", "check for deviceid property");
-                assert.property(res.body, "forAppId", "test", "check appid value");
-                assert.property(res.body, "forDeviceId", 1, "check for deviceid value");
+                assert.propertyVal(res.body, "forAppId", "test", "check appid value");
+                assert.propertyVal(res.body, "forDeviceId", "1", "check for deviceid value");
 
                 done();
             });
@@ -206,8 +206,8 @@ describe("AppDataController Tests", function () {
                 assert.isObject(res.body[0], "check for returned body");
                 assert.property(res.body[0], "forAppId", "check for appid property");
                 assert.property(res.body[0], "forDeviceId", "check for deviceid property");
-                assert.property(res.body[0], "forAppId", "test", "check appid value");
-                assert.property(res.body[0], "forDeviceId", 1, "check for deviceid value");
+                assert.propertyVal(res.body[0], "forAppId", "test", "check appid value");
+                assert.propertyVal(res.body[0], "forDeviceId", "1", "check for deviceid value");
 
                 done();
             });
