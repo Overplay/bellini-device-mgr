@@ -234,15 +234,13 @@ describe("AppDataController Tests", function () {
 
     describe("DELETE Error Checking", function () {
         it("DELETE request to remove non-existent entry in database", function ( done ) {
-            it("DELETE request to clean up after posts", function ( done ) {
-                var req = request.delete("/appmodel/test/1");
-                req.end(function (err, res) {
+            var req = request.delete("/appmodel/test/1");
+            req.end(function (err, res) {
 
-                    assert.isNull(err, "null error check");
-                    assert.equal(res.status, 400, "check for 400 status (not found)");
+                assert.isNull(err, "null error check");
+                assert.equal(res.status, 400, "check for 400 status (not found)");
 
-                    done();
-                });
+                done();
             });
         });
     });
