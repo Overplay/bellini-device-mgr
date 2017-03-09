@@ -101,7 +101,7 @@ module.exports = {
         // the "funSockets" room, excluding our newly added socket:
         sails.sockets.broadcast( room,
             'DEVICE-JOIN',
-            { message: 'Welcome to the OGDevice rooms for '+params.deviceUDID },
+            { message: 'Welcome to the OGDevice room for '+params.deviceUDID },
             req );
 
         return res.ok({ message: 'joined'});

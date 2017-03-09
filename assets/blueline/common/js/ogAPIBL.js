@@ -190,9 +190,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                             reject( jwres );
                         } else {
                             $log.debug( "Successfully joined room for this device" );
-                            io.socket.on( 'DEV-DM', function ( data ) {
-                                _msgCb( data.message );
-                                console.log( 'Message rx for `' + JSON.stringify( data.message ) );
+                            io.socket.on( 'DEVICE-DM', function ( data ) {
+                                _msgCb( data );
+                                console.log( 'Message rx for `' + JSON.stringify( data ) );
                             } );
 
                             resolve();

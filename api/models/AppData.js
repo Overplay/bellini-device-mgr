@@ -37,11 +37,6 @@ module.exports = {
         lockedByDeviceId: {
             type:       "string",
             defaultsTo: ""
-        },
-        
-        chickenWings: {
-            type: 'boolean',
-            defaultsTo: true
         }
 
     }

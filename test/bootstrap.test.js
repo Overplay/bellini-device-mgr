@@ -13,9 +13,12 @@ before(function(done) {
         // configuration for testing purposes
         log: { // this should work to silent the sails app logs
             level: 'silent'
-        }
+        },
+        connections: { mongodbServer: { database: 'testDB'}}
     }, function(err) {
         if (err) return done(err);
+        
+        console.log('Database is: '+sails.config.connections.mongodbServer.database);
         // here you can load fixtures, etc.
         done(err, sails);
     });
