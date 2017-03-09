@@ -18,6 +18,9 @@
 ################################################
 
 .tmp
+
+# Removed these from ignore since these are private repos and it is a pain in the ass
+# every time we start a new server! [mak]
 #local.js
 #waterlock.js
 

@@ -179,6 +179,57 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( stripData );
             }
 
+            function joinDeviceRoom(){
+                return $q( function ( resolve, reject ) {
+
+                    io.socket.post( '/ogdevice/joinroom', {
+                        deviceUDID: getOGSystem().udid
+                    }, function ( resData, jwres ) {
+                        console.log( resData );
+                        if ( jwres.statusCode != 200 ) {
+                            reject( jwres );
+                        } else {
+                            $log.debug( "Successfully joined room for this device" );
+                            io.socket.on( 'DEV-DM', function ( data ) {
+                                _msgCb( data.message );
+                                console.log( 'Message rx for `' + JSON.stringify( data.message ) );
+                            } );
+
+                            resolve();
+                        }
+                    } );
+                } );
+
+            }
+
+            function joinVenueRoom(){
+
+            }
+
+            function subscribeToAppData(){
+
+                return $q( function ( resolve, reject ) {
+
+                    io.socket.post( '/appdata/subscribe', {
+                        deviceUDID: getOGSystem().udid,
+                        appid:      _appName
+                    }, function ( resData, jwres ) {
+                        console.log( resData );
+                        if ( jwres.statusCode != 200 ) {
+                            reject( jwres );
+                        } else {
+                            $log.debug( "Successfully subscribed to appData" );
+                            io.socket.on( 'appdata', function ( data ) {
+                                _dataCb( data.data.data );
+                                console.log( 'AppData change for `' + data );
+                            } );
+
+                            resolve();
+                        }
+                    } );
+                })
+            }
+
             service.init = function ( params ) {
 
                 if ( !params )
@@ -212,53 +263,21 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 if ( !_dataCb )
                     $log.warn( "You didn't specify a messageCallback, so you won't get one!" );
 
+                io.socket.on("connect", function(){
+                    $log.debug("(Re)Connecting to websockets rooms");
+                    joinDeviceRoom();
+                    subscribeToAppData();
+                });
+
                 return $http.post( '/appdata/initialize', { appid: _appName, deviceUDID: getOGSystem().udid } )
                     .then( function ( data ) {
                         $log.debug( "ogAPI: Model data init complete" );
                         $log.debug( "ogAPI: Subscribing to model changes" );
-                        return $q( function ( resolve, reject ) {
-
-                            io.socket.post( '/appdata/subscribe', {
-                                deviceUDID: getOGSystem().udid,
-                                appid:      _appName
-                            }, function ( resData, jwres ) {
-                                console.log( resData );
-                                if ( jwres.statusCode != 200 ) {
-                                    reject( jwres );
-                                } else {
-                                    $log.debug( "Successfully subscribed to appData" );
-                                    io.socket.on( 'appdata', function ( data ) {
-                                        _dataCb( data.data.data );
-                                        console.log( 'AppData change for `' + data );
-                                    } );
-
-                                    resolve( data );
-                                }
-                            } );
-
-                        });
+                        return subscribeToAppData();
                     })
                     .then( function ( data ) {
                         $log.debug( "ogAPI: Subscribing to message changes" );
-                        return $q( function ( resolve, reject ) {
-
-                            io.socket.post( '/ogdevice/joinroom', {
-                                deviceUDID: getOGSystem().udid
-                            }, function ( resData, jwres ) {
-                                console.log( resData );
-                                if ( jwres.statusCode != 200 ) {
-                                    reject( jwres );
-                                } else {
-                                    $log.debug( "Successfully joined room for this device" );
-                                    io.socket.on( 'DEV-DM', function ( data ) {
-                                        _msgCb( data.message );
-                                        console.log( 'Message rx for `' + JSON.stringify(data.message) );
-                                    } );
-
-                                    resolve( data );
-                                }
-                            } );
-                        } );
+                        return joinDeviceRoom();
                     });
                 
             };

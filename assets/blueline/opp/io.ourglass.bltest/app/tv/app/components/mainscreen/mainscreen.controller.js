@@ -12,11 +12,14 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI, $window 
 
         $log.info( "Model changed, yay!" );
         $scope.ticketNumber = newValue.ticketNumber;
+        $scope.ogsystem = newValue;
         $scope.$apply();
     }
 
     function inboundMessage( msg ) {
         $log.info( "New message: " + msg );
+        $scope.ogsystem = msg;
+
     }
 
 

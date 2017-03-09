@@ -16,9 +16,11 @@ app.controller( "socketDashController", function ( $scope, $log, $http, toastr )
 
 
     $scope.dm = function ( roomName ) {
+        var dudid = roomName.replace( 'device_', '' );
+
         io.socket.post( '/ogdevice/dm', {
-            deviceUDID: roomName,
-            message: { message: "Hello from the Cloud!" }
+            deviceUDID: dudid,
+            message: { dest: dudid, action: 'test', payload: 'hello from cloud' }
         }, function ( resData, jwres ) {
         
             if (jwres.statusCode==200)

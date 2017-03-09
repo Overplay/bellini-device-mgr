@@ -93,14 +93,14 @@ module.exports = {
         if ( !params.deviceUDID )
             return res.badRequest( { error: "Missing params" } );
 
-        var room = params.deviceUDID;
+        var room = "device_"+params.deviceUDID;
 
         sails.sockets.join( req, room );
 
         // Broadcast a notification to all the sockets who have joined
         // the "funSockets" room, excluding our newly added socket:
         sails.sockets.broadcast( room,
-            'DEV-JOIN',
+            'DEVICE-JOIN',
             { message: 'Welcome to the OGDevice rooms for '+params.deviceUDID },
             req );
 
@@ -123,7 +123,7 @@ module.exports = {
         if ( !params.deviceUDID || !params.message )
             return res.badRequest( { error: "Missing params" } );
 
-        sails.sockets.broadcast( params.deviceUDID, 'DEV-DM', { message: params.message }, req );
+        sails.sockets.broadcast( "device_" +params.deviceUDID, 'DEVICE-DM', params.message, req );
 
         return res.ok(params);
 

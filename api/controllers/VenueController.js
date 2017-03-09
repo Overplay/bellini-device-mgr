@@ -388,6 +388,57 @@ module.exports = {
             .catch(function (err) {
                 return res.serverError({error: err})
             })
+    },
+
+    joinroom: function ( req, res ) {
+
+        if ( !req.isSocket ) {
+            return res.badRequest( { error: "Sockets only, sonny" } );
+        }
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "That's not how to subscribe, sparky!" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.venueId )
+            return res.badRequest( { error: "Missing venueId" } );
+
+        var room = "venue_" + params.deviceUDID;
+
+        sails.sockets.join( req, room );
+
+        // Broadcast a notification to all the sockets who have joined
+        // the "funSockets" room, excluding our newly added socket:
+        sails.sockets.broadcast( room,
+            'VENUE-JOIN',
+            { message: 'Welcome to the Venue room for ' + params.venueId },
+            req );
+
+        return res.ok( { message: 'joined' } );
+
+    },
+
+    dm: function ( req, res ) {
+
+        if ( !req.isSocket ) {
+            return res.badRequest( { error: "Sockets only, sonny" } );
+        }
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "That's not how to message, sparky!" } );
+
+        //OK, we need a venueId
+        var params = req.allParams();
+
+        if ( !params.venueId || !params.message )
+            return res.badRequest( { error: "Missing params" } );
+
+        sails.sockets.broadcast( "venue_" + params.venueId, 'VENUE-DM', params.message, req );
+
+        return res.ok( params );
+
     }
 };
 
