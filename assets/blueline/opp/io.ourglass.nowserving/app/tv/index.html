@@ -20,10 +20,40 @@
     <!-- App Specific and Overridden CSS -->
     <!--<link href="assets/css/style.css" rel="stylesheet">-->
     <link href="../../../../common/css/og.css" rel="stylesheet">
-    <link href="assets/css/nowserving-og-style.css" rel="stylesheet">
 
     <title>Ourglass Now Serving</title>
+
+    <style>
+
+        .title {
+            text-align: center;
+            padding-top: 3vh;
+            color: white;
+        }
+
+        .logo-holder {
+            width: 100vw;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        @keyframes blinker {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        .ticket-number {
+            font-size: 50vw;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            animation: blinker 1s linear infinite alternate;
+        }
+
+    </style>
 </head>
+
 <body ng-controller="mainScreenController">
     <div class="title">Now Serving</div>
     <div class="ticket-number">{{ ticketNumber }}</div>
