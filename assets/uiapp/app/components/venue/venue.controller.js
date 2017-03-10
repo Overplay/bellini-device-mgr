@@ -184,7 +184,7 @@ app.controller('listVenueController', function ($scope, venues, $log, links, rol
 
 })
 
-app.controller('viewVenueController', function ($scope, venue, $log, uiGmapGoogleMapApi, uibHelper, nucleus, user, $http, toastr, links, role, $uibModal) {
+app.controller('viewVenueController', function ($scope, venue, $log, uiGmapGoogleMapApi, uibHelper, nucleus, $http, toastr, links, role, $uibModal) {
     
     $scope.venue = venue;
     $scope.$parent.ui.pageTitle = "Venue Overview";
@@ -192,7 +192,6 @@ app.controller('viewVenueController', function ($scope, venue, $log, uiGmapGoogl
     $scope.$parent.links = links;
 
     $scope.admin = role === "admin";
-    $scope.uid = user.id;
     $scope.mediaSizes = ['widget', 'crawler'];
 
     $scope.sponsorships = [];
@@ -203,13 +202,6 @@ app.controller('viewVenueController', function ($scope, venue, $log, uiGmapGoogl
             $scope.sponsorships = res.data;
         })
 
-    $scope.userRoute = function (id) {
-        if (id === user.id)
-            return "user.editUser()";
-        else if ($scope.admin)
-            return "user.editUserAdmin({id: user.auth})";
-        return "user.editUserOwner({id: user.auth})";
-    }
 
     $scope.map = {
         center: {

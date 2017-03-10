@@ -17,7 +17,7 @@
             <tr ng-repeat="v in venues | orderBy: 'name' | filter:searchTerm">
                 <td width="40%">{{v.name}}</td>
                 <td width="40%">{{ v.address.street + " " + v.address.street2 }}<br/>{{ v.address.city + ", " + v.address.state }}</td>
-                <td><a ui-sref="{{ admin ? 'venue.adminView({id: v.id})' : 'venue.view({id: v.id})' }}" class="btn btn-sm btn-warning">MORE INFO</a></td>
+                <td><a ui-sref="venue.view({id: v.id})" class="btn btn-sm btn-warning">MORE INFO</a></td>
             </tr>
             </tbody>
         </table>

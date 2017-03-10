@@ -214,5 +214,65 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         } )
 
 
+    /**
+     * LITE version of the Venue routes from Bellini Core
+     */
+
+        .state( 'venue', {
+            url:         '/venue',
+            templateUrl: '/uiapp/app/components/venue/venue-sidemenu.partial.html',
+            controller:  function ( $scope ) {
+                $scope.ui = { panelHeading: "", pageTitle: "" };
+            },
+            abstract:    true
+        } )
+
+        .state( 'venue.view', {
+            url:         '/view/:id',
+            resolve:     {
+                venue: function ( $http, $stateParams ) {
+                    return $http.get( apiPath + "/venue/" + $stateParams.id )
+                        .then( function ( data ) {
+                            return data.data;
+                        } )
+                        .catch( function ( err ) {
+                            return err;
+                        } )
+                },
+                links: function () {
+                    return [
+                    ]
+                },
+                role:  function () {
+                    return "admin";
+                }
+            },
+            templateUrl: '/uiapp/app/components/venue/viewvenue.partial.html',
+            controller:  'viewVenueController'
+        } )
+
+        .state( 'venue.list', {
+            url:         '/admin-list',
+            controller:  'listVenueController',
+            templateUrl: '/uiapp/app/components/venue/venuelist.partial.html',
+            resolve:     {
+                venues: function ( $http ) {
+                    return $http.get( apiPath + '/venue' )
+                        .then( function ( data ) {
+                            return data.data;
+                        } )
+                },
+                links:  function () {
+                    return [
+                    ]
+                },
+                role:   function () {
+                    return "admin";
+                }
+            }
+        } )
+
+ 
+
 })
 ;
