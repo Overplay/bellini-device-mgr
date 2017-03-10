@@ -15,14 +15,26 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI ) {
         $scope.$apply();
     }
 
+    function inboundMessage( msg ) {
+        $log.info( "New message: " + msg );
+        $scope.ogsystem = msg;
+    }
+
     function updateFromRemote() {
 
         ogAPI.init( {
             appName:      "io.ourglass.nowserving",
             sockets:      true,
             modelCallback: modelChanged,
+            messageCallback: inboundMessage,
             appType:      'tv'
-        } );
+        })
+            .then ( function ( d ) {
+                $log.debug("ogAPI init complete!");
+            })
+            .catch( function ( err ) {
+                $log.error("Something failed: " + err);
+            })
 
     }
 
