@@ -19,6 +19,11 @@ module.exports = {
             defaultsTo: ''
         },
 
+        uuid: {
+            type: 'string',
+            unique: true
+        },
+
         address: {
             type: 'json'
         },

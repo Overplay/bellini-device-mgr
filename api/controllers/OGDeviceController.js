@@ -16,7 +16,7 @@ module.exports = {
      * @param res
      * @returns {*}
      */
-    registerDevice: function ( req, res ) {
+    register: function ( req, res ) {
 
         if ( req.method != 'POST' )
             return res.badRequest( { error: 'bad verb' } );
@@ -26,8 +26,7 @@ module.exports = {
         if ( !params.deviceUDID )
             return res.badRequest( { error: 'no udid' } );
 
-        // TODO: Shouldn't blindly toss all params into the model!! [mak]
-        OGDevice.create( params )
+        OGDevice.findOrCreate({ deviceUDID: params.deviceUDID }, { deviceUDID: params.deviceUDID } )
             .then( function ( device ) {
                 return res.ok( device );
             } )

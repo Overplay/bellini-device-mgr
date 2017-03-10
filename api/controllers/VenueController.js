@@ -390,6 +390,23 @@ module.exports = {
             })
     },
 
+    replicate: function( req, res ){
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "That's not how to subscribe, sparky!" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.uuid )
+            return res.badRequest( { error: "Missing uuid" } );
+
+        Venue.updateOrCreate({ uuid: params.uuid }, params )
+            .then(res.ok)
+            .catch(res.serverError);
+
+    },
+
     joinroom: function ( req, res ) {
 
         if ( !req.isSocket ) {

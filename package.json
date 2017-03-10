@@ -41,6 +41,7 @@
     "sails-disk": "^0.10.9",
     "sails-hook-blueprint-count": "0.0.3",
     "sails-hook-mongo-auto-index": "^0.1.3",
+    "sails-hook-update-or-create": "^0.1.4",
     "sails-mongo": "^0.12.0",
     "shelljs": "^0.7.6",
     "skipper-disk": "^0.5.4",
