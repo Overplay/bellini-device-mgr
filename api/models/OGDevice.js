@@ -16,8 +16,8 @@ module.exports = {
       unique: true
       },
 
-    atVenue: {
-      model: 'venue'
+    atVenueUUID: {
+      type: 'string'
     },
 
     name: {

@@ -190,6 +190,11 @@ app.controller('viewVenueController', function ($scope, venue, $log, uiGmapGoogl
     $scope.$parent.ui.pageTitle = "Venue Overview";
     $scope.$parent.ui.panelHeading = venue.name;
     $scope.$parent.links = links;
+    
+    $http.get('venue/devices?atVenueUUID='+venue.uuid)
+        .then(function(resp){
+            $scope.venue.devices = resp.data;
+        })
 
     $scope.admin = role === "admin";
     $scope.mediaSizes = ['widget', 'crawler'];
@@ -229,10 +234,13 @@ app.controller('viewVenueController', function ($scope, venue, $log, uiGmapGoogl
             geocode.geocode({
                 address: $scope.map.address
             }, function (res, stat) {
-                $scope.venue.geolocation = {
-                    latitude: $scope.map.center.latitude = res[0].geometry.location.lat(),
-                    longitude: $scope.map.center.longitude = res[0].geometry.location.lng()
-                };
+                if (res[0]){
+                    $scope.venue.geolocation = {
+                        latitude:  $scope.map.center.latitude = res[ 0 ] && res[ 0 ].geometry.location.lat(),
+                        longitude: $scope.map.center.longitude = res[ 0 ] && res[ 0 ].geometry.location.lng()
+                    };
+                }
+
                 nucleus.updateVenue($scope.venue.id, $scope.venue)
                     .then(function () {
                     })
