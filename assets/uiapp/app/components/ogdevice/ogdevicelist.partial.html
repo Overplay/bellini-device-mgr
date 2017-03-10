@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-sm-8 col-sm-offset-2 top30" ng-show="ogdevices.length">
+        <input type="text" ng-model="searchTerm" class="form-control" placeholder="Search devices...">
+    </div>
+    <div class="col-sm-10 col-sm-offset-1 top30">
+        <h3 ng-if="!ogdevices.length" style="text-align: center; padding-bottom: 10px">No Devices</h3>
+        <table class="table table-striped" ng-if="ogdevices.length">
+            <thead>
+            <tr>
+                <th></th>
+                <th>UDID</th>
+                <th>Venue</th>
+                <th>Last Contact</th>
+
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="device in ogdevices | filter:searchTerm">
+                <td>
+                    <a ui-sref="ogdevice.moreinfo({ id: device.id} )"
+                       class="btn btn-sm btn-warning">MORE INFO</a>
+                </td>
+                <td>{{ device.deviceUDID }}</td>
+                <td><span ng-class="{ 'text-danger': !device.atVenue }">
+                    {{ device.atVenue ? device.atVenue.name : "Unassigned" }}
+                    </span>
+                </td>
+                <td>TBI</td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

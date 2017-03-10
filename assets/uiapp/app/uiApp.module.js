@@ -23,21 +23,14 @@ app.config(['ChartJsProvider', function (ChartJsProvider) {
     });
 }])
 
-app.run( function ( $log, $rootScope , $http) {
+app.run( function ( $log, $rootScope ) {
 
-    $log.info( "Asahi is pouring!" );
-
-    $http.get('/uiapp/local.json').then(function(data){
-        $rootScope.AJPGSUrl = data.data.AJPGSUrl
-    })
+    $log.info( "Bellini-DM UI is pouring!" );
 
     $rootScope.$on( '$stateChangeError',
         function ( event, toState, toParams, fromState, fromParams, error ) {
             $log.error( "State change fail!" );
         } )
-
-
-
 
 } );
 

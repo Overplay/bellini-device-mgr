@@ -48,6 +48,10 @@ module.exports = {
     software: {
       type: 'json',
       defaultsTo: {}
+    },
+    
+    lastContact: {
+      type: 'date'
     }
 
   }

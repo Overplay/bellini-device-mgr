@@ -120,8 +120,11 @@ module.exports = {
         //OK, we need a deviceUDID
         var params = req.allParams();
 
-        if ( !params.deviceUDID || !params.message )
-            return res.badRequest( { error: "Missing params" } );
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+
+        if ( !params.message )
+            return res.badRequest( { error: "Missing message" } );
 
         sails.sockets.broadcast( "device_" +params.deviceUDID, 'DEVICE-DM', params.message, req );
 

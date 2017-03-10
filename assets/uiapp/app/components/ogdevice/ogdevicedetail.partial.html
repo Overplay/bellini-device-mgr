@@ -1,0 +1,87 @@
+<div class="row">
+    <div class="col-10 col-offset-1">
+        <uib-tabset>
+            <uib-tab heading="Overview">
+                <table class="table table-striped" style="width: 80%; margin-top: 20px;">
+                    <tbody>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Device Name</td>
+                        <td style="text-align: left;">{{ ogdevice.name }}</td>
+                    </tr>
+
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Device UDID</td>
+                        <td style="text-align: left;">{{ ogdevice.deviceUDID }}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Device Database ID</td>
+                        <td style="text-align: left;">{{ ogdevice.id }}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Venue Name</td>
+                        <td style="text-align: left;">{{ ogdevice.atVenue ? ogdevice.atVenue.name : "Not Associated "}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Venue UUID</td>
+                        <td style="text-align: left;">{{ ogdevice.atVenue ? ogdevice.atVenue.uuid : "Not Associated "}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Venue Database ID</td>
+                        <td style="text-align: left;">{{ ogdevice.atVenue ? ogdevice.atVenue.id : "Not Associated "}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Last Contact</td>
+                        <td style="text-align: left;">{{ ogdevice.lastContact ? ogdevice.lastContact : "NEVER"}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Installed Apps</td>
+                        <td style="text-align: left;">
+                            <pre>{{ ogdevice.installedApps | json }}</pre>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Software</td>
+                        <td style="text-align: left;">
+                            <pre>{{ ogdevice.software | json }}</pre>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Hardware</td>
+                        <td style="text-align: left;">
+                            <pre>{{ ogdevice.hardware | json }}</pre>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </uib-tab>
+            <uib-tab heading="Remote Control">
+                <div style="margin-top: 10px; display: flex; padding: 10px; background-color: #ECE9E9">
+                    <div style="flex:1; margin-right: 10px;">
+                        <button class="btn btn-success" ng-click="ping()">PING</button>
+                    </div>
+                    <div style="flex: 4;">
+                        <pre>{{ pingResponse.response }}</pre>
+                    </div>
+
+                </div>
+
+
+            </uib-tab>
+            <uib-tab heading="Logs">
+
+            </uib-tab>
+
+            <uib-tab heading="Raw JSON Object">
+                <div class="well">
+                    <pre>{{ ogdevice | json }}</pre>
+                </div>
+            </uib-tab>
+        </uib-tabset>
+    </div>
+
+</div>

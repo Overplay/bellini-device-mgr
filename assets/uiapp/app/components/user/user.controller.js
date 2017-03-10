@@ -406,10 +406,11 @@ app.controller("addUserController", function ($scope, $state, $log, toastr, nucl
 
 });
 
-app.controller('listUserController', function ($scope, $state, $log, nucleus, users, links, role) {
+app.controller('listUserController', function ($scope, $state, $log, nucleus, users, links) {
     $scope.users = users;
     $scope.$parent.links = links;
-    $scope.admin = role === "admin";
-    $scope.$parent.ui.pageTitle = $scope.admin ? "Users" : "Venue Managers";
-    $scope.$parent.ui.panelHeading = "";
+    $scope.admin = true;
+
+    $scope.$parent.ui = { pageTitle: "Users", panelHeading: "All Users"}
+
 });

@@ -1,0 +1,16 @@
+<div class="row">
+    <div class="col-md-offset-3 col-md-8 col-lg-offset-2">
+        <h1>{{ ui.pageTitle }}</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3 col-lg-2">
+        <ul class="side-menu top30">
+            <li ng-repeat="link in links"><a ui-sref="{{ link.link }}">{{ link.text }}</a></li>
+        </ul>
+    </div>
+    <div class="col-md-8 top30" style="border: 1px solid #f0f0f0; border-radius: 3px; padding: 20px;">
+        <h2 class="n-blue-box" ng-if="ui.panelHeading">{{ ui.panelHeading }}</h2>
+        <ui-view></ui-view>
+    </div>
+</div>
