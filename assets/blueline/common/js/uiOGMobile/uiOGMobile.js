@@ -15,7 +15,7 @@
     angular.module( 'ui.ogMobile', [] )
 
     // Templatlized, specialized UIB Helper
-        .factory( 'uibHelper', function ( $log, $uibModal, $templateCache ) {
+        .factory( 'uibHelper', function ( $log, $uibModal, $templateCache, $timeout ) {
 
             var _curtain;
 
@@ -341,9 +341,35 @@
                     _curtain.remove();
             }
 
+            service.dryToast = function ( msg, delay ) {
+
+                var toastHTML = $templateCache.get( 'dry-toast.template.html' );
+                var m = msg || "Have a nice day :)";
+                toastHTML = toastHTML.replace( '$$message$$', m );
+                _toast = angular.element( toastHTML );
+
+                var body = angular.element( document ).find( 'body' ).eq( 0 );
+
+                body.append( _toast );
+
+                var d = delay | 1000;
+
+                function dismissT() {
+                    $log.debug( "Detaching" );
+                    _toast.remove();
+                }
+
+                $timeout( dismissT, d );
+
+                return {
+                    dismiss: dismissT
+                }
+            }
+
             return service;
 
-        } )
+        })
+
 
         // These are generated via Gulp task
         .run( [ '$templateCache', function ( $templateCache ) {
@@ -355,7 +381,9 @@
             $templateCache.put( 'inputboxesmodal.template.html', '<div class="modal-header">\n    <h3 class="modal-title">{{ modalUi.title }}</h3>\n</div>\n<div class="modal-body">\n    <p>{{ modalUi.body }}</p>\n    <div class="form-group" ng-repeat="f in modalUi.fieldsArray track by $index" >\n        <label for="{{ \'f\'+$index }}">{{ f.label }}</label>\n        <input type="{{ f.type }}" placeholder="{{ f.placeholder }}"\n               class="form-control" id="{{ \'f\'+$index }}"\n               ng-model="f.value">\n    </div>\n</div>\n\n<div class="modal-footer">\n    <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>\n    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>\n</div>' );
             $templateCache.put( 'selectlistmodal.template.html', '<style>\n    .slm-pick-item {\n        color: teal;\n        padding: 10px 0 10px 5px;\n        margin-left: 0;\n    }\n\n    .slm-picked {\n        background: #696969;\n        color: white;\n        transition: all 0.5s;\n    }\n\n    .slm-no-num {\n        list-style-type: none;\n        padding: 10px;\n    }\n</style>\n\n<div class="modal-header">\n    <h3 class="modal-title">{{ modalUi.title }}</h3>\n</div>\n<div class="modal-body" ng-show="showChoice">\n    {{ modalUi.choices[modalUi.currentChoice] }}\n</div>\n<div class="modal-body" ng-hide="showChoice">\n    {{ modalUi.body }}\n</div>\n<ol class="slm-no-num" style="margin: 10px; border: 1px solid #cacaca;">\n    <li ng-repeat="choice in modalUi.choices" class="slm-pick-item"\n        ng-class="{ \'slm-picked\': modalUi.currentChoice==$index}"\n        ng-click="modalUi.currentChoice = $index">{{ choice }}</li>\n</ol>\n\n\n<div class="modal-footer">\n    <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>\n    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>\n</div>' );
             $templateCache.put( 'stringeditmodal.template.html', '<div class="modal-header">\n    <h3 class="modal-title">{{ modalUi.title }}</h3>\n</div>\n<div class="modal-body">\n    <p>{{ modalUi.body }}</p>\n    <input class="form-control input-lg" type="text" ng-model="modalUi.editString" placeholder="{{ modalUi.placeholder }}">\n    </div>\n\n<div class="modal-footer">\n    <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>\n    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>\n</div>' );
+            $templateCache.put( 'dry-toast.template.html', '<style>\n\n    .toast-holder {\n        position: absolute;\n        bottom: 2vh;\n        color: white;\n        width: 100vw;\n    }\n\n    .toast {\n        width: 90%;\n        padding: 10px;\n        border-radius: 5px;\n        background: rgba(47, 37, 41, 0.7);\n        margin: 0 auto 0 auto;\n        font-size: 1.5rem;\n        font-weight: bold;\n        font-family: Arial, SansSerif;\n        -webkit-box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.75);\n        -moz-box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.75);\n        box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.75);\n    }\n\n\n</style>\n\n<div class="toast-holder">\n    <div class="toast">\n        <p style="text-align: center">$$message$$</p>\n    </div>\n</div>\n\n\n\n' );
         } ] )
+
 
 
 })( window, window.angular );

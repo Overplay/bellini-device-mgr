@@ -62,9 +62,48 @@
             <uib-tab heading="Remote Control">
                 <div style="margin-top: 10px; display: flex; padding: 10px; background-color: #ECE9E9">
                     <div style="flex:1; margin-right: 10px;">
-                        <button class="btn btn-success" ng-click="ping()">PING</button>
+                        <button class="btn btn-success" style="width: 100%;" ng-click="ping()">PING</button>
                     </div>
                     <div style="flex: 4;">
+                        <pre>{{ pingResponse.response }}</pre>
+                    </div>
+
+                </div>
+
+                <div style="margin-top: 10px; display: flex; padding: 10px; background-color: #ECE9E9">
+                    <div style="flex:1; margin-right: 10px;">
+                        <button class="btn btn-success" style="width: 100%;" ng-click="sendLaunch()">LAUNCH</button>
+                    </div>
+                    <div style="flex: 2;">
+                        <input class="form-control" type="text" placeholder="App ID" ng-model="launchAppId"/>
+                    </div>
+                    <div style="flex: 2;">
+                        <pre>{{ launchResponse }}</pre>
+                    </div>
+
+                </div>
+
+                <div style="margin-top: 10px; display: flex; padding: 10px; background-color: #ECE9E9">
+                    <div style="flex:1; margin-right: 10px;">
+                        <button class="btn btn-success" ng-click="sendLaunch()">KILL</button>
+                    </div>
+                    <div style="flex: 2;">
+                        <input class="form-control" type="text" placeholder="App ID" ng-model="killAppId"/>
+                    </div>
+                    <div style="flex: 2;">
+                        <pre>{{ killResponse }}</pre>
+                    </div>
+
+                </div>
+
+                <div style="margin-top: 10px; display: flex; padding: 10px; background-color: #ECE9E9">
+                    <div style="flex:2; margin-right: 10px;">
+                        <button class="btn btn-success" ng-click="moveCralwer()">MOVE CRAWLER</button>
+                    </div>
+                    <div style="flex:2; margin-right: 10px;">
+                        <button class="btn btn-success" ng-click="moveWidget()">MOVE CRAWLER</button>
+                    </div>
+                    <div style="flex: 2;">
                         <pre>{{ pingResponse.response }}</pre>
                     </div>
 

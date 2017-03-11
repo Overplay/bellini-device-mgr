@@ -52,14 +52,14 @@ module.exports = {
 
 			case 'POST':
 				sails.log.silly("POSTING app data for: " + appid + ' on device ' + deviceid);
-				AppData.findOne({ forAppId: appid, forDeviceId: deviceid })
+				AppData.findOne({ forAppId: appid, forDeviceUDID: deviceid })
 					.then(function(model){
 						if (model){
 							return res.badRequest({ error: "model already exists, try a PUT genius!"});
 						}
 
 						var newAppData = { forAppId: appid,
-											forDeviceId: deviceid,
+											forDeviceUDID: deviceid,
 											data: params.data || {}
 											};
 						AppData.create(newAppData)
@@ -78,14 +78,14 @@ module.exports = {
 			case 'PUT':
 				sails.log.silly("PUTTING app data for: " + appid + " on device " + deviceid);
 
-				var newAppData = { forAppID: appid, forDeviceId: deviceid, data: params.data || {} };
-				AppData.findOne({ forAppId: appid, forDeviceId: deviceid })
+				var newAppData = { forAppID: appid, forDeviceUDID: deviceid, data: params.data || {} };
+				AppData.findOne({ forAppId: appid, forDeviceUDID: deviceid })
 					.then(function ( model ) {
 						if ( !model ){
 							return res.badRequest({ error: "model does not exist, try a POST"});
 						}
 
-						AppData.update( { forAppId: appid, forDeviceId: deviceid }, newAppData )
+						AppData.update( { forAppId: appid, forDeviceUDID: deviceid }, newAppData )
 							.then( function ( model ) {
 								if ( !model ) {
 									return res.serverError({error: "unable to update model"});
@@ -101,7 +101,7 @@ module.exports = {
             case 'GET':
                 sails.log.silly("GETTING app data for: " + appid + " on device " + deviceid);
 
-                AppData.findOne({ forAppId: appid, forDeviceId: deviceid })
+                AppData.findOne({ forAppId: appid, forDeviceUDID: deviceid })
                     .then( function( model ) {
                         if ( !model ) {
                             return res.badRequest({error: "model does not exist!"});
@@ -115,7 +115,7 @@ module.exports = {
 			case 'DELETE':
 				sails.log.silly("DELETE app data for: " + appid + " on device " + deviceid);
 
-				AppData.destroy({ forAppId: appid, forDeviceId: deviceid})
+				AppData.destroy({ forAppId: appid, forDeviceUDID: deviceid})
 					.then(function ( model ) {
 						if ( model.length == 0) {
 							return res.badRequest({error: "model does not exist"});

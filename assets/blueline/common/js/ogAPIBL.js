@@ -178,8 +178,10 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             function getDataForApp() {
                 return $http.get('/appmodel/' + _appName + '/' + getOGSystem().udid)
                     .then( stripData )
+                    .then( stripData ); // conveniently the object goes resp.data.data
             }
 
+            // TODO someone should implement locking someday :D [mak]
             function getDataForAppAndLock() {
                 return $http.get( API_PATH + 'appdata/' + _appName + "?lock" )
                     .then( stripData );
@@ -275,17 +277,6 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     subscribeToAppData();
                 });
 
-                // return $http.post( '/appdata/initialize', { appid: _appName, deviceUDID: getOGSystem().udid } )
-                //     .then( function ( data ) {
-                //         $log.debug( "ogAPI: Model data init complete" );
-                //         $log.debug( "ogAPI: Subscribing to model changes" );
-                //         return subscribeToAppData();
-                //     })
-                //     .then( function ( data ) {
-                //         $log.debug( "ogAPI: Subscribing to message changes" );
-                //         return joinDeviceRoom();
-                //     });
-
                 return $http.post( '/appmodel/initialize', { appid: _appName, deviceUDID: getOGSystem().udid } )
                     .then( stripData )
                     .then( function ( data ) {
@@ -299,8 +290,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( function ( data ) {
                         $log.debug( "ogAPI: Subscribing to message changes" );
                         return joinDeviceRoom();
-                    })
-                    .then ( service.loadModel )
+                    });
 
             };
 

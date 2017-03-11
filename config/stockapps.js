@@ -30,6 +30,12 @@ var stockApps = [
         defaultModel: {
             mydata: [{ song: "My Milkshake" }, { song: "Mr. ROboto "}]
         }
+    },
+    {
+        appId:        "io.ourglass.mktest",
+        defaultModel: {
+            mydata: { value: 0, setBy: "sails" }
+        }
     } ];
 
 var self = module.exports.stockapps = {
