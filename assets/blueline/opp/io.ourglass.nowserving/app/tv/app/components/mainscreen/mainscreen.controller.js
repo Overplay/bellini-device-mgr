@@ -12,7 +12,7 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI ) {
 
         $log.info( "Model changed, yay!" );
         $scope.ticketNumber = newValue.ticketNumber;
-        $scope.$apply();
+        // $scope.$apply();
     }
 
     function inboundMessage( msg ) {
@@ -20,7 +20,7 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI ) {
         $scope.ogsystem = msg;
     }
 
-    function updateFromRemote() {
+    function initialize() {
 
         ogAPI.init( {
             appName:      "io.ourglass.nowserving",
@@ -29,8 +29,9 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI ) {
             messageCallback: inboundMessage,
             appType:      'tv'
         })
-            .then ( function ( d ) {
+            .then ( function ( data ) {
                 $log.debug("ogAPI init complete!");
+                $scope.ticketNumber = data.data.ticketNumber;
             })
             .catch( function ( err ) {
                 $log.error("Something failed: " + err);
@@ -38,7 +39,7 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI ) {
 
     }
 
-    updateFromRemote();
+    initialize();
 
 } );
 

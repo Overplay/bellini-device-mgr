@@ -169,9 +169,15 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return service.model;
             }
 
+            // function getDataForApp() {
+            //     return $http.get( API_PATH + 'appdata/' + _appName )
+            //         .then( stripData );
+            // }
+
+            // updated for BlueLine
             function getDataForApp() {
-                return $http.get( API_PATH + 'appdata/' + _appName )
-                    .then( stripData );
+                return $http.get('/appmodel/' + _appName + '/' + getOGSystem().udid)
+                    .then( stripData )
             }
 
             function getDataForAppAndLock() {
@@ -269,8 +275,23 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     subscribeToAppData();
                 });
 
-                return $http.post( '/appdata/initialize', { appid: _appName, deviceUDID: getOGSystem().udid } )
+                // return $http.post( '/appdata/initialize', { appid: _appName, deviceUDID: getOGSystem().udid } )
+                //     .then( function ( data ) {
+                //         $log.debug( "ogAPI: Model data init complete" );
+                //         $log.debug( "ogAPI: Subscribing to model changes" );
+                //         return subscribeToAppData();
+                //     })
+                //     .then( function ( data ) {
+                //         $log.debug( "ogAPI: Subscribing to message changes" );
+                //         return joinDeviceRoom();
+                //     });
+
+                return $http.post( '/appmodel/initialize', { appid: _appName, deviceUDID: getOGSystem().udid } )
+                    .then( stripData )
                     .then( function ( data ) {
+
+                        updateModel( data );
+
                         $log.debug( "ogAPI: Model data init complete" );
                         $log.debug( "ogAPI: Subscribing to model changes" );
                         return subscribeToAppData();
@@ -278,15 +299,16 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( function ( data ) {
                         $log.debug( "ogAPI: Subscribing to message changes" );
                         return joinDeviceRoom();
-                    });
-                
+                    })
+                    .then ( service.loadModel )
+
             };
 
 
             service.getTweets = function () {
                 return $http.get( API_PATH + 'scrape/' + _appName )
                     .then( stripData );
-            }
+            };
 
             service.getChannelTweets = function () {
                 return $http.get( API_PATH + 'scrape/io.ourglass.core.channeltweets' )
@@ -298,10 +320,23 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return $http.post( API_PATH + 'scrape/' + _appName, { query: query } );
             };
 
+            // service.save = function () {
+            //     var postModel = _.cloneDeep( service.model );
+            //     postModel.lockKey = _lockKey || 0;
+            //     return $http.post( API_PATH + 'appdata/' + _appName, postModel );
+            // };
+
+            // updated for BlueLine
             service.save = function () {
-                var postModel = _.cloneDeep( service.model );
-                postModel.lockKey = _lockKey || 0;
-                return $http.post( API_PATH + 'appdata/' + _appName, postModel );
+                return $http.put( '/appmodel/' + _appName + '/' + getOGSystem().udid, service.model)
+                    .then ( stripData )
+                    .then ( function ( data ) {
+                        $log.debug("ogAPI: Model data saved via PUT");
+                        updateModel( data[0] )
+                    })
+                    .catch( function ( err ) {
+                        $log.error("ogAPI: some error occurred during save:PUT -- " + err);
+                    })
             };
 
             service.loadModel = function () {

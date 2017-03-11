@@ -49,6 +49,12 @@ module.exports.routes = {
     skipAssets: true
   },
 
+  '/appmodel/initialize': {
+    controller: 'AppDataController',
+    action:     'initialize',
+    skipAssets: true
+  },
+
   // '/device/:deviceudid/associate/:venueid': {
   //   controller: 'AppDataController',
   //   action:     'appDataForDevice',
