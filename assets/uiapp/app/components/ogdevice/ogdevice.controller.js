@@ -1,22 +1,22 @@
 /**
- * 
+ *
  * Basic OGDevice Management and Websocket Control
  * By MAK March 2017
- * 
+ *
  */
 
 
-app.controller('listOGDeviceController', function(devices, $scope, $log){
+app.controller( 'listOGDeviceController', function ( devices, $scope, $log ) {
 
-    
-    $log.debug("Loading listOGDeviceController");
-    
+
+    $log.debug( "Loading listOGDeviceController" );
+
     $scope.ogdevices = devices;
 
     $scope.$parent.ui = { pageTitle: "OG Boxes", panelHeading: "All Boxes" }
 
 
-});
+} );
 
 app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toastr, $timeout ) {
 
@@ -27,13 +27,15 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
 
     $scope.ogdevice = device;
 
-    $scope.$parent.ui = { pageTitle: "OG Box Detail", panelHeading: "For UDID: "+device.deviceUDID };
+    $scope.$parent.ui = { pageTitle: "OG Box Detail", panelHeading: "For UDID: " + device.deviceUDID };
 
-    function newDMMessage(data){
-        $log.debug( 'Message rx for `' + JSON.stringify( data ) );
+    function newDMMessage( data ) {
+        $log.debug( 'Message rx for ' + JSON.stringify( data ) );
         if ( data.action == 'ping-ack' ) {
             $scope.pingResponse = { response: 'PING ACKed in ' + (new Date().getTime() - pingStartTime) + 'ms' };
             $timeout.cancel( pingWaitPromise );
+        } else if ( data.action == 'ident-ack' ) {
+            $scope.identResponse = data.payload;
         }
     }
 
@@ -53,6 +55,7 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
                 }
             } );
     }
+
     //
     // io.socket.on( "connect", function () {
     //     $log.debug( "(Re)Connecting to websockets rooms" );
@@ -61,14 +64,14 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
     // } );
     //
     //
-    
-    function endPingWait(){
-        $log.error("No ping response in 5 second window!");
+
+    function endPingWait() {
+        $log.error( "No ping response in 5 second window!" );
         $scope.pingResponse = { response: "NO ACK after 5 seconds. Device is probably down!" };
     }
 
 
-    $scope.ping = function(){
+    $scope.ping = function () {
         $scope.pingResponse = { response: "ISSUING PING..." };
         pingStartTime = new Date().getTime();
 
@@ -76,18 +79,61 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
             deviceUDID: device.deviceUDID,
             message:    { dest: device.deviceUDID, action: 'ping', payload: 'Ping me back, bro!' }
         }, function ( resData, jwres ) {
-             if ( jwres.statusCode == 200 ){
-                    toastr.success( "Ping Issued" );
-                    pingWaitPromise = $timeout( endPingWait, 5000 );
-                }
-                else {
-                    $scope.pingResponse = { response: "PING FAILED to connect to Bellini!"  };
-                    toastr.error( "Could not issue ping!" );
-                }
+            if ( jwres.statusCode == 200 ) {
+                toastr.success( "Ping Issued" );
+                pingWaitPromise = $timeout( endPingWait, 5000 );
+            }
+            else {
+                $scope.pingResponse = { response: "PING FAILED to connect to Bellini!" };
+                toastr.error( "Could not issue ping!" );
+            }
 
         } );
 
     };
+
+    $scope.identify = function () {
+        $scope.identResponse = {};
+        io.socket.post( '/ogdevice/dm', {
+            deviceUDID: device.deviceUDID,
+            message:    { dest: device.deviceUDID, action: 'identify' }
+        }, function ( resData, jwres ) {
+            if ( jwres.statusCode == 200 ) {
+                toastr.success( "Ident Issued" );
+                pingWaitPromise = $timeout( endPingWait, 5000 );
+            }
+            else {
+                $scope.identResponse = { response: "IDENT FAILED" };
+                toastr.error( "Could not issue ident!" );
+            }
+
+        } );
+    }
+
+    $scope.launch = function () {
+        io.socket.post( '/ogdevice/dm', {
+            deviceUDID: device.deviceUDID,
+            message:    {
+                dest:    device.deviceUDID,
+                action:  'launch',
+                payload: {
+                    appId:   "io.ourglass.bltest",
+                    appType: "widget",
+                    fullUrl: "path-here"
+                }
+            }
+        }, function ( resData, jwres ) {
+            if ( jwres.statusCode == 200 ) {
+                toastr.success( "Ident Issued" );
+                pingWaitPromise = $timeout( endPingWait, 5000 );
+            }
+            else {
+                $scope.identResponse = { response: "IDENT FAILED" };
+                toastr.error( "Could not issue ident!" );
+            }
+
+        } );
+    }
 
     $scope.pingResponse = { response: "WAITING to PING" };
 

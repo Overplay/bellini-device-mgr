@@ -25,8 +25,8 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI, uibHelpe
     // MAK note. Playing with arrow functions. This'll probably fail in Android browser :)
     function testDirectModelLoad(){
         ogAPI.loadModel()
-            .then( data => $log.info("Direct model load yielded: "+JSON.stringify(data)) )
-            .catch( err => $log.error("Direct model load failed: "+ JSON.stringify(err)) )
+            .then( function(data){  $log.info("Direct model load yielded: "+JSON.stringify(data)) })
+            .catch( function(err){ $log.error("Direct model load failed: "+ JSON.stringify(err)) })
     }
 
     function subtract(){

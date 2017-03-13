@@ -60,6 +60,7 @@
 
             </uib-tab>
             <uib-tab heading="Remote Control">
+                <!------- PING ------------>
                 <div style="margin-top: 10px; display: flex; padding: 10px; background-color: #ECE9E9">
                     <div style="flex:1; margin-right: 10px;">
                         <button class="btn btn-success" style="width: 100%;" ng-click="ping()">PING</button>
@@ -69,10 +70,20 @@
                     </div>
 
                 </div>
+                <!-------- IDENT ---------->
+                <div style="margin-top: 10px; display: flex; padding: 10px; background-color: #ECE9E9">
+                    <div style="flex:1; margin-right: 10px;">
+                        <button class="btn btn-success" style="width: 100%;" ng-click="identify()">IDENTIFY</button>
+                    </div>
+                    <div style="flex: 4;">
+                        <pre>{{ identResponse | json }}</pre>
+                    </div>
+
+                </div>
 
                 <div style="margin-top: 10px; display: flex; padding: 10px; background-color: #ECE9E9">
                     <div style="flex:1; margin-right: 10px;">
-                        <button class="btn btn-success" style="width: 100%;" ng-click="sendLaunch()">LAUNCH</button>
+                        <button class="btn btn-success" style="width: 100%;" ng-click="launch()">LAUNCH</button>
                     </div>
                     <div style="flex: 2;">
                         <input class="form-control" type="text" placeholder="App ID" ng-model="launchAppId"/>
