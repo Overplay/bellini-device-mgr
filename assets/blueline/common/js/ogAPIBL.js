@@ -145,7 +145,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
          * Common (mobile and TV) app service
          *
          ***************************/
-        .factory( 'ogAPI', function ( $http, $log, $interval, $q ) {
+        .factory( 'ogAPI', function ( $http, $log, $interval, $q, $rootScope ) {
 
             //local variables
             var _usingSockets;
@@ -169,14 +169,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return service.model;
             }
 
-            // function getDataForApp() {
-            //     return $http.get( API_PATH + 'appdata/' + _appName )
-            //         .then( stripData );
-            // }
-
             // updated for BlueLine
             function getDataForApp() {
-                return $http.get('/appmodel/' + _appName + '/' + getOGSystem().udid)
+                return $http.get( '/appmodel/' + _appName + '/' + getOGSystem().udid )
                     .then( stripData )
                     .then( stripData ); // conveniently the object goes resp.data.data
             }
@@ -187,7 +182,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( stripData );
             }
 
-            function joinDeviceRoom(){
+            function joinDeviceRoom() {
                 return $q( function ( resolve, reject ) {
 
                     io.socket.post( '/ogdevice/joinroom', {
@@ -199,8 +194,13 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                         } else {
                             $log.debug( "Successfully joined room for this device" );
                             io.socket.on( 'DEVICE-DM', function ( data ) {
-                                _msgCb( data );
-                                console.log( 'Message rx for `' + JSON.stringify( data ) );
+                                if ( _msgCb ) {
+                                    $rootScope.$apply( function () {
+                                        _msgCb( data );
+                                    } );
+                                } else {
+                                    console.log( 'Dropping sio message rx (no cb):' + JSON.stringify( data ) );
+                                }
                             } );
 
                             resolve();
@@ -210,11 +210,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             }
 
-            function joinVenueRoom(){
+            function joinVenueRoom() {
 
             }
 
-            function subscribeToAppData(){
+            function subscribeToAppData() {
 
                 return $q( function ( resolve, reject ) {
 
@@ -228,14 +228,22 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                         } else {
                             $log.debug( "Successfully subscribed to appData" );
                             io.socket.on( 'appdata', function ( data ) {
-                                _dataCb( data.data.data );
-                                console.log( 'AppData change for `' + data );
+                                service.model = data.data;
+                                if ( _dataCb ) {
+                                    $rootScope.$apply( function () {
+                                        _dataCb( service.model );
+                                        console.log( 'AppData change for ' + service.model );
+                                    } );
+                                } else {
+                                    console.log( 'Dropping sio data change rx (no cb):' + JSON.stringify( data ) );
+                                }
+
                             } );
 
                             resolve();
                         }
                     } );
-                })
+                } )
             }
 
             service.init = function ( params ) {
@@ -271,62 +279,106 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 if ( !_dataCb )
                     $log.warn( "You didn't specify a messageCallback, so you won't get one!" );
 
-                io.socket.on("connect", function(){
-                    $log.debug("(Re)Connecting to websockets rooms");
+                io.socket.on( "connect", function () {
+                    $log.debug( "(Re)Connecting to websockets rooms" );
                     joinDeviceRoom();
                     subscribeToAppData();
-                });
+                } );
 
                 return $http.post( '/appmodel/initialize', { appid: _appName, deviceUDID: getOGSystem().udid } )
                     .then( stripData )
-                    .then( function ( data ) {
-
-                        updateModel( data );
-
+                    .then( stripData ) // Yes, twice because data.data.data
+                    .then( function ( model ) {
                         $log.debug( "ogAPI: Model data init complete" );
                         $log.debug( "ogAPI: Subscribing to model changes" );
+                        service.model = model;
                         return subscribeToAppData();
-                    })
-                    .then( function ( data ) {
+                    } )
+                    .then( function () {
                         $log.debug( "ogAPI: Subscribing to message changes" );
                         return joinDeviceRoom();
-                    });
+                    } )
+                    .then( function () {
+                        return service.model;
+                    } );
 
             };
 
+            // TODO if we were cool kids we might make this an Observable
+            function sendSIOMessage( url, message ) {
+                var wrappedMessage = { deviceUDID: getOGSystem().udid, message: message };
+                return $q( function ( resolve, reject ) {
+                    io.socket.post( url, wrappedMessage, function ( resData, jwRes ) {
+                        if ( jwRes.statusCode != 200 ) {
+                            reject( jwRes );
+                        } else {
+                            resolve({ resData: resData, jwRes: jwRes });
+                        }
+                    } );
 
-            service.getTweets = function () {
-                return $http.get( API_PATH + 'scrape/' + _appName )
-                    .then( stripData );
+                } );
+            }
+
+
+            function sioPut( url, params ) {
+                return $q( function ( resolve, reject ) {
+                    io.socket.put( url, params, function ( resData, jwRes ) {
+                        if ( jwRes.statusCode != 200 ) {
+                            reject( jwRes );
+                        } else {
+                            resolve( { resData: resData, jwRes: jwRes } );
+                        }
+                    } );
+
+                } );
+            }
+
+
+            service.sendMessageToDeviceRoom = function (message) {
+                // NOTE must have leading slash!
+                return sendSIOMessage('/ogdevice/dm', message);
             };
 
-            service.getChannelTweets = function () {
-                return $http.get( API_PATH + 'scrape/io.ourglass.core.channeltweets' )
-                    .then( stripData );
+            service.sendMessageToVenueRoom = function ( message ) {
+                // NOTE must have leading slash!
+                return sendSIOMessage( '/venue/dm', message );
             };
 
-            service.updateTwitterQuery = function ( paramsArr ) {
-                var query = paramsArr.join( '+OR+' );
-                return $http.post( API_PATH + 'scrape/' + _appName, { query: query } );
-            };
 
-            // service.save = function () {
-            //     var postModel = _.cloneDeep( service.model );
-            //     postModel.lockKey = _lockKey || 0;
-            //     return $http.post( API_PATH + 'appdata/' + _appName, postModel );
+            // TODO Twitter scraping needs to either move into Bellini or into Buc
+            // service.getTweets = function () {
+            //     return $http.get( API_PATH + 'scrape/' + _appName )
+            //         .then( stripData );
+            // };
+            //
+            // service.getChannelTweets = function () {
+            //     return $http.get( API_PATH + 'scrape/io.ourglass.core.channeltweets' )
+            //         .then( stripData );
+            // };
+            //
+            // service.updateTwitterQuery = function ( paramsArr ) {
+            //     var query = paramsArr.join( '+OR+' );
+            //     return $http.post( API_PATH + 'scrape/' + _appName, { query: query } );
             // };
 
+
             // updated for BlueLine
+            // TODO replace with socketIO?
+            service.saveHTTP = function () {
+                return $http.put( '/appmodel/' + _appName + '/' + getOGSystem().udid, { data: service.model } )
+                    .then( stripData )
+                    .then( function ( data ) {
+                        $log.debug( "ogAPI: Model data saved via PUT" );
+                        //updateModel( data[0] )
+                    } )
+            };
+
             service.save = function () {
-                return $http.put( '/appmodel/' + _appName + '/' + getOGSystem().udid, service.model)
-                    .then ( stripData )
-                    .then ( function ( data ) {
-                        $log.debug("ogAPI: Model data saved via PUT");
-                        updateModel( data[0] )
-                    })
-                    .catch( function ( err ) {
-                        $log.error("ogAPI: some error occurred during save:PUT -- " + err);
-                    })
+                return sioPut( '/appmodel/' + _appName + '/' + getOGSystem().udid, { data: service.model } )
+                    .then( function ( data ) {
+                        $log.debug( "ogAPI: Model data saved via si PUT" );
+                        return data.resData;
+                    } )
             };
 
             service.loadModel = function () {
@@ -334,6 +386,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( updateModel );
             };
 
+            // TODO implement model locking on Bellini side...
             service.loadModelAndLock = function () {
                 return getDataForAppAndLock()
                     .then( function ( model ) {
@@ -398,63 +451,6 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return $http.post( API_PATH + 'spam', email );
             }
 
-
-            service.proxyGet = function ( targetHost, appId ) {
-                return $http.get( API_PATH + 'appdataproxy/' + appId + "?remote=" + targetHost )
-                    .then( function ( resp ) {
-                        return resp.data;
-                    } );
-            }
-
-            /**
-             * function which controls the polling for the associated model
-             * records the intervalReference so that it can be cancelled later in kill()
-             */
-            function startPolling() {
-                $log.debug( "Beginning data polling" );
-                _intervalRef = $interval( function () {
-                    $http.get( API_PATH + 'appdata/' + _appName )
-                        .then( stripData )
-                        .then( updateIfChanged )
-                        .catch( function ( err ) {
-                            $log.error( "Error polling model data!" );
-                        } );
-                }, _pollInterval );
-            }
-
-            /**
-             * function which updates the model in service if the newData passes the criteria of the DATA_UPDATE_METHOD
-             * @param newData - data to compare to the service.model and potentially replace it
-             */
-            function updateIfChanged( newData ) {
-                switch ( DATA_UPDATE_METHOD ) {
-                    case 'lastUpdated':
-                        if ( !service.model.lastUpdated || newData.lastUpdated > service.model.lastUpdated ) {
-                            $log.debug( "service has old data, updating" );
-                            service.model = newData;
-                            _dataCb( service.model );
-                        }
-                        else {
-                            $log.debug( "service still has the most recent, not updating" );
-                        }
-                        break;
-                    case 'objectEquality':
-                        //need to first make copies with no lastUpdated
-                        var tempCurrent = JSON.parse( JSON.stringify( service.model ) );
-                        delete tempCurrent.lastUpdated;
-                        var tempNew = JSON.parse( JSON.stringify( newData ) );
-                        delete tempNew.lastUpdated;
-                        if ( !_.isEqual( tempCurrent, tempNew ) ) {
-                            $log.debug( 'tempCurrent is outdated, updating' );
-                            service.model = newData;
-                            _dataCb( service.model );
-                        }
-                        else {
-                            $log.debug( "service still has the most recent, not updating" );
-                        }
-                        break;
-                }
-            }
 
             // New methods for BlueLine Architecture
 

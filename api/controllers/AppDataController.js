@@ -87,10 +87,13 @@ module.exports = {
 
 						AppData.update( { forAppId: appid, forDeviceUDID: deviceid }, newAppData )
 							.then( function ( model ) {
-								if ( !model ) {
+								if ( !model  || !model.length ) {
 									return res.serverError({error: "unable to update model"});
 								}
-								return res.ok( model );
+								// TODO could this ever not be an array?
+								var m = model[0];
+								AppData.publishUpdate( m.id, m.data, req );
+								return res.ok( m.data );
 							})
 							.catch( res.serverError );
 					})

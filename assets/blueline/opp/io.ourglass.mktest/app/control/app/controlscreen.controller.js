@@ -1,11 +1,11 @@
 /**
- * Created by mkahn on 11/17/16.
+ * Created by mkahn on 11/18/16.
  */
 
-app.controller( "mainScreenController", function ( $scope, $log, ogAPI, uibHelper, $interval ) {
+app.controller( "ogMAKBLTestMainController", function ( $scope, $log, ogAPI, uibHelper ) {
 
-    $log.debug( "mainScreenController has loaded" );
-    
+    $log.debug( "loaded ogMAKBLTestMainController" );
+
     $scope.hideAds = true;
 
     $scope.ogsystem = ogAPI.getOGSystem();
@@ -18,41 +18,42 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI, uibHelpe
     function inboundMessage( msg ) {
         $log.info( "New message: " + msg );
         $scope.inboundMsg = msg;
-        $scope.outboundMsg = { cocktail: 'shot', size: 'small', time: new Date() };
-        ogAPI.sendMessageToDeviceRoom($scope.outboundMsg);
     }
 
     // MAK note. Playing with arrow functions. This'll probably fail in Android browser :)
-    function testDirectModelLoad(){
+    function testDirectModelLoad() {
         ogAPI.loadModel()
-            .then( data => $log.info("Direct model load yielded: "+JSON.stringify(data)) )
-            .catch( err => $log.error("Direct model load failed: "+ JSON.stringify(err)) )
+            .then( data => $log.info( "Direct model load yielded: " + JSON.stringify( data ) ) )
+            .catch( err => $log.error( "Direct model load failed: " + JSON.stringify( err ) ) )
     }
 
-    function subtract(){
-        ogAPI.model.mydata.value -= 1;
-        ogAPI.model.mydata.setBy = 'TV';
-        ogAPI.save();
-    }
 
     ogAPI.init( {
         appName:         "io.ourglass.mktest",
         modelCallback:   modelChanged,
         messageCallback: inboundMessage,
-        appType:         'tv'
+        appType:         'mobile'
     } )
         .then( function ( d ) {
             $log.debug( "ogAPI init complete!" )
             uibHelper.dryToast( "Model Init OK", 2000 );
             testDirectModelLoad();
-            $interval(subtract, 5000);
 
         } )
         .catch( function ( err ) {
             $log.error( "That's not right!" );
             uibHelper.dryToast( "Model Init FAIL!", 2000 );
         } )
+        
+    
+    $scope.add = function(amt){
+        ogAPI.model.mydata.value += amt;
+        ogAPI.model.mydata.setBy = 'control';
+        ogAPI.save();
+    }
+    
+    $scope.sendDeviceDM = function(){
+        ogAPI.sendMessageToDeviceRoom({ cocktail: 'Bellini', size: "medium"});
+    }
 
-
-});
-
+} );
