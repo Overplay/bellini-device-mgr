@@ -31,7 +31,7 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI ) {
         })
             .then ( function ( data ) {
                 $log.debug("ogAPI init complete!");
-                $scope.ticketNumber = data.data.ticketNumber;
+                $scope.ticketNumber = data.ticketNumber;
             })
             .catch( function ( err ) {
                 $log.error("Something failed: " + err);
