@@ -154,6 +154,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             var _appName;
             var _appType;
 
+            var _deviceUDID = getOGSystem().udid;
             var _lockKey;
 
             // Data callback when data on BL has changed
@@ -171,7 +172,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             // updated for BlueLine
             function getDataForApp() {
-                return $http.get( '/appmodel/' + _appName + '/' + getOGSystem().udid )
+                return $http.get( '/appmodel/' + _appName + '/' + _deviceUDID )
                     .then( stripData )
                     .then( stripData ); // conveniently the object goes resp.data.data
             }
@@ -186,7 +187,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return $q( function ( resolve, reject ) {
 
                     io.socket.post( '/ogdevice/joinroom', {
-                        deviceUDID: getOGSystem().udid
+                        deviceUDID: _deviceUDID
                     }, function ( resData, jwres ) {
                         console.log( resData );
                         if ( jwres.statusCode != 200 ) {
@@ -219,7 +220,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return $q( function ( resolve, reject ) {
 
                     io.socket.post( '/appdata/subscribe', {
-                        deviceUDID: getOGSystem().udid,
+                        deviceUDID: _deviceUDID,
                         appid:      _appName
                     }, function ( resData, jwres ) {
                         console.log( resData );
@@ -263,6 +264,17 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 _appType = params.appType;
                 $log.debug( "Init called for app type: " + _appType );
 
+                if (_appType!="tv") {
+                    if (!params.deviceUDID){
+                        throw new Error( "This app type requires a deviceUDID parameter!")
+                    } else if (params.deviceUDID!='test') {
+                        _deviceUDID = params.deviceUDID;
+                    } else {
+                        // TODO this is a nasty, dirty, straight up hack
+                        _deviceUDID = getOGSystem().udid;
+                    }
+                }
+
                 // Check the app name
                 if ( !params.appName ) {
                     throw new Error( "appName parameter missing and is required." );
@@ -285,7 +297,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     subscribeToAppData();
                 } );
 
-                return $http.post( '/appmodel/initialize', { appid: _appName, deviceUDID: getOGSystem().udid } )
+                return $http.post( '/appmodel/initialize', { appid: _appName, deviceUDID: _deviceUDID } )
                     .then( stripData )
                     .then( stripData ) // Yes, twice because data.data.data
                     .then( function ( model ) {
@@ -306,7 +318,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             // TODO if we were cool kids we might make this an Observable
             function sendSIOMessage( url, message ) {
-                var wrappedMessage = { deviceUDID: getOGSystem().udid, message: message };
+                var wrappedMessage = { deviceUDID: _deviceUDID, message: message };
                 return $q( function ( resolve, reject ) {
                     io.socket.post( url, wrappedMessage, function ( resData, jwRes ) {
                         if ( jwRes.statusCode != 200 ) {
@@ -365,7 +377,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             // updated for BlueLine
             // TODO replace with socketIO?
             service.saveHTTP = function () {
-                return $http.put( '/appmodel/' + _appName + '/' + getOGSystem().udid, { data: service.model } )
+                return $http.put( '/appmodel/' + _appName + '/' + _deviceUDID, { data: service.model } )
                     .then( stripData )
                     .then( function ( data ) {
                         $log.debug( "ogAPI: Model data saved via PUT" );
@@ -374,7 +386,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             };
 
             service.save = function () {
-                return sioPut( '/appmodel/' + _appName + '/' + getOGSystem().udid, { data: service.model } )
+                return sioPut( '/appmodel/' + _appName + '/' + _deviceUDID, { data: service.model } )
                     .then( function ( data ) {
                         $log.debug( "ogAPI: Model data saved via si PUT" );
                         return data.resData;
