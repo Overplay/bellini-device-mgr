@@ -144,16 +144,14 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
             }
         }, function ( resData, jwres ) {
             if ( jwres.statusCode == 200 ) {
-                toastr.success( "Ident Issued" );
-                pingWaitPromise = $timeout( endPingWait, 5000 );
+                toastr.success( "Launch Issued" );
             }
             else {
-                $scope.identResponse = { response: "IDENT FAILED" };
-                toastr.error( "Could not issue ident!" );
+                toastr.error( "Could not issue launch!" );
             }
 
         } );
-    }
+    };
 
     $scope.pingResponse = { response: "WAITING to PING" };
 
