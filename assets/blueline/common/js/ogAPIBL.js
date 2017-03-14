@@ -273,7 +273,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                         _deviceUDID = zed[ 1 ];
                     }
                     else if ( !params.deviceUDID ) {
-                        throw new Error( "This app type requires a deviceUDID parameter!" )
+                        throw new Error( "This app type requires a deviceUDID parameter or one to be passed in the query string!" )
                     } else if ( params.deviceUDID != 'test' ) {
                         _deviceUDID = params.deviceUDID;
                     } else {
