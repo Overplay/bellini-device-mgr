@@ -145,7 +145,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
          * Common (mobile and TV) app service
          *
          ***************************/
-        .factory( 'ogAPI', function ( $http, $log, $interval, $q, $rootScope ) {
+        .factory( 'ogAPI', function ( $http, $log, $interval, $q, $rootScope, $window ) {
 
             //local variables
             var _usingSockets;
@@ -264,10 +264,17 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 _appType = params.appType;
                 $log.debug( "Init called for app type: " + _appType );
 
-                if (_appType!="tv") {
-                    if (!params.deviceUDID){
-                        throw new Error( "This app type requires a deviceUDID parameter!")
-                    } else if (params.deviceUDID!='test') {
+                var qparams = $window.location.search.substring(1);
+
+                if ( _appType != "tv" ) {
+                    if ( qparams && qparams.indexOf( "deviceUDID" ) != -1 ) {
+                        $log.debug( "Looks like we've been passed a deviceUDID in the query params, grabbing that!" );
+                        var zed = qparams.split( '=' );
+                        _deviceUDID = zed[ 1 ];
+                    }
+                    else if ( !params.deviceUDID ) {
+                        throw new Error( "This app type requires a deviceUDID parameter!" )
+                    } else if ( params.deviceUDID != 'test' ) {
                         _deviceUDID = params.deviceUDID;
                     } else {
                         // TODO this is a nasty, dirty, straight up hack
@@ -324,7 +331,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                         if ( jwRes.statusCode != 200 ) {
                             reject( jwRes );
                         } else {
-                            resolve({ resData: resData, jwRes: jwRes });
+                            resolve( { resData: resData, jwRes: jwRes } );
                         }
                     } );
 
@@ -346,9 +353,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             }
 
 
-            service.sendMessageToDeviceRoom = function (message) {
+            service.sendMessageToDeviceRoom = function ( message ) {
                 // NOTE must have leading slash!
-                return sendSIOMessage('/ogdevice/dm', message);
+                return sendSIOMessage( '/ogdevice/dm', message );
             };
 
             service.sendMessageToVenueRoom = function ( message ) {
