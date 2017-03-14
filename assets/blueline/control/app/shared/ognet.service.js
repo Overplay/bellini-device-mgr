@@ -1,4 +1,4 @@
-app.factory('ogNet', function($log, $http, $q){
+app.factory('ogNet', function($log, $http, $q, ogAPI){
 
     var service = {};
 

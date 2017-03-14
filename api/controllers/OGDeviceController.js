@@ -219,8 +219,29 @@ module.exports = {
             req );
 
         return res.ok( { status: "ok" } );
-    }
+    },
 
+    findByUDID: function (req, res ){
+    
+        if ( req.method != 'GET' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+    
+        OGDevice.findOne({ deviceUDID: params.deviceUDID })
+            .then( function(dev){
+                if (!dev)
+                    return res.badRequest({error: "no such device"});
+                
+                res.ok(dev);
+            } )
+            .catch( res.serverError );
+    
+    }
 
 };
 
