@@ -6,12 +6,26 @@
  */
 
 
-app.controller( 'listOGDeviceController', function ( devices, $scope, $log ) {
+app.controller( 'listOGDeviceController', function ( devices, $scope, $log, bVenues ) {
 
 
     $log.debug( "Loading listOGDeviceController" );
 
     $scope.ogdevices = devices;
+
+    $scope.ogdevices.forEach( function(og){
+        if (!og.atVenueUUID) {
+            og['venueName'] = "unassigned";
+        } else {
+            bVenues.getByUUID(og.atVenueUUID)
+                .then(function(v){
+                    og[ 'venueName' ] = v.name;
+                })
+                .catch(function(e){
+                    og[ 'venueName' ] = "Lookup Problem";
+                })
+        }
+    });
 
     $scope.$parent.ui = { pageTitle: "OG Boxes", panelHeading: "All Boxes" }
 

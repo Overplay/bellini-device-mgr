@@ -9,7 +9,8 @@
             <tr>
                 <th></th>
                 <th>UDID</th>
-                <th>Venue</th>
+                <th>Venue UUID</th>
+                <th>Venue Name</th>
                 <th>Last Contact</th>
 
 
@@ -26,6 +27,7 @@
                     {{ device.atVenueUUID ? device.atVenueUUID : "Unassigned" }}
                     </span>
                 </td>
+                <td>{{ device.venueName }}</td>
                 <td>TBI</td>
 
             </tr>
