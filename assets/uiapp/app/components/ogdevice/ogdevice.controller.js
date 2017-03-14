@@ -143,6 +143,40 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
 
     };
 
+    $scope.kill = function () {
+
+        if ( !$scope.form.appId ) {
+            toastr.error( "Try adding an appId sparky!" );
+            return;
+        }
+
+        belliniDM.killAppOnDevice( device.deviceUDID, $scope.form.appId )
+            .then( function ( d ) {
+                toastr.success( "Kill requested!" );
+            } )
+            .catch( function ( err ) {
+                toastr.error( "No kill for you!" );
+            } );
+
+    };
+
+    $scope.move = function () {
+
+        if ( !$scope.form.appId ) {
+            toastr.error( "Try adding an appId sparky!" );
+            return;
+        }
+
+        belliniDM.moveAppOnDevice( device.deviceUDID, $scope.form.appId )
+            .then( function ( d ) {
+                toastr.success( "Move requested!" );
+            } )
+            .catch( function ( err ) {
+                toastr.error( "No move for you!" );
+            } );
+
+    };
+
     $scope.pingResponse = { response: "WAITING to PING" };
 
     joinDeviceRoom();
