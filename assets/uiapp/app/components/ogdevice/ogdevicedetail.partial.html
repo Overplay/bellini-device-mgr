@@ -60,6 +60,25 @@
 
             </uib-tab>
             <uib-tab heading="Remote Control">
+
+
+                <div style="margin-top: 10px; padding: 10px; background-color: #ECE9E9">
+                    <div>
+                        <input class="form-control" type="text" placeholder="App ID" ng-model="form.appId"/>
+                    </div>
+                    <div style="display: flex;">
+                        <div style="flex:1; margin-right: 10px;">
+                            <button class="btn btn-success" style="width: 80%;" ng-click="launch()">LAUNCH</button>
+                        </div>
+                        <div style="flex:1; margin-right: 10px;">
+                            <button class="btn btn-danger" style="width: 80%;" ng-click="kill()">KILL</button>
+                        </div>
+                        <div style="flex:1; margin-right: 10px;">
+                            <button class="btn btn-danger" style="width: 80%;" ng-click="move()">MOVE</button>
+                        </div>
+                    </div>
+                </div>
+
                 <!------- PING ------------>
                 <div style="margin-top: 10px; display: flex; padding: 10px; background-color: #ECE9E9">
                     <div style="flex:1; margin-right: 10px;">
@@ -79,24 +98,6 @@
                         <pre>{{ identResponse | json }}</pre>
                     </div>
                 </div>
-
-                <div style="margin-top: 10px; padding: 10px; background-color: #ECE9E9">
-                    <div>
-                        <input class="form-control" type="text" placeholder="App ID" ng-model="form.appId"/>
-                    </div>
-                    <div style="display: flex;">
-                        <div style="flex:1; margin-right: 10px;">
-                            <button class="btn btn-success" style="width: 80%;" ng-click="launch()">LAUNCH</button>
-                        </div>
-                        <div style="flex:1; margin-right: 10px;">
-                            <button class="btn btn-danger" style="width: 80%;" ng-click="kill()">KILL</button>
-                        </div>
-                        <div style="flex:1; margin-right: 10px;">
-                            <button class="btn btn-danger" style="width: 80%;" ng-click="move()">MOVE</button>
-                        </div>
-                    </div>
-                </div>
-
 
             </uib-tab>
             <uib-tab heading="Logs">
