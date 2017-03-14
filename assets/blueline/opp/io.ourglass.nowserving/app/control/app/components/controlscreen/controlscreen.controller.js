@@ -72,7 +72,8 @@ app.controller( "ogNowServingController", function ( $scope, $log, ogAPI ) {
             sockets: true,
             modelCallback: modelChanged,
             messageCallback: inboundMessage,
-            appType: 'mobile'
+            appType: 'mobile',
+            deviceUDID: "test"
         })
             .then ( function ( data ) {
                 $scope.ticketNumber = data.ticketNumber

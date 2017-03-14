@@ -8,13 +8,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         .state('home', {
             url: "/home",
             templateUrl: 'app/components/homepage/home.html',
-            controller: 'homeController',
-            resolve: {
-                currentList:
-                    function ( waitList ) {
-                         return waitList.loadModel();
-                    }
-            }
+            controller: 'homeController'
         })
         .state('add', {
             url: "/add",

@@ -2,34 +2,29 @@
  * Created by mkahn on 4/28/15.
  */
 
-app.controller("homeController", function ($scope, $log, waitList, currentList, $interval, uibHelper ) {
+app.controller("homeController", function ($scope, $log, waitList, $interval, uibHelper ) {
 
-        $log.info("Loading homeController");
-        
-        $scope.ui = { firstLoad: true };
-        
-        uibHelper.curtainModal('Loading Waitlist');
-        
-        $scope.parties = currentList;
-        
-        var reloadInterval = $interval( function(){
-        
-            waitList.loadModel()
-                .then( function(list){
-                    $scope.parties = list;
-                    $scope.ui.firstLoad = false;
-                })
-                .finally( function(){
-                    uibHelper.dismissCurtain();
-                })
-            
-        }, 2000);
-    
-        // $scope.$on('MODEL_CHANGED', function(){
-        //     $scope.parties = waitList.getCurrentList();
-        // });
-        //
-        // $scope.parties = currentList;
+    $log.info("Loading homeController");
 
+    $scope.ui = { firstLoad: true };
+
+    uibHelper.curtainModal('Loading Waitlist');
+
+    $scope.$on('MODEL_CHANGED', function(){
+        $scope.parties = waitList.getCurrentList();
     });
+
+    function initialize() {
+        waitList.loadModel()
+            .then( function ( list ) {
+                $scope.parties = list;
+            })
+            .finally( function () {
+                uibHelper.dismissCurtain();
+                $scope.ui.firstLoad = false;
+            })
+    }
+
+    initialize();
+});
 
