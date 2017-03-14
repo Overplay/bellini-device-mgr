@@ -138,11 +138,9 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
             message:    {
                 dest:    device.deviceUDID,
                 action:  'launch',
-                payload: {
-                    appId:  $scope.form.appId,
-                    appType: "widget",
-                    fullUrl: "path-here"
-                }
+                appId:  $scope.form.appId,
+                appType: "widget",
+                fullUrl: "path-here"
             }
         }, function ( resData, jwres ) {
             if ( jwres.statusCode == 200 ) {
