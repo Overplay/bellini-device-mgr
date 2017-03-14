@@ -7,7 +7,7 @@ app.factory( 'waitList', function ( $log, $http, $timeout, $rootScope, ogAPI, $q
     $log.debug( "Loading waitlist service." );
     
     var _fetched = false;
-    
+
     var service = {};
 
     var _currentList;
@@ -24,20 +24,19 @@ app.factory( 'waitList', function ( $log, $http, $timeout, $rootScope, ogAPI, $q
         if (arguments.length > 1 && _.isString(arguments[0])){
             params = { name: arguments[0], partySize: arguments[1] };
         }
-        
+
         return {
             name: params && params.name,
             partySize: params && params.partySize,
-            phone: params && params.phone, 
+            phone: params && params.phone,
             dateCreated: ( params && params.dateCreated ) || new Date(),
             tableReady : ( params && params.tableReady ) || false
         }
-        
     }
-    
+
     service.newParty = function(params){
         return Party(params);
-    }
+    };
 
     function notify() {
         $rootScope.$broadcast( 'MODEL_CHANGED' );
@@ -46,6 +45,8 @@ app.factory( 'waitList', function ( $log, $http, $timeout, $rootScope, ogAPI, $q
     function handleUpdate( newModel ) {
         $log.debug( "Got a remote model update" );
         // TODO merge with local model
+        _currentList = newModel.parties;
+        notify();
     }
 
 
@@ -61,18 +62,17 @@ app.factory( 'waitList', function ( $log, $http, $timeout, $rootScope, ogAPI, $q
      * @param party
      */
      service.addParty = function( party ) {
-         
+
          var idx = _.findIndex(_currentList, { name: party.name });
-         
-         if ( idx< 0 ){
+
+         if ( idx < 0 ) {
              _currentList.push( Party( party ) );
              updateRemoteModel();
              return true;  // should return false if it fails
          }
-        
+
         return false;
-         
-    }
+    };
 
     /**
      * Removes a party from the waiting list.  Returns true is success, false if that same name is not in
@@ -87,18 +87,18 @@ app.factory( 'waitList', function ( $log, $http, $timeout, $rootScope, ogAPI, $q
 
         updateRemoteModel();
         return true;
-    }
-    
+    };
+
     service.sitParty = function( party ) {
-        
+
         if ( party.tableReady ){
             service.removeParty( party );
         } else {
             party.tableReady = new Date();
         }
-        
+
         updateRemoteModel();
-    }
+    };
 
     service.loadTestData = function( persistRemote ) {
 
@@ -113,22 +113,36 @@ app.factory( 'waitList', function ( $log, $http, $timeout, $rootScope, ogAPI, $q
 
         if ( persistRemote ) updateRemoteModel();
 
-    }
-    
+        notify();
+    };
+
     service.getCurrentList = function (){
         return _currentList;
+    };
+
+    function inboundMessage( msg ) {
+        $log.info( "New message: " + msg );
     }
 
     ogAPI.init( {
-        appName:      "io.ourglass.waitinglist",
+        appName: "io.ourglass.waitinglist",
         appType: 'mobile',
-        dataCallback: handleUpdate
-    } );
+        modelCallback: handleUpdate,
+        messageCallback: inboundMessage,
+        deviceUDID: 'test'
+    })
+        .then( function ( data ) {
+            $log.debug("waitinglist service: init success");
+            _currentList = data.parties;
+        })
+        .catch( function ( err ) {
+            $log.error("waitinglist service: Something bad happened: " + err);
+        });
 
     service.loadModel = function(){
-    
+
         $log.debug("Loading model");
-    
+
         if (!_currentList){
             return ogAPI.loadModel()
                 .then( function ( modelData ) {
@@ -139,8 +153,8 @@ app.factory( 'waitList', function ( $log, $http, $timeout, $rootScope, ogAPI, $q
         } else {
             return $q.when(_currentList);
         }
-        
-    }
+
+    };
     
     $log.debug("Done initializing waitlist service.");
 

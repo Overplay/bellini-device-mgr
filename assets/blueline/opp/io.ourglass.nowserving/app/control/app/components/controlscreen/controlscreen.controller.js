@@ -10,7 +10,7 @@ app.controller( "ogNowServingController", function ( $scope, $log, ogAPI ) {
 
     function saveModel() {
 
-        ogAPI.model.data = {ticketNumber: $scope.ticketNumber};
+        ogAPI.model = {ticketNumber: $scope.ticketNumber};
 
         ogAPI.save()
             .then( function ( response ) {
@@ -72,10 +72,11 @@ app.controller( "ogNowServingController", function ( $scope, $log, ogAPI ) {
             sockets: true,
             modelCallback: modelChanged,
             messageCallback: inboundMessage,
-            appType: 'mobile'
+            appType: 'mobile',
+            deviceUDID: "test"
         })
             .then ( function ( data ) {
-                $scope.ticketNumber = data.data.ticketNumber
+                $scope.ticketNumber = data.ticketNumber
             })
             .catch( function ( err ) {
                 $log.error("Something failed: " + err);

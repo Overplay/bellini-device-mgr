@@ -10,14 +10,14 @@
 // 		'dateCreated': new Date()
 // }
 
-app.controller('waitingListController', ['$scope', 'ogTVModel', '$log', '$timeout', function ($scope, ogTVModel, $log, $timeout) {
+app.controller('waitingListController', ['$scope', 'ogAPI', '$log', '$timeout', function ($scope, ogAPI, $log, $timeout) {
 
 	var TESTING = false;
 
 	$scope.parties = function() {
 		if (TESTING)
 			return parties;
-		return ogTVModel.model.parties;
+		return ogAPI.model.parties;
 	};
 
 
@@ -82,24 +82,34 @@ app.controller('waitingListController', ['$scope', 'ogTVModel', '$log', '$timeou
 		}
 	];
 
+	function inboundMessage( msg ) {
+		$log.info( "New message: " + msg );
+		$scope.ogsystem = msg;
+	}
 
-	function handleDataCallback(data) {
-		if (data.length != ogTVModel.model.parties.length) {
-			ogTVModel.model.parties = data.parties;
+	function handleModelCallback(data) {
+		if (data.length != ogAPI.model.parties.length) {
+			ogAPI.model.parties = data.parties;
 		}
 	}
 
-	function updateFromRemote() {
+	function initialize() {
 
-		ogTVModel.init({
+		ogAPI.init({
 			appName: "io.ourglass.waitinglist",
-			dataCallback: handleDataCallback
+			modelCallback: handleModelCallback,
+			messageCallback: inboundMessage,
+			appType: 'tv'
+		})
+			.then ( function ( data ) {
+				$log.debug("tv init finished");
+			})
+			.catch ( function ( err ) {
+				$log.error("Something failed: " + err);
 			});
 	}
 
-
-	updateFromRemote();
-
+	initialize();
 
 }]);
 

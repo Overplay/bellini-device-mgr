@@ -17,12 +17,12 @@ app.directive( 'partyCell', function (waitList, $log, uibHelper) {
             scope.tapped = function(){
                 $log.debug("Doink");
                 scope.showControls = !scope.showControls;
-            }
+            };
             
             scope.sit = function(){
                 $log.debug("Sitting...");
                 waitList.sitParty( scope.party );
-            }
+            };
             
             scope.remove = function(){
                 uibHelper.confirmModal( "Remove?", "Are you sure you want to remove "+scope.party.name+" from the waiting list?", true )
@@ -30,9 +30,7 @@ app.directive( 'partyCell', function (waitList, $log, uibHelper) {
                         $log.debug( "Removing..." );
                         waitList.removeParty( scope.party );
                     })
-                
             }
         }
     }
-
 });
