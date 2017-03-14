@@ -128,8 +128,7 @@ app.factory( 'waitList', function ( $log, $http, $timeout, $rootScope, ogAPI, $q
         appName: "io.ourglass.waitinglist",
         appType: 'mobile',
         modelCallback: handleUpdate,
-        messageCallback: inboundMessage,
-        deviceUDID: 'test'
+        messageCallback: inboundMessage
     })
         .then( function ( data ) {
             $log.debug("waitinglist service: init success");

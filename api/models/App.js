@@ -18,7 +18,21 @@ module.exports = {
     defaultModel: {
       type: 'json',
       defaultsTo: {}
+    },
+    
+    appWidth: {
+      type: 'integer'
+    },
+
+    appHeight: {
+      type: 'integer'
+    },
+    
+    appType: {
+      type: 'string'
     }
+    
+    
 
   }
 };

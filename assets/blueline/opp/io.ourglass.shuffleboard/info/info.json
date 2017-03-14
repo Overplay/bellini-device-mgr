@@ -1,0 +1,22 @@
+{
+  "appId": "io.ourglass.shuffleboard",
+  "appType": "widget",
+  "appName": "Shuffleboard",
+
+  "icon": "shuffleboard@3x.png",
+  "iconLabel": "ShuffleBoard",
+
+  "primaryColorHex": "#A9A9A9",
+  "secondaryColorHex": "#000000",
+
+  "height": 50,
+  "width": 10,
+
+  "initialValue": {
+    "red": 0,
+    "blue": 0
+  },
+
+  "version": 1.0,
+  "installDate": 1475073632093
+}

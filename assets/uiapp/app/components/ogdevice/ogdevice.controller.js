@@ -25,6 +25,8 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
 
     $log.debug( "Loading listOGDeviceDetailController" );
 
+    $scope.form = { launchAppId: '', killAppId: '' };
+
     $scope.ogdevice = device;
 
     $scope.$parent.ui = { pageTitle: "OG Box Detail", panelHeading: "For UDID: " + device.deviceUDID };
@@ -111,13 +113,19 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
     }
 
     $scope.launch = function () {
+
+        if (!$scope.form.appId){
+            toastr.error("Try adding an appId sparky!");
+            return;
+        }
+
         io.socket.post( '/ogdevice/dm', {
             deviceUDID: device.deviceUDID,
             message:    {
                 dest:    device.deviceUDID,
                 action:  'launch',
                 payload: {
-                    appId:   "io.ourglass.bltest",
+                    appId:  $scope.form.appId,
                     appType: "widget",
                     fullUrl: "path-here"
                 }

@@ -22,8 +22,8 @@
                        class="btn btn-sm btn-warning">MORE INFO</a>
                 </td>
                 <td>{{ device.deviceUDID }}</td>
-                <td><span ng-class="{ 'text-danger': !device.atVenue }">
-                    {{ device.atVenue ? device.atVenue.name : "Unassigned" }}
+                <td><span ng-class="{ 'text-danger': !device.atVenueUUID }">
+                    {{ device.atVenueUUID ? device.atVenueUUID : "Unassigned" }}
                     </span>
                 </td>
                 <td>TBI</td>

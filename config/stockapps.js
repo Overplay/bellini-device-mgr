@@ -36,6 +36,12 @@ var stockApps = [
         defaultModel: {
             mydata: { value: 0, setBy: "sails" }
         }
+    },
+    {
+        appId:        "io.ourglass.shuffleboard",
+        defaultModel: {
+           red: 0, blue: 0
+        }
     } ];
 
 var self = module.exports.stockapps = {
