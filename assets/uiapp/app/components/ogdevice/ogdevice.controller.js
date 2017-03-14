@@ -13,26 +13,26 @@ app.controller( 'listOGDeviceController', function ( devices, $scope, $log, bVen
 
     $scope.ogdevices = devices;
 
-    $scope.ogdevices.forEach( function(og){
-        if (!og.atVenueUUID) {
-            og['venueName'] = "unassigned";
+    $scope.ogdevices.forEach( function ( og ) {
+        if ( !og.atVenueUUID ) {
+            og[ 'venueName' ] = "unassigned";
         } else {
-            bVenues.getByUUID(og.atVenueUUID)
-                .then(function(v){
+            bVenues.getByUUID( og.atVenueUUID )
+                .then( function ( v ) {
                     og[ 'venueName' ] = v.name;
-                })
-                .catch(function(e){
+                } )
+                .catch( function ( e ) {
                     og[ 'venueName' ] = "Lookup Problem";
-                })
+                } )
         }
-    });
+    } );
 
     $scope.$parent.ui = { pageTitle: "OG Boxes", panelHeading: "All Boxes" }
 
 
 } );
 
-app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toastr, $timeout ) {
+app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toastr, $timeout, belliniDM ) {
 
     var pingStartTime;
     var pingWaitPromise;
@@ -128,19 +128,19 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
 
     $scope.launch = function () {
 
-        if (!$scope.form.appId){
-            toastr.error("Try adding an appId sparky!");
+        if ( !$scope.form.appId ) {
+            toastr.error( "Try adding an appId sparky!" );
             return;
         }
 
-        $http.post('ogdevice/launch', { deviceUDID: device.deviceUDID, appId: $scope.form.appId})
-            .then(function(d){
-                toastr.success("Launch requested!");
-            })
-            .catch(function(err){
-                toastr.error( "CNo launch for you!" );
-            })
-            
+        belliniDM.launchAppOnDevice( device.deviceUDID, $scope.form.appId )
+            .then( function ( d ) {
+                toastr.success( "Launch requested!" );
+            } )
+            .catch( function ( err ) {
+                toastr.error( "No launch for you!" );
+            } );
+
     };
 
     $scope.pingResponse = { response: "WAITING to PING" };
