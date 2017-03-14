@@ -133,24 +133,14 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
             return;
         }
 
-        io.socket.post( '/ogdevice/dm', {
-            deviceUDID: device.deviceUDID,
-            message:    {
-                dest:    device.deviceUDID,
-                action:  'launch',
-                appId:  $scope.form.appId,
-                appType: "widget",
-                fullUrl: "path-here"
-            }
-        }, function ( resData, jwres ) {
-            if ( jwres.statusCode == 200 ) {
-                toastr.success( "Launch Issued" );
-            }
-            else {
-                toastr.error( "Could not issue launch!" );
-            }
-
-        } );
+        $http.post('ogdevice/launch', { deviceUDID: device.deviceUDID, appId: $scope.form.appId})
+            .then(function(d){
+                toastr.success("Launch requested!");
+            })
+            .catch(function(err){
+                toastr.error( "CNo launch for you!" );
+            })
+            
     };
 
     $scope.pingResponse = { response: "WAITING to PING" };
