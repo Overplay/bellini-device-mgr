@@ -15,22 +15,27 @@ app.controller("dsConController",
         $scope.getSelectedTabTitle = function () {
             return $scope.tabs[$ionicTabsDelegate.selectedIndex()];
         };
+
         $scope.getTabURI = function (tab) {
             return tab.toLowerCase().replace(' ', '');
         };
 
-        function modelUpdate(data) {
-            if(data.messages && data.messages.length != $scope.messages.length) {
+        function modelUpdate( data ) {
+            if (data.messages && data.messages.length != $scope.messages.length) {
                 $scope.messages = data.messages || [];
             }
-            if(data.comingUpMessages && data.comingUpMessages.length != $scope.comingUpMessages.length) {
+            if (data.comingUpMessages && data.comingUpMessages.length != $scope.comingUpMessages.length) {
                 $scope.comingUpMessages = data.comingUpMessages || [];
             }
-            if(data.twitterQueries && data.twitterQueries.length != $scope.twitterQueries.length) {
+            if (data.twitterQueries && data.twitterQueries.length != $scope.twitterQueries.length) {
                 $scope.twitterQueries = data.twitterQueries || [];
             }
-            
+
             $scope.hideTVTweets = data.hideTVTweets;
+        }
+
+        function inboundMessage( msg ) {
+            $log.info( "New message: " + msg );
         }
 
         function initialize() {
@@ -39,22 +44,29 @@ app.controller("dsConController",
                 appType: 'mobile',
                 appName: "io.ourglass.ogcrawler",
                 endpoint: "control",
-                dataCallback: modelUpdate
-            });
-
-            ogAPI.loadModel()
-                .then( modelUpdate );
-
+                deviceUDID: "test",
+                modelCallback: modelUpdate,
+                messageCallback: inboundMessage
+            })
+                .then( function ( data ) {
+                    $log.debug("crawler control: init complete");
+                    modelUpdate( data );
+                })
+                .catch( function ( err ) {
+                    $log.error("crawler controller: something bad happened: " + err);
+                })
         }
 
         $scope.newMessage = function () {
             $scope.messages.push("");
             $scope.update();
         };
+
         $scope.newComingUpMessage = function () {
             $scope.comingUpMessages.push("");
             $scope.update();
         };
+
         $scope.newTwitterQuery = function () {
             $scope.twitterQueries.push("");
             //$scope.update();
@@ -64,10 +76,12 @@ app.controller("dsConController",
             $scope.messages.splice(index, 1);
             $scope.update();
         };
+
         $scope.delComingUpMessage = function (index) {
             $scope.comingUpMessages.splice(index, 1);
             $scope.update();
         };
+
         $scope.delTwitterQuery = function (index) {
             $scope.twitterQueries.splice(index, 1);
             $scope.update();
@@ -88,20 +102,11 @@ app.controller("dsConController",
                 .finally( uibHelper.dismissCurtain );
             
         };
-        
-        
+
         $scope.toggleTVTweets = function(){
             $log.debug("Toggling tweets");
             $scope.hideTVTweets =! $scope.hideTVTweets;
-        }
-
-        // $scope.$watch('messageForm.dirty', function(nval){
-        //
-        //     if (nval){
-        //         $scope.update();
-        //     }
-        //
-        // });
+        };
 
         initialize();
 

@@ -149,18 +149,27 @@ app.controller( "crawlerController",
             getTVGrid();
         });
 
+        function inboundMessage( msg ) {
+            $log.info( "New message: " + msg );
+        }
 
-        ogAPI.init( {
-            appName:       "io.ourglass.ogcrawler",
-            appType:       "tv",
-            modelCallback: modelUpdate
-        } );
+        function initialize() {
+            ogAPI.init({
+                appName: "io.ourglass.ogcrawler",
+                appType: "tv",
+                modelCallback: modelUpdate,
+                messageCallback: inboundMessage,
+                deviceUDID: "test"
+            });
 
-        ogAPI.loadModel()
-            .then( modelUpdate );
+            ogAPI.loadModel()
+                .then(modelUpdate);
+        }
 
         $interval(getTVGrid, 1000*60*5);
         getTVGrid();
+
+        initialize()
 
     });
 
