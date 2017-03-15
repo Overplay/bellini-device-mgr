@@ -16,7 +16,7 @@ module.exports = {
             .send({ email: params.email, password: params.password, type: "local"})
             .then( function(d){
                 req.session.authenticated = true;
-                res.ok(d);
+                res.ok(d.body);
             } )
             .catch( res.badRequest )
 
