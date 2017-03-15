@@ -9,7 +9,10 @@ var Promise = require('bluebird');
 var stockApps = [
     {
         appId:        "io.ourglass.nowserving",
-        defaultModel: { ticketNumber: 0 }
+        defaultModel: { ticketNumber: 0 },
+        appType: 'widget',
+        appWidth: 10,
+        appHeight: 50
     },
     {
         appId:        "io.ourglass.ogcrawler",
@@ -17,31 +20,46 @@ var stockApps = [
             "messages":       [ "Ourglass TV", "Check Ourglass out at www.ourglass.tv" ],
             "twitterQueries": [ "@Warriors" ],
             "hideTVTweets":   false
-        }
+        },
+        appType:   'crawler',
+        appWidth:  100,
+        appHeight: 10
     },
     {
         appId:        "io.ourglass.waitinglist",
         defaultModel: {
             "parties": []
-        }
+        },
+        appType:     'widget',
+        appWidth:     10,
+        appHeight:    50
     },
     {
         appId:        "io.ourglass.bltest",
         defaultModel: {
             mydata: [{ song: "My Milkshake" }, { song: "Mr. ROboto "}]
-        }
+        },
+        appType:   'widget',
+        appWidth:  10,
+        appHeight: 50
     },
     {
         appId:        "io.ourglass.mktest",
         defaultModel: {
             mydata: { value: 0, setBy: "sails" }
-        }
+        },
+        appType:   'widget',
+        appWidth:  10,
+        appHeight: 50
     },
     {
         appId:        "io.ourglass.shuffleboard",
         defaultModel: {
            red: 0, blue: 0
-        }
+        },
+        appType:   'widget',
+        appWidth:  10,
+        appHeight: 50
     } ];
 
 var self = module.exports.stockapps = {

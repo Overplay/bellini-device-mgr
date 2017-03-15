@@ -20,6 +20,16 @@ module.exports = {
             } )
             .catch( res.badRequest )
 
+    },
+
+    hackygetprogramguideyo: function( req, res){
+
+        request.get( "http://104.131.145.36:1338/tvmediaproxy/fetch/5266D")
+            .then( function(resp){
+                return res.ok(resp.body);
+            })
+            .catch( res.serverError );
+
     }
 
 }

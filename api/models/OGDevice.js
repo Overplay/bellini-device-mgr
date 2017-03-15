@@ -30,6 +30,11 @@ module.exports = {
       defaultsTo: []
     },
 
+    runningApps: {
+      type:       'array',
+      defaultsTo: []
+    },
+
     accessToken: {
       type: 'string',
       defaultsTo: ''
