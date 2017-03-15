@@ -26,7 +26,7 @@ module.exports = {
         if ( !params.deviceUDID )
             return res.badRequest( { error: 'no udid' } );
 
-        OGDevice.findOrCreate({ deviceUDID: params.deviceUDID }, { deviceUDID: params.deviceUDID } )
+        OGDevice.findOrCreate( { deviceUDID: params.deviceUDID }, { deviceUDID: params.deviceUDID } )
             .then( function ( device ) {
                 return res.ok( device );
             } )
@@ -45,39 +45,39 @@ module.exports = {
 
         var params = req.allParams();
 
-        if ( !params.deviceUDID || !params.venue )
+        if ( !params.deviceUDID || !params.venueUUID )
             return res.badRequest( { error: 'missing parameters' } );
 
         var preconditions = {
-            device: OGDevice.findOneByDeviceUDID( params.deviceUDID ),
-            venue:  Venue.findOne( params.venue )
+            device: OGDevice.findOne( { deviceUDID: params.deviceUDID }),
+            venue:  Venue.findOne( { uuid: params.venueUUID } )
         };
 
         Promise.props( preconditions )
-            .then( function(resp){
+            .then( function ( resp ) {
 
-            if ( !resp.venue)
-                return res.badRequest( { error: "No such venue" } );
+                if ( !resp.venue )
+                    return res.badRequest( { error: "No such venue" } );
 
-            if ( !resp.device )
-                return res.badRequest( { error: "No such device" } );
+                if ( !resp.device )
+                    return res.badRequest( { error: "No such device" } );
 
-            var device = resp.device;
-            device.atVenue = resp.venue.id;
-            device.save()
-                .then( function(){
-                    return res.ok(device)
-                })
-                .catch( function ( err ) {
-                    return res.serverError(err)
-                });
+                var device = resp.device;
+                device.atVenueUUID = resp.venue.uuid;
+                device.save()
+                    .then( function () {
+                        return res.ok( device )
+                    } )
+                    .catch( function ( err ) {
+                        return res.serverError( err )
+                    } );
 
-        })
-        .catch( res.serverError );
+            } )
+            .catch( res.serverError );
 
     },
 
-    joinroom: function( req, res ){
+    joinroom: function ( req, res ) {
 
         if ( !req.isSocket ) {
             return res.badRequest( { error: "Sockets only, sonny" } );
@@ -92,7 +92,7 @@ module.exports = {
         if ( !params.deviceUDID )
             return res.badRequest( { error: "Missing params" } );
 
-        var room = "device_"+params.deviceUDID;
+        var room = "device_" + params.deviceUDID;
 
         sails.sockets.join( req, room );
 
@@ -100,10 +100,10 @@ module.exports = {
         // the "funSockets" room, excluding our newly added socket:
         sails.sockets.broadcast( room,
             'DEVICE-JOIN',
-            { message: 'Welcome to the OGDevice room for '+params.deviceUDID },
+            { message: 'Welcome to the OGDevice room for ' + params.deviceUDID },
             req );
 
-        return res.ok({ message: 'joined'});
+        return res.ok( { message: 'joined' } );
 
     },
 
@@ -125,12 +125,123 @@ module.exports = {
         if ( !params.message )
             return res.badRequest( { error: "Missing message" } );
 
-        sails.sockets.broadcast( "device_" +params.deviceUDID, 'DEVICE-DM', params.message, req );
+        sails.sockets.broadcast( "device_" + params.deviceUDID, 'DEVICE-DM', params.message, req );
 
-        return res.ok(params);
+        return res.ok( params );
 
+    },
+
+    launch: function ( req, res ) {
+
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "That's not how to message, sparky!" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+
+        if ( !params.appId )
+            return res.badRequest( { error: "Missing app ID" } );
+
+        App.findOne( { appId: params.appId } )
+            .then( function ( model ) {
+                if ( !model )
+                    return res.badRequest( { error: "No such app" } );
+
+                sails.sockets.broadcast( "device_" + params.deviceUDID,
+                    'DEVICE-DM',
+                    {
+                        action:  'launch',
+                        appId:   params.appId,
+                        fullUrl: '/blueline/opp/' + params.appId + '/app/tv',
+                        width:   model.appWidth || 15,
+                        height:  model.appHeight || 40,
+                        appType: model.appType || 'widget'
+                    },
+                    req );
+
+                return res.ok( { status: "ok" } );
+            } )
+            .catch( res.serverError )
+
+    },
+
+    kill: function ( req, res ) {
+
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "That's not how to message, sparky!" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+
+        if ( !params.appId )
+            return res.badRequest( { error: "Missing app ID" } );
+
+        sails.sockets.broadcast( "device_" + params.deviceUDID,
+            'DEVICE-DM',
+            {
+                action:  'kill',
+                appId:   params.appId
+            },
+            req );
+
+        return res.ok( { status: "ok" } );
+    },
+
+    move: function ( req, res ) {
+
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "That's not how to message, sparky!" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+
+        if ( !params.appId )
+            return res.badRequest( { error: "Missing app ID" } );
+
+        sails.sockets.broadcast( "device_" + params.deviceUDID,
+            'DEVICE-DM',
+            {
+                action: 'move',
+                appId:  params.appId
+            },
+            req );
+
+        return res.ok( { status: "ok" } );
+    },
+
+    findByUDID: function (req, res ){
+    
+        if ( req.method != 'GET' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+    
+        OGDevice.findOne({ deviceUDID: params.deviceUDID })
+            .then( function(dev){
+                if (!dev)
+                    return res.badRequest({error: "no such device"});
+                
+                res.ok(dev);
+            } )
+            .catch( res.serverError );
+    
     }
-
 
 };
 

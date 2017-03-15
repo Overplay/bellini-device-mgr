@@ -6,24 +6,40 @@
  */
 
 
-app.controller( 'listOGDeviceController', function ( devices, $scope, $log ) {
+app.controller( 'listOGDeviceController', function ( devices, $scope, $log, bVenues ) {
 
 
     $log.debug( "Loading listOGDeviceController" );
 
     $scope.ogdevices = devices;
 
+    $scope.ogdevices.forEach( function ( og ) {
+        if ( !og.atVenueUUID ) {
+            og[ 'venueName' ] = "unassigned";
+        } else {
+            bVenues.getByUUID( og.atVenueUUID )
+                .then( function ( v ) {
+                    og[ 'venueName' ] = v.name;
+                } )
+                .catch( function ( e ) {
+                    og[ 'venueName' ] = "Lookup Problem";
+                } )
+        }
+    } );
+
     $scope.$parent.ui = { pageTitle: "OG Boxes", panelHeading: "All Boxes" }
 
 
 } );
 
-app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toastr, $timeout ) {
+app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toastr, $timeout, belliniDM ) {
 
     var pingStartTime;
     var pingWaitPromise;
 
     $log.debug( "Loading listOGDeviceDetailController" );
+
+    $scope.form = { launchAppId: '', killAppId: '' };
 
     $scope.ogdevice = device;
 
@@ -111,29 +127,55 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
     }
 
     $scope.launch = function () {
-        io.socket.post( '/ogdevice/dm', {
-            deviceUDID: device.deviceUDID,
-            message:    {
-                dest:    device.deviceUDID,
-                action:  'launch',
-                payload: {
-                    appId:   "io.ourglass.bltest",
-                    appType: "widget",
-                    fullUrl: "path-here"
-                }
-            }
-        }, function ( resData, jwres ) {
-            if ( jwres.statusCode == 200 ) {
-                toastr.success( "Ident Issued" );
-                pingWaitPromise = $timeout( endPingWait, 5000 );
-            }
-            else {
-                $scope.identResponse = { response: "IDENT FAILED" };
-                toastr.error( "Could not issue ident!" );
-            }
 
-        } );
-    }
+        if ( !$scope.form.appId ) {
+            toastr.error( "Try adding an appId sparky!" );
+            return;
+        }
+
+        belliniDM.launchAppOnDevice( device.deviceUDID, $scope.form.appId )
+            .then( function ( d ) {
+                toastr.success( "Launch requested!" );
+            } )
+            .catch( function ( err ) {
+                toastr.error( "No launch for you!" );
+            } );
+
+    };
+
+    $scope.kill = function () {
+
+        if ( !$scope.form.appId ) {
+            toastr.error( "Try adding an appId sparky!" );
+            return;
+        }
+
+        belliniDM.killAppOnDevice( device.deviceUDID, $scope.form.appId )
+            .then( function ( d ) {
+                toastr.success( "Kill requested!" );
+            } )
+            .catch( function ( err ) {
+                toastr.error( "No kill for you!" );
+            } );
+
+    };
+
+    $scope.move = function () {
+
+        if ( !$scope.form.appId ) {
+            toastr.error( "Try adding an appId sparky!" );
+            return;
+        }
+
+        belliniDM.moveAppOnDevice( device.deviceUDID, $scope.form.appId )
+            .then( function ( d ) {
+                toastr.success( "Move requested!" );
+            } )
+            .catch( function ( err ) {
+                toastr.error( "No move for you!" );
+            } );
+
+    };
 
     $scope.pingResponse = { response: "WAITING to PING" };
 

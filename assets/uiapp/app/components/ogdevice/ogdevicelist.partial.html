@@ -9,7 +9,8 @@
             <tr>
                 <th></th>
                 <th>UDID</th>
-                <th>Venue</th>
+                <th>Venue UUID</th>
+                <th>Venue Name</th>
                 <th>Last Contact</th>
 
 
@@ -22,10 +23,11 @@
                        class="btn btn-sm btn-warning">MORE INFO</a>
                 </td>
                 <td>{{ device.deviceUDID }}</td>
-                <td><span ng-class="{ 'text-danger': !device.atVenue }">
-                    {{ device.atVenue ? device.atVenue.name : "Unassigned" }}
+                <td><span ng-class="{ 'text-danger': !device.atVenueUUID }">
+                    {{ device.atVenueUUID ? device.atVenueUUID : "Unassigned" }}
                     </span>
                 </td>
+                <td>{{ device.venueName }}</td>
                 <td>TBI</td>
 
             </tr>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html ng-app="optvShuffConApp">
+<head>
+    <meta charset="UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="../../../../common/bower_components/angular/angular.min.js"></script>
+    <script src="../../../../common/bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="../../../../common/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="../../../../common/js/uiOGMobile/uiOGMobile.js"></script>
+
+    <!-- App Main and AngularJS Routes -->
+    <script src="app/optvShuffConApp.module.js"></script>
+    <script src="../../../../common/js/ogAPI.js"></script>
+
+    <!-- Controllers -->
+    <script src="app/components/shuffcon/ShuffconController.js"></script>
+
+    <!-- App Specific and Overridden CSS -->
+    <link href="../../../../common/css/og.css" rel="stylesheet">
+    <link href="assets/css/ogstyles.css" rel="stylesheet">
+
+    <!--<link href="assets/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">-->
+
+    <title>OGTV Shuffleboard Control</title>
+</head>
+
+<body ng-controller="shuffconController">
+
+<!--Shuffleboard Remote Control -->
+<div class="ogview">
+
+    <og-app-header name="Shuffleboard"></og-app-header>
+
+    <div class="ogcontainer">
+
+        <div class="control-container bordered">
+            <svg class="red-fill left" height="60" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg"
+                 ng-click="changeRed(-1)">
+                <path d="M0 0h24v24H0z" fill="none"/>
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/>
+            </svg>
+            <p class="center red">{{ ui.localRed }}</p>
+            <svg class="red-fill right" height="60" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg"
+                 ng-click="changeRed(1)">
+                <path d="M0 0h24v24H0z" fill="none"/>
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+            </svg>
+
+        </div>
+
+        <div class="control-container bordered">
+            <svg class="blue-fill left" height="60" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg"
+                 ng-click="changeBlue(-1)">
+                <path d="M0 0h24v24H0z" fill="none"/>
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/>
+            </svg>
+            <p class="center blue">{{ ui.localBlue }}</p>
+            <svg class="blue-fill right" height="60" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg"
+                 ng-click="changeBlue(1)">
+                <path d="M0 0h24v24H0z" fill="none"/>
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+            </svg>
+
+        </div>
+
+        <div class="control-container">
+            <a class="left" ng-click="resetScores()">Reset Scores</a>
+            <a class="right" style="text-align: right" ng-click="move()">Move App on TV</a>
+
+        </div>
+
+        <og-advert type="crawler"></og-advert>
+
+    </div>
+
+</div>
+
+</body>
+</html>

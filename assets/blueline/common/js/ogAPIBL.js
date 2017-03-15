@@ -474,6 +474,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             // New methods for BlueLine Architecture
 
             service.getOGSystem = getOGSystem;
+            
+            service.getDeviceUDID = function(){ return _deviceUDID; }
 
             return service;
 
