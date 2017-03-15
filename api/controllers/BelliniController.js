@@ -16,7 +16,7 @@ module.exports = {
             .send({ email: params.email, password: params.password, type: "local"})
             .then( function(d){
                 req.session.authenticated = true;
-                res.ok(d.body);
+                res.ok(d);
             } )
             .catch( res.badRequest )
 
@@ -25,7 +25,9 @@ module.exports = {
     hackygetprogramguideyo: function( req, res){
 
         request.get( "http://104.131.145.36:1338/tvmediaproxy/fetch/5266D")
-            .then( res.ok )
+            .then( function(resp){
+                return res.ok(resp.body);
+            })
             .catch( res.serverError );
 
     }
