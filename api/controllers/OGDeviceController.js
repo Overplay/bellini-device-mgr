@@ -241,6 +241,80 @@ module.exports = {
             } )
             .catch( res.serverError );
     
+    },
+    
+    appstatus: function (req, res) {
+
+        if ( req.method != 'GET' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+            
+        var preconditions = {
+            device: OGDevice.findOne( { deviceUDID: params.deviceUDID } ),
+            apps: App.find()
+        }
+
+        Promise.props(preconditions)
+            .then( function ( results ) {
+                if ( !results.device )
+                    return res.badRequest( { error: "no such device" } );
+
+                var allApps = results.apps.map(function(a){ return a.appId });
+                var runningApps = results.device.runningApps || [];
+                return res.ok({ available: allApps, running: runningApps });
+                
+            } )
+            .catch( res.serverError );
+        
+    },
+
+    launchack: function(req, res){
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+
+        if ( !params.appId )
+            return res.badRequest( { error: "Missing appId" } );
+
+        var preconditions = {
+            device: OGDevice.findOne( { deviceUDID: params.deviceUDID } ),
+            app:   App.findOne({ appId: params.appId })
+        }
+
+        Promise.props(preconditions)
+            .then( function(results){
+
+                if ( !results.device )
+                    return res.badRequest( { error: "no such device" } );
+
+                if ( !results.app )
+                    return res.badRequest( { error: "no such app" } );
+
+                // Get the just launched app type
+                var launchedAppType = results.app.appType;
+                // Now we need to remove any such app from currently running
+
+                 _.remove(results.device.runningApps, function(a){
+                    return a.appType == launchedAppType;
+                });
+                results.device.runningApps.push(results.app);
+                results.device.save();
+                return res.ok(results.device);
+
+
+            })
+
     }
 
 };

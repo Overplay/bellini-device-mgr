@@ -2,12 +2,14 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
 
     var service = {};
 
+    var _deviceUDID = ogAPI.getDeviceUDID();
+
     function stripData(response){
         return response.data;
     }
 
     service.getDeviceInfo = function(){
-        return $http.get( "/api/system/device" )
+        return $http.get( "/ogdevice/findByUDID?deviceUDID="+_deviceUDID )
             .then( stripData )
     }
 
@@ -40,24 +42,24 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
                     return inbound;
                 } )
         }
-    }
+    };
     
-    service.updateSystemNameLocation = function(name, location){
-       return $http.post( "/api/system/device", { name: name, locationWithinVenue: location } );
-    }
-    
-    
-    service.getApps  = function reloadAppList() {
-        
-        return $http.get( "/api/system/apps" )
-            .then( function ( data ) {
-                var rval = { runningApps:[], sleepingApps: []};
-                angular.forEach( data.data, function ( app ) {
-                    app.running ? rval.runningApps.push( app ) : rval.sleepingApps.push( app );
-                });
-                return rval;
+    // TODO this is using a blueprint route, should have dedicated route for security, maybe
+    service.updateSystemNameLocation = function(name){
+        return service.getDeviceInfo()
+            .then(function(d) {
+                return $http.put( '/api/v1/ogdevice/' + d.id, { name: name } );
             });
-    }
+            
+    };
+    
+    
+    service.getApps  = function() {
+        
+        return $http.get( "/ogdevice/appstatus?deviceUDID="+_deviceUDID )
+            .then( stripData );
+            
+    };
     
     
     service.register = function(regcode){
