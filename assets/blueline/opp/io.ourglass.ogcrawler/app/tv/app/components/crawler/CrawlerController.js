@@ -32,34 +32,47 @@ app.controller( "crawlerController",
         //and coming up
         function updateDisplay() {
 
-            ogAds.getCurrentAd()
-                .then( function ( currentAd ) {
-                    crawlerModel.ads = currentAd.textAds || [];
-                } )
-                .then( reloadTweets )
-                .then( function () {
+            // TODO: Once the APIs are ready, this can be implemented for Twitter and Ads
+            // ogAds.getCurrentAd()
+            //     .then( function ( currentAd ) {
+            //         crawlerModel.ads = currentAd.textAds || [];
+            //     } )
+            //     .then( reloadTweets )
+            //     .then( function () {
+            //
+            //         $log.debug( "Rebuilding hz scroller feed" );
+            //         var tempArr = [];
+            //         crawlerModel.user.forEach( function ( um ) {
+            //             tempArr.push( { text: um, style: { color: '#ffffff' } } )
+            //         } );
+            //
+            //         crawlerModel.twitter.forEach( function ( um ) {
+            //             tempArr.push( { text: um, style: { color: '#87CEEB' } } )
+            //         } );
+            //
+            //         crawlerModel.ads.forEach( function ( um ) {
+            //             tempArr.push( { text: um, style: { color: '#ccf936' } } )
+            //         } );
+            //
+            //         tempArr = tempArr.filter( function ( x ) {
+            //             return (x !== (undefined || !x.message));
+            //         } );
+            //
+            //         $scope.crawlerMessages = _.shuffle( tempArr );
+            //     } )
 
-                    $log.debug( "Rebuilding hz scroller feed" );
-                    var tempArr = [];
-                    crawlerModel.user.forEach( function ( um ) {
-                        tempArr.push( { text: um, style: { color: '#ffffff' } } )
-                    } );
+            // TODO: This should be removed when the above is working correctly
+            $log.debug( "Rebuilding hz scroller feed" );
+            var tempArr = [];
+            crawlerModel.user.forEach( function ( um ) {
+                tempArr.push( { text: um, style: { color: '#ffffff' } } )
+            });
 
-                    crawlerModel.twitter.forEach( function ( um ) {
-                        tempArr.push( { text: um, style: { color: '#87CEEB' } } )
-                    } );
+            tempArr = tempArr.filter( function ( x ) {
+                return (x !== (undefined || !x.message));
+            });
 
-                    crawlerModel.ads.forEach( function ( um ) {
-                        tempArr.push( { text: um, style: { color: '#ccf936' } } )
-                    } );
-
-                    tempArr = tempArr.filter( function ( x ) {
-                        return (x !== (undefined || !x.message));
-                    } );
-
-                    $scope.crawlerMessages = _.shuffle( tempArr );
-                } )
-
+            $scope.crawlerMessages = _.shuffle( tempArr );
         }
 
         function modelUpdate( data ) {
