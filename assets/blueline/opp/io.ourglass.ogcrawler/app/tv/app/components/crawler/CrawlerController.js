@@ -63,6 +63,7 @@ app.controller( "crawlerController",
         }
 
         function modelUpdate( data ) {
+            $log.debug("crawler: got a model update!");
             crawlerModel.user = data.messages;
             updateDisplay();
         }
@@ -119,7 +120,7 @@ app.controller( "crawlerController",
 
         }
 
-        function getTVGrid(){
+        function getTVGrid() {
 
             return ogProgramGuide.getNowAndNext()
                 .then( function( grid ){
@@ -160,14 +161,18 @@ app.controller( "crawlerController",
                 modelCallback: modelUpdate,
                 messageCallback: inboundMessage,
                 deviceUDID: "test"
-            });
-
-            ogAPI.loadModel()
-                .then(modelUpdate);
+            })
+                .then( function ( data ) {
+                    $log.debug("crawler: init complete");
+                    $scope.crawlerMessages = data.messages
+                })
+                .catch( function ( err ) {
+                    $log.error("crawler: something bad happened: " + err);
+                });
         }
 
-        $interval(getTVGrid, 1000*60*5);
-        getTVGrid();
+        // $interval(getTVGrid, 1000*60*5); // get tv grid every 5 min
+        // getTVGrid();
 
         initialize()
 
