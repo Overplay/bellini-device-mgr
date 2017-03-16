@@ -10,7 +10,6 @@ app.controller( "shuffleController",
         $scope.score = { red: 0, blue: 0, redHighlight: false, blueHighlight: false };
 
         var _remoteScore = {};
-
         
         function updateLocalScore() {
 
@@ -36,22 +35,32 @@ app.controller( "shuffleController",
             _remoteScore = data;
             updateLocalScore();
         }
-        
 
-        ogAPI.init( {
-            appName:         "io.ourglass.shuffleboard",
-            modelCallback:   modelChanged,
-            messageCallback: undefined, //don't need
-            appType:         'tv'
-        } )
-            .then( function ( data ) {
-                $log.debug( "ogAPI init complete!" )
-                _remoteScore = data;
+        function inboundMessage( msg ) {
+            $log.info( "New message: " + msg );
+        }
 
+        function initialize() {
+
+            ogAPI.init({
+                appName: "io.ourglass.shuffleboard",
+                sockets: true,
+                modelCallback: modelChanged,
+                messageCallback: inboundMessage, //don't need
+                appType: 'tv',
+                deviceUDID: 'test'
             } )
-            .catch( function ( err ) {
-                $log.error( "That's not right!" );
-            } )
+                .then( function ( data ) {
+                    $log.debug( "ogAPI init complete!" );
+                    _remoteScore = data;
 
+                } )
+                .catch( function ( err ) {
+                    $log.error( "That's not right!" );
+                } )
+
+        }
+
+        initialize()
 
     } );
