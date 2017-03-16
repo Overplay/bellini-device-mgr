@@ -3,7 +3,7 @@
  */
 
 app.controller( "shuffleController",
-    function ($scope, ogAPI, $log ) {
+    function ($scope, ogAPI, $log, $timeout ) {
 
         console.log( "Loading shuffleController(TV Blueline)" );
 
