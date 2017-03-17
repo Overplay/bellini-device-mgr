@@ -14,7 +14,7 @@ module.exports = {
       type: 'string',
       required: true,
       unique: true
-      },
+    },
 
     atVenueUUID: {
       type: 'string'
@@ -51,6 +51,11 @@ module.exports = {
     },
     
     software: {
+      type: 'json',
+      defaultsTo: {}
+    },
+
+    deviceData: {
       type: 'json',
       defaultsTo: {}
     },

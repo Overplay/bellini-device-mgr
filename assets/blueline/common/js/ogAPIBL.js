@@ -475,7 +475,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             service.getOGSystem = getOGSystem;
             
-            service.getDeviceUDID = function(){ return _deviceUDID; }
+            service.getDeviceUDID = function(){ return _deviceUDID; };
 
             return service;
 
@@ -489,11 +489,16 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             service.getNowAndNext = function () {
                 return $http.get( API_PATH + 'tv/currentgrid' )
                     .then( stripData );
-            }
+            };
 
             service.changeChannel = function ( channelNum ) {
                 return $http.post( API_PATH + 'tv/change/' + channelNum );
-            }
+            };
+
+            service.getProgramGuide = function () {
+                return $http.get( '/bellini/getprogramguide' )
+                    .then( stripData );
+            };
 
             return service;
         } )

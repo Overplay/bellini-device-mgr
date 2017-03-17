@@ -22,7 +22,7 @@ module.exports = {
 
     },
 
-    hackygetprogramguideyo: function( req, res){
+    getprogramguide: function( req, res){
 
         request.get( "http://104.131.145.36:1338/tvmediaproxy/fetch/5266D")
             .then( function(resp){
@@ -30,6 +30,18 @@ module.exports = {
             })
             .catch( res.serverError );
 
+    },
+
+
+    // TODO: should return information about the device, including current channel, installed apps, etc.
+    ogdeviceinfo: function (req, res) {
+        request.get("")
+            .then( function (resp) {
+                return res.ok(resp.body);
+            })
+            .catch( res.serverError );
     }
+
+
 
 }

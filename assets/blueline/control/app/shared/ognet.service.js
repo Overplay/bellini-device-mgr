@@ -8,8 +8,9 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
         return response.data;
     }
 
+    // TODO this will need to work with BlueLine
     service.getDeviceInfo = function() {
-        return $http.get( "/ogdevice/findByUDID?deviceUDID="+_deviceUDID )
+        return $http.get("/appmodel/control/" + ogAPI.getDeviceUDID())
             .then( stripData )
     };
 
@@ -33,14 +34,14 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
             return $q.when( JSON.parse( grid ) );
         } else {
             // no local copy or caching is turned off, let's get fresh data
-            return $http.get( "/api/program/grid" )
+            return $http.get( "/bellini/getprogramguide" ) // updated for BlueLine
                 .then( function ( data ) {
                     var inbound = data.data;
                     localStorage.setItem( "grid", JSON.stringify( inbound ) );
                     localStorage.setItem( "lastGetTime", Date.now());
                     $log.debug("using new data via API call from AmstelBright");
                     return inbound;
-                } )
+                })
         }
     };
     
@@ -52,10 +53,15 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
             });
     };
     
-    
+    // TODO: this needs to be more robust, checking if the model has apps
     service.getApps  = function() {
-        return $http.get( "/ogdevice/appstatus?deviceUDID=" + _deviceUDID )
-            .then( stripData );
+        return ogAPI.loadModel()
+            .then( function ( data ) {
+                $log.debug("got model data");
+                return data.apps
+            })
+        // return $http.get( "/ogdevice/appstatus?deviceUDID=" + _deviceUDID )
+        //     .then( stripData );
     };
     
     
