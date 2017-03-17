@@ -8,10 +8,10 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
         return response.data;
     }
 
-    service.getDeviceInfo = function(){
+    service.getDeviceInfo = function() {
         return $http.get( "/ogdevice/findByUDID?deviceUDID="+_deviceUDID )
             .then( stripData )
-    }
+    };
 
     //The caching is probably no longer needed since AB does the caching too...and it's better at it.
     service.getGrid = function() {
@@ -50,22 +50,46 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
             .then(function(d) {
                 return $http.put( '/api/v1/ogdevice/' + d.id, { name: name } );
             });
-            
     };
     
     
     service.getApps  = function() {
-        
-        return $http.get( "/ogdevice/appstatus?deviceUDID="+_deviceUDID )
+        return $http.get( "/ogdevice/appstatus?deviceUDID=" + _deviceUDID )
             .then( stripData );
-            
     };
     
     
     service.register = function(regcode){
         return $http.post( '/api/system/regcode?regcode=' + regcode.toUpperCase() );
+    };
+
+    function modelChanged( newData ) {
+        $log.debug("ogNet: got a model change");
     }
 
-    return service;
+    function inboundMessage( msg ) {
+        $log.info( "New message: " + msg );
+    }
+    
+    function initialize() {
+        ogAPI.init({
+            appName: "control",
+            sockets: true,
+            modelCallback: modelChanged,
+            messageCallback: inboundMessage,
+            appType: 'mobile',
+            deviceUDID: "test"
+        })
+            .then ( function ( data ) {
+                $log.debug("ogNet service successful init");
+            })
+            .catch( function ( err ) {
+                $log.error("Something failed: " + err);
+            })
+    }
 
+    initialize();
+
+    return service;
+    
 });
