@@ -54,6 +54,11 @@ module.exports = {
       type: 'json',
       defaultsTo: {}
     },
+
+    data: {
+      type: 'json',
+      defaultsTo: {}
+    },
     
     lastContact: {
       type: 'date'
