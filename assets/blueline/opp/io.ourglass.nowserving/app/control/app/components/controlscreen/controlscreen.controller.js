@@ -57,15 +57,6 @@ app.controller( "ogNowServingController", function ( $scope, $log, ogAPI ) {
     function initialize() {
 
         $log.debug( "initializing app and data" );
-        // ogControllerModel.init( { appName: "io.ourglass.nowserving" } );
-        // ogControllerModel.loadModel()
-        //     .then( function ( latestData ) {
-        //         $scope.ticketNumber = latestData.ticketNumber;
-        //     } )
-        //     .catch( function ( err ) {
-        //         $log.error( "WTF?!?!?" );
-        //         $scope.ticketNumber = "Error Talking to AB";
-        //     } )
 
         ogAPI.init({
             appName: "io.ourglass.nowserving",
