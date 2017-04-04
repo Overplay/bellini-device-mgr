@@ -3,7 +3,7 @@
  */
 
 app.directive( 'appCell', 
-    function ( $log, $http, $rootScope ) {
+    function ( $log, ogAPI, $rootScope ) {
         return {
             restrict:    'E',
             scope:       {
@@ -13,36 +13,33 @@ app.directive( 'appCell',
             link:        function ( scope, elem, attrs ) {
 
                 scope.running = attrs.running;
-
-                scope.openController = function () {
-                    window.location.href = "/www/opp/" + app.appId + '/app/control/index.html?name=' + app.appName;
-                };
                 
                 scope.launch = function(){
-                    $http.post( "/api/app/" + scope.app.appId + '/launch')
-                        .then( function ( data ) {
-                            $log.debug('Launch done')
-                            $rootScope.$broadcast('RELOAD_APPS')
-                        } );
+                    ogAPI.launch(scope.app.appId)
+                        .then( function(resp){
+                            $log.debug('Launch was ok');
+                        })
+                        .catch( $log.error )
                 }
 
                 scope.move = function () {
-                    $http.post( "/api/app/" + scope.app.appId + '/move' )
-                        .then( function ( data ) {
-                            $log.debug( 'Move done' )
-                        } );
+                    ogAPI.move( scope.app.appId )
+                        .then( function ( resp ) {
+                            $log.debug( 'Move was ok' );
+                        } )
+                        .catch( $log.error )
                 }
 
                 scope.kill = function () {
-                    $http.post( "/api/app/" + scope.app.appId + '/kill')
-                        .then( function ( data ) {
-                            $log.debug( 'Move done' )
-                            $rootScope.$broadcast( 'RELOAD_APPS' )
-                        } );
+                    ogAPI.kill( scope.app.appId )
+                        .then( function ( resp ) {
+                            $log.debug( 'Kill was ok' );
+                        } )
+                        .catch( $log.error )
                 }
                 
                 scope.control = function(){
-                    window.location.href = "/www/opp/" + scope.app.appId + '/app/control/index.html?name=' + scope.app.appName;
+                    ogAPI.relocToControlApp(scope.app.appId)
                 }
                 
             }

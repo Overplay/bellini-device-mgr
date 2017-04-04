@@ -8,7 +8,16 @@ var Promise = require('bluebird');
 
 var stockApps = [
     {
+        appId:        "io.ourglass.ogcontrol",
+        defaultModel: { favoriteChannels: [] },
+        appType:      'mobile',
+        appWidth:     10,
+        appHeight:    50
+    },
+    {
         appId:        "io.ourglass.nowserving",
+        displayName:  "Now Serving",
+        icon: "nowserve.png",
         defaultModel: { ticketNumber: 0 },
         appType: 'widget',
         appWidth: 10,
@@ -16,6 +25,8 @@ var stockApps = [
     },
     {
         appId:        "io.ourglass.ogcrawler",
+        displayName:  "OG Cralwer",
+        icon: "space.png",
         defaultModel: {
             "messages":       [ "Ourglass TV", "Check Ourglass out at www.ourglass.tv" ],
             "twitterQueries": [ "@Warriors" ],
@@ -27,6 +38,8 @@ var stockApps = [
     },
     {
         appId:        "io.ourglass.waitinglist",
+        displayName: "Waiting List",
+        icon: "waitlist@3x.png",
         defaultModel: {
             "parties": []
         },
@@ -36,8 +49,10 @@ var stockApps = [
     },
     {
         appId:        "io.ourglass.bltest",
+        displayName:  "BlueLine Test",
+        icon: "testapp.png",
         defaultModel: {
-            mydata: [{ song: "My Milkshake" }, { song: "Mr. ROboto "}]
+            mydata: [{ song: "My Milkshake" }, { song: "Mr. Roboto "}]
         },
         appType:   'widget',
         appWidth:  10,
@@ -45,6 +60,8 @@ var stockApps = [
     },
     {
         appId:        "io.ourglass.mktest",
+        displayName: "MK Test",
+        icon:        "testapp.png",
         defaultModel: {
             mydata: { value: 0, setBy: "sails" }
         },
@@ -54,6 +71,8 @@ var stockApps = [
     },
     {
         appId:        "io.ourglass.shuffleboard",
+        displayName: "Shuffleboard",
+        icon:        "shuffleboard@3x.png",
         defaultModel: {
            red: 0, blue: 0
         },

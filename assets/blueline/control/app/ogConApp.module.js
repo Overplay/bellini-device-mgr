@@ -27,11 +27,14 @@ app.config( [ '$cookiesProvider', function ( $cookiesProvider ) {
 
 
 
-app.run( function ( $rootScope, $log ) {
+app.run( function ( $rootScope, $log,  ogNet ) {
 
     $rootScope.$on( '$stateChangeError', function ( event, toState, toParams, fromState, fromParams, error ) {
         event.preventDefault();
         $log.error( error );
     } );
+
+    
+
 
 } );

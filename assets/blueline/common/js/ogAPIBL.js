@@ -426,7 +426,17 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              */
             service.move = function ( appid ) {
                 appid = appid || _appName;
-                return $http.post( API_PATH + 'app/' + appid + '/move' );
+                return $http.post( '/ogdevice/move', { deviceUDID: _deviceUDID, appId: appid } )
+                    .then( stripData )
+                    .then( function ( d ) {
+                        $rootScope.$broadcast( '$app_state_change', { action: 'move', appId: appid } );
+                        return d;
+                    } )
+                    .catch( function ( err ) {
+                        $log.info( "App move FAILED for: " + appid );
+                        $rootScope.$broadcast( '$app_state_change_failure', { action: 'move', appId: appid } );
+                        throw err; // Rethrow
+                    } );
             }
 
             /**
@@ -435,7 +445,19 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              * @returns {HttpPromise}         */
             service.launch = function ( appid ) {
                 appid = appid || _appName;
-                return $http.post( API_PATH + 'app/' + appid + '/launch' );
+                return $http.post( '/ogdevice/launch', { deviceUDID: _deviceUDID, appId: appid } )
+                    .then( stripData )
+                    .then( function(d){
+                        $log.info("App launch successful for: "+appid);
+                        $rootScope.$broadcast( '$app_state_change', { action: 'launch', appId: appid } );
+
+                        return d;
+                    })
+                    .catch(function(err){
+                        $log.info( "App launch FAILED for: " + appid );
+                        $rootScope.$broadcast( '$app_state_change_failure', { action: 'launch', appId: appid } );
+                        throw err; // Rethrow
+                    })
             }
 
             /**
@@ -446,7 +468,22 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             service.kill = function ( appid ) {
                 appid = appid || _appName;
                 //should be able to return the promise object and act on it
-                return $http.post( API_PATH + 'app/' + appid + '/kill' );
+                return $http.post( '/ogdevice/kill', { deviceUDID: _deviceUDID, appId: appid } )
+                    .then( stripData )
+                    .then( function(d){
+                        $rootScope.$broadcast( '$app_state_change', { action: 'kill', appId: appid } );
+                        return d;
+                    })
+                    .catch( function ( err ) {
+                        $log.info( "App kill FAILED for: " + appid );
+                        $rootScope.$broadcast( '$app_state_change_failure', { action: 'kill', appId: appid } );
+                        throw err; // Rethrow
+                    } )
+            }
+
+
+            service.relocToControlApp = function( appid ){
+                window.location.href = "/blueline/opp/" + appid + '/app/control/index.html?deviceUDID=' + _deviceUDID;
             }
 
             /**

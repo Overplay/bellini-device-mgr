@@ -2,7 +2,7 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
 
     var service = {};
 
-    var _deviceUDID = ogAPI.getDeviceUDID();
+    var _deviceUDID;
 
     function stripData(response){
         return response.data;
@@ -65,6 +65,32 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
     service.register = function(regcode){
         return $http.post( '/api/system/regcode?regcode=' + regcode.toUpperCase() );
     }
+
+    function inboundMessage(msg){
+
+    }
+
+    function modelUpdate(data){
+
+
+    }
+
+    var initter = ogAPI.init( {
+            appName:         "io.ourglass.ogcontrol",
+            sockets:         true,
+            modelCallback:   modelUpdate,
+            messageCallback: inboundMessage,
+            appType:         'mobile'
+        } ).then( function(resp){
+            $log.debug("Init complete");
+            _deviceUDID = ogAPI.getDeviceUDID();
+            return resp
+        });
+
+
+    service.init = function(){
+        return initter
+    };
 
     return service;
 

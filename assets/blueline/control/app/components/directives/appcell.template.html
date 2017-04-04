@@ -2,16 +2,20 @@
     .app-cell {
         /*border: 1px solid greenyellow;*/
         width: 100%;
-        height: 18vw;
-        position: relative;
+        /*height: 18vw;*/
+        height: 72px;
+        display: flex;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        margin-top: 10px;
     }
 
     .app-icon {
-        height: 15vw;
-        width: 15vw;
-        position: absolute;
-        top: 0;
-        left: 0;
+        /*height: 15vw;*/
+        /*width: 15vw;*/
+        height: 64px;
+        width: 64px;
+        margin-right: 10px;
+        flex: 1;
     }
 
     .app-img {
@@ -24,16 +28,8 @@
     }
 
     .app-cell-left {
-        position: absolute;
-        top: 0;
-        left: 16vw;
-        /*border: 1px solid yellow;*/
-        margin-left: 2vw;
-        border-left: 2px solid #20B8EB;
-        padding-left: 3vw;
-        padding-right: 3vw;
-        height: 15vw;
-        width: 70%;
+
+        flex: 5;
     }
 
     .app-name {
@@ -44,7 +40,8 @@
 
     .app-cell button {
         margin-right: 2vw;
-        font-size: 3vw;!important;
+        font-size: 3vw;
+    !important;
 
     }
 
@@ -52,12 +49,12 @@
 
 
 <div class="app-cell">
-    <div  style="float: left;">
-        <div class="app-icon"><img class="app-img" ng-src="/{{app.iconPath}}"/></div>
+    <div class="app-icon">
+        <img class="app-img" ng-src="{{app.iconPath}}"/>
     </div>
     <div class="app-cell-left" ng-if="running">
         <div class="app-name">
-            {{app.appName}}
+            {{app.displayName}}
         </div>
         <div class="app-cell-buttons">
             <button class="btn btn-warning" style="float: left;" ng-click="control()">CONTROL</button>
@@ -67,8 +64,11 @@
     </div>
 
     <div class="app-cell-left" ng-if="!running" style="padding-top: 15px;">
-        <span class="app-name">{{app.appName}} </span>
-        <button class="btn btn-success pull-right" ng-click="launch()" ><span class="glyphicon glyphicon-expand"></span></button>
+        <span class="app-name">{{app.displayName}} </span>
+        <button class="btn btn-success btn-xs pull-right" ng-click="launch()">
+            <!--<span class="glyphicon glyphicon-expand"></span>-->
+            LAUNCH
+        </button>
 
     </div>
 

@@ -15,6 +15,16 @@ module.exports = {
       unique: 'true'
     },
     
+    displayName: {
+      type: 'string',
+      defaultsTo: 'UnnamedApp'
+    },
+    
+    icon: {
+      type: 'string',
+      defaultsTo: 'appicon.png'
+    },
+    
     defaultModel: {
       type: 'json',
       defaultsTo: {}
@@ -30,9 +40,13 @@ module.exports = {
     
     appType: {
       type: 'string'
+    },
+
+    toJSON: function () {
+      var obj = this.toObject();
+      obj.iconPath = '/blueline/opp/' + obj.appId + '/assets/icons/' + obj.icon;
+      return obj;
     }
-    
-    
 
   }
 };

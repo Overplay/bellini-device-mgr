@@ -12,9 +12,10 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             templateUrl: 'app/components/dashboard/dashboard.template.html',
             controller: 'dashboardController',
             resolve:     {
-                ogDevice: function ( ogNet ) {
-                    return ogNet.getDeviceInfo();
-                }
+                 ogDevice: function ( ogNet ) {
+                     return ogNet.init().
+                        then( function(){ return ogNet.getDeviceInfo() });
+                 }
             }
 
         } )

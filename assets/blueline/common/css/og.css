@@ -6314,3 +6314,9 @@ button.close {
 .btn-full {
   width: 100%;
 }
+
+.btn-outline {
+  background-color: transparent;
+  color: inherit;
+  transition: all .5s;
+}

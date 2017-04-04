@@ -3,15 +3,15 @@
         <div class="col-md-12">
             <h4>RUNNING</h4>
             <p class="no-apps" ng-show="runningApps.length < 1">There are no running apps.</p>
-            <app-cell ng-repeat="app in runningApps track by $index" app="app" running="true"></app-cell>
+            <app-cell ng-repeat="app in runningApps | orderBy: 'displayName' track by $index" app="app" running="true"></app-cell>
         </div>
 
     </div>
     <div class="row">
         <div class="col-md-12">
-            <h4>SLEEPING</h4>
-            <p class="no-apps" ng-show="sleepingApps.length < 1">There are no sleeping apps.</p>
-            <app-cell ng-repeat="app in sleepingApps track by $index" app="app"></app-cell>
+            <h4>AVAILABLE</h4>
+            <p class="no-apps" ng-show="availableApps.length < 1">There are no avaialable apps.</p>
+            <app-cell ng-repeat="app in availableApps | orderBy: 'displayName' track by $index" app="app"></app-cell>
         </div>
     </div>
 </div>
