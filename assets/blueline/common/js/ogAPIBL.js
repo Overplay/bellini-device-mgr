@@ -34,6 +34,19 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
         return response.data;
     }
 
+    //Helper to pull url params
+    function getParameterByName( name, url ) {
+        if ( !url ) {
+            url = window.location.href;
+        }
+        name = name.replace( /[\[\]]/g, "\\$&" );
+        var regex = new RegExp( "[?&]" + name + "(=([^&#]*)|&|#|$)" ),
+            results = regex.exec( url );
+        if ( !results ) return null;
+        if ( !results[ 2 ] ) return '';
+        return decodeURIComponent( results[ 2 ].replace( /\+/g, " " ) );
+    }
+
     /**
      * This relies on the addJsonInterface on the Android side!
      * @returns {any}
@@ -47,17 +60,14 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             return rval;
         }
 
-        console.log('<p style="color:orange; font-size: 20px;">CODE RUNNING IN BROWSER or WEBVIEW</p>');
+        console.log('%c CODE RUNNING IN BROWSER or WEBVIEW', 'background: #0f0; font-size: 20px; color: #DDD');
 
         var dudid = 'testy-mctesterson';
 
-        var qparams = window.location.search.substring( 1 );
+        var qParamUDID = getParameterByName("deviceUDID");
 
-        if ( qparams && qparams.indexOf( "deviceUDID" ) != -1 ) {
-            console.log( "Looks like we've been passed a deviceUDID in the query params, grabbing that!" );
-            var zed = qparams.split( '=' );
-            dudid = zed[ 1 ];
-        }
+        if ( qParamUDID )
+            dudid = qParamUDID;
 
         var simSys = {
             abVersionCode:  99,
