@@ -54,13 +54,14 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
     function getOGSystem() {
 
         if ( window.OGSystem ) {
-            console.log("Detected code running on emulator or OG H/W");
+            console.log("%c Detected code running on emulator or OG H/W",
+                'background: #921992; font-size: 20px; color: #fff' );
             var rval = JSON.parse( window.OGSystem.getSystemInfo() );
             rval.onHardware = true;  // so code can easily tell it is on Emu or H/W
             return rval;
         }
 
-        console.log('%c CODE RUNNING IN BROWSER or WEBVIEW', 'background: #0f0; font-size: 20px; color: #3c931a');
+        console.log('%c CODE RUNNING IN BROWSER or WEBVIEW', 'background: #3c931a; font-size: 20px; color: #fff');
 
         var dudid = 'testy-mctesterson';
 
