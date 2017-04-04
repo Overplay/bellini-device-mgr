@@ -60,7 +60,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             return rval;
         }
 
-        console.log('%c CODE RUNNING IN BROWSER or WEBVIEW', 'background: #0f0; font-size: 20px; color: #DDD');
+        console.log('%c CODE RUNNING IN BROWSER or WEBVIEW', 'background: #0f0; font-size: 20px; color: #3c931a');
 
         var dudid = 'testy-mctesterson';
 
