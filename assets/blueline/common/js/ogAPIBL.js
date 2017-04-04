@@ -40,11 +40,26 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
      */
     function getOGSystem() {
 
-        if ( window.OGSystem )
-            return JSON.parse( window.OGSystem.getSystemInfo() );
+        if ( window.OGSystem ) {
+            console.log("Detected code running on emulator or OG H/W");
+            var rval = JSON.parse( window.OGSystem.getSystemInfo() );
+            rval.onHardware = true;  // so code can easily tell it is on Emu or H/W
+            return rval;
+        }
 
-        // TODO some of this mock data should be modifiable during debug
-        return {
+        console.log('<p style="color:orange; font-size: 20px;">CODE RUNNING IN BROWSER or WEBVIEW</p>');
+
+        var dudid = 'testy-mctesterson';
+
+        var qparams = window.location.search.substring( 1 );
+
+        if ( qparams && qparams.indexOf( "deviceUDID" ) != -1 ) {
+            console.log( "Looks like we've been passed a deviceUDID in the query params, grabbing that!" );
+            var zed = qparams.split( '=' );
+            dudid = zed[ 1 ];
+        }
+
+        var simSys = {
             abVersionCode:  99,
             abVersionName:  '9.9.99',
             osVersion:      "9.9.9.",
@@ -52,11 +67,13 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             name:           'Simulato',
             wifiMacAddress: '00:11:22:33',
             outputRes:      { height: 1080, width: 1920 },
-            udid:           'testy-mc-testerton',
+            udid:           dudid,
             venue:          'testvenue',
             osApiLevel:     99,
             mock:           true
-        }
+        };
+
+        return simSys;
     }
 
     function isRunningInAndroid() {
@@ -271,23 +288,23 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 _appType = params.appType;
                 $log.debug( "Init called for app type: " + _appType );
 
-                var qparams = $window.location.search.substring(1);
-
-                if ( _appType != "tv" ) {
-                    if ( qparams && qparams.indexOf( "deviceUDID" ) != -1 ) {
-                        $log.debug( "Looks like we've been passed a deviceUDID in the query params, grabbing that!" );
-                        var zed = qparams.split( '=' );
-                        _deviceUDID = zed[ 1 ];
-                    }
-                    else if ( !params.deviceUDID ) {
-                        throw new Error( "This app type requires a deviceUDID parameter or one to be passed in the query string!" )
-                    } else if ( params.deviceUDID != 'test' ) {
-                        _deviceUDID = params.deviceUDID;
-                    } else {
-                        // TODO this is a nasty, dirty, straight up hack
+                // var qparams = $window.location.search.substring(1);
+                //
+                // if ( _appType != "tv" ) {
+                //     if ( qparams && qparams.indexOf( "deviceUDID" ) != -1 ) {
+                //         $log.debug( "Looks like we've been passed a deviceUDID in the query params, grabbing that!" );
+                //         var zed = qparams.split( '=' );
+                //         _deviceUDID = zed[ 1 ];
+                //     }
+                //     else if ( !params.deviceUDID ) {
+                //         throw new Error( "This app type requires a deviceUDID parameter or one to be passed in the query string!" )
+                //     } else if ( params.deviceUDID != 'test' ) {
+                //         _deviceUDID = params.deviceUDID;
+                //     } else {
+                //         // TODO this is a nasty, dirty, straight up hack
                         _deviceUDID = getOGSystem().udid;
-                    }
-                }
+                //     }
+                // }
 
                 // Check the app name
                 if ( !params.appName ) {

@@ -32,6 +32,7 @@ app.controller( "shuffleController",
         }
 
         function modelChanged( data ) {
+            $log.debug("Received a model update")
             _remoteScore = data;
             updateLocalScore();
         }
@@ -47,8 +48,7 @@ app.controller( "shuffleController",
                 sockets: true,
                 modelCallback: modelChanged,
                 messageCallback: inboundMessage, //don't need
-                appType: 'tv',
-                deviceUDID: 'test'
+                appType: 'tv'
             } )
                 .then( function ( data ) {
                     $log.debug( "ogAPI init complete!" );
