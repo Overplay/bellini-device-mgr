@@ -32,37 +32,51 @@ app.controller( "crawlerController",
         //and coming up
         function updateDisplay() {
 
-            ogAds.getCurrentAd()
-                .then( function ( currentAd ) {
-                    crawlerModel.ads = currentAd.textAds || [];
-                } )
-                .then( reloadTweets )
-                .then( function () {
+            // TODO: Once the APIs are ready, this can be implemented for Twitter and Ads
+            // ogAds.getCurrentAd()
+            //     .then( function ( currentAd ) {
+            //         crawlerModel.ads = currentAd.textAds || [];
+            //     } )
+            //     .then( reloadTweets )
+            //     .then( function () {
+            //
+            //         $log.debug( "Rebuilding hz scroller feed" );
+            //         var tempArr = [];
+            //         crawlerModel.user.forEach( function ( um ) {
+            //             tempArr.push( { text: um, style: { color: '#ffffff' } } )
+            //         } );
+            //
+            //         crawlerModel.twitter.forEach( function ( um ) {
+            //             tempArr.push( { text: um, style: { color: '#87CEEB' } } )
+            //         } );
+            //
+            //         crawlerModel.ads.forEach( function ( um ) {
+            //             tempArr.push( { text: um, style: { color: '#ccf936' } } )
+            //         } );
+            //
+            //         tempArr = tempArr.filter( function ( x ) {
+            //             return (x !== (undefined || !x.message));
+            //         } );
+            //
+            //         $scope.crawlerMessages = _.shuffle( tempArr );
+            //     } )
 
-                    $log.debug( "Rebuilding hz scroller feed" );
-                    var tempArr = [];
-                    crawlerModel.user.forEach( function ( um ) {
-                        tempArr.push( { text: um, style: { color: '#ffffff' } } )
-                    } );
+            // TODO: This should be removed when the above is working correctly
+            $log.debug( "Rebuilding hz scroller feed" );
+            var tempArr = [];
+            crawlerModel.user.forEach( function ( um ) {
+                tempArr.push( { text: um, style: { color: '#ffffff' } } )
+            });
 
-                    crawlerModel.twitter.forEach( function ( um ) {
-                        tempArr.push( { text: um, style: { color: '#87CEEB' } } )
-                    } );
+            tempArr = tempArr.filter( function ( x ) {
+                return (x !== (undefined || !x.message));
+            });
 
-                    crawlerModel.ads.forEach( function ( um ) {
-                        tempArr.push( { text: um, style: { color: '#ccf936' } } )
-                    } );
-
-                    tempArr = tempArr.filter( function ( x ) {
-                        return (x !== (undefined || !x.message));
-                    } );
-
-                    $scope.crawlerMessages = _.shuffle( tempArr );
-                } )
-
+            $scope.crawlerMessages = _.shuffle( tempArr );
         }
 
         function modelUpdate( data ) {
+            $log.debug("crawler: got a model update!");
             crawlerModel.user = data.messages;
             updateDisplay();
         }
@@ -119,7 +133,7 @@ app.controller( "crawlerController",
 
         }
 
-        function getTVGrid(){
+        function getTVGrid() {
 
             return ogProgramGuide.getNowAndNext()
                 .then( function( grid ){
@@ -149,18 +163,31 @@ app.controller( "crawlerController",
             getTVGrid();
         });
 
+        function inboundMessage( msg ) {
+            $log.info( "New message: " + msg );
+        }
 
-        ogAPI.init( {
-            appName:       "io.ourglass.ogcrawler",
-            appType:       "tv",
-            modelCallback: modelUpdate
-        } );
+        function initialize() {
+            ogAPI.init({
+                appName: "io.ourglass.ogcrawler",
+                appType: "tv",
+                modelCallback: modelUpdate,
+                messageCallback: inboundMessage,
+                deviceUDID: "test"
+            })
+                .then( function ( data ) {
+                    $log.debug("crawler: init complete");
+                    $scope.crawlerMessages = data.messages
+                })
+                .catch( function ( err ) {
+                    $log.error("crawler: something bad happened: " + err);
+                });
+        }
 
-        ogAPI.loadModel()
-            .then( modelUpdate );
+        // $interval(getTVGrid, 1000*60*5); // get tv grid every 5 min
+        // getTVGrid();
 
-        $interval(getTVGrid, 1000*60*5);
-        getTVGrid();
+        initialize()
 
     });
 

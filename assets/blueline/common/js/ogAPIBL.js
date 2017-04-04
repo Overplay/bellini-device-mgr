@@ -66,7 +66,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
     angular.module( 'ourglassAPI', [] )
 
     // Advertising service
-        .factory( 'ogAds', function ( $http, $log ) {
+        .factory( 'ogAds', function ( $http, $q, $log ) {
 
             var _forceAllAds = true;
 
@@ -91,7 +91,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return $http.get( url )
                     .then( stripData )
                     .then( processNewAds )
-            }
+            };
 
             service.getNextAd = function () {
 
@@ -101,7 +101,14 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 _adIndex = (_adIndex + 1) % _adRotation.length;
                 return _adRotation[ _adIndex ];
 
-            }
+            };
+
+            // TODO: This needs to be implemented for ogCrawler
+            service.getCurrentAd = function () {
+                return $q( function ( resolve, reject ) {
+                    resolve({"currentAds": []});
+                })
+            };
 
 
             service.getImgUrl = function ( adType ) {
@@ -523,14 +530,21 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             var service = {};
 
+            // TODO: This needs to be updated for Blueline
             service.getNowAndNext = function () {
                 return $http.get( API_PATH + 'tv/currentgrid' )
                     .then( stripData );
-            }
+            };
 
             service.changeChannel = function ( channelNum ) {
                 return $http.post( API_PATH + 'tv/change/' + channelNum );
-            }
+            };
+
+            // updated for Blueline
+            service.getProgramGuide = function () {
+                return $http.get( '/bellini/getprogramguide' )
+                    .then( stripData );
+            };
 
             return service;
         } )
