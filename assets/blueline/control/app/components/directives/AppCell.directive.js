@@ -39,7 +39,7 @@ app.directive( 'appCell',
                 }
                 
                 scope.control = function(){
-                    ogAPI.relocToControlApp(scope.app.appId)
+                    ogAPI.relocToControlApp(scope.app)
                 }
                 
             }

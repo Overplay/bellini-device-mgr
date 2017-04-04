@@ -489,8 +489,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             }
 
 
-            service.relocToControlApp = function( appid ){
-                window.location.href = "/blueline/opp/" + appid + '/app/control/index.html?deviceUDID=' + _deviceUDID;
+            service.relocToControlApp = function( app ){
+                window.location.href = "/blueline/opp/" + app.appId +
+                    '/app/control/index.html?deviceUDID=' + _deviceUDID + '&displayName=' + app.displayName;
             }
 
             /**
