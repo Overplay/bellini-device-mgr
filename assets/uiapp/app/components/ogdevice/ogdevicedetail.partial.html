@@ -63,20 +63,21 @@
 
 
                 <div style="margin-top: 10px; padding: 10px; background-color: #ECE9E9">
-                    <div>
-                        <input class="form-control" style="margin-bottom: 10px;" type="text" placeholder="App ID" ng-model="form.appId"/>
-                    </div>
-                    <div style="display: flex;">
-                        <div style="flex:1; margin-right: 10px;">
-                            <button class="btn btn-success" style="width: 80%;" ng-click="launch()">LAUNCH</button>
-                        </div>
-                        <div style="flex:1; margin-right: 10px;">
-                            <button class="btn btn-danger" style="width: 80%;" ng-click="kill()">KILL</button>
-                        </div>
-                        <div style="flex:1; margin-right: 10px;">
-                            <button class="btn btn-danger" style="width: 80%;" ng-click="move()">MOVE</button>
-                        </div>
-                    </div>
+                    <iframe width="375" height="667" src="/blueline/control/index.html?deviceUDID={{ ogdevice.deviceUDID }}"></iframe>
+                    <!--<div>-->
+                        <!--<input class="form-control" style="margin-bottom: 10px;" type="text" placeholder="App ID" ng-model="form.appId"/>-->
+                    <!--</div>-->
+                    <!--<div style="display: flex;">-->
+                        <!--<div style="flex:1; margin-right: 10px;">-->
+                            <!--<button class="btn btn-success" style="width: 80%;" ng-click="launch()">LAUNCH</button>-->
+                        <!--</div>-->
+                        <!--<div style="flex:1; margin-right: 10px;">-->
+                            <!--<button class="btn btn-danger" style="width: 80%;" ng-click="kill()">KILL</button>-->
+                        <!--</div>-->
+                        <!--<div style="flex:1; margin-right: 10px;">-->
+                            <!--<button class="btn btn-danger" style="width: 80%;" ng-click="move()">MOVE</button>-->
+                        <!--</div>-->
+                    <!--</div>-->
                 </div>
 
                 <!------- PING ------------>
