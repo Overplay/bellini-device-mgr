@@ -66,7 +66,7 @@ app.controller( "shuffconController",
 
 
         $scope.move = function () {
-            ogControllerModel.move();
+            ogAPI.move();
         };
 
         initialize();
