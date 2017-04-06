@@ -89,6 +89,17 @@ module.exports.bootstrap = function ( cb ) {
         });
 
 
+    TwitterService.authenticate()
+        .then( function(t){
+            return SocialScrape.create({ source: 'twitter', queryString: '@mitch_kahn', forDeviceUDID: 'test', forAppId: 'io.ourglass.twitterbot'})
+                .then( TwitterService.runScrape)
+        })
+        .then( function(d){
+            sails.log.debug(d);
+        })
+        .catch( function(e){
+            sails.log.error(e);
+        })
     // It's very important to trigger this callback method when you are finished
     // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
 
