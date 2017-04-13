@@ -247,6 +247,39 @@ module.exports = {
         return res.ok({ response: "Bellini-DM is here."});
     },
 
+    changechannel: function(req, res){
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+
+        if ( !params.channel )
+            return res.badRequest( { error: "Missing channel" } );
+
+        OGDevice.findOne( { deviceUDID: params.deviceUDID } )
+            .then( function ( dev ) {
+                if ( !dev )
+                    return res.badRequest( { error: "no such device" } );
+
+
+                // This lets the webapps know, albeit indirectly
+                sails.sockets.broadcast( "device_" + params.deviceUDID,
+                    'DEVICE-DM',
+                    {
+                        action: 'tune',
+                        channel: parseInt(params.channel)
+                    } );
+                res.ok( { message: "thank you for your patronage" } );
+            } )
+            .catch( res.serverError );
+
+    },
+
     programchange: function( req, res ){
     
         if ( req.method != 'POST' )

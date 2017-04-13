@@ -554,6 +554,14 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             // New methods for BlueLine Architecture
 
             service.getOGSystem = getOGSystem;
+
+            service.getCurrentProgram = function(){
+                var sys = getOGSystem();
+                if (!sys.onHardware)
+                    return undefined; // we're not on OG Box or Emu
+
+                return sys.nowShowing;
+            }
             
             service.getDeviceUDID = function(){ return _deviceUDID; }
 
