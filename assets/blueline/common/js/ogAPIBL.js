@@ -187,6 +187,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             // unique name, like io.ourglass.cralwer
             var _appName;
+            // The above is called appId everywhere else, so we support both in here until we can clean up!
+            var _appId;
             var _appType;
 
             var _deviceUDID = getOGSystem().udid;
@@ -207,14 +209,14 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             // updated for BlueLine
             function getDataForApp() {
-                return $http.get( '/appmodel/' + _appName + '/' + _deviceUDID )
+                return $http.get( '/appmodel/' + _appId + '/' + _deviceUDID )
                     .then( stripData )
                     .then( stripData ); // conveniently the object goes resp.data.data
             }
 
             // TODO someone should implement locking someday :D [mak]
             function getDataForAppAndLock() {
-                return $http.get( API_PATH + 'appdata/' + _appName + "?lock" )
+                return $http.get( API_PATH + 'appdata/' + _appId + "?lock" )
                     .then( stripData );
             }
 
@@ -256,7 +258,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                     io.socket.post( '/appdata/subscribe', {
                         deviceUDID: _deviceUDID,
-                        appid:      _appName
+                        appid:      _appId
                     }, function ( resData, jwres ) {
                         console.log( resData );
                         if ( jwres.statusCode != 200 ) {
@@ -318,12 +320,17 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 // }
 
                 // Check the app name
-                if ( !params.appName ) {
-                    throw new Error( "appName parameter missing and is required." );
+                if ( !params.appName && !params.appId ) {
+                    throw new Error( "appId parameter missing and is required." );
                 }
 
-                _appName = params.appName;
-                $log.debug( "Init for app: " + _appName );
+                if (params.appName)
+                    console.log("%c appName parameter is deprecated and is now appId. Fix it in your code!", "background-color: #cb42f4; color: #fff;");
+
+                _appName = params.appId || params.appName;
+                _appId = _appName;
+                
+                $log.debug( "Init for app: " + _appId );
 
                 _dataCb = params.modelCallback;
                 if ( !_dataCb )
@@ -339,7 +346,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     subscribeToAppData();
                 } );
 
-                return $http.post( '/appmodel/initialize', { appid: _appName, deviceUDID: _deviceUDID } )
+                return $http.post( '/appmodel/initialize', { appid: _appId, deviceUDID: _deviceUDID } )
                     .then( stripData )
                     .then( stripData ) // Yes, twice because data.data.data
                     .then( function ( model ) {
@@ -399,27 +406,27 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             };
 
 
-            // TODO Twitter scraping needs to either move into Bellini or into Buc
-            // service.getTweets = function () {
-            //     return $http.get( API_PATH + 'scrape/' + _appName )
-            //         .then( stripData );
-            // };
-            //
-            // service.getChannelTweets = function () {
-            //     return $http.get( API_PATH + 'scrape/io.ourglass.core.channeltweets' )
-            //         .then( stripData );
-            // };
-            //
-            // service.updateTwitterQuery = function ( paramsArr ) {
-            //     var query = paramsArr.join( '+OR+' );
-            //     return $http.post( API_PATH + 'scrape/' + _appName, { query: query } );
-            // };
+            service.getTweets = function () {
+                return $http.get( '/socialscrape/result?deviceUDID='+_deviceUDID+'&appId='+_appId )
+                    .then( stripData );
+            };
+            
+            
+            service.getChannelTweets = function () {
+                return $http.get( '/socialscrape/channeltweets?deviceUDID=' + _deviceUDID )
+                    .then( stripData );
+            };
+            
+            service.updateTwitterQuery = function ( paramsArr ) {
+                var query = paramsArr.join( '+OR+' );
+                return $http.post( '/socialscrape/add', { queryString: query, deviceUDID: _deviceUDID, appId: _appId } );
+            };
 
 
             // updated for BlueLine
             // TODO replace with socketIO?
             service.saveHTTP = function () {
-                return $http.put( '/appmodel/' + _appName + '/' + _deviceUDID, { data: service.model } )
+                return $http.put( '/appmodel/' + _appId + '/' + _deviceUDID, { data: service.model } )
                     .then( stripData )
                     .then( function ( data ) {
                         $log.debug( "ogAPI: Model data saved via PUT" );
@@ -428,7 +435,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             };
 
             service.save = function () {
-                return sioPut( '/appmodel/' + _appName + '/' + _deviceUDID, { data: service.model } )
+                return sioPut( '/appmodel/' + _appId + '/' + _deviceUDID, { data: service.model } )
                     .then( function ( data ) {
                         $log.debug( "ogAPI: Model data saved via si PUT" );
                         return data.resData;
@@ -456,11 +463,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * performs a post to the move endpoint for either the current app or the appid that is passed in
-             * @param [appid] the app to move, if not included, then move the _appName
+             * @param [appid] the app to move, if not included, then move the _appId
              * @returns {HttpPromise}
              */
             service.move = function ( appid ) {
-                appid = appid || _appName;
+                appid = appid || _appId;
                 return $http.post( '/ogdevice/move', { deviceUDID: _deviceUDID, appId: appid } )
                     .then( stripData )
                     .then( function ( d ) {
@@ -476,10 +483,10 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * performs a post to the launch endpoint for either the current app or the appid that is passed in
-             * @param [appid] the app to move, if not included, then move the _appName
+             * @param [appid] the app to move, if not included, then move the _appId
              * @returns {HttpPromise}         */
             service.launch = function ( appid ) {
-                appid = appid || _appName;
+                appid = appid || _appId;
                 return $http.post( '/ogdevice/launch', { deviceUDID: _deviceUDID, appId: appid } )
                     .then( stripData )
                     .then( function(d){
@@ -497,11 +504,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * performs a post to the kill endpoint for either the current app or the appid that is passed in
-             * @param [appid] the app to move, if not included, then move the _appName
+             * @param [appid] the app to move, if not included, then move the _appId
              * @returns {HttpPromise}
              */
             service.kill = function ( appid ) {
-                appid = appid || _appName;
+                appid = appid || _appId;
                 //should be able to return the promise object and act on it
                 return $http.post( '/ogdevice/kill', { deviceUDID: _deviceUDID, appId: appid } )
                     .then( stripData )

@@ -13,13 +13,10 @@
 app.controller( "crawlerController",
     function ( $scope, $timeout, $http, $interval, ogAPI, $log, $window, $q, ogAds, ogProgramGuide ) {
 
-
-        var TWEET_COUNT = 10, //MAGIC NUMBER?
-            TWEET_UPDATE_INTERVAL = 30000;
-
+        //Maximum number of tweets to show
+        var TWEET_COUNT = 10;
 
         $scope.vertMessages = [];
-            
         $scope.crawlerMessages = [];
 
         var crawlerModel = {
@@ -32,47 +29,34 @@ app.controller( "crawlerController",
         //and coming up
         function updateDisplay() {
 
-            // TODO: Once the APIs are ready, this can be implemented for Twitter and Ads
-            // ogAds.getCurrentAd()
-            //     .then( function ( currentAd ) {
-            //         crawlerModel.ads = currentAd.textAds || [];
-            //     } )
-            //     .then( reloadTweets )
-            //     .then( function () {
-            //
-            //         $log.debug( "Rebuilding hz scroller feed" );
-            //         var tempArr = [];
-            //         crawlerModel.user.forEach( function ( um ) {
-            //             tempArr.push( { text: um, style: { color: '#ffffff' } } )
-            //         } );
-            //
-            //         crawlerModel.twitter.forEach( function ( um ) {
-            //             tempArr.push( { text: um, style: { color: '#87CEEB' } } )
-            //         } );
-            //
-            //         crawlerModel.ads.forEach( function ( um ) {
-            //             tempArr.push( { text: um, style: { color: '#ccf936' } } )
-            //         } );
-            //
-            //         tempArr = tempArr.filter( function ( x ) {
-            //             return (x !== (undefined || !x.message));
-            //         } );
-            //
-            //         $scope.crawlerMessages = _.shuffle( tempArr );
-            //     } )
+            ogAds.getCurrentAd()
+                .then( function ( currentAd ) {
+                    crawlerModel.ads = currentAd.textAds || [];
+                } )
+                .then( reloadTweets )
+                .then( function () {
 
-            // TODO: This should be removed when the above is working correctly
-            $log.debug( "Rebuilding hz scroller feed" );
-            var tempArr = [];
-            crawlerModel.user.forEach( function ( um ) {
-                tempArr.push( { text: um, style: { color: '#ffffff' } } )
-            });
+                    $log.debug( "Rebuilding hz scroller feed" );
+                    var tempArr = [];
+                    crawlerModel.user.forEach( function ( um ) {
+                        tempArr.push( { text: um, style: { color: '#ffffff' } } )
+                    } );
 
-            tempArr = tempArr.filter( function ( x ) {
-                return (x !== (undefined || !x.message));
-            });
+                    crawlerModel.twitter.forEach( function ( um ) {
+                        tempArr.push( { text: um, style: { color: '#87CEEB' } } )
+                    } );
 
-            $scope.crawlerMessages = _.shuffle( tempArr );
+                    crawlerModel.ads.forEach( function ( um ) {
+                        tempArr.push( { text: um, style: { color: '#ccf936' } } )
+                    } );
+
+                    tempArr = tempArr.filter( function ( x ) {
+                        return (x !== (undefined || !x.message));
+                    } );
+
+                    $scope.crawlerMessages = _.shuffle( tempArr );
+                });
+
         }
 
         function modelUpdate( data ) {
@@ -107,7 +91,7 @@ app.controller( "crawlerController",
                         }
 
                         if (tempArr.length>0)
-                            crawlerModel.twitter = tempArr;
+                            crawlerModel.twitter = _.shuffle(tempArr);
                             
                         $log.debug("Processed tweets are this long: "+tempArr.length);
                     }
@@ -117,6 +101,7 @@ app.controller( "crawlerController",
                 } )
                 .catch( function ( err ) {
                     $log.error( "Shat meeself getting tweets!" );
+                    return false;
                 } )
 
         }
@@ -177,7 +162,18 @@ app.controller( "crawlerController",
             })
                 .then( function ( data ) {
                     $log.debug("crawler: init complete");
-                    $scope.crawlerMessages = data.messages
+                    crawlerModel.user = data.messages;
+                    updateDisplay();
+                    if ( data.twitterQueries ) {
+                        // TODO This is gross because it runs a tweet grab immediately
+                        ogAPI.updateTwitterQuery(data.twitterQueries)
+                            .then( function(d){
+                                $log.debug("Successfully update twitter queries");
+                            })
+                            .catch(function(e){
+                                $log.error(e.message);
+                            })
+                    }
                 })
                 .catch( function ( err ) {
                     $log.error("crawler: something bad happened: " + err);

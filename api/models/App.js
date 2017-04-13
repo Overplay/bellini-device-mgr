@@ -41,6 +41,13 @@ module.exports = {
     appType: {
       type: 'string'
     },
+    
+    // Virtual apps do not appear on the app picker in the System Control app. They are for things like DirecTV
+    // tweet scraping.
+    isVirtual: {
+      type: 'boolean',
+      defaultsTo: false
+    },
 
     toJSON: function () {
       var obj = this.toObject();

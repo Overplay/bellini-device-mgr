@@ -79,7 +79,12 @@ var stockApps = [
         appType:   'widget',
         appWidth:  10,
         appHeight: 50
-    } ];
+    },
+    {
+        appId:        "tuner",
+        appType:      'virtual',
+        isVirtual:     true
+    }];
 
 var self = module.exports.stockapps = {
 

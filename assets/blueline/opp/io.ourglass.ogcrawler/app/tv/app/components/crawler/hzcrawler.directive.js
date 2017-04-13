@@ -70,12 +70,7 @@ app.directive( 'hzCrawler',
                     } );
                 
                 }
-                
-                
-                function updateModel() {
 
-
-                }
 
                 // Dump crawler off screen
                 function resetCrawlerTransition() {
@@ -121,9 +116,16 @@ app.directive( 'hzCrawler',
                     } )
                 }
 
+                scope.$watch('messages', function(newval, oldval){
+                    if ( (newval && newval.length ) && ( !oldval || !oldval.length ))
+                        doScroll(); // we just went from no content to having content
+                });
+
                 function doScroll() {
 
                     resetCrawlerTransition();
+                    if (!scope.messages || !scope.messages.length)
+                        return; // nothing to do
                     scope.displayMessages = _.cloneDeep( scope.messages );
                     loadWidth()
                         .then( function ( width ) {

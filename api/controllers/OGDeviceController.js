@@ -247,6 +247,34 @@ module.exports = {
         return res.ok({ response: "Bellini-DM is here."});
     },
 
+    programchange: function( req, res ){
+    
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+
+        if ( !params.tvShow )
+            return res.badRequest( { error: "Missing show info" } );
+
+        OGDevice.findOne( { deviceUDID: params.deviceUDID } )
+            .then( function ( dev ) {
+                if ( !dev )
+                    return res.badRequest( { error: "no such device" } );
+
+                // TODO this should be validated as proper TV Show!!!!
+                dev.currentProgram = tvShow;
+                dev.save();
+                res.ok( { message: "thank you for your patronage" } );
+            })
+            .catch( res.serverError );
+
+    },
+
     appstatus: function ( req, res ) {
 
         if ( req.method != 'GET' )

@@ -39,6 +39,11 @@ module.exports = {
       type: 'string',
       defaultsTo: ''
     },
+    
+    currentProgram: {
+      type: 'json',
+      defaultsTo: {}
+    },
 
     logs: {
       collection: 'ogLog',

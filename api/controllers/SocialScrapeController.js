@@ -76,9 +76,8 @@ module.exports = {
 
     },
 
-    result: function ( req, res ) {
-
-        sails.hooks.socialscrapehook.dbmaint( 'DELETE_ALL' );
+    // TODO this is the same code as below, should really be one piece of code that returns
+    fordeviceandapp: function(req, res){
 
         if ( req.method != 'GET' )
             return res.badRequest( { error: "Bad verb" } );
@@ -103,6 +102,37 @@ module.exports = {
             .catch( res.serverError );
 
 
+    },
+
+    result: function ( req, res ) {
+
+        if ( req.method != 'GET' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+
+        if ( !params.appId )
+            return res.badRequest( { error: "Missing appId" } );
+
+        SocialScrape.findOne( { forDeviceUDID: params.deviceUDID, forAppId: params.appId } )
+            .then( function ( scrape ) {
+
+                if ( !scrape )
+                    return res.notFound( { error: 'no such appId, UDID combo' } );
+
+                return res.ok( scrape.lastResult );
+            } )
+            .catch( res.serverError );
+    },
+    
+    // TODO: the idea is the tweet SS obj is setup when a channel change comes into BDM
+    // for now, respond with nothing
+    channeltweets: function (req, res ){
+        res.ok([]);
     }
 };
 
