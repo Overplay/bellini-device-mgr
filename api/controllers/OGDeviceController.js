@@ -269,6 +269,12 @@ module.exports = {
                 // TODO this should be validated as proper TV Show!!!!
                 dev.currentProgram = params.tvShow;
                 dev.save();
+                // This lets the webapps know, albeit indirectly
+                sails.sockets.broadcast( "device_" + params.deviceUDID,
+                    'DEVICE-DM',
+                    {
+                        action: 'new-program'
+                    } );
                 res.ok( { message: "thank you for your patronage" } );
             })
             .catch( res.serverError );
