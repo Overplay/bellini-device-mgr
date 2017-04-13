@@ -267,7 +267,7 @@ module.exports = {
                     return res.badRequest( { error: "no such device" } );
 
                 // TODO this should be validated as proper TV Show!!!!
-                dev.currentProgram = tvShow;
+                dev.currentProgram = params.tvShow;
                 dev.save();
                 res.ok( { message: "thank you for your patronage" } );
             })
