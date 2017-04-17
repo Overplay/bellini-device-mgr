@@ -1,20 +1,16 @@
-# ASAHI: A Basically Working Sails Web App Using Waterlock
+# BELLINI Device Manager
 
-Waterlock is a nice start towards handing authentication for a Sails.js app, but it still requires the user do a lot
-of work such as: policies, login pages, password reset pages, etc.
+All of the Bellini apps (Core, Device Manager, PGS) are based off improved versions of the original Asahi code.
 
-Installation:
-
-1. Clone repo
-
-2. `cd` into folder then `npm install`
-
-3. There will be some "bowery" stuff to do, but we'll make a Grunt task for that later, for now just run `bower update`
-where needed.
+Bellini-DM's role in life is to handle all OG devices:
+* SocketIO communication paths
+* Logging
+* Serving of apps ( codename "Blueline" in the assets/blueline folder )
+* Monitoring devices
 
 
-Structure Notes
----------------
+Sails Structure Notes
+---------------------
 
 1. The usual Grunting of `assets` to `.tmp` is turned off. I like to really know how my stuff is going together and this
    is particularly important when using AngularJS. Assets is served directly as the root of the webserver.
