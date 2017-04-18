@@ -39,11 +39,6 @@ module.exports = {
       type: 'string',
       defaultsTo: ''
     },
-    
-    currentProgram: {
-      type: 'json',
-      defaultsTo: {}
-    },
 
     logs: {
       collection: 'ogLog',
@@ -67,6 +62,23 @@ module.exports = {
     
     lastContact: {
       type: 'date'
+    },
+
+    guideInfo: {
+      type: 'json',
+      defaultsTo: { source: 'ogpgs', 
+                  lineupId: "5266D",
+                  carrier: "DirecTV" }
+    },
+    
+    pairedTo: {
+      type: 'json',
+      defaultsTo: {}
+    },
+
+    currentProgram: {
+      type:       'json',
+      defaultsTo: {}
     }
 
   }
