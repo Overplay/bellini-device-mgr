@@ -90,6 +90,13 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
     function isRunningInAndroid() {
         return window.OGSystem;
     }
+    
+    function getOGDeviceFromCloud(udid){
+        
+        return $http.get('/ogdevice/findByUDID?deviceUDID='+udid)
+            .then(stripData);
+    
+    }
 
     angular.module( 'ourglassAPI', [] )
 
@@ -300,24 +307,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 _appType = params.appType;
                 $log.debug( "Init called for app type: " + _appType );
-
-                // var qparams = $window.location.search.substring(1);
-                //
-                // if ( _appType != "tv" ) {
-                //     if ( qparams && qparams.indexOf( "deviceUDID" ) != -1 ) {
-                //         $log.debug( "Looks like we've been passed a deviceUDID in the query params, grabbing that!" );
-                //         var zed = qparams.split( '=' );
-                //         _deviceUDID = zed[ 1 ];
-                //     }
-                //     else if ( !params.deviceUDID ) {
-                //         throw new Error( "This app type requires a deviceUDID parameter or one to be passed in the query string!" )
-                //     } else if ( params.deviceUDID != 'test' ) {
-                //         _deviceUDID = params.deviceUDID;
-                //     } else {
-                //         // TODO this is a nasty, dirty, straight up hack
-                        _deviceUDID = getOGSystem().udid;
-                //     }
-                // }
+                _deviceUDID = getOGSystem().udid;
+                
 
                 // Check the app name
                 if ( !params.appName && !params.appId ) {
@@ -561,33 +552,32 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     return undefined; // we're not on OG Box or Emu
 
                 return sys.nowShowing;
-            }
+            };
             
             service.getDeviceUDID = function(){ return _deviceUDID; }
 
-            return service;
 
-        } )
-
-
-        .factory( 'ogProgramGuide', function ( $http, $log, $interval ) {
-
-            var service = {};
-
-            // TODO: This needs to be updated for Blueline
-            service.getNowAndNext = function () {
-                return $http.get( API_PATH + 'tv/currentgrid' )
+            service.getGrid = function () {
+                return $http.get( '/pgs/grid?deviceUDID='+ _deviceUDID )
                     .then( stripData );
             };
 
             service.changeChannel = function ( channelNum ) {
-                return $http.post( API_PATH + 'tv/change/' + channelNum );
+                return $http.post( '/ogdevice/changechannel?deviceUDID=' + _deviceUDID
+                     + '&channel=' + channelNum )
+                     .then(stripData);
             };
 
-            // updated for Blueline
-            service.getProgramGuide = function () {
-                return $http.get( '/bellini/getprogramguide' )
+            service.getGridForChannel = function ( channelNum ){
+
+                return $http.post( '/pgs/listingsforchannel?deviceUDID=' + _deviceUDID
+                    + '&channel=' + channelNum )
                     .then( stripData );
+
+            };
+            
+            service.pairedSTB = function(){
+                return getOGSystem();
             };
 
             return service;

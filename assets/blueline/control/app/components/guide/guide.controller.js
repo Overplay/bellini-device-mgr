@@ -3,10 +3,11 @@
  */
 
 app.controller( "guideController",
-    function ( $scope, $timeout, ogDevice, $log, $interval, uibHelper, $cookies, ogNet, $filter, ogProgramGuide,
+    function ( $scope, $timeout, ogDevice, $log, $interval, uibHelper, $filter, ogAPI,
                $rootScope, $location, $anchorScroll) {
 
         $log.info( "Loading guideController" );
+        
         $scope.ui = { loadError: false, refineSearch: 'all', isPaired: ogDevice.isPairedToSTB };
 
         var slideIdx = 0;

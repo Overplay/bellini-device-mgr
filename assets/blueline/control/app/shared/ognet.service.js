@@ -12,37 +12,6 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
         return $http.get( "/ogdevice/findByUDID?deviceUDID="+_deviceUDID )
             .then( stripData )
     }
-
-    //The caching is probably no longer needed since AB does the caching too...and it's better at it.
-    service.getGrid = function() {
-
-        // Grab local copy, if one exists
-        var grid = localStorage.getItem( "grid" );
-
-        var now = Date.now();
-        var lastGetTime = parseInt(localStorage.getItem("lastGetTime"), 10);
-        var useCached = false;
-
-        if (lastGetTime && now < lastGetTime + 300000) {
-            useCached = true;
-        }
-        
-        if ( grid && useCached ) {
-            // We had a local copy, so make it JSON and return as an already resolved promise
-            $log.debug("using cached grid data");
-            return $q.when( JSON.parse( grid ) );
-        } else {
-            // no local copy or caching is turned off, let's get fresh data
-            return $http.get( "/api/program/grid" )
-                .then( function ( data ) {
-                    var inbound = data.data;
-                    localStorage.setItem( "grid", JSON.stringify( inbound ) );
-                    localStorage.setItem( "lastGetTime", Date.now());
-                    $log.debug("using new data via API call from AmstelBright");
-                    return inbound;
-                } )
-        }
-    };
     
     // TODO this is using a blueprint route, should have dedicated route for security, maybe
     service.updateSystemNameLocation = function(name){

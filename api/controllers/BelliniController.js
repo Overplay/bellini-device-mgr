@@ -20,31 +20,8 @@ module.exports = {
             } )
             .catch( res.badRequest )
 
-    },
-
-    getprogramguide: function( req, res) {
-
-        request.get("http://104.131.145.36:1338/tvmediaproxy/fetch/5266D")
-            .then( function( resp ) {
-                if ( resp.status != 200 ) {
-                    return res.serverError({error: "Unable to find tv program listings."});
-                }
-                return res.ok( resp.body );
-            })
-            .catch( res.serverError );
-
-    },
-
-    getcurrentchannel: function (req, res) {
-        return res.serverError({errror: "not yet implemented"});
-    },
-
-    setcurrentchannel: function ( req, res) {
-        return res.serverError({error: "not yet implemented"});
-    },
-
-    getnowandnext: function ( req, res) {
-        return res.serverError({error: "not yet implemented"});
     }
+
+ 
 
 };

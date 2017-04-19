@@ -247,6 +247,30 @@ module.exports = {
         return res.ok({ response: "Bellini-DM is here."});
     },
 
+    regstbpairing: function( req, res){
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+
+        if (!req.body && !req.body.carrier )
+            return res.badRequest( { error: "Malformed STB data"} );
+
+        OGDevice.update( { deviceUDID: params.deviceUDID} , { pairedTo: req.body } )
+            .then( function ( dev ) {
+                if ( !dev )
+                    return res.badRequest( { error: "no such device" } );
+
+                res.ok( dev );
+            } )
+            .catch( res.serverError );
+
+    },
+
     changechannel: function(req, res){
 
         if ( req.method != 'POST' )
