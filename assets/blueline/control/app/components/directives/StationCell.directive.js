@@ -33,9 +33,10 @@ app.directive( 'stationCell',
 
                 }
 
-                scope.displayTime = function ( timeStr) {
+                // timeStr is utc time, so we need to add the proper offset for our TZ
+                scope.displayTime = function ( timeStr ) {
 
-                    var date = new Date(Date.parse(timeStr));
+                    var date = new Date(Date.parse(timeStr + " -0700"));
                     var hour = (date.getHours() > 12 ? date.getHours() - 12 : date.getHours());
                     var min = date.getMinutes();
 

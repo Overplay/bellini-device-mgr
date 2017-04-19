@@ -79,6 +79,21 @@ module.exports = {
     currentProgram: {
       type:       'json',
       defaultsTo: {}
+    },
+    
+    timeZoneOffset: {
+      type:   'string',
+      defaultsTo: '-0700'
+    },
+    
+    favoriteChannels: {
+      type: 'array',
+      defaultsTo: []
+    },
+    
+    hideChannels: {
+      type:       'array',
+      defaultsTo: []
     }
 
   }
