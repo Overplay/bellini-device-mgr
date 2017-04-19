@@ -11,6 +11,10 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
     service.getDeviceInfo = function(){
         return $http.get( "/ogdevice/findByUDID?deviceUDID="+_deviceUDID )
             .then( stripData )
+            .then( function(device){
+                device.isPairedToSTB = device.pairedTo && device.pairedTo.carrier;
+                return device;
+            })
     }
     
     // TODO this is using a blueprint route, should have dedicated route for security, maybe

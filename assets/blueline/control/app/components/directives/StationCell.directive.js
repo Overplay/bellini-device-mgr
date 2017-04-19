@@ -3,7 +3,7 @@
  */
 
 app.directive( 'stationCell',
-    function ( $log, ogProgramGuide, uibHelper, $http, $rootScope, $timeout ) {
+    function ( $log, ogAPI, uibHelper, $http, $rootScope, $timeout ) {
         return {
             restrict:    'E',
             scope:       {
@@ -27,7 +27,7 @@ app.directive( 'stationCell',
 
                     var hud = uibHelper.curtainModal( 'Changing...' );
                     $log.debug( "Changing channel to: " + scope.grid.channel.channelNumber );
-                    ogProgramGuide.changeChannel( scope.grid.channel.channelNumber );
+                    ogAPI.changeChannel( scope.grid.channel.channelNumber );
                     $rootScope.currentChannel = scope.grid;
                     $timeout(function(){ hud.dismiss() }, 5000);
 

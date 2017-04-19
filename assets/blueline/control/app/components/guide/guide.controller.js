@@ -7,7 +7,7 @@ app.controller( "guideController",
                $rootScope, $location, $anchorScroll) {
 
         $log.info( "Loading guideController" );
-        
+
         $scope.ui = { loadError: false, refineSearch: 'all', isPaired: ogDevice.isPairedToSTB };
 
         var slideIdx = 0;
@@ -18,20 +18,24 @@ app.controller( "guideController",
 
         $rootScope.currentChannel = {};
 
-        function getCurrentChannel() {
-            return ogProgramGuide.getNowAndNext()
-                .then(function (grid) {
-                    $log.debug("Got the grid and current channel.");
-                    $rootScope.currentChannel = grid.grid;
-                });
-        }
-
-        getCurrentChannel();
+        // function getCurrentChannel() {
+        //     return ogAPI.getGrid()
+        //         .then(function (grid) {
+        //             $log.debug("Got the grid and current channel.");
+        //             $rootScope.currentChannel = grid.grid;
+        //         });
+        // }
+        //
+        // getCurrentChannel();
 
         function loadListings(){
-            ogNet.getGrid(false)
+            ogAPI.getGrid(false)
                 .then( function ( g ) {
                     fullGrid = g;
+
+                    var currentChannel = parseInt(ogDevice.currentProgram.channelNumber);
+                    $rootScope.currentChannel = _.find( fullGrid, { channel: { channelNumber: currentChannel } } );
+
                     filterGrid();
                 } )
                 .catch(function(err){
@@ -60,8 +64,6 @@ app.controller( "guideController",
                     return inputArray;
             
             }
-        
-        
         }
 
         function filterGrid(){
@@ -93,6 +95,7 @@ app.controller( "guideController",
                     slideIdx = 0;
                 }
             }
+
             filterGrid();
 
         };

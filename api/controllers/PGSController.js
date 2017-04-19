@@ -35,6 +35,8 @@ function lineupForDevice(deviceUDID){
                     var lup = d.body;
                     var rval = _.map(lup, function(chanLup){
 
+                        chanLup.channel["logoUrl"] = "http://cdn.tvpassport.com/image/station/100x100/" + chanLup.channel.logoFilename;
+
                         _.remove(chanLup.listings, function(listing){
                             // Times come from TVMedia in utc
                             var showEndsAt = moment( listing.listDateTime + " +0000").add( listing.duration, "m");
