@@ -75,7 +75,7 @@ module.exports.bootstrap = function ( cb ) {
             return sails.config.stockapps.install();
         } )
 
-        .then( function (apps) {
+        .then( function ( apps ) {
             sails.config.testdata.install();
             sails.log.debug( "Inserts done" );
             return true;
@@ -83,25 +83,18 @@ module.exports.bootstrap = function ( cb ) {
         .then( function () {
             sails.log.debug( "Bootstrapping SAILS done" );
         } )
-        .catch( function(err){
-        
-            sails.log.error("Something went wrong bootstrapping!");
-        });
+        .catch( function ( err ) {
+
+            sails.log.error( "Something went wrong bootstrapping!" );
+        } );
 
 
-    TwitterService.authenticate()
-        .then( function(t){
-            return SocialScrape.create({ source: 'twitter', queryString: '@mitch_kahn', forDeviceUDID: 'test', forAppId: 'io.ourglass.twitterbot'})
-                .then( TwitterService.runScrape)
-        })
-        .then( function(d){
-            sails.log.debug(d);
-        })
-        .catch( function(e){
-            sails.log.error(e);
-        })
-    // It's very important to trigger this callback method when you are finished
-    // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
+    // TwitterService.authenticate()
+    //     .then( function(t){
+    //         return SocialScrape.create({ source: 'twitter', queryString: '@mitch_kahn', forDeviceUDID: 'test',
+    // forAppId: 'io.ourglass.twitterbot'}) .then( TwitterService.runScrape) }) .then( function(d){ sails.log.debug(d);
+    // }) .catch( function(e){ sails.log.error(e); }) It's very important to trigger this callback method when you are
+    // finished with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
 
     cb();
 };

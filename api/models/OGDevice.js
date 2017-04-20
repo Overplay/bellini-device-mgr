@@ -8,94 +8,96 @@
 
 module.exports = {
 
-  attributes: {
+    attributes: {
 
-    deviceUDID: {
-      type: 'string',
-      required: true,
-      unique: true
-      },
+        deviceUDID: {
+            type:     'string',
+            required: true,
+            unique:   true
+        },
 
-    atVenueUUID: {
-      type: 'string'
-    },
+        atVenueUUID: {
+            type: 'string'
+        },
 
-    name: {
-      type: 'string',
-      defaultsTo: "No Name"
-    },
+        name: {
+            type:       'string',
+            defaultsTo: "No Name"
+        },
 
-    installedApps: {
-      type: 'array',
-      defaultsTo: []
-    },
+        installedApps: {
+            type:       'array',
+            defaultsTo: []
+        },
 
-    runningApps: {
-      type:       'array',
-      defaultsTo: []
-    },
+        runningApps: {
+            type:       'array',
+            defaultsTo: []
+        },
 
-    accessToken: {
-      type: 'string',
-      defaultsTo: ''
-    },
+        accessToken: {
+            type:       'string',
+            defaultsTo: ''
+        },
 
-    logs: {
-      collection: 'ogLog',
-      via: 'forDevice'
-    },
+        logs: {
+            collection: 'ogLog',
+            via:        'forDevice'
+        },
 
-    hardware: {
-      type: 'json',
-      defaultsTo: {}
-    },
-    
-    software: {
-      type: 'json',
-      defaultsTo: {}
-    },
+        hardware: {
+            type:       'json',
+            defaultsTo: {}
+        },
 
-    data: {
-      type: 'json',
-      defaultsTo: {}
-    },
-    
-    lastContact: {
-      type: 'date'
-    },
+        software: {
+            type:       'json',
+            defaultsTo: {}
+        },
 
-    guideInfo: {
-      type: 'json',
-      defaultsTo: { source: 'ogpgs', 
-                  lineupId: "5266D",
-                  carrier: "DirecTV" }
-    },
-    
-    pairedTo: {
-      type: 'json',
-      defaultsTo: {}
-    },
+        data: {
+            type:       'json',
+            defaultsTo: {}
+        },
 
-    currentProgram: {
-      type:       'json',
-      defaultsTo: {}
-    },
-    
-    timeZoneOffset: {
-      type:   'string',
-      defaultsTo: '-0700'
-    },
-    
-    favoriteChannels: {
-      type: 'array',
-      defaultsTo: []
-    },
-    
-    hideChannels: {
-      type:       'array',
-      defaultsTo: []
+        lastContact: {
+            type: 'date'
+        },
+
+        guideInfo: {
+            type:       'json',
+            defaultsTo: {
+                source:   'ogpgs',
+                lineupId: "5266D",
+                carrier:  "DirecTV"
+            }
+        },
+
+        pairedTo: {
+            type:       'json',
+            defaultsTo: {}
+        },
+
+        currentProgram: {
+            type:       'json',
+            defaultsTo: {}
+        },
+
+        timeZoneOffset: {
+            type:       'string',
+            defaultsTo: '-0700'
+        },
+
+        favoriteChannels: {
+            type:       'array',
+            defaultsTo: []
+        },
+
+        hideChannels: {
+            type:       'array',
+            defaultsTo: []
+        }
+
     }
-
-  }
 };
 

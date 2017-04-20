@@ -85,6 +85,12 @@ module.exports = {
         sponsorships: {
             type: 'array',
             defaultsTo: []
+        },
+        
+        // used for "Virtual Venues" like "Limbo" where devices are before associated.
+        virtual: {
+            type: 'boolean',
+            defaultsTo: false
         }
     },
 

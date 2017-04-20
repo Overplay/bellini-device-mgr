@@ -8,6 +8,16 @@
 
 var Promise = require( 'bluebird' );
 
+
+function sendDeviceDM( deviceUDID, message, req ) {
+
+    sails.sockets.broadcast( "device_" + deviceUDID,
+        'DEVICE-DM',
+        message,
+        req );
+
+}
+
 module.exports = {
 
     /**
@@ -40,7 +50,7 @@ module.exports = {
 
     associateWithVenue: function ( req, res ) {
 
-        if ( req.method != 'POST' )
+        if ( req.method != 'POST'   )
             return res.badRequest( { error: 'bad verb' } );
 
         var params = req.allParams();
@@ -66,11 +76,43 @@ module.exports = {
                 device.atVenueUUID = resp.venue.uuid;
                 device.save()
                     .then( function () {
+                        // Let device know this has changed
+                        sendDeviceDM( params.deviceUDID, {
+                            action: 'cloud_record_update',
+                            change: { atVenueUUID: device.atVenueUUID }
+                        }, req );
                         return res.ok( device )
                     } )
                     .catch( function ( err ) {
                         return res.serverError( err )
                     } );
+
+            } )
+            .catch( res.serverError );
+
+    },
+
+    changeName: function ( req, res ) {
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: 'bad verb' } );
+
+        var params = req.allParams();
+
+        if ( !params.deviceUDID || !params.name )
+            return res.badRequest( { error: 'missing parameters' } );
+
+        OGDevice.update( { deviceUDID: params.deviceUDID }, { name: params.name } )
+            .then( function ( devices ) {
+
+                if ( devices.length == 0 )
+                    return res.badRequest( { error: "No device for that UDID" } );
+
+                sendDeviceDM( params.deviceUDID, {
+                    action: 'cloud_record_update',
+                    change: { name: devices[0].name }
+                }, req );
+                return res.ok( devices[0] );
 
             } )
             .catch( res.serverError );
@@ -237,17 +279,32 @@ module.exports = {
                 if ( !dev )
                     return res.badRequest( { error: "no such device" } );
 
-                res.ok( dev );
+                if ( !dev.atVenueUUID ) {
+                    return res.ok( dev );
+                }
+
+                return Promise.props( { device: dev, venue: Venue.findOne( { uuid: dev.atVenueUUID } ) } );
+
             } )
+            .then( function ( props ) {
+
+                if ( props.venue ) {
+                    props.device.venueName = props.venue.name;
+                }
+
+                return res.ok( props.device );
+
+            } )
+
             .catch( res.serverError );
 
     },
 
-    pingcloud: function(req, res) {
-        return res.ok({ response: "Bellini-DM is here."});
+    pingcloud: function ( req, res ) {
+        return res.ok( { response: "Bellini-DM is here." } );
     },
 
-    regstbpairing: function( req, res){
+    regstbpairing: function ( req, res ) {
 
         if ( req.method != 'POST' )
             return res.badRequest( { error: "Bad verb" } );
@@ -257,10 +314,10 @@ module.exports = {
         if ( !params.deviceUDID )
             return res.badRequest( { error: "Missing UDID" } );
 
-        if (!req.body && !req.body.carrier )
-            return res.badRequest( { error: "Malformed STB data"} );
+        if ( !req.body && !req.body.carrier )
+            return res.badRequest( { error: "Malformed STB data" } );
 
-        OGDevice.update( { deviceUDID: params.deviceUDID} , { pairedTo: req.body } )
+        OGDevice.update( { deviceUDID: params.deviceUDID }, { pairedTo: req.body } )
             .then( function ( dev ) {
                 if ( !dev )
                     return res.badRequest( { error: "no such device" } );
@@ -271,7 +328,7 @@ module.exports = {
 
     },
 
-    changechannel: function(req, res){
+    changechannel: function ( req, res ) {
 
         if ( req.method != 'POST' )
             return res.badRequest( { error: "Bad verb" } );
@@ -295,8 +352,8 @@ module.exports = {
                 sails.sockets.broadcast( "device_" + params.deviceUDID,
                     'DEVICE-DM',
                     {
-                        action: 'tune',
-                        channel: parseInt(params.channel)
+                        action:  'tune',
+                        channel: parseInt( params.channel )
                     } );
                 res.ok( { message: "thank you for your patronage" } );
             } )
@@ -304,8 +361,8 @@ module.exports = {
 
     },
 
-    programchange: function( req, res ){
-    
+    programchange: function ( req, res ) {
+
         if ( req.method != 'POST' )
             return res.badRequest( { error: "Bad verb" } );
 
@@ -333,7 +390,7 @@ module.exports = {
                         action: 'new-program'
                     } );
                 res.ok( { message: "thank you for your patronage" } );
-            })
+            } )
             .catch( res.serverError );
 
     },
@@ -427,15 +484,15 @@ module.exports = {
 
                             case 'kill':
 
-                                _.remove( results.device.runningApps, function(a){
+                                _.remove( results.device.runningApps, function ( a ) {
                                     return a.appId == results.app.appId;
-                                })
+                                } )
                                 results.device.save();
                                 return res.ok( results.device );
                                 break;
 
                             case 'move':
-                                return res.ok( { iheadthat: 'but i did nothing'})
+                                return res.ok( { iheadthat: 'but i did nothing' } )
 
                         }
 
