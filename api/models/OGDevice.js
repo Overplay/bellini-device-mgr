@@ -96,8 +96,28 @@ module.exports = {
         hideChannels: {
             type:       'array',
             defaultsTo: []
+        },
+
+        tempRegCode: {
+            type: 'string',
+            defaultsTo: ''
         }
 
+    },
+
+    afterUpdate: function(updatedRecord, cb){
+
+        // If the reg code is set, put a timeout to clear it in 5 minutes
+        if (updatedRecord.tempRegCode){
+            setTimeout( function(){
+                OGDevice.update({ deviceUDID: updatedRecord.deviceUDID }, { tempRegCode: ''})
+                    .then(function(dev){
+                        sails.log.silly("Cleared temp reg code");
+                    })
+            }, 5 * 60 * 1000);
+        }
+
+        cb();
     }
 };
 

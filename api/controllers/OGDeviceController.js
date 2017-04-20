@@ -50,7 +50,7 @@ module.exports = {
 
     associateWithVenue: function ( req, res ) {
 
-        if ( req.method != 'POST'   )
+        if ( req.method != 'POST' )
             return res.badRequest( { error: 'bad verb' } );
 
         var params = req.allParams();
@@ -110,9 +110,9 @@ module.exports = {
 
                 sendDeviceDM( params.deviceUDID, {
                     action: 'cloud_record_update',
-                    change: { name: devices[0].name }
+                    change: { name: devices[ 0 ].name }
                 }, req );
-                return res.ok( devices[0] );
+                return res.ok( devices[ 0 ] );
 
             } )
             .catch( res.serverError );
@@ -510,7 +510,44 @@ module.exports = {
         }
 
 
+    },
+
+    regcode: function ( req, res ) {
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+
+        // Get all living reg codes...there shouldn't be too many
+
+        OGDevice.find( { tempRegCode: { '!': '' } } )
+            .then( function ( waitingOGs ) {
+
+                var codesInUse = _.pluck( waitingOGs, 'tempRegCode' );
+                var letters = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ];
+                var code;
+
+                do {
+                    code = _.sample( letters ) + _.random( 0, 9 ) + _.sample( letters ) + _.sample( letters );
+                } while ( codesInUse.indexOf( code ) != -1 );
+
+                return OGDevice.update( { deviceUDID: params.deviceUDID }, { tempRegCode: code } );
+            } )
+            .then( function ( devices ) {
+
+                if ( devices.length == 0 )
+                    return res.badRequest( { error: "no such device" } );
+
+                return res.ok( { code: devices[ 0 ].tempRegCode } );
+            } )
+            .catch( res.serverError );
     }
+
 
 };
 
