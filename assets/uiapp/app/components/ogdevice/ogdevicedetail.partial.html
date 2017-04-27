@@ -6,7 +6,8 @@
                     <tbody>
                     <tr>
                         <td style="font-weight: bold; width: 20%;">Device Name</td>
-                        <td style="text-align: left;">{{ ogdevice.name }}</td>
+                        <td style="text-align: left;">{{ ogdevice.name }}
+                        <button class="btn btn-sm pull-right" ng-click="changeName()">CHANGE NAME</button></td>
                     </tr>
 
                     <tr>
@@ -20,6 +21,7 @@
                     <tr>
                         <td style="font-weight: bold; width: 20%;">Venue Name</td>
                         <td style="text-align: left;">{{ ogdevice.atVenue ? ogdevice.atVenue.name : "Not Associated "}}
+                            <button class="btn btn-sm pull-right" ng-click="changeVenue()">CHANGE VENUE</button>
                         </td>
                     </tr>
                     <tr>

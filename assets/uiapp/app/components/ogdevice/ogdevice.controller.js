@@ -32,7 +32,7 @@ app.controller( 'listOGDeviceController', function ( devices, $scope, $log, bVen
 
 } );
 
-app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toastr, $timeout, belliniDM ) {
+app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toastr, $timeout, belliniDM, uibHelper ) {
 
     var pingStartTime;
     var pingWaitPromise;
@@ -70,6 +70,28 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
                     } );
                 }
             } );
+    }
+    
+    $scope.changeName = function(){
+
+        uibHelper.stringEditModal( "Device Name", "Enter the new device name below.", $scope.ogdevice.name )
+            .then( function ( name ) {
+                $log.info( "New device name chosen: " + name );
+                if ( name ) {
+                    $scope.ogdevice.name = name;
+                    belliniDM.changeDeviceName($scope.ogdevice.deviceUDID, $scope.ogdevice.name)
+                        .then( function(){
+                            toastr.success("Device name changed");
+                        })
+                        .catch( function(e){
+                            toastr.error("Error changing device name");
+                        })
+                } else {
+                    toastr.error( "You can't have a blank event name, Sparky." );
+                }
+            } )
+    
+    
     }
 
     //

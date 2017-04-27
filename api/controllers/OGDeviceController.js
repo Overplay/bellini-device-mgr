@@ -300,6 +300,43 @@ module.exports = {
 
     },
 
+    findByRegCode: function ( req, res ) {
+
+        if ( req.method != 'GET' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.regcode )
+            return res.badRequest( { error: "Missing reg code" } );
+
+        OGDevice.findOne( { tempRegCode: params.regcode } )
+            .then( function ( dev ) {
+                if ( !dev )
+                    return res.notFound( { error: "no such device" } );
+
+                if ( !dev.atVenueUUID ) {
+                    return res.ok( dev );
+                }
+
+                return Promise.props( { device: dev, venue: Venue.findOne( { uuid: dev.atVenueUUID } ) } );
+
+            } )
+            .then( function ( props ) {
+
+                if ( props.venue ) {
+                    props.device.venueName = props.venue.name;
+                }
+
+                return res.ok( props.device );
+
+            } )
+
+            .catch( res.serverError );
+
+    },
+
     pingcloud: function ( req, res ) {
         return res.ok( { response: "Bellini-DM is here." } );
     },
@@ -546,6 +583,18 @@ module.exports = {
                 return res.ok( { code: devices[ 0 ].tempRegCode } );
             } )
             .catch( res.serverError );
+    },
+
+    all: function( req, res ){
+
+        if ( req.method != 'GET' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        OGDevice.find(req.query)
+            .then(res.ok)
+            .catch(res.serverError);
+
+
     }
 
 

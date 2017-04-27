@@ -7,19 +7,21 @@ var request = require( 'superagent-bluebird-promise' );
 var Promise = require( "bluebird" );
 
 function decorateMediaEP( entry ) {
-    entry.mediaBaseUrl = sails.config.sponsorProxy.endpoint + '/media/download/';
+    entry.mediaBaseUrl = sails.config.uservice.sponsorProxy.endpoint + '/media/download/';
     return entry;
 };
 
+
+// TODO clean this up using proxy service
 module.exports = {
 
     all: function ( req, res ) {
 
-        if (!sails.config.sponsorProxy || !sails.config.sponsorProxy)
+        if (!(sails.config.uservice && sails.config.uservice.sponsorProxy))
             return res.serverError({error: 'Bad sponsor proxy setup. This is not recoverable'});
 
-        var proxypath = sails.config.sponsorProxy.endpoint +
-            sails.config.sponsorProxy.allAds;
+        var proxypath = sails.config.uservice.sponsorProxy.endpoint +
+            sails.config.uservice.sponsorProxy.allAds;
 
         request.get( proxypath )
             .then( function(d){
@@ -33,7 +35,7 @@ module.exports = {
 
     venue: function ( req, res ) {
 
-        if ( !sails.config.sponsorProxy || !sails.config.sponsorProxy )
+        if ( !(sails.config.uservice || !sails.config.uservice.sponsorProxy) )
             return res.serverError( { error: 'Bad sponsor proxy setup. This is not recoverable' } );
 
         var params = req.allParams();
@@ -41,8 +43,8 @@ module.exports = {
         if (!params.venueId)
             return res.badRequest({ error: "need venueId, sparky! "});
 
-        var proxypath = sails.config.sponsorProxy.endpoint +
-            sails.config.sponsorProxy.allAds + '/'+ params.venueId;
+        var proxypath = sails.config.uservice.sponsorProxy.endpoint +
+            sails.config.uservice.sponsorProxy.allAds + '/'+ params.venueId;
 
         request.get( proxypath )
             .then( function ( d ) {
