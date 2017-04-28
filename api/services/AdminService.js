@@ -4,83 +4,84 @@
  *
  */
 
-var _ = require('lodash');
+var _ = require( 'lodash' );
 
 var _authRoleId = undefined;
 
 function getAuthRole() {
 
     // If we already have it, just return it
-    if (_authRoleId) {
-        return new Promise.resolve(_authRoleId);
+    if ( _authRoleId ) {
+        return new Promise.resolve( _authRoleId );
     }
 
-    return new Promise(function (resolve, reject) {
+    return new Promise( function ( resolve, reject ) {
 
-        Role.findOneByRoleName('admin')
-            .then(function (role) {
+        Role.findOneByRoleName( 'admin' )
+            .then( function ( role ) {
                 _authRoleId = role.id; // remember it
-                resolve(role.id);
-            })
-            .catch(function (err) {
-                log.error("MAJOR problem getting auth role, is DB corrupt?");
-                reject(err);
-            })
+                resolve( role.id );
+            } )
+            .catch( function ( err ) {
+                log.error( "MAJOR problem getting auth role, is DB corrupt?" );
+                reject( err );
+            } )
 
-    })
+    } )
 }
 
-function attachAdminToAuth(authObj) {
+function attachAdminToAuth( authObj ) {
 
-    return new Promise(function (resolve, reject) {
+    return new Promise( function ( resolve, reject ) {
 
         getAuthRole()
-            .then(function (authRoleId) {
+            .then( function ( authRoleId ) {
 
-                User.findOneById(authObj.user)
-                    .then(function (user) {
+                User.findOneById( authObj.user )
+                    .then( function ( user ) {
                         user.accountType = 'admin';
-                        user.roles = _.union(user.roles, [authRoleId]);
+                        user.roles = _.union( user.roles, [ authRoleId ] );
                         user.save();
-                        resolve(user);
-                    })
-                    .catch(reject);
+                        resolve( user );
+                    } )
+                    .catch( reject );
 
-            })
-            .catch(reject);  //bubble it up, but this should not ever occur
+            } )
+            .catch( reject );  //bubble it up, but this should not ever occur
 
 
-    })
+    } )
 }
 
 
-module.exports = require('waterlock').waterlocked({
+module.exports = require( 'waterlock' ).waterlocked( {
 
 
     /**
      * Adds admin privilege to the account pointed to by emailAddr
      *
+     * Rewritten by MAK 4-2017 for ring-based-security
+     *
      * @param emailAddr
      */
-    addAdmin: function (emailAddr) {
+    addAdmin: function ( emailAddr ) {
 
-        return new Promise(function (resolve, reject) {
-            "use strict";
+        return Auth.findOneByEmail( emailAddr )
+            .then( function ( auth ) {
+                if ( !auth ) {
+                    sails.log.error( "Could not upgrade user to Admin, no such email!" );
+                    throw new Error( 'no user with that email' );
+                }
 
-            Auth.findOneByEmail(emailAddr)
-                .then(function (auth) {
-                    sails.log.debug("Found an auth for email: " + emailAddr);
-                    attachAdminToAuth(auth)
-                        .then(resolve)
-                        .catch(reject)
+                sails.log.debug( "Found an auth for email: " + emailAddr );
+                auth.ring = 0;
+                return auth.save();
 
-                })
-                .catch(function (err) {
-                    sails.log.error("No email for that user: " + emailAddr);
-                    reject(err);
-                })
-
-        });
+            } )
+            .catch( function ( err ) {
+                sails.log.error( "No email for that user: " + emailAddr );
+                reject( err );
+            } );
 
     },
 
@@ -93,68 +94,67 @@ module.exports = require('waterlock').waterlocked({
      * @param userObj
      */
 
-    // TODO: This should do a check before attempting create to keep the log noise level down :)
-    addUser: function (emailAddr, password, userObj, facebookId, requireValidation) {
+    addUser: function ( emailAddr, password, userObj, facebookId, requireValidation ) {
 
-        return new Promise(function (resolve, reject) {
+        var authAttrib = {
+            email:    emailAddr,
+            password: password
+        };
 
-            var authAttrib = {
-                email: emailAddr,
-                password: password
-            };
+        if ( facebookId && typeof facebookId !== 'undefined' )
+            authAttrib.facebookId = facebookId;
 
-            if (facebookId && typeof facebookId !== 'undefined')
-                authAttrib.facebookId = facebookId;
+        requireValidation = requireValidation || sails.config.waterlock.alwaysValidate;
 
-            requireValidation = requireValidation || sails.config.waterlock.alwaysValidate;
+        // rewritten massively by MAK 4-2017
+        return Auth.findOne( { email: emailAddr } ) //TODO check on facebook id too?? I think that facebook auth with login if found
+        // automatically -CG
+            .then( function ( auth ) {
+                if ( auth ) {
+                    sails.log.debug( "Email is in system, rejecting create." )
+                    throw new Error( "Email already in system" );
+                }
 
-            Auth.findOne({email: emailAddr}) //TODO check on facebook id too?? I think that facebook auth with login if found automatically -CG 
-                .then(function (auth) {
-                    if (auth) {
-                        sails.log.debug("Email is in system, rejecting create.")
-                        reject(new Error("Email already in system"));
-                    } else {
-                        sails.log.debug("Email is not in system, adding account.")
-                        return User.create(userObj || {})
-                            .then(function (user) {
-                                waterlock.engine.attachAuthToUser(authAttrib, user, function (err, userWithAuth) {
-                                    if (err) {
-                                        sails.log.error('AdminService.addUser: Error attaching auth to user');
-                                        sails.log.error(err);
-                                        reject(err);
-                                    } else {
-                                        if (requireValidation) {
-                                            sails.log.info("AdminService.addUser: adding validation token");
+                sails.log.debug( "Email is not in system, adding account." )
+                return User.create( userObj || {} );
+            } )
+            .then( function ( newUser ) {
+                // have to wrap up the old-skool method
+                return new Promise( function ( resolve, reject ) {
+                    waterlock.engine.attachAuthToUser( authAttrib, newUser, function ( err, userWithAuth ) {
+                        if ( err ) {
+                            sails.log.error( 'AdminService.addUser: Error attaching auth to user' );
+                            sails.log.error( err );
+                            reject( err );
+                        }
 
-                                            ValidateToken.create({owner: userWithAuth.auth.id})
-                                                .then(function (tok) {
-                                                    //sails.log.info(tok);
+                        resolve( userWithAuth );
 
-                                                    return Auth.update({id: tok.owner}, {
-                                                            validateToken: tok,
-                                                            blocked: true
-                                                        })
-                                                        .then(function (data) {
-                                                            sails.log.debug("Back attach of validateToken OK");
-                                                            resolve(userWithAuth);
-                                                        })
+                    } );
+                } ); // end Promise
+            } )
+            .then( function ( userWithAuth ) {
 
+                var finalIndignity;
 
-                                                })
-                                                .catch(reject);
+                if ( requireValidation ) {
+                    sails.log.info( "AdminService.addUser: adding validation token" );
+                    finalIndignity = ValidateToken.create( { owner: userWithAuth.auth.id } )
+                        .then( function ( tok ) {
+                            return Auth.update( { id: tok.owner }, {
+                                validateToken: tok,
+                                blocked:       true
+                            } );
+                        } );
+                } else {
+                    // no validation so just pass this shit through
+                    finalIndignity = Promise.resolve( userWithAuth );
+                }
 
-                                        } else {
-                                            resolve(userWithAuth);
-                                        }
-                                    }
-                                });
-                            })
-                            .catch(reject)
-                    }
-                })
-                .catch(reject)
+                return finalIndignity;
 
-        })
+            } );
+
 
     },
 
@@ -164,54 +164,43 @@ module.exports = require('waterlock').waterlocked({
      * @param params { password: "password", email | token: "value" }
      *
      */
-    changePwd: function (params) {
+    changePwd: function ( params ) {
 
-        return new Promise(function (resolve, reject) {
+        if ( !params.password ) {
+            return Promise.reject( new Error( "Try including a password!" ) );
+        }
 
-            if (!params.password) {
-                reject(new Error("Try including a password!"));
-            }
+        if ( params.email ) {
 
-            if (params.email) {
+            return Auth.findOneByEmail( params.email )
+                .then( function ( authObj ) {
 
-                return Auth.findOneByEmail(params.email)
-                    .then(function (authObj) {
-                        authObj.password = params.password;
-                        return authObj.save()
-                            .then(function (authObjNew) {
-                                resolve();
-                            })
-                            .catch(reject);
+                    if ( !authObj ) {
+                        throw new Error( 'no such email' );
+                    }
 
-                    })
-                    .catch(reject);
+                    authObj.password = params.password;
+                    return authObj.save();
+
+                } )
 
 
-            } else if (params.resetToken) {
+        } else if ( params.resetToken ) {
 
-                // Token is stored on the Auth resetToken.token
+            // Token is stored on the Auth resetToken.token
 
-                return Auth.findOne({"resetToken.token": params.token})
-                    .then(function (authObj) {
-                        authObj.password = params.password;
-                        authObj.save()
-                            .then(function (authObjNew) {
-                                resolve();
-                            })
-                            .catch(reject);
+            // TODO I think this is broken, the param below does not match!
+            return Auth.findOne( { "resetToken.token": params.token } )
+                .then( function ( authObj ) {
+                    authObj.password = params.password;
+                    return authObj.save()
+                } );
 
-                    })
-                    .catch(reject);
+        }
 
-            }
-            
-            return null; //fixes promise handler warning  
-
-
-        });
+        return Promise.reject( new Error( 'bad params' ) ); //fixes promise handler warning
 
     }
 
 
-})
-;
+});

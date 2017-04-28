@@ -9,10 +9,12 @@
 module.exports = {
 
   attributes: require('waterlock').models.auth.attributes({
-    
-    /* e.g.
-    nickname: 'string'
-    */
+
+      // 0 = god, 1 = device, 2 = user,  3 = disabled used(?)
+      ring: {
+          type:       "integer",
+          defaultsTo: 3
+      },
     
   }),
   

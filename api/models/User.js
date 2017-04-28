@@ -75,12 +75,13 @@ module.exports = {
         // For now, not implemented
         
 
+        // Roles replaced as ring in the Auth model
         // Array of ids of roles. Not a collection because we don't want all the relation stuff slowing us 
         // down.
-        roles: {
-            type: 'array',
-            defaultsTo: []
-        },
+        // roles: {
+        //     type: 'array',
+        //     defaultsTo: []
+        // },
         
         ownedVenues: {
             collection: 'Venue',
