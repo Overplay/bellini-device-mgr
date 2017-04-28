@@ -28,6 +28,7 @@
     "angular-google-maps": "*",
     "file-saver": "*",
     "angular-chart.js": "*",
-    "moment": "*"
+    "moment": "*",
+    "angular-google-chart": "1.0.0-beta.1"
   }
 }

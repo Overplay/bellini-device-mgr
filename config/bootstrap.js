@@ -34,39 +34,58 @@ module.exports.bootstrap = function ( cb ) {
 
     } );
 
+    var coreAdmins = [
+
+        {
+            user: {
+                firstName: 'Admin',
+                lastName:  'McDeviceadmin',
+                metadata:  { preinstall: true },
+                roles:     [ RoleCacheService.roleByName( "admin", '' ), RoleCacheService.roleByName( "user", '' ) ]
+            },
+            auth: {
+                email:    'admin@test.com',
+                password: 'beerchugs'
+            }
+        },
+        {
+            user: {
+                firstName: 'Mitch',
+                lastName:  'Kahn',
+                metadata:  { preinstall: true },
+                roles:     [ RoleCacheService.roleByName( "admin", '' ), RoleCacheService.roleByName( "user", '' ) ]
+            },
+            auth: {
+                email:    'mitch+a@ourglass.tv',
+                password: 'D@rkB0ck!'
+            }
+        },
+        {
+            user: {
+                firstName: 'Treb',
+                lastName:  'Ryan',
+                metadata:  { preinstall: true },
+                roles:     [ RoleCacheService.roleByName( "admin", '' ), RoleCacheService.roleByName( "user", '' ) ]
+            },
+            auth: {
+                email:    'treb+a@ourglass.tv',
+                password: 'D@rkB0ck!'
+            }
+        }
+
+    ];
+
     chain = chain
         .then( RoleCacheService.sync )
         .then( function () {
 
-            var adminUser = {
-                firstName: 'Admin',
-                lastName:  'Pre-installed',
-                metadata:  { preinstall: true },
-                roles:     [ RoleCacheService.roleByName( "admin", '' ), RoleCacheService.roleByName( "user", '' ) ]
-            }
+            var parr = coreAdmins.map( function(admin){
+                return AdminService.addUser( admin.auth.email, admin.auth.password, admin.user, false )
+                    .then( function () { sails.log.debug( "Admin user created." )} )
+                    .catch( function () { sails.log.warn( "Admin user NOT created. Probably already existed." )} );
+            })
 
-            return AdminService.addUser( 'admin@test.com', 'beerchugs', adminUser, false )
-                .then( function () { sails.log.debug( "Admin user created." )} )
-                .catch( function () { sails.log.warn( "Admin user NOT created. Probably already existed." )} );
-
-        } )
-        .then( function () {
-
-            var roles = [ RoleCacheService.roleByName( "admin", '' ), RoleCacheService.roleByName( "user", '' ) ];
-
-            return AdminService.addUser( 'admin2@test.com', 'beerchugs', { roles: roles } )
-                .then( function () { sails.log.debug( "Admin user created." )} )
-                .catch( function () { sails.log.warn( "Admin user NOT created. Probably already existed." )} );
-
-        } )
-
-        .then( function () {
-
-            var roles = [ RoleCacheService.roleByName( "user", '' ) ];
-
-            return AdminService.addUser( 'general@test.com', 'beerchugs', { roles: roles } )
-                .then( function () { sails.log.debug( "General user created." )} )
-                .catch( function () { sails.log.warn( "General user NOT created. Probably already existed." )} );
+            return Promise.all(parr);
 
         } )
         .then( function () {

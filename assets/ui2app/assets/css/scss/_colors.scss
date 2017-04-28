@@ -1,0 +1,27 @@
+
+$primary-color: #007fa0;
+$nav-header-color: #0f161c;
+//$nav-header-color: hotpink;
+$light-grey: #f0f0f0;
+$faint-blue: #C1E9FF;
+$side-link-grey: #707070;
+
+$og-green: #008c04;
+$og-faint-green: lighten($og-green, 60%);
+
+$highlight-color-info: #b7fdb7;
+
+$error-color: #ff0051;
+
+$material-border-grey: #f0f0f0;
+
+@mixin material-card-shadow {
+  -webkit-box-shadow: 3px 3px 4px 0px rgba(168, 168, 168, 1);
+  -moz-box-shadow: 3px 3px 4px 0px rgba(168, 168, 168, 1);
+  box-shadow: 3px 3px 4px 0px rgba(168, 168, 168, 1);
+}
+
+@mixin material-card {
+  @include material-card-shadow;
+  border: 1px solid $material-border-grey;
+}

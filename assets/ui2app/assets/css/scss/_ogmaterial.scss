@@ -1,0 +1,12 @@
+@mixin material-card-shadow {
+  -webkit-box-shadow: 1px 1px 1px 0px rgba(168, 168, 168, 1);
+  -moz-box-shadow: 1px 1px 1px 0px rgba(168, 168, 168, 1);
+  box-shadow: 1px 1px 1px 0px rgba(168, 168, 168, 1);
+}
+
+@mixin material-card {
+  @include material-card-shadow;
+  border: 1px solid $material-border-grey;
+  margin: 5px;
+}
+

@@ -1,0 +1,74 @@
+<!-- This is for the Angular 1 reboot of the UI 2017 style -->
+<!DOCTYPE html>
+<html ng-app="uiApp">
+<head>
+    <title><%= typeof title == 'undefined' ? 'ourglass' : title %></title>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#006176">
+
+    <!-- Grab the common JS libs -->
+    <%- partial( '../partials/ui2/jsdeps' ) %>
+
+    <!-- Grab the common CSS  -->
+    <%- partial( '../partials/ui2/cssdeps' ) %>
+
+    <!-- Import your app, controllers, etc. here. Path needs to be out of /assets/js/views/  -->
+    <!-- This means a src like src="/js/views/ui". Bower components are pulled from /bower_components/... -->
+
+    <script src="/ui2app/app/ui2App.module.js"></script>
+    <script src="/ui2app/app/ui2App.routes.js"></script>
+
+    <script src="/ui2app/app/services/bellini/apicore.service.js"></script>
+    <script src="/ui2app/app/services/bellini/auth.service.js"></script>
+    <script src="/ui2app/app/services/bellini/users.service.js"></script>
+    <script src="/ui2app/app/services/bellini/venues.service.js"></script>
+    <script src="/ui2app/app/services/bellini/ogdevice.service.js"></script>
+    <script src="/ui2app/app/services/bellini/bellinidm.service.js"></script>
+
+    <script src="/ui2app/app/services/bellini/user-auth.service.js"></script>
+    <script src="/ui2app/app/services/ui/ui.service.js"></script>
+
+    <script src="/ui2app/app/components/navside/navside.controller.js"></script>
+    <script src="/ui2app/app/components/navtop/navtop.controller.js"></script>
+    <script src="/ui2app/app/components/admin/admin.controller.js"></script>
+    <script src="/ui2app/app/components/user/userbasicinfo.component.js"></script>
+    <script src="/ui2app/app/components/account/myaccount.controller.js"></script>
+    <script src="/ui2app/app/components/device/venuedevicelist.component.js"></script>
+    <script src="/ui2app/app/components/venue/venuebasicinfo.component.js"></script>
+
+    <script src="/ui2app/app/components/ogdevices/ogdevice.controller.js"></script>
+
+    <!--<script src="/uiapp/app/components/directives/navbar/gennavbar.directive.js"></script>-->
+    <!--<script src="/uiapp/app/components/directives/dragAndDrop/dragAndDrop.directive.js"></script>-->
+    <!--<script src="/uiapp/app/components/directives/ImgInput/imageinput.directive.js"></script>-->
+
+    <!--<script src="/uiapp/app/shared/uibHelperService/uibHelperService.js"></script>-->
+
+    <!--<script src="/uiapp/app/components/admin/admin.controller.js"></script>-->
+    <!--<script src="/uiapp/app/components/dash/dash.controller.js"></script>-->
+    <!--<script src="/uiapp/app/components/trevda/trevda.controller.js"></script>-->
+    <!--<script src="/uiapp/app/components/user/user.controller.js"></script>-->
+    <!--<script src="/uiapp/app/components/device/device.controller.js"></script>-->
+    <!--<script src="/uiapp/app/components/organization/organization.controller.js"></script>-->
+    <!--<script src="/uiapp/app/components/venue/venue.controller.js"></script>-->
+    <!--<script src="/uiapp/app/components/bestposition/bestposition.controller.js"></script>-->
+    <!--<script src="/uiapp/app/components/socket/socket.controller.js"></script>-->
+
+    <!--<script src="/uiapp/app/components/directives/userdata/userdata.directive.js"></script>-->
+    <!--<script src="/uiapp/app/shared/navBarService/navBarService.js"></script>-->
+    <!--<script src="/uiapp/app/shared/asahiService/asahiService.js"></script>-->
+    <!--<script src="/uiapp/app/shared/filtersAndDirectives/filtersAndDirectives.js"></script>-->
+
+</head>
+
+<body style="background-color: #ffffff">
+
+<!-- BODY IMPORT -->
+
+<%- body %>
+
+
+</body>
+</html>

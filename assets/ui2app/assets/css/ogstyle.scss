@@ -1,0 +1,117 @@
+@import "scss/colors";
+@import "scss/ogmaterial";
+@import "../../app/components/navtop/navtop";
+@import "../../app/components/navside/navside";
+@import "../../app/components/device/device";
+
+
+
+$corner-radius: 3px;
+
+.subhead {
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+// An icon button
+.ibut {
+  padding: 5px;
+  background-color: $primary-color;
+  color: white;
+  border-radius: 3px;
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
+}
+
+.highlighted-text {
+  padding: 5px;
+  background-color: $highlight-color-info, 10%;
+  font-style: italic;
+  font-weight: lighter;
+  border-radius: $corner-radius;
+}
+
+.error-border {
+  border: 2px solid $error-color !important;
+  border-radius: 3px !important;
+}
+
+
+// Spinner animation
+
+.spinner-holder {
+  width: 80px;
+  height: 80px;
+  background-color: #57b279;
+  padding: 5px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20vh auto 0 auto;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  /*position: relative;*/
+  text-align: center;
+  margin-bottom: 8px;
+
+  -webkit-animation: sk-rotate 2.0s infinite linear;
+  animation: sk-rotate 2.0s infinite linear;
+}
+
+.dot1, .dot2 {
+  width: 60%;
+  height: 60%;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  background-color: #ffffff;
+  border-radius: 100%;
+
+  -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+  animation: sk-bounce 2.0s infinite ease-in-out;
+}
+
+.dot2 {
+  top: auto;
+  bottom: 0;
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+@-webkit-keyframes sk-rotate {
+  100% {
+    -webkit-transform: rotate(360deg)
+  }
+}
+
+@keyframes sk-rotate {
+  100% {
+    transform: rotate(360deg);
+    -webkit-transform: rotate(360deg)
+  }
+}
+
+@-webkit-keyframes sk-bounce {
+  0%, 100% {
+    -webkit-transform: scale(0.0)
+  }
+  50% {
+    -webkit-transform: scale(1.0)
+  }
+}
+
+@keyframes sk-bounce {
+  0%, 100% {
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  }
+  50% {
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}

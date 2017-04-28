@@ -1,0 +1,19 @@
+.ogcard {
+
+  @include material-card;
+  min-height: 140px;
+
+
+}
+
+.venueside {
+  height: 30px;
+  background-color: $og-faint-green;
+  padding: 5px;
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 900;
+}
+
+
+.devside {
+}

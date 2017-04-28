@@ -1,0 +1,9 @@
+
+<div class="ogsidebar" ng-class="menuVisible ? '': 'hideMenu'">
+    <div class="sidelinkholder">
+        <div ng-repeat="s in sidelinks" class="sidelink" ui-sref="{{ s.sref }}">
+            <div class="sideicon"><i class="fa fa-{{ s.icon }}" aria-hidden="true"></i></div>
+            <div class="sidelabel">{{ s.label }}</div>
+        </div>
+    </div>
+</div>

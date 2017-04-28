@@ -209,6 +209,9 @@ app.config(function ($stateProvider, $urlRouterProvider) {
                         .then( function ( data ) {
                             return data.data;
                         } )
+                },
+                venues: function ($http){
+                    return $http.get( '/api/v1/venue').then(function(d){ return d.data });
                 }
             }
         } )

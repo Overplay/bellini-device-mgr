@@ -6,7 +6,7 @@
  */
 
 
-app.controller( 'listOGDeviceController', function ( devices, $scope, $log, bVenues ) {
+app.controller( 'listOGDeviceController', function ( devices, $scope, $log, sailsVenues, toastr ) {
 
 
     $log.debug( "Loading listOGDeviceController" );
@@ -17,12 +17,13 @@ app.controller( 'listOGDeviceController', function ( devices, $scope, $log, bVen
         if ( !og.atVenueUUID ) {
             og[ 'venueName' ] = "unassigned";
         } else {
-            bVenues.getByUUID( og.atVenueUUID )
+            sailsVenues.getByUUID( og.atVenueUUID )
                 .then( function ( v ) {
                     og[ 'venueName' ] = v.name;
                 } )
                 .catch( function ( e ) {
-                    og[ 'venueName' ] = "Lookup Problem";
+                    og[ 'venueName' ] = "UUID May be Invalid";
+                    toastr.error(e.data.error, "Problem Fetching Venue Info");
                 } )
         }
     } );
@@ -37,11 +38,13 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
     var pingStartTime;
     var pingWaitPromise;
 
+
     $log.debug( "Loading listOGDeviceDetailController" );
 
     $scope.form = { launchAppId: '', killAppId: '' };
 
     $scope.ogdevice = device;
+    $scope.ogdevice.populateVenue();
 
     $scope.$parent.ui = { pageTitle: "OG Box Detail", panelHeading: "For UDID: " + device.deviceUDID };
 
@@ -103,6 +106,14 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
         uibHelper.selectListModal( "Device Venue", "Pick the new device venue from the list below.", venueList, 0 )
             .then( function ( idx ) {
                 $log.info( "New venue chosen: " + idx );
+                $scope.ogdevice.atVenueUUID = venues[idx].uuid;
+                $scope.ogdevice.save()
+                    .then( function(d){
+                        toastr.success("Venue Changed");
+                    })
+                    .catch( function ( err ) {
+                        toastr.error( "Venue Could not be Changed" );
+                    } )
 
             } )
 

@@ -1,0 +1,41 @@
+<div class="container">
+    <h1><i class="fa fa-users" aria-hidden="true" style="color: #999999"></i>&nbsp;&nbsp;All Users</h1>
+    <div class="row">
+        <h3 ng-if="!users.length" style="text-align: center">No Users</h3>
+
+        <div class="col-sm-10 col-lg-10 top30" ng-show="users.length">
+            <input type="text" ng-model="searchTerm" class="form-control" placeholder="Search users...">
+        </div>
+        <div class="col-sm-10 col-lg-10 top30">
+            <table class="table table-striped" ng-if="users.length">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Roles</th>
+                    <th></th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr ng-repeat="user in users | orderBy: 'user.lastName' | filter: searchTerm">
+                    <td>
+                        <i ng-if="user.blocked" class="fa fa-ban" aria-hidden="true"></i>
+                        {{ user.firstName }} {{ user.lastName }}
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <!--<td ng-if="admin">{{ user.createdAt | date }}</td>-->
+                    <td><span ng-repeat="t in user.roleTypes">{{t}}<br></span></td>
+                    <td><span ng-repeat="venue in user.managedVenues">{{venue.name}}<br></span></td>
+                    <td>
+                        <a ui-sref="admin.edituser({ id: user.id })"
+                           class="btn btn-sm btn-primary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;EDIT</a>
+                           <button class="btn btn-sm btn-danger" ng-click="delUser(user)"><i class="fa fa-times-circle"
+                                                                                         aria-hidden="true"></i>&nbsp;DELETE</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

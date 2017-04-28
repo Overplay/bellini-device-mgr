@@ -1,0 +1,118 @@
+<div class="row">
+    <div class="col-10 col-offset-1">
+        <uib-tabset>
+            <uib-tab heading="Overview">
+                <table class="table table-striped" style="width: 80%; margin-top: 20px;">
+                    <tbody>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Device Name</td>
+                        <td style="text-align: left;">{{ ogdevice.name }}
+                        <button class="btn btn-sm pull-right" ng-click="changeName()">CHANGE NAME</button></td>
+                    </tr>
+
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Device UDID</td>
+                        <td style="text-align: left;">{{ ogdevice.deviceUDID }}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Device Database ID</td>
+                        <td style="text-align: left;">{{ ogdevice.id }}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Venue Name</td>
+                        <td style="text-align: left;">{{ ogdevice.atVenue ? ogdevice.atVenue.name : "Not Associated "}}
+                            <button class="btn btn-sm pull-right" ng-click="changeVenue()">CHANGE VENUE</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Venue UUID</td>
+                        <td style="text-align: left;">{{ ogdevice.atVenue ? ogdevice.atVenue.uuid : "Not Associated "}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Venue Database ID</td>
+                        <td style="text-align: left;">{{ ogdevice.atVenue ? ogdevice.atVenue.id : "Not Associated "}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Last Contact</td>
+                        <td style="text-align: left;">{{ ogdevice.lastContact ? ogdevice.lastContact : "NEVER"}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Installed Apps</td>
+                        <td style="text-align: left;">
+                            <pre>{{ ogdevice.installedApps | json }}</pre>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Software</td>
+                        <td style="text-align: left;">
+                            <pre>{{ ogdevice.software | json }}</pre>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; width: 20%;">Hardware</td>
+                        <td style="text-align: left;">
+                            <pre>{{ ogdevice.hardware | json }}</pre>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </uib-tab>
+            <uib-tab heading="Remote Control">
+
+
+                <div style="margin-top: 10px; padding: 10px; background-color: #ECE9E9">
+                    <a class="btn btn-default" href="/blueline/control/index.html?deviceUDID={{ ogdevice.deviceUDID }}">START CONTROL APP</a>
+                    <!--<div>-->
+                        <!--<input class="form-control" style="margin-bottom: 10px;" type="text" placeholder="App ID" ng-model="form.appId"/>-->
+                    <!--</div>-->
+                    <!--<div style="display: flex;">-->
+                        <!--<div style="flex:1; margin-right: 10px;">-->
+                            <!--<button class="btn btn-success" style="width: 80%;" ng-click="launch()">LAUNCH</button>-->
+                        <!--</div>-->
+                        <!--<div style="flex:1; margin-right: 10px;">-->
+                            <!--<button class="btn btn-danger" style="width: 80%;" ng-click="kill()">KILL</button>-->
+                        <!--</div>-->
+                        <!--<div style="flex:1; margin-right: 10px;">-->
+                            <!--<button class="btn btn-danger" style="width: 80%;" ng-click="move()">MOVE</button>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                </div>
+
+                <!------- PING ------------>
+                <div style="margin-top: 10px; display: flex; padding: 10px; background-color: #ECE9E9">
+                    <div style="flex:1; margin-right: 10px;">
+                        <button class="btn btn-success" style="width: 100%;" ng-click="ping()">PING</button>
+                    </div>
+                    <div style="flex: 4;">
+                        <pre>{{ pingResponse.response }}</pre>
+                    </div>
+
+                </div>
+                <!-------- IDENT ---------->
+                <div style="margin-top: 10px; display: flex; padding: 10px; background-color: #ECE9E9">
+                    <div style="flex:1; margin-right: 10px;">
+                        <button class="btn btn-success" style="width: 100%;" ng-click="identify()">IDENTIFY</button>
+                    </div>
+                    <div style="flex: 4;">
+                        <pre>{{ identResponse | json }}</pre>
+                    </div>
+                </div>
+
+            </uib-tab>
+            <uib-tab heading="Logs">
+
+            </uib-tab>
+
+            <uib-tab heading="Raw JSON Object">
+                <div class="well">
+                    <pre>{{ ogdevice | json }}</pre>
+                </div>
+            </uib-tab>
+        </uib-tabset>
+    </div>
+
+</div>

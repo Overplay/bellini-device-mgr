@@ -1,0 +1,50 @@
+
+.ogsidebar {
+  position: relative;
+  /*top: 60px;*/
+  left: 0;
+  background-color: white;
+  width: 220px;
+  height: 100vh;
+  /* Temp border for layout */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 350ms ease-in-out;
+}
+
+.sidelinkholder {
+  /*border: 1px solid coral;*/
+  margin: 20px 10px 0 10px;
+  /*border-top: 2px solid #348ad6;*/
+  /*border-top: 1px solid #c1e9ff;*/
+  border-right: 1px solid $faint-blue;
+  min-height: 500px;
+
+}
+
+.sidelink {
+  font-size: 18px;
+  display: flex;
+  padding: 10px 0 10px 0;
+  background-color: white;
+  color: $side-link-grey;
+}
+
+.sidelink:hover {
+  background-color: darken(white, 10%);
+}
+
+.sideicon {
+  flex: 1;
+  text-align: center;
+}
+
+.sidelabel {
+  flex: 5;
+  margin-left: 5px;
+}
+
+.hideMenu {
+  left: -300px;
+
+}
+

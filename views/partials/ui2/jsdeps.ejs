@@ -1,0 +1,40 @@
+<!-- include all common Javascript dependencies here. Usually crap like Angular and support libs -->
+
+<!-- I have seen severe performance issues with using CDNs, so all are bower deps hosted in /assets/bower_components -->
+
+<script src="/bower_components/lodash/dist/lodash.min.js"></script>
+<script src="/bower_components/angular/angular.min.js"></script>
+<script src="/bower_components/angular-animate/angular-animate.min.js"></script>
+<script src="/bower_components/angular-aria/angular-aria.min.js"></script>
+<script src="/bower_components/angular-messages/angular-messages.min.js"></script>
+<script src="/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="/bower_components/angular-simple-logger/dist/angular-simple-logger.min.js"></script>
+<script src="/bower_components/angular-google-maps/dist/angular-google-maps.min.js"></script>
+<script src="/bower_components/file-saver/FileSaver.min.js"></script>
+
+
+<script src="/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+<script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+
+<script src="/js/uiOG/uiOG.js"></script>
+
+<!--<script src="/bower_components/angular-toastr/dist/angular-toastr.min.css"></script>-->
+<script src="/bower_components/angular-toastr/dist/angular-toastr.tpls.min.js"></script>
+
+<script src="/bower_components/chart.js/dist/Chart.min.js"></script>
+<script src="/bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+
+<script src="/bower_components/angular-google-chart/ng-google-chart.min.js"></script>
+
+
+<script src="/bower_components/moment/min/moment-with-locales.min.js"></script>
+
+<script src="/js/dependencies/sails.io.js"></script>
+
+<% if ( typeof roles !== "undefined" && roles ) { %>
+<script>
+    var nucleus = {roles: <%- JSON.stringify(roles) %> };
+</script>
+<% } %>
+
+

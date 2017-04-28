@@ -478,6 +478,54 @@ module.exports = {
 
         return res.ok( params );
 
+    },
+
+    findByUUID: function ( req, res ) {
+
+        if ( req.method != 'GET' )
+            return res.badRequest( { error: "Bad Verb" } );
+
+        //OK, we need a venueId
+        var params = req.allParams();
+
+        if ( !params.id && !params.uuid )
+            return res.badRequest( { error: "Missing uuid" } );
+
+        var includeVirtual = !!params.includeVirtual;
+
+        var uuid = params.id || params.uuid;
+
+        var query = includeVirtual ? { uuid: uuid } : { uuid: uuid, virtual: false };
+
+        Venue.findOne( query )
+            .then( function ( venue ) {
+
+                if ( !venue ) {
+                    return res.notFound( { error: "no venue with that UUID" } );
+                }
+
+                return res.ok( venue );
+            } )
+            .catch( res.serverError );
+
+    },
+
+    // replaces blueprint, easier to secure
+    all: function ( req, res ) {
+
+        if ( req.method != 'GET' )
+            return res.badRequest( { error: "Bad Verb" } );
+
+        // With an existing database this is an ass-painer becuase some have virtual as undefined
+        // var query = { virtual: false };
+        // if ( req.allParams().virtual && req.allParams().virtual==true ){
+        //     query = {}
+        // }
+
+        Venue.find( { virtual: false } )
+            .then( res.ok )
+            .catch( res.serverError );
+
     }
 }
 ;
