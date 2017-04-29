@@ -11,20 +11,14 @@
                 <tr>
                     <th>Name</th>
                     <th>Address</th>
-                    <th></th>
+                    <th>OGs</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="v in venues | orderBy: 'name' | filter:searchTerm">
                     <td width="40%">{{v.name}}</td>
                     <td width="40%">{{ v.address.street + " " + v.address.street2 }}<br/>{{ v.address.city + ", " + v.address.state }}</td>
-                    <td>
-                        <a ui-sref="admin.editvenue({ id: v.id })"
-                           class="btn btn-sm btn-primary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;EDIT</a>
-                        <button class="btn btn-sm btn-danger" ng-click="delVenue(v)"><i class="fa fa-times-circle"
-                                                                                          aria-hidden="true"></i>&nbsp;DELETE
-                        </button>
-                    </td>
+                    <td>{{ v.devices.length }}</td>
                 </tr>
                 </tbody>
             </table>

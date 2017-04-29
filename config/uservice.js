@@ -20,7 +20,7 @@ module.exports = {
         },
 
         bcSyncSettings: {
-            cronDelay: 5 * 1000, // 15 seconds
+            cronDelay: 5 * 60 * 50 * 1000, // 5 min
             bcport:    2000
         }
 

@@ -12,7 +12,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Roles</th>
+                    <th uib-tooltip="1=Admin, 2=Device, 3=User">Ring</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -25,7 +25,7 @@
                     </td>
                     <td>{{ user.email }}</td>
                     <!--<td ng-if="admin">{{ user.createdAt | date }}</td>-->
-                    <td><span ng-repeat="t in user.roleTypes">{{t}}<br></span></td>
+                    <td>{{  user.auth.ring }}</td>
                     <td><span ng-repeat="venue in user.managedVenues">{{venue.name}}<br></span></td>
                     <td>
                         <a ui-sref="admin.edituser({ id: user.id })"

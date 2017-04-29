@@ -38,7 +38,7 @@ module.exports = function bcSyncHook(sails) {
             
             sails.log.debug('BC Sync will sync with this period: ' + cronDelay / 1000 + 's');
 
-            setTimeout(sails.hooks.bcsynchook.sync, cronDelay);
+            setTimeout(sails.hooks.bcsynchook.sync, 5000);
             return cb();
 
         },
@@ -87,7 +87,7 @@ module.exports = function bcSyncHook(sails) {
                 } );
 
 
-            //setTimeout( sails.hooks.bcsynchook.sync, cronDelay );
+            setTimeout( sails.hooks.bcsynchook.sync, cronDelay );
 
         }
 

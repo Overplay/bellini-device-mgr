@@ -57,6 +57,9 @@ module.exports = require('waterlock').actions.user({
 
                     var juser = user.toJSON();
                     juser.email = user.auth && user.auth.email;
+                    juser.isAdmin = !!(user.auth && (user.auth.ring == 1) )
+                    // juser.isManager = user.managedVenues.length !=0;
+                    // juser.isOwner =  user.ownedVenues.length != 0;
                     // delete user.auth;
                     delete juser.roles;
                     delete juser.auth.password;

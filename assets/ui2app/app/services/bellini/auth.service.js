@@ -25,12 +25,13 @@ app.factory( "sailsAuth", function ( sailsApi, sailsCoreModel ) {
             this.user = json && json.user;
             this.email = json && json.email;
             this.blocked = json && json.blocked;
+            this.ring = json && json.ring || 3;
 
             this.parseCore( json );
         };
 
         this.getPostObj = function () {
-            var fields = ['email', 'blocked', '@id:user'];
+            var fields = ['email', 'blocked', '@id:user', 'ring'];
             return this.cloneUsingFields(fields);
         };
 

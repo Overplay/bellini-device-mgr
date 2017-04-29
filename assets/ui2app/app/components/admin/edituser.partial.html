@@ -11,13 +11,9 @@
                     <user-basic-info class="top15" user="user"></user-basic-info>
                 </uib-tab>
                 <uib-tab heading="Permissions and Password">
-                    <h5 class="subhead">Roles</h5>
-
-                    <div ng-repeat="role in roles" >
-                        <input ng-disabled="role.roleKey !='admin' && role.roleKey!='sponsor'" type="checkbox" ng-model="role.selected" ng-click="roleChange()"/>&nbsp;{{ role.roleKey
-                        }}
-                    </div>
-                    <p style="font-style: italic; margin-top: 5px;"> Note: The Proprietor Manager and Proprietor Owner roles are controlled by adding and removing venues.</p>
+                    <h5 class="subhead">Ring Level</h5>
+                    <p><span class="badge">{{ user.ring | ringToHuman }} / {{ user.ring }}</span> </p>
+                     <button ng-click="changeRing()" class="btn btn-sm btn-warning">CHANGE RING</button> </p>
                     <hr>
                     <h5 class="subhead">Password</h5>
                     <button class="btn btn-sm btn-primary" ng-click="changePassword()">CHANGE PASSWORD</button>
@@ -28,64 +24,6 @@
                         <b>{{ user.blocked?"BLOCKED":"ENABLED" }}</b>
                         </span>.</p>
                     <input type="checkbox" ng-model="user.blocked" ng-click="blockedChange()"/>&nbsp;Block User
-                </uib-tab>
-                <!-- VENUES -->
-                <uib-tab heading="Venues">
-                    <h3>Managed Venues</h3>
-                    <p class="highlighted-text" ng-hide="user.managedVenues.length">This user has no managed venues.</p>
-                    <table class="table table-striped table-bordered top30"
-                           ng-if="user.managedVenues.length">
-                        <thead>
-                        <tr>
-                            <th>Venue</th>
-                            <th>Address</th>
-                            <th>Remove Manager</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="venue in user.managedVenues">
-                            <td><a ui-sref="admin.editvenue({id: venue.id})">{{ venue.name }}</a></td>
-                            <td>{{ venue.address | addressify }}</td>
-                            <td>
-                                <button class="btn btn-sm btn-danger" ng-click="removeManagedVenue(venue)">
-                                    Remove
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <button class="btn btn-sm btn-primary" ng-click="addVenue('manager')">
-                        Add Managed Venue
-                    </button>
-
-                    <hr style="padding: 30px"/>
-                    <h3>Owned Venues</h3>
-                    <p class="highlighted-text" ng-hide="user.ownedVenues.length">This user has no owned
-                        venues.</p>
-                    <table class="table table-striped table-bordered top30"
-                           ng-if="user.ownedVenues.length">
-                        <thead>
-                        <tr>
-                            <th>Venue</th>
-                            <th>Address</th>
-                            <th>Remove Owner</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="venue in user.ownedVenues">
-                            <td><a ui-sref="admin.editvenue({id: venue.id})">{{ venue.name }}</a></td>
-                            <td>{{ venue.address | addressify }}</td>
-                            <td>
-                                <button class="btn btn-sm btn-danger" ng-click="removeOwnedVenue(venue)">
-                                    Remove
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <button class="btn btn-sm btn-primary" ng-click="addVenue('owner')">
-                        Add Owned Venue
-                    </button>
                 </uib-tab>
             </uib-tabset>
         </div>

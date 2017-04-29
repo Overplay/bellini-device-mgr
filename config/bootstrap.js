@@ -18,30 +18,13 @@ module.exports.bootstrap = function ( cb ) {
 
     var chain = Promise.resolve();
 
-    coreRoles.forEach( function ( role ) {
-
-        chain = chain.then( function () {
-            return Role.findOrCreate( role )
-                .then( function ( r ) {
-                    if ( r ) {
-                        sails.log.debug( "Role created: " + r.roleName );
-                        return r;
-                    }
-                    throw new Error( "Could not create role: " + role.roleName );
-
-                } );
-        } );
-
-    } );
-
     var coreAdmins = [
 
         {
             user: {
                 firstName: 'Admin',
                 lastName:  'McDeviceadmin',
-                metadata:  { preinstall: true },
-                roles:     [ RoleCacheService.roleByName( "admin", '' ), RoleCacheService.roleByName( "user", '' ) ]
+                metadata:  { preinstall: true }
             },
             auth: {
                 email:    'admin@test.com',
@@ -52,8 +35,7 @@ module.exports.bootstrap = function ( cb ) {
             user: {
                 firstName: 'Mitch',
                 lastName:  'Kahn',
-                metadata:  { preinstall: true },
-                roles:     [ RoleCacheService.roleByName( "admin", '' ), RoleCacheService.roleByName( "user", '' ) ]
+                metadata:  { preinstall: true }
             },
             auth: {
                 email:    'mitch+a@ourglass.tv',
@@ -65,7 +47,6 @@ module.exports.bootstrap = function ( cb ) {
                 firstName: 'Treb',
                 lastName:  'Ryan',
                 metadata:  { preinstall: true },
-                roles:     [ RoleCacheService.roleByName( "admin", '' ), RoleCacheService.roleByName( "user", '' ) ]
             },
             auth: {
                 email:    'treb+a@ourglass.tv',
@@ -76,14 +57,15 @@ module.exports.bootstrap = function ( cb ) {
     ];
 
     chain = chain
-        .then( RoleCacheService.sync )
         .then( function () {
 
             var parr = coreAdmins.map( function(admin){
-                return AdminService.addUser( admin.auth.email, admin.auth.password, admin.user, false )
+                return AdminService.addUserAtRing( admin.auth.email, admin.auth.password, 1, admin.user, false )
                     .then( function () { sails.log.debug( "Admin user created." )} )
                     .catch( function () { sails.log.warn( "Admin user NOT created. Probably already existed." )} );
             })
+
+            parr.push( AdminService.addUserAtRing('jonny@lowstatus.com','password', 3, { firstName: 'Jonnie', lastName: 'looser '}));
 
             return Promise.all(parr);
 

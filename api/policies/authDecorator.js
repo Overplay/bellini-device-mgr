@@ -14,9 +14,9 @@ module.exports = function ( req, res, next ) {
     req.options.locals = req.options.locals || {};
     // This !! bit of magic converts truthy/falsy to the hard true/false that EJS needs
     req.options.locals.authenticated = !!req.session.authenticated;
-    req.options.locals.admin = !!( req.session.user && RoleCacheService.hasAdminRole( req.session.user.roles ));
+    req.options.locals.admin = !!( req.session.user && req.session.user.auth && (req.session.user.auth==1));
 
-    req.options.locals.roles = req.session && req.session.user && req.session.user.roleTypes;
+    req.options.locals.roles = "Yeah, we don't do roles anymore";
     
     return next();
 

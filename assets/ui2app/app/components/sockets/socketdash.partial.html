@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-lg-8">
+
+            <h1>WebSocket Dashboard</h1>
+
+            <h2>Rooms</h2>
+
+            <table class="table table-condensed table-striped">
+                <tr>
+                    <th>Room Name</th>
+                    <th></th>
+                </tr>
+                <tr ng-repeat="r in rooms track by $index">
+                    <td>{{ r }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" ng-click="dm(r)" style="margin: 5px;">SEND DM</button>
+                    </td>
+
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+

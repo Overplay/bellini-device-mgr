@@ -31,22 +31,13 @@ app.controller( 'adminUserListController', function ( $scope, users, $log, uibHe
 
 // USER EDIT FOR ADMIN
 
-app.controller( 'adminUserEditController', function ( $scope, user, $log, uibHelper, toastr, roles,
-                                                      $state, userAuthService, allVenues, sailsUsers, dialogService ) {
+app.controller( 'adminUserEditController', function ( $scope, user, $log, uibHelper, toastr,
+                                                      $state, userAuthService, sailsUsers, dialogService ) {
 
     $log.debug( "Loading adminUserEditController" );
     $scope.user = user;
     var _newUser;
 
-
-    function refreshRoles() {
-        $scope.roles = roles.map( function ( r ) {
-            r.selected = _.includes( $scope.user.roleTypes, r.roleKey );
-            return r;
-        } );
-    }
-
-    refreshRoles();
 
     function makeNameFields( user ) {
         return [
@@ -194,57 +185,6 @@ app.controller( 'adminUserEditController', function ( $scope, user, $log, uibHel
             } )
     }
 
-    $scope.addVenue = function ( kind ) {
-
-        var vnames = _.map( allVenues, 'name' );
-
-        uibHelper.selectListModal( 'Pick a Venue', '', vnames, 0 )
-            .then( function ( chosenOne ) {
-
-                $log.debug( "Chose " + allVenues[ chosenOne ].id );
-                $scope.user.attachToVenue( allVenues[ chosenOne ], kind )
-                    .then( function ( modifiedUser ) {
-                        toastr.success( "Added user to venue." );
-                        $scope.user = modifiedUser;
-                        refreshRoles();
-                    } )
-                    .catch( function ( err ) {
-                        toastr.error( "Problem attaching user to venue" );
-                    } );
-            } )
-            .catch( function ( err ) {
-
-            } );
-
-    }
-
-    function doVenueRemove( venue, asType ) {
-
-        uibHelper.confirmModal( "Confirm", "Are you sure you want to remove this user from the " + asType + " role on venue: " +
-            venue.name + "?" )
-            .then( function () {
-
-                $scope.user.removeFromVenue( venue, asType )
-                    .then( function ( user ) {
-                        $scope.user = user;
-                        refreshRoles();
-                        toastr.success( "User Removed" );
-                    } )
-                    .catch( function ( err ) {
-                        toastr.error( "Problem removing user from venue" );
-                    } );
-
-            } )
-
-    }
-
-    $scope.removeOwnedVenue = function ( venue ) {
-        doVenueRemove( venue, 'owner' );
-    }
-
-    $scope.removeManagedVenue = function ( venue ) {
-        doVenueRemove( venue, 'manager' );
-    }
 
     function changePassword( newPass ) {
         userAuthService.changePassword( { email: $scope.user.email, password: newPass } )
@@ -275,6 +215,22 @@ app.controller( 'adminUserEditController', function ( $scope, user, $log, uibHel
             } );
     }
 
+    $scope.changeRing = function(){
+
+        uibHelper.selectListModal("Change Ring", "Select a new security ring below.", ['Admin', 'Device',
+            'User', 'Other (unused)'], $scope.user.ring-1)
+            .then( function(choice){
+                return $scope.user.setRing(choice+1);
+            })
+            .then( function(newUser){
+                toastr.success("User's ring level was changed");
+            })
+            .catch( function(err){
+                toastr.error(err.message);
+            })
+
+    }
+
 } );
 
 app.controller( 'adminVenueListController', function ( $scope, venues, $log, uibHelper, $state, toastr ) {
@@ -282,27 +238,9 @@ app.controller( 'adminVenueListController', function ( $scope, venues, $log, uib
     $log.debug( 'Loading adminVenueListController' );
     $scope.venues = venues;
 
-    //TODO Ryan: Add delete method. See above for example.
-    $scope.delVenue = function ( venue ) {
+    $scope.venues.forEach( function(v){ v.populateDevices(); });
 
-        let mustMatch = "";
 
-        uibHelper.stringEditModal( "Confirm Venue Delete",
-            "Please type the venue's name ( " + venue.name + " ) in the box below, then click OK, to delete.",
-            mustMatch, "enter email here" )
-            .then( function ( res ) {
-
-                if ( res === venue.name || res === '4321' ) {
-                    toastr.success( "Venue " + venue.name + " deleted." );
-                    venue.delete()
-                        .then( function () {
-                            $state.reload();
-                        } );
-                }
-
-            });
-
-    }
 } )
 
 app.controller( 'adminVenueEditController', function ( $scope, venue, $log, uibHelper, $state, toastr) {

@@ -6,26 +6,15 @@
  */
 
 
-app.controller( 'listOGDeviceController', function ( devices, $scope, $log, sailsVenues, toastr ) {
+app.controller( 'listOGDeviceController', function ( $scope, $log, ogdevices ) {
 
 
     $log.debug( "Loading listOGDeviceController" );
 
-    $scope.ogdevices = devices;
+    $scope.ogdevices = ogdevices;
 
     $scope.ogdevices.forEach( function ( og ) {
-        if ( !og.atVenueUUID ) {
-            og[ 'venueName' ] = "unassigned";
-        } else {
-            sailsVenues.getByUUID( og.atVenueUUID )
-                .then( function ( v ) {
-                    og[ 'venueName' ] = v.name;
-                } )
-                .catch( function ( e ) {
-                    og[ 'venueName' ] = "UUID May be Invalid";
-                    toastr.error(e.data.error, "Problem Fetching Venue Info");
-                } )
-        }
+        og.populateVenue();
     } );
 
     $scope.$parent.ui = { pageTitle: "OG Boxes", panelHeading: "All Boxes" }

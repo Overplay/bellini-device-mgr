@@ -13,9 +13,13 @@ module.exports = {
 
     uiApp: function ( req, res ) {
 
-        //return res.view("ui/uiapp", {layout: 'ui/uilayout'});
 
-        return res.view( "ui/ui2dmAppBody", { layout: 'ui/ui2dmtemplate' } );
+        // TODO This should probably be done in policies
+        if (req.session.user.auth.ring == 1){
+            return res.view( "ui/ui2dmAppBody", { layout: 'ui/ui2dmtemplate' } );
+        }
+
+        res.view('', { layout: 'ui/notenoughjuice' });
     }
 
 };

@@ -10,7 +10,8 @@ module.exports = {
 
   attributes: require('waterlock').models.auth.attributes({
 
-      // 0 = god, 1 = device, 2 = user,  3 = disabled used(?)
+      // 1 = god, 2 = device, 3 = user,  4 = disabled used(?)
+      // 0/undefined = fuck off matey
       ring: {
           type:       "integer",
           defaultsTo: 3

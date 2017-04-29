@@ -58,34 +58,8 @@ module.exports = {
             defaultsTo: ''
         },
 
-        devices: {
-            collection: 'Device',
-            via: 'venue'
-        },
 
-        venueOwners: {
-            collection: 'User',
-            via: 'ownedVenues'
-        },
 
-        venueManagers: {
-            collection: 'User',
-            via: 'managedVenues'
-        },
-
-        organization: {
-            model: 'Organization'
-        },
-
-        textHistory: {
-            type: 'array',
-            defaultsTo: []
-        },
-
-        sponsorships: {
-            type: 'array',
-            defaultsTo: []
-        },
         
         // used for "Virtual Venues" like "Limbo" where devices are before associated.
         virtual: {

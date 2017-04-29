@@ -43,7 +43,7 @@ app.run( function ( $log, $rootScope, toastr, $state ) {
                         $log.debug( 'forbidden fruit' );
                         toastr.error( "Yeah, we're gonna need you not to do that.", "Not Authorized" );
                         event.preventDefault();
-                        $state.go('welcome');
+                        $state.go('dashboard');
                         break;
                 }
 
@@ -77,6 +77,13 @@ app.filter( 'addressify', function () {
         newAddr += addressJson.state + ' ';
         newAddr += addressJson.zip;
         return newAddr;
+    }
+} );
+
+app.filter( 'ringToHuman', function () {
+    return function ( ring ) {
+        var rings = [ 'Admin', 'Device', 'User', 'Other' ];
+        return rings[ring-1];
     }
 } );
 

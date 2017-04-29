@@ -1,5 +1,8 @@
 /**
  * Created by ryanhartzell on 9/8/16.
+ *
+ * Passes anything with an Authorization header.
+ * Do not use in production!!
  */
 
 module.exports = function (req, res, next) {

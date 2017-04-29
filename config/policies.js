@@ -28,17 +28,11 @@ module.exports.policies = {
         landing: ['authDecorator', 'authRedirect']
     },
 
-    // Let's tighten down a bit on blog posts
-    BlogPostController: {
-        restricted: [ 'sessionAuth' ],
-        open:       true,
-        admin:      [ 'isAdmin' ]
-    },
 
     EJSExampleController: {
         restricted: [ 'authDecorator', 'sessionAuth' ],
         open:       true,
-        admin:      [ 'authDecorator', 'isAdmin' ]
+        admin:      [ 'authDecorator', 'isRingAdmin' ]
     },
 
     /**
@@ -50,109 +44,42 @@ module.exports.policies = {
      */
 
 
-
-    ActivationController: {
-        '*': false,
-        'generateCode': ['sessionAuth'] //just need to be logged in as any user 
-    },
-    AdController: {
-        '*': true,
-        'update': ['sessionAuth', 'isAdOwner'],
-        'destroy': ['sessionAuth', 'isAdOwner'],
-        'review': ['sessionAuth', 'isAdmin'],
-        'pauseOrResume': ['sessionAuth', 'isAdOwner'],
-        'setDelete': ['sessionAuth', 'isAdOwner'],
-        'forReview': ['sessionAuth', 'isAdmin'],
-        'editAd': ['sessionAuth', 'isAdOwner'],
-        'getAccepted': true //TODO 
-    },
     
     AuthController: {
-        '*': true, //really protect auth
-        'find':    [ 'sessionAuth', 'isAdmin' ],
-        'findOne': ['sessionAuth', 'isVenueOwnerMeOrAdmin'], //tricky for manager list and whatnot
-        'update':  [ 'sessionAuth', 'isAdmin' ],
-        'destroy': ['sessionAuth', 'isAdmin'], //maybe me?
-        'register': ['sessionAuth', 'isAdmin'], //not even used anywhere
-        'addUser': true, //used in SignupApp through nucleus service
-        'resetPwd': ['passwordReset'],
-        'register': false, //we use a differnet registration than waterlock
-        //changePw own policy because it could be an authenticated user OR a reset token 
-        'changePwd': ['passwordChange'] //this is tricky becuase of pw reset... 
-    },
-
-    DeviceController: {
-        '*': true,
-        'find': ['sessionAuth', 'isDeviceManagerOrOwner'],
-        'findOne': ['sessionAuth', 'isDeviceManagerOrOwner'],
-        'update': ['sessionAuth', 'isDeviceOwner'],
-        'destroy': ['sessionAuth', 'isDeviceOwner'],
-        'registerDevice': ['sessionAuth'],
-        'testDevice': ['sessionAuth'],
-        //backup and restore todo
-        'getUserRolesForDevice': ['GETOnly', 'hasJsonWebToken'],
-        'verifyRequest': ['hasSameIP']
-
+        '*': 'isRingAdmin', //really protect auth
+        // 'find':    [ 'isRingAdmin' ],
+        // 'findOne': [ 'authProtection' ], //tricky for manager list and whatnot
+        // 'update':  [ 'authProtection' ],
+        // 'destroy': [ 'authProtection' ], //maybe me?
+        // 'register': [ 'isRingAdmin' ], //not even used anywhere
+        // 'addUser': true, //used in SignupApp through nucleus service
+        // 'resetPwd': ['passwordReset'],
+        // 'register': false, //we use a differnet registration than waterlock
+        // //changePw own policy because it could be an authenticated user OR a reset token
+        // 'changePwd': ['passwordChange'] //this is tricky becuase of pw reset...
     },
 
     MediaController: {
-        '*': true,
-        'upload': ['sessionAuth'],
-        'deleteAllEntries': false
+        '*': 'isRingAdmin'
     },
 
     OGLogController: {
-        '*': true,
-        'destroy': ['sessionAuth', 'isAdmin'],
+        '*': 'isRingAdmin',
         'upload': ['tempAuth']
     },
 
     SMSController: {
-        '*': true,
+        '*': 'isRingAdmin',
         'notify': ['limitSMS', 'tempAuth']
     },
 
     UserController: {
-        '*': ['sessionAuth'], //true,
-        'find': ['sessionAuth', 'isAdmin'],
-        'findOne': ['sessionAuth', 'isVenueOwnerMeOrAdmin'],
-        'update':  [ 'sessionAuth', 'isMeOrAdmin' ],
-        'destroy': [ 'sessionAuth', 'isAdmin' ],
-        'inviteUser': ['sessionAuth', 'isProprietorOwner'],
-        'inviteRole': ['sessionAuth', 'isProprietorOwner'],
-        'findByEmail': ['sessionAuth', 'isProprietorOwner'],
-        'getVenues': ['sessionAuth', 'isProprietorOwner'],
-        'getDevices': ['sessionAuth', 'isProprietorOwner'],
-        'getManagedDevices': ['sessionAuth', 'isProprietorManager'],
-        'getAlist': ['sessionAuth', 'isAdvertiser'],
-        'becomeAdvertiser': ['sessionAuth']
-
+        '*': 'isRingAdmin'
     },
     
     VenueController: {
-        '*': ['sessionAuth'],
-        'find': ['sessionAuth', 'isVenueOwnerMeOrAdmin'],
-        'findOne': ['sessionAuth'], //issues with this one for device population
-        'update': ['sessionAuth', 'isVenueOwnerMeOrAdmin'],
-        'destroy': ['sessionAuth', 'isVenueOwnerMeOrAdmin'],
-        'getVenueManagers': ['sessionAuth', 'isVenueOwnerMeOrAdmin'],
-        'addManager': ['sessionAuth', 'isVenueOwnerMeOrAdmin'],
-        'addOwner': ['sessionAuth', 'isVenueOwnerMeOrAdmin'],
-        'removeManager': ['sessionAuth', 'isVenueOwnerMeOrAdmin'],
-        'removeOwner': ['sessionAuth', 'isVenueOwnerMeOrAdmin'],
-        'getMobileView': true //TODO 
+        '*': ['isRingAdmin']
     },
-    
-
-    RoleController: {
-        '*':       true,
-        'find':    [ 'sessionAuth', 'isAdmin' ],
-        'findOne': [ 'sessionAuth', 'isAdmin' ],
-        'update':  [ 'sessionAuth', 'isAdmin' ],
-        'destroy': [ 'sessionAuth', 'isAdmin' ]
-
-    },
-
 
     //AuthController: [ 'sessionAuth', 'meOrAdmin' ],
 
@@ -161,6 +88,6 @@ module.exports.policies = {
     },
 
     // Override this in local.js for testing
-    wideOpen: true
+    wideOpen: false
 
 };

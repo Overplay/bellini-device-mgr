@@ -8,27 +8,6 @@ var _ = require( 'lodash' );
 
 var _authRoleId = undefined;
 
-function getAuthRole() {
-
-    // If we already have it, just return it
-    if ( _authRoleId ) {
-        return new Promise.resolve( _authRoleId );
-    }
-
-    return new Promise( function ( resolve, reject ) {
-
-        Role.findOneByRoleName( 'admin' )
-            .then( function ( role ) {
-                _authRoleId = role.id; // remember it
-                resolve( role.id );
-            } )
-            .catch( function ( err ) {
-                log.error( "MAJOR problem getting auth role, is DB corrupt?" );
-                reject( err );
-            } )
-
-    } )
-}
 
 function attachAdminToAuth( authObj ) {
 
@@ -94,11 +73,19 @@ module.exports = require( 'waterlock' ).waterlocked( {
      * @param userObj
      */
 
+    // Backwards compatible call until we go thru all the non-ring code. Creates a regular user.
     addUser: function ( emailAddr, password, userObj, facebookId, requireValidation ) {
+
+        return module.exports.addUserAtRing( emailAddr, password, 3, userObj, facebookId, requireValidation )
+
+    },
+
+    addUserAtRing: function ( emailAddr, password, ring, userObj, facebookId, requireValidation ) {
 
         var authAttrib = {
             email:    emailAddr,
-            password: password
+            password: password,
+            ring: ring
         };
 
         if ( facebookId && typeof facebookId !== 'undefined' )

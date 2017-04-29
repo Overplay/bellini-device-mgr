@@ -54,7 +54,7 @@ app.factory( "sailsVenues", function ( sailsApi, sailsCoreModel, sailsOGDevice )
         this.populateDevices = function(){
 
             var _this = this;
-            return sailsOGDevice.getAll('forVenueUUID='+this.uuid)
+            return sailsOGDevice.getAll('atVenueUUID='+this.uuid)
                 .then( function(devices){
                     _this.devices = devices;
                     return _this;

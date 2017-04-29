@@ -3,12 +3,15 @@
  */
 
 
-app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel, sailsVenues ) {
+app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel ) {
 
 
     var getAll = function ( queryString ) {
         // using non blueprint getter for security
-        return sailsApi.apiGet( '/ogdevice/all', queryString )
+
+        var ep = '/ogdevice/all' + ( queryString ? "?"+queryString : '');
+
+        return sailsApi.apiGet( ep )
             .then( function ( ogdevices ) {
                 return ogdevices.map( newOGDevice );
             } )
@@ -56,7 +59,7 @@ app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel, sailsVenues )
         this.populateVenue = function(){
 
             var _this = this;
-            return sailsVenues.getByUUID(this.atVenueUUID)
+            return sailsApi.apiGet( '/venue/findByUUID?uuid=' + this.atVenueUUID )
                 .then( function(v){
                     _this.atVenue = v;
                     return _this;

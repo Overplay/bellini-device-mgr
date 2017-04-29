@@ -9,7 +9,7 @@ app.factory( 'sideMenu', function ( $rootScope ) {
     var menuGroups = {
         deviceMenu:   [
             { label: "All Active", sref: "devices.allactive", icon: "tv" },
-            { label: "All By Venue", sref: "device.allbyvenue", icon: "building" },
+            { label: "All By Venue", sref: "devices.byvenue", icon: "building" },
             { label: "In Bullpen", sref: "devices.bullpen", icon: "child" },
         ],
         venueMenu: [

@@ -38,6 +38,7 @@ app.factory( "sailsUsers", function ( sailsApi, sailsCoreModel, sailsAuth, userA
             this.roleTypes = json && json.roleTypes;
             this.auth = json && json.auth && sailsAuth.new( json.auth );
             this.blocked = this.auth && this.auth.blocked;
+            this.ring = this.auth && this.auth.ring;
 
             this.parseCore( json );
         };
@@ -58,6 +59,16 @@ app.factory( "sailsUsers", function ( sailsApi, sailsCoreModel, sailsAuth, userA
         this.updateBlocked = function(){
             this.auth.blocked = !!this.blocked;
             return this.auth.save();
+        }
+
+        this.setRing = function(ring){
+            var _this = this;
+            this.auth.ring = ring;
+            return this.auth.save()
+                .then( function(val){
+                    _this.ring = ring;
+                    return val;
+                });
         }
 
         // TODO: lots of replicated code below
