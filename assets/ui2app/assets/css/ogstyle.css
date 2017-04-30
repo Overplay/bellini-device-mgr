@@ -1,3 +1,12 @@
+.material-panel {
+  -webkit-box-shadow: 1px 1px 1px 0px #a8a8a8;
+  -moz-box-shadow: 1px 1px 1px 0px #a8a8a8;
+  box-shadow: 1px 1px 1px 0px #a8a8a8;
+  border: 1px solid #f0f0f0;
+  margin: 5px;
+  min-height: 300px;
+  padding: 0 30px 30px 30px; }
+
 .ognavbar {
   position: relative;
   top: 0;
@@ -44,7 +53,7 @@
   /*top: 60px;*/
   left: 0;
   background-color: white;
-  width: 220px;
+  width: 190px;
   height: 100vh;
   /* Temp border for layout */
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -55,7 +64,6 @@
   margin: 20px 10px 0 10px;
   /*border-top: 2px solid #348ad6;*/
   /*border-top: 1px solid #c1e9ff;*/
-  border-right: 1px solid #C1E9FF;
   min-height: 500px; }
 
 .sidelink {

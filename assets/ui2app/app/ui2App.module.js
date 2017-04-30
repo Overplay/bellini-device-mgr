@@ -24,7 +24,7 @@ app.config( function ( toastrConfig ) {
 // }])
 
 
-app.run( function ( $log, $rootScope, toastr, $state ) {
+app.run( function ( $log, $rootScope, toastr, $state, uibHelper ) {
 
     $log.info( "Bellini is pouring!" );
 
@@ -45,6 +45,17 @@ app.run( function ( $log, $rootScope, toastr, $state ) {
                         event.preventDefault();
                         $state.go('dashboard');
                         break;
+
+                    case 500:
+                        $log.debug( "Something bad...500" );
+                        var ej = error.data && error.data.error;
+                        if ( ej == "peer down" ) {
+                            $log.error( "Peer down" );
+                            event.preventDefault();
+                            uibHelper.headsupModal("This is Bad!", "A peer service is down. This is non recoverable!")
+                                .then(function(){});
+                            break;
+                        }
                 }
 
             }

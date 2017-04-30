@@ -8,6 +8,10 @@
 
 $corner-radius: 3px;
 
+body {
+  //background-color: $light-grey !important;
+}
+
 .subhead {
   margin-top: 15px;
   font-weight: bold;
@@ -36,6 +40,9 @@ $corner-radius: 3px;
   border: 2px solid $error-color !important;
   border-radius: 3px !important;
 }
+
+// Material look
+
 
 
 // Spinner animation

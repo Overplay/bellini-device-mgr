@@ -14,6 +14,8 @@ var yelp = new Yelp( {
     token_secret:    "WLHkoScUyrkJCW1WS7c_fXe_ekI"
 } );
 
+var USE_BC_VENUES = true;
+
 module.exports = {
 
 
@@ -522,9 +524,20 @@ module.exports = {
         //     query = {}
         // }
 
-        Venue.find( { virtual: false } )
-            .then( res.ok )
-            .catch( res.serverError );
+        if (USE_BC_VENUES){
+
+            BCService.Venue.findAllReal()
+                .then(res.ok)
+                .catch( res.proxyError );
+
+        } else {
+
+            Venue.find( { virtual: false } )
+                .then( res.ok )
+                .catch( res.serverError );
+
+        }
+
 
     }
 }

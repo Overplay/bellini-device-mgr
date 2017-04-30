@@ -8,6 +8,7 @@
 
 var Promise = require( 'bluebird' );
 
+var USE_BC_VENUES = true;
 
 function sendDeviceDM( deviceUDID, message, req ) {
 
@@ -17,6 +18,14 @@ function sendDeviceDM( deviceUDID, message, req ) {
         req );
 
 }
+
+function findVenueByUUID( uuid ) {
+
+    return USE_BC_VENUES ? BCService.Venue.findByUUID( uuid ) :
+        Venue.findOne( { uuid: uuid } );
+
+}
+
 
 module.exports = {
 
@@ -58,9 +67,10 @@ module.exports = {
         if ( !params.deviceUDID || !params.venueUUID )
             return res.badRequest( { error: 'missing parameters' } );
 
+
         var preconditions = {
             device: OGDevice.findOne( { deviceUDID: params.deviceUDID } ),
-            venue:  Venue.findOne( { uuid: params.venueUUID } )
+            venue:  findVenueByUUID( params.venueUUID )
         };
 
         Promise.props( preconditions )
@@ -283,7 +293,7 @@ module.exports = {
                     return res.ok( dev );
                 }
 
-                return Promise.props( { device: dev, venue: Venue.findOne( { uuid: dev.atVenueUUID } ) } );
+                return Promise.props( { device: dev, venue: findVenueByUUID( dev.atVenueUUID ) } );
 
             } )
             .then( function ( props ) {
@@ -320,7 +330,7 @@ module.exports = {
                     return res.ok( dev );
                 }
 
-                return Promise.props( { device: dev, venue: Venue.findOne( { uuid: dev.atVenueUUID } ) } );
+                return Promise.props( { device: dev, venue: findVenueByUUID( dev.atVenueUUID ) } );
 
             } )
             .then( function ( props ) {
@@ -585,14 +595,14 @@ module.exports = {
             .catch( res.serverError );
     },
 
-    all: function( req, res ){
+    all: function ( req, res ) {
 
         if ( req.method != 'GET' )
             return res.badRequest( { error: "Bad verb" } );
 
-        OGDevice.find(req.query)
-            .then(res.ok)
-            .catch(res.serverError);
+        OGDevice.find( req.query )
+            .then( res.ok )
+            .catch( res.serverError );
 
 
     }
