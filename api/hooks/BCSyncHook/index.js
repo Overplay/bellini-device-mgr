@@ -13,6 +13,8 @@
 var Promise = require('bluebird');
 var _ = require('lodash');
 
+var disabled = true; // right now, we get venues from 2000, so this hook is not needed anymore.
+
 module.exports = function bcSyncHook(sails) {
 
     var cronDelay = 0;
@@ -31,7 +33,7 @@ module.exports = function bcSyncHook(sails) {
         },
 
         initialize: function (cb) {
-            if (!cronDelay) {
+            if (!cronDelay || disabled ) {
                 sails.log.warn("There's no config file or its BC Sync hook is disabled... ");
                 return cb();
             }

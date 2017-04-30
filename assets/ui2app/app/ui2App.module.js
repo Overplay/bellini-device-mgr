@@ -31,6 +31,11 @@ app.run( function ( $log, $rootScope, toastr, $state, uibHelper ) {
     $rootScope.$on( '$stateChangeError',
         function ( event, toState, toParams, fromState, fromParams, error ) {
             $log.error( "State change fail!" );
+
+            if (!fromState.name){
+                $log.debug('FromState is nil, prolly a reload, bailing out to root');
+                window.location = '/';
+            } else
             if ( error && error.status ) {
 
                 switch ( error.status ) {
