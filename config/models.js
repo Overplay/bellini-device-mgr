@@ -28,6 +28,6 @@ module.exports.models = {
   * See http://sailsjs.org/#!/documentation/concepts/ORM/model-settings.html  *
   *                                                                          *
   ***************************************************************************/
-  migrate: 'drop', //TODO change this for production (alter or safe)
+  migrate: 'alter', //TODO change this for production (alter or safe)
   terse: true
 };
