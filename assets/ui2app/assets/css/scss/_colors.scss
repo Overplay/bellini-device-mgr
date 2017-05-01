@@ -13,6 +13,12 @@ $highlight-color-info: #b7fdb7;
 
 $error-color: #ff0051;
 
+// brand colors
+$brand-green: #51b85e !default;
+$brand-blue: #20B8EB !default;
+$brand-orange: #f6921e !default;
+$brand-red: #ee4839 !default;
+
 $material-border-grey: #f0f0f0;
 
 @mixin material-card-shadow {

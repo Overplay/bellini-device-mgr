@@ -102,13 +102,37 @@
   font-family: 'Exo 2', sans-serif;
   font-weight: 900; }
 
+.admin {
+  background-color: #ee4839; }
+
+.device {
+  background-color: #51b85e; }
+
+.user {
+  background-color: #20B8EB; }
+
+.sponsor {
+  background-color: #f6921e; }
+
+.other {
+  background-color: rebeccapurple; }
+
+.ring-badge {
+  padding: 5px;
+  border-radius: 4px;
+  font-weight: bold;
+  color: white;
+  width: 100px;
+  text-align: center;
+  display: inline-block; }
+
 .subhead {
   margin-top: 15px;
   font-weight: bold; }
 
 .ibut {
   padding: 5px;
-  background-color: #007fa0;
+  background-color: #20B8EB;
   color: white;
   border-radius: 3px; }
   .ibut:hover {

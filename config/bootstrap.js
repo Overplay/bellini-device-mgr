@@ -13,9 +13,6 @@ var Promises = require( 'bluebird' );
 
 module.exports.bootstrap = function ( cb ) {
 
-
-    var coreRoles = sails.config.roles.coreRoles;
-
     var chain = Promise.resolve();
 
     var coreAdmins = [

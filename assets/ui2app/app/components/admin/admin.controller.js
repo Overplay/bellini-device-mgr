@@ -218,7 +218,7 @@ app.controller( 'adminUserEditController', function ( $scope, user, $log, uibHel
     $scope.changeRing = function(){
 
         uibHelper.selectListModal("Change Ring", "Select a new security ring below.", ['Admin', 'Device',
-            'User', 'Other (unused)'], $scope.user.ring-1)
+            'User ( effectively blocked on DM )'], $scope.user.ring-1)
             .then( function(choice){
                 return $scope.user.setRing(choice+1);
             })

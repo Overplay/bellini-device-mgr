@@ -13,7 +13,7 @@
                 </uib-tab>
                 <uib-tab heading="Permissions and Password">
                     <h5 class="subhead">Ring Level</h5>
-                    <p><span class="badge">{{ user.ring | ringToHuman }} / {{ user.ring }}</span> </p>
+                    <p><ring-badge ring="user.ring"></ring-badge></p>
                      <button ng-click="changeRing()" class="btn btn-sm btn-warning">CHANGE RING</button> </p>
                     <hr>
                     <h5 class="subhead">Password</h5>

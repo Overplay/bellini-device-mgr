@@ -4,33 +4,7 @@
  *
  */
 
-var _ = require( 'lodash' );
-
-var _authRoleId = undefined;
-
-
-function attachAdminToAuth( authObj ) {
-
-    return new Promise( function ( resolve, reject ) {
-
-        getAuthRole()
-            .then( function ( authRoleId ) {
-
-                User.findOneById( authObj.user )
-                    .then( function ( user ) {
-                        user.accountType = 'admin';
-                        user.roles = _.union( user.roles, [ authRoleId ] );
-                        user.save();
-                        resolve( user );
-                    } )
-                    .catch( reject );
-
-            } )
-            .catch( reject );  //bubble it up, but this should not ever occur
-
-
-    } )
-}
+var _= require( 'lodash' );
 
 
 module.exports = require( 'waterlock' ).waterlocked( {

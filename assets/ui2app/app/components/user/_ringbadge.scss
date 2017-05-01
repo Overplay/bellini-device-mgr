@@ -1,0 +1,29 @@
+.admin {
+  background-color: $brand-red;
+}
+
+.device {
+  background-color: $brand-green;
+}
+
+.user {
+  background-color: $brand-blue;
+}
+
+.sponsor {
+  background-color: $brand-orange;
+}
+
+.other {
+  background-color: rebeccapurple;
+}
+
+.ring-badge {
+  padding: 5px;
+  border-radius: 4px;
+  font-weight: bold;
+  color: white;
+  width: 100px;
+  text-align: center;
+  display: inline-block;
+}
