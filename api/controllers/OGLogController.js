@@ -7,73 +7,73 @@
 
 module.exports = {
 
-    upload: function (req, res) {
+    // MAK, what is this for
+    upload: function ( req, res ) {
 
         var params = req.allParams();
 
-        if (!params.logType)
-            return res.badRequest({error: "Missing log type"});
-        if (!params.message)
-            return res.badRequest({error: "Missing message"});
-        if (!params.deviceUniqueId && !params.deviceId)
-            return res.badRequest({error: "Missing device id"});
-        if (!params.loggedAt)
-            return res.badRequest({error: "Missing logged at time"});
+        if ( !params.logType )
+            return res.badRequest( { error: "Missing log type" } );
+        if ( !params.message )
+            return res.badRequest( { error: "Missing message" } );
+        if ( !params.deviceUniqueId && !params.deviceId )
+            return res.badRequest( { error: "Missing device id" } );
+        if ( !params.loggedAt )
+            return res.badRequest( { error: "Missing logged at time" } );
 
-        params.loggedAt = new Date(params.loggedAt);
-        sails.log.debug(params);
+        params.loggedAt = new Date( params.loggedAt );
+        sails.log.debug( params );
 
-        OGLog.create(params)
-            .then( function (log) {
-                if (log.logType == "alert") {
+        OGLog.create( params )
+            .then( function ( log ) {
+                if ( log.logType == "alert" ) {
                     // return TwilioService.sendText('+13033249551', "RED ALERT!!!!");
                 }
-                return res.ok(log)
-            })
+                return res.ok( log )
+            } )
 
-            .catch( function (err) {
-                sails.log.debug("error creating log")
-                return res.serverError({error: err});
-            })
+            .catch( function ( err ) {
+                sails.log.debug( "error creating log" )
+                return res.serverError( { error: err } );
+            } )
 
     },
 
-    //if device id in OGLog, include ad id? this is complicated 
-    //more in the ad controller
-    impressions: function (req, res) {
-        OGLog.find({where: { logType: 'impression'}, sort: 'loggedAt DESC' })
-            .then(function(logs) {
-                return res.ok(logs); //all logs
-            })
-            .catch(function(err){
-                return res.serverError({error: err})
-            })
-    },
+    heartbeats: function ( req, res ) {
 
-    deviceHeartbeat: function (req, res) {
+        var deviceUDID = req.allParams().deviceUDID || req.allParams().id;
+        var limit = req.allParams().limit || 10;
 
-        if (!req.allParams().id)
-            return res.badRequest({error: "Missing device id"});
+        if ( deviceUDID )
+            return res.badRequest( { error: "Missing device udid" } );
 
-        var id = req.allParams().id;
-
-        //Why the f was this line ever here: MAK
-        //OGLog.find({ where: { logType: 'heartbeat'}, sort: 'loggedAt DESC'})
-        //TODO test with uniqueDeviceId: id in query if deviceId now instead of unique TOODODODODO
-        //OGLog.find({ where: { logType: 'heartbeat', deviceId: id}, sort: 'loggedAt DESC'})
-        OGLog.find( { where: { logType: 'heartbeat', deviceUniqueId: id }, limit: 10, sort: 'loggedAt DESC' } )
+        OGLog.find( { where: { logType: 'heartbeat', deviceUniqueId: deviceUDID }, limit: limit, sort: 'loggedAt DESC' } )
             .then( res.ok )
-            .catch(function(err){
-                return res.serverError({error: err})
-            })
+            .catch( res.serverError );
+
     },
 
-    getAll: function (req, res) {
+    all: function ( req, res ) {
         OGLog.find()
+            .then( res.ok )
+            .catch( function ( err ) {
+                return res.serverError( { error: err } )
+            } )
+    },
+
+    // NOTE: Policies now pre-check for POST and deviceUDID and it's from a valid device
+    postlog: function (req, res ){
+
+        var allParams = req.allParams();
+        if ( !allParams.logType ){
+            return res.badRequest({ error: 'no valid logtype' })
+        }
+
+        // schema: true is in the model, protecting it from random shit
+        OGLog.create(allParams)
             .then(res.ok)
-            .catch(function(err){
-                return res.serverError({error: err})
-            })
+            .catch(res.serverError);
+
     }
 
 

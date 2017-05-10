@@ -40,11 +40,6 @@ module.exports = {
             defaultsTo: ''
         },
 
-        logs: {
-            collection: 'ogLog',
-            via:        'forDevice'
-        },
-
         hardware: {
             type:       'json',
             defaultsTo: {}

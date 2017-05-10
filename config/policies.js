@@ -25,7 +25,7 @@ module.exports.policies = {
     '*': true,
 
     LandingController: {
-        landing: ['authDecorator', 'authRedirect']
+        landing: [ 'authDecorator', 'authRedirect' ]
     },
 
 
@@ -44,9 +44,12 @@ module.exports.policies = {
      */
 
 
-    
+
     AuthController: {
-        '*': 'isRingAdmin', //really protect auth
+        '*':         'isRingAdmin', //really protect auth
+        'loginPage': true,
+        // TODO some sort of policy on to many logins from same IP address
+        'login' : true
         // 'find':    [ 'isRingAdmin' ],
         // 'findOne': [ 'authProtection' ], //tricky for manager list and whatnot
         // 'update':  [ 'authProtection' ],
@@ -64,27 +67,28 @@ module.exports.policies = {
     },
 
     OGLogController: {
-        '*': 'isRingAdmin',
-        'upload': ['tempAuth']
+        '*':      'isRingAdmin',
+        'create':  false,
+        'postlog': ['isDevice', 'hasValidatedDeviceUDID']
     },
 
     SMSController: {
-        '*': 'isRingAdmin',
-        'notify': ['limitSMS', 'tempAuth']
+        '*':      'isRingAdmin',
+        'notify': [ 'limitSMS', 'tempAuth' ]
     },
 
     UserController: {
         '*': 'isRingAdmin'
     },
-    
+
     VenueController: {
-        '*': ['isRingAdmin']
+        '*': [ 'isRingAdmin' ]
     },
 
     //AuthController: [ 'sessionAuth', 'meOrAdmin' ],
 
     UIController: {
-        'uiApp': ['forceAnonToLogin', 'authDecorator', 'sessionAuth']
+        'uiApp': [ 'forceAnonToLogin', 'authDecorator', 'sessionAuth' ]
     },
 
     // Override this in local.js for testing

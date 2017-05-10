@@ -7,32 +7,33 @@
 
 module.exports = {
 
+    schema: true, // we don't want random cruft in the DB
+
     attributes: {
 
         logType: {
             type: "string",
-            enum: ['impression', 'heartbeat', 'alert', 'channel', 'placement', 'other']
+            //enum: ['impression', 'heartbeat', 'alert', 'channel', 'placement', 'other']
         },
 
         message: {
             type: "json"
         },
 
-        deviceUniqueId: {
+        deviceUDID: {
             type: 'string'
         },
-        deviceId: {
-            type: 'string'
-        },
+
         loggedAt: {
             type: 'datetime'
         },
-        forDevice: {
-            model: 'OGDevice'
-        }
-    }
 
-    ,
+        // Any attached media (like a LogCat file)
+        mediaId: {
+            type: 'string'
+        }
+
+    },
 
     beforeUpdate: function (valuesToUpdate, cb) {
 //        if (valuesToUpdate.loggedAt)
