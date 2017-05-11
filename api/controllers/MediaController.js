@@ -62,12 +62,78 @@ module.exports = {
 
     },
 
+    /*
+     uploads a file and creates it as a Media instance
+     */
+    upload2: function ( req, res ) {
+
+        if ( req.method != 'POST' ) {
+            return res.badRequest( { error: "Must use POST" } );
+        }
+
+        // The code below can take down sails because SkipperDisk is shitty
+
+        // var numFiles = req.file( 'file' )._files.length;
+        //
+        // if ( numFiles == 0 )
+        //     return res.badRequest( { error: "No files in POST" } );
+        //
+        // if ( numFiles > 1 )
+        //     return res.badRequest( { error: "This endpoint only does single files, try media/uploadmultiple." } );
+
+        var destinationFolder = require( 'path' ).resolve( sails.config.paths.media );
+
+        var uploadOptions = {
+            dirname:  destinationFolder,
+            maxBytes: 10 * 1024 * 1024
+        };
+
+        req.file( 'file' ).upload( uploadOptions, function whenDone( err, uploadedFiles ) {
+
+            if ( err ) {
+                sails.log.error( "Media upload error: " + util.inspect( err ) );
+                return res.serverError( { error: err } );
+            }
+
+            // If no files were uploaded, respond with an error.
+            if ( (uploadedFiles === undefined) || (uploadedFiles.length === 0) ) {
+                return res.badRequest( { error: 'No file(s) uploaded.' } );
+            }
+
+            sails.log.silly( "Processing uploaded file." );
+
+            var localFile = uploadedFiles[ 0 ];
+
+            var mObj = {
+                path:     localFile.fd,
+                file:     {
+                    size: localFile.size,
+                    type: localFile.type
+                },
+                metadata: req.param( 'metadata' ),
+                source:   req.param( 'source' )
+            };
+
+            Media.create( mObj )
+                .then( function ( newMedia ) {
+                    if ( !newMedia )
+                        throw new Error( "Could not create new Media!" );
+
+                    sails.log.silly( "Media.create: [ " + newMedia.id + " ]" );
+                    return res.ok( newMedia );
+                } )
+                .catch( function ( err ) {
+                    return res.badRequest( { error: err.message } );
+                } );
+
+        } );
+
+    },
 
     /*
     uploads a file and creates it as a Media instance 
      */
     upload: function ( req, res ) {
-
 
         //TODO media path config CEG
         var destinationFolder = require( 'path' ).resolve(sails.config.appPath, 'data/uploads/media');
@@ -81,59 +147,55 @@ module.exports = {
 
             if ( err ) {
                 sails.log.error( "Media upload error: " + util.inspect( err ) );
-                res.serverError( {error: err} );
+                return res.serverError( {error: err} );
             }
 
             // If no files were uploaded, respond with an error.
-            else if ( (uploadedFiles === undefined) || (uploadedFiles.length === 0) ) {
-                res.badRequest( {error: 'No file(s) uploaded.'} );
+            if ( (uploadedFiles === undefined) || (uploadedFiles.length === 0) ) {
+                return res.badRequest( {error: 'No file(s) uploaded.'} );
             }
 
-            else {
+            sails.log.silly( "Processing uploaded file." );
 
-                sails.log.silly( "Processing uploaded files." );
+            var localFile = uploadedFiles[ 0 ];
 
-                var ops = [];
+            var mObj = {
+                path:     localFile.fd,
+                file:     {
+                    size: localFile.size,
+                    type: localFile.type
+                },
+                metadata: req.param( 'metadata' ),
+                source:   req.param( 'source' )
+            };
 
-                for ( var uploadedFile in uploadedFiles ) {
+            Media.create( mObj )
+                .then( function ( newMedia ) {
+                    if ( !newMedia )
+                        throw new Error( "Could not create new Media!" );
 
-                    //TODO need hasOwnProperty check here?
-                    var localFile = uploadedFiles[ uploadedFile ];
+                    sails.log.silly( "Media.create: [ " + newMedia.id + " ]" );
+                    return newMedia;
+                } )
+                .then( function(newMedia){
 
-                    var mObj = {
-                        path:     localFile.fd,
-                        file:     {
-                            size: localFile.size,
-                            type: localFile.type
-                        },
-                        metadata: req.param( 'metadata' ),
-                        source:   req.param( 'source' )
-                    };
-
-                    ops.push( Media.create( mObj ) );
-                }
-
-                //Resolve creation of all media
-                promise.all( ops )
-                    .then(
-                        function ( newMedias ) {
-
-                            sails.log.silly( "Media.create: [ " + util.inspect( _.pluck( newMedias, 'id' ) ) + " ]" );
-
-                            //TODO are all these checks really necessary?
-                            if ( _.isArray( newMedias ) && (_.size( newMedias ) === 0) ) res.status( 201 ).json( {} );
-                            else if ( _.isArray( newMedias ) && (_.size( newMedias ) === 1) ) res.status( 201 ).json( newMedias[ 0 ] );
-                            else res.status( 201 ).json( newMedias );
+                    if (req.param('oglog')){
+                        // this is a media log, so let's create the log
+                        var oglog = req.param('oglog');
+                        oglog.mediaId = newMedia.id;
+                        OGLog.create(oglog)
+                            .then(res.ok)
+                            .catch(res.serverError);
 
 
-                        } )
-                    .catch(
-                        function ( err ) {
-                            sails.log.error( "Media.create (error): " + util.inspect( err ) );
-                            res.serverError( {error: err} );
-                        } );
+                    } else {
+                        return res.ok(media);
+                    }
 
-            }
+                })
+                .catch( function ( err ) {
+                    return res.badRequest( { error: err.message } );
+                } );
 
         } );
 

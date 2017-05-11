@@ -49,7 +49,7 @@ module.exports.policies = {
         '*':         'isRingAdmin', //really protect auth
         'loginPage': true,
         // TODO some sort of policy on to many logins from same IP address
-        'login' : true
+        'login':     true
         // 'find':    [ 'isRingAdmin' ],
         // 'findOne': [ 'authProtection' ], //tricky for manager list and whatnot
         // 'update':  [ 'authProtection' ],
@@ -67,9 +67,9 @@ module.exports.policies = {
     },
 
     OGLogController: {
-        '*':      'isRingAdmin',
+        '*':       'isRingAdmin',
         'create':  false,
-        'postlog': ['isDevice', 'hasValidatedDeviceUDID']
+        'postlog': [ 'isDevice', 'hasValidatedDeviceUDID' ]
     },
 
     SMSController: {
@@ -82,7 +82,8 @@ module.exports.policies = {
     },
 
     VenueController: {
-        '*': [ 'isRingAdmin' ]
+        '*':          [ 'isRingAdmin' ],
+        'findByUUID': [ 'sessionAuth' ]
     },
 
     //AuthController: [ 'sessionAuth', 'meOrAdmin' ],
