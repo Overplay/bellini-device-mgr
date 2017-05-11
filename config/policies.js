@@ -81,9 +81,9 @@ module.exports.policies = {
         '*': 'isRingAdmin'
     },
 
+    // TODO this needs to check auth on 2000
     VenueController: {
-        '*':          [ 'isRingAdmin' ],
-        'findByUUID': [ 'sessionAuth' ]
+        '*':          true
     },
 
     //AuthController: [ 'sessionAuth', 'meOrAdmin' ],
