@@ -58,6 +58,9 @@ app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel ) {
 
         this.populateVenue = function(){
 
+            if (!this.atVenueUUID)
+                return; // nothing to do
+
             var _this = this;
             return sailsApi.apiGet( '/venue/findByUUID?uuid=' + this.atVenueUUID )
                 .then( function(v){
