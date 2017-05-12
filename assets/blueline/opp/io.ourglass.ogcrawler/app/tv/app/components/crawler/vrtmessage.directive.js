@@ -128,7 +128,7 @@ app.directive( 'vertMsgBox',
                 }
 
                 scope.$watch( 'msgBlocks', function ( nval ) {
-                    if ( nval.length && scope.nup.showPlaceholder ){
+                    if ( nval && nval.length && scope.nup.showPlaceholder ){
                         startCycle();
                     }
                     if (!nval || !nval.length){

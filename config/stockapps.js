@@ -21,7 +21,7 @@ var stockApps = [
         defaultModel: { ticketNumber: 0 },
         appType: 'widget',
         appWidth: 10,
-        appHeight: 50
+        appHeight: 35
     },
     {
         appId:        "io.ourglass.ogcrawler",

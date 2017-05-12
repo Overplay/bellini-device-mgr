@@ -11,12 +11,16 @@
 
 
 app.controller( "crawlerController",
-    function ( $scope, $timeout, $http, $interval, ogAPI, $log, $window, $q, ogAds, ogProgramGuide ) {
+    function ( $scope, $timeout, $http, $interval, ogAPI, $log, $window, $q, ogAds ) {
 
         //Maximum number of tweets to show
         var TWEET_COUNT = 10;
 
-        $scope.vertMessages = [];
+        var testVertMessages = [
+            { header: "Coming Up", messages: ["Basketball", "Curling", "Soccer "] }
+        ]
+
+        $scope.vertMessages= testVertMessages;
         $scope.crawlerMessages = [];
 
         var crawlerModel = {
@@ -157,9 +161,8 @@ app.controller( "crawlerController",
                 appName: "io.ourglass.ogcrawler",
                 appType: "tv",
                 modelCallback: modelUpdate,
-                messageCallback: inboundMessage,
-                deviceUDID: "test"
-            })
+                messageCallback: inboundMessage
+                })
                 .then( function ( data ) {
                     $log.debug("crawler: init complete");
                     crawlerModel.user = data.messages;
