@@ -30,6 +30,7 @@ function lineupForDevice(deviceUDID){
             return lineupId;
         })
         .then( function(lineupId){
+            // Fetching from AJPGS, for now
             return request.get( "http://104.131.145.36:1338/tvmediaproxy/fetch/" + lineupId )
                 .then( function ( d ) {
                     var lup = d.body;

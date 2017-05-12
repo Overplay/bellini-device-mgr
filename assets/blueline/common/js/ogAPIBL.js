@@ -568,9 +568,18 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                      .then(stripData);
             };
 
+            service.getGridForCurrentChannel = function(){
+
+                var prog = this.getCurrentProgram();
+                if (!prog) return $q.when(undefined);
+
+                return this.getGridForChannel(prog.channelNumber);
+
+            }
+
             service.getGridForChannel = function ( channelNum ){
 
-                return $http.post( '/pgs/listingsforchannel?deviceUDID=' + _deviceUDID
+                return $http.get( '/pgs/listingsforchannel?deviceUDID=' + _deviceUDID
                     + '&channel=' + channelNum )
                     .then( stripData );
 

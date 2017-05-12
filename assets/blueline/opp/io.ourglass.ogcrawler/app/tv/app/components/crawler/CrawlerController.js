@@ -16,22 +16,24 @@ app.controller( "crawlerController",
         //Maximum number of tweets to show
         var TWEET_COUNT = 10;
 
-        var testVertMessages = [
-            { header: "Coming Up", messages: ["Basketball", "Curling", "Soccer "] }
-        ]
+        // var testVertMessages = [
+        //     { header: "Coming Up", messages: [ "Basketball", "Curling", "Soccer " ] }
+        // ]
 
-        $scope.vertMessages= testVertMessages;
+        $scope.vertMessages = [];
         $scope.crawlerMessages = [];
 
         var crawlerModel = {
-            user:        [],
-            twitter:     [],
-            ads:         []
+            user:    [],
+            twitter: [],
+            ads:     []
         };
 
         //function to set the display messages to the randomized concatenation of user and twitter messages
         //and coming up
         function updateDisplay() {
+
+            getTVGrid();
 
             ogAds.getCurrentAd()
                 .then( function ( currentAd ) {
@@ -59,27 +61,27 @@ app.controller( "crawlerController",
                     } );
 
                     $scope.crawlerMessages = _.shuffle( tempArr );
-                });
+                } );
 
         }
 
         function modelUpdate( data ) {
-            $log.debug("crawler: got a model update!");
+            $log.debug( "crawler: got a model update!" );
             crawlerModel.user = data.messages;
             updateDisplay();
         }
 
         function reloadTweets() {
 
-            $log.debug("Grabbing tweets");
+            $log.debug( "Grabbing tweets" );
             return $q.all( [ ogAPI.getTweets(), ogAPI.getChannelTweets() ] )
                 .then( function ( tweets ) {
-                    
-                    $log.debug("HideTVTweets is "+(ogAPI.model.hideTVTweets?"on":"off"));
-                    
-                    if (ogAPI.model.hideTVTweets)
-                        tweets[1] = {};
-                                             
+
+                    $log.debug( "HideTVTweets is " + (ogAPI.model.hideTVTweets ? "on" : "off") );
+
+                    if ( ogAPI.model.hideTVTweets )
+                        tweets[ 1 ] = {};
+
                     var mergedTweets = _.merge( tweets[ 0 ], tweets[ 1 ] );
 
                     if ( mergedTweets.statuses ) {
@@ -94,10 +96,10 @@ app.controller( "crawlerController",
                             tempArr.push( usableTweet );
                         }
 
-                        if (tempArr.length>0)
-                            crawlerModel.twitter = _.shuffle(tempArr);
-                            
-                        $log.debug("Processed tweets are this long: "+tempArr.length);
+                        if ( tempArr.length > 0 )
+                            crawlerModel.twitter = _.shuffle( tempArr );
+
+                        $log.debug( "Processed tweets are this long: " + tempArr.length );
                     }
 
                     return true;
@@ -109,14 +111,14 @@ app.controller( "crawlerController",
                 } )
 
         }
-        
-        function makeSensibleMessageFrom(msgArray, listing ) {
 
-            msgArray.push(listing.showName);
-            
+        function makeSensibleMessageFrom( msgArray, listing ) {
+
+            msgArray.push( listing.showName );
+
             //Now, look for team names
             if ( listing.team1 && listing.team2 ) {
-                $log.debug("Adding secondary team entry");
+                $log.debug( "Adding secondary team entry" );
                 msgArray.push( listing.team1 + " v " + listing.team2 );
             }
 
@@ -124,71 +126,93 @@ app.controller( "crawlerController",
 
         function getTVGrid() {
 
-            return ogProgramGuide.getNowAndNext()
-                .then( function( grid ){
+            return ogAPI.getGridForCurrentChannel()
+                .then( function ( grid ) {
                     // { nowPlaying: 'Title', grid: { channel: <channel>, lisitings: [ <listingobjects> ] }
-                    $log.debug("Got the grid");
-                    
-                    var newVerts = [];
-                    newVerts.push({ header: 'On Now', messages: [ grid.nowPlaying ] });
-                    var nupMsgs = [];
-                    grid.grid.listings.forEach( function(listing){
-                        if ( grid.nowPlaying != listing.showName )
+                    $log.debug( "Got the grid" );
+
+                    if ( !grid ) {
+                        $log.debug( "Grid returned undefined, blanking Vert scroller" );
+                        $scope.vertMessages = [];
+                    } else {
+
+                        var newVerts = [];
+                        newVerts.push( { header: 'On Now', messages: [ grid.listings[ 0 ].showName ] } );
+
+                        // Remove the first listing
+                        grid.listings.shift();
+
+                        var nupMsgs = [];
+                        grid.listings.forEach( function ( listing ) {
                             makeSensibleMessageFrom( nupMsgs, listing );
-                    });
-                    newVerts.push( { header: 'Coming Up', messages: nupMsgs } );
-                    $scope.vertMessages = newVerts;
-                });
+                        } );
+                        newVerts.push( { header: 'Coming Up', messages: nupMsgs } );
+                        $scope.vertMessages = newVerts;
+
+
+                    }
+
+
+                } );
 
         }
-        
-        $scope.$on('HZ_CRAWLER_START', function(){
-            $log.debug("Got a cralwer start message");
-            updateDisplay();
-        });
 
-        $scope.$on('VERT_RELOAD_INTERVAL', function(){
-            $log.debug('Got Vert reload request');
+        $scope.$on( 'HZ_CRAWLER_START', function () {
+            $log.debug( "Got a cralwer start message" );
+            updateDisplay();
+        } );
+
+        $scope.$on( 'VERT_RELOAD_INTERVAL', function () {
+            $log.debug( 'Got Vert reload request' );
             getTVGrid();
-        });
+        } );
 
         function inboundMessage( msg ) {
             $log.info( "New message: " + msg );
         }
 
         function initialize() {
-            ogAPI.init({
-                appName: "io.ourglass.ogcrawler",
-                appType: "tv",
-                modelCallback: modelUpdate,
+            ogAPI.init( {
+                appName:         "io.ourglass.ogcrawler",
+                appType:         "tv",
+                modelCallback:   modelUpdate,
                 messageCallback: inboundMessage
-                })
+            } )
                 .then( function ( data ) {
-                    $log.debug("crawler: init complete");
+                    $log.debug( "crawler: init complete" );
                     crawlerModel.user = data.messages;
                     updateDisplay();
                     if ( data.twitterQueries ) {
                         // TODO This is gross because it runs a tweet grab immediately
-                        ogAPI.updateTwitterQuery(data.twitterQueries)
-                            .then( function(d){
-                                $log.debug("Successfully update twitter queries");
-                            })
-                            .catch(function(e){
-                                $log.error(e.message);
-                            })
+                        ogAPI.updateTwitterQuery( data.twitterQueries )
+                            .then( function ( d ) {
+                                $log.debug( "Successfully update twitter queries" );
+                            } )
+                            .catch( function ( e ) {
+                                $log.error( e.message );
+                            } )
                     }
-                })
+                } )
                 .catch( function ( err ) {
-                    $log.error("crawler: something bad happened: " + err);
-                });
+                    $log.error( "crawler: something bad happened: " + err );
+                } );
         }
 
         // $interval(getTVGrid, 1000*60*5); // get tv grid every 5 min
         // getTVGrid();
 
-        initialize()
+        initialize();
 
-    });
+        ogAPI.getGridForCurrentChannel()
+            .then( function ( info ) {
+                if ( !info ) {
+                    $log.debug( "No channel info" );
+                } else {
+                    $log.debug( info );
+                }
+            } )
+
+    } );
 
 
 // $scope.vertMessages = [
