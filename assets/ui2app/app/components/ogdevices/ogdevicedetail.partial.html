@@ -96,7 +96,7 @@
             <uib-tab heading="Logs">
                 <div ng-repeat="l in logs | filter: { logType: 'logcat' }">
                     <h4>{{ l.message.timestamp | date:'MM/dd/yyyy @ h:mma' }}</h4>
-                    <pre>{{ l.message.logcat.replace('n/tat', '\n') }}</pre>
+                    <p>{{ l.message.logcat.replace('n/tat', '\n') }}</p>
                 </div>
             </uib-tab>
 
