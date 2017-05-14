@@ -22,7 +22,8 @@ app.controller( 'listOGDeviceController', function ( $scope, $log, ogdevices ) {
 
 } );
 
-app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toastr, $timeout, belliniDM, uibHelper, venues ) {
+app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toastr, $timeout,
+        belliniDM, uibHelper, venues, sailsOGLogs ) {
 
     var pingStartTime;
     var pingWaitPromise;
@@ -219,6 +220,16 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
     $scope.pingResponse = { response: "WAITING to PING" };
 
     joinDeviceRoom();
+
+    // Load all logs
+    sailsOGLogs.getAll('deviceUDID='+device.deviceUDID)
+        .then( function(logs){
+            $scope.logs = logs;
+            toastr.success(logs.length+' logs loaded');
+        })
+        .catch( function(err){
+            toastr.error("Could not load logs");
+        })
 
 
 } );
