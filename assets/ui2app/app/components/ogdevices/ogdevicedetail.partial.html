@@ -7,7 +7,8 @@
                     <tr>
                         <td style="font-weight: bold; width: 20%;">Device Name</td>
                         <td style="text-align: left;">{{ ogdevice.name }}
-                        <button class="btn btn-sm pull-right" ng-click="changeName()">CHANGE NAME</button></td>
+                            <button class="btn btn-sm pull-right" ng-click="changeName()">CHANGE NAME</button>
+                        </td>
                     </tr>
 
                     <tr>
@@ -65,8 +66,9 @@
 
 
                 <div style="margin-top: 10px; padding: 10px; background-color: #ECE9E9">
-                    <p><a class="btn btn-default" href="/blueline/control/index.html?deviceUDID={{ ogdevice.deviceUDID }}"
-                       target="_blank">START CONTROL APP</a>
+                    <p><a class="btn btn-default"
+                          href="/blueline/control/index.html?deviceUDID={{ ogdevice.deviceUDID }}"
+                          target="_blank">START CONTROL APP</a>
                         &nbsp;<i>App will open in another tab.</i></p>
                 </div>
 
@@ -92,7 +94,11 @@
 
             </uib-tab>
             <uib-tab heading="Logs">
-                <pre ng-repeat="logcat in logs | filter: { logType: 'logcat' }">{{ logcat.message }}</pre>
+                <div ng-repeat="logcat in logs | filter: { logType: 'logcat' }">
+                    <h4>{{ logcat.message.timestamp | date }}</h4>
+                    <pre {{ logcat.message.logcat }}
+                    </pre>
+                </div>
 
             </uib-tab>
 
