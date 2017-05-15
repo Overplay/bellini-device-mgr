@@ -74,6 +74,16 @@ module.exports = {
             .then(res.ok)
             .catch(res.serverError);
 
+    },
+
+    wipeem: function( req, res ){
+
+        OGLog.destroy({})
+            .then( function(r){
+                res.ok({ deleted: r.length });
+            })
+            .catch(res.serverError);
+
     }
 
 
