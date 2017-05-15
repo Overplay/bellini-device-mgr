@@ -69,7 +69,8 @@ module.exports.policies = {
     OGLogController: {
         '*':       'isRingAdmin',
         'create':  false,
-        'postlog': [ 'isDevice', 'hasValidatedDeviceUDID' ]
+        'postlog': [ 'isDevice', 'hasValidatedDeviceUDID' ],
+        'wipeem' : [ 'isRingAdmin', 'isDELETE']
     },
 
     SMSController: {
