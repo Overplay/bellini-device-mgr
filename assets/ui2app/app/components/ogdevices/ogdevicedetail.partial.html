@@ -94,10 +94,10 @@
 
             </uib-tab>
             <uib-tab heading="Logs">
-                <div ng-repeat="l in logs | filter: { logType: 'logcat' }">
-                    <h4 style="margin-left: 20px;">{{ l.message.timestamp | date:'MM/dd/yyyy @ h:mma' }}</h4>
+                <div style="margin-left: 20px;" ng-repeat="l in logs | filter: { logType: 'logcat' }">
+                    <h4>{{ l.message.timestamp | date:'MM/dd/yyyy @ h:mma' }}</h4>
                     <div>Length: {{ l.message.logcat.length }}</div>
-                    <div>{{ l.message.logcat }}</div>
+                    <div ng-repeat="entry in l.message.logcat track by $index">{{ entry }}</div>
                 </div>
             </uib-tab>
 
