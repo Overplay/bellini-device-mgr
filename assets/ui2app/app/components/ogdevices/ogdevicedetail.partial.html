@@ -96,8 +96,8 @@
             <uib-tab heading="Logs">
                 <div ng-repeat="l in logs | filter: { logType: 'logcat' }">
                     <h4 style="margin-left: 20px;">{{ l.message.timestamp | date:'MM/dd/yyyy @ h:mma' }}</h4>
-                    <div ng-repeat="line in l.message.logcat">{{ line }}</div>
-                    <div>{{ l.message }}</div>
+                    <div>Length: {{ l.message.logcat.length }}</div>
+                    <div>{{ l.message.logcat }}</div>
                 </div>
             </uib-tab>
 
