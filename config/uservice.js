@@ -19,6 +19,10 @@ module.exports = {
             adsForVenue: '/ad/forVenue/'
         },
 
+        belliniCore: {
+            url: 'http://138.68.230.239:2000'
+        },
+
         bcSyncSettings: {
             cronDelay: 5 * 60 * 50 * 1000, // 5 min
             bcport:    2000

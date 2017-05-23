@@ -5,6 +5,8 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+ var Promise = require('bluebird');
+
 module.exports = {
 
     // MAK, what is this for
@@ -71,7 +73,17 @@ module.exports = {
 
         // schema: true is in the model, protecting it from random shit
         OGLog.create(allParams)
-            .then(res.ok)
+            .then(function(newLog){
+
+                return Promise.props({
+                    newLog: newLog,
+                    device: OGDevice.update({ deviceUDID: req.allParams().deviceUDID }, { lastContact: new Date() })
+                })
+
+            })
+            .then( function(props){
+                return res.ok(props.newLog);
+            })
             .catch(res.serverError);
 
     },

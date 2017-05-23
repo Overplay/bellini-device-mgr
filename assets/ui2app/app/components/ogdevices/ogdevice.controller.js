@@ -222,14 +222,14 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
     joinDeviceRoom();
 
     // Load all logs
-    sailsOGLogs.getAll('deviceUDID='+device.deviceUDID)
-        .then( function(logs){
-            $scope.logs = logs;
-            toastr.success(logs.length+' logs loaded');
-        })
-        .catch( function(err){
-            toastr.error("Could not load logs");
-        })
+    // sailsOGLogs.getAll('deviceUDID='+device.deviceUDID)
+    //     .then( function(logs){
+    //         $scope.logs = logs;
+    //         toastr.success(logs.length+' logs loaded');
+    //     })
+    //     .catch( function(err){
+    //         toastr.error("Could not load logs");
+    //     })
 
 
 } );

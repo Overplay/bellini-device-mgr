@@ -407,7 +407,15 @@ module.exports = {
             return res.badRequest( { error: "BAD VERB" } );
 
         OGDevice.find({ atVenueUUID: req.allParams().atVenueUUID })
-            .then(res.ok)
+            .then(function(devices){
+
+                if (!req.allParams().getstatus){
+                    return res.ok(devices);
+                } else {
+                    // we need to get the status of each device...or do we?
+                }
+
+            })
             .catch(res.serverError);
 
     },

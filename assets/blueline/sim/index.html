@@ -7,6 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width">
 
+    <link href="../common/css/og.css" rel="stylesheet"/>
+    <link href="/blueline/common/bower_components/angular-toastr/dist/angular-toastr.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="assets/css/sim.css"/>
+
     <script src="/js/dependencies/sails.io.js"></script>
     <script src="../common/bower_components/lodash/dist/lodash.min.js"></script>
     <script src="../common/bower_components/angular/angular.min.js"></script>
@@ -17,13 +21,12 @@
 
     <script src="app/ogsim.module.js"></script>
     <script src="app/components/mainframe.component.js"></script>
+    <script src="app/services/mainframe.service.js"></script>
 
-    <link href="../common/css/og.css" rel="stylesheet"/>
-    <link href="../common/bower_components/angular-toastr/dist/angular-toastr.css"/>
-    <link rel="stylesheet" href="assets/css/sim.css"/>
+
 
 </head>
 <body ng-controller="mfController">
-<main-frame crawler="crawler" widget="widget"></main-frame>
+<main-frame crawler="crawler" widget="widget" vid="vid"></main-frame>
 </body>
 </html>

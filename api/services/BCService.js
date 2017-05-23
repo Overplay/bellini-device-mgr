@@ -7,7 +7,7 @@ module.exports = {
 
         findByUUID: function(uuid){
 
-            return ProxyService.get('http://localhost:2000/venue/findByUUID', { uuid: uuid })
+            return ProxyService.get(sails.config.uservice.belliniCore.url + '/venue/findByUUID', { uuid: uuid })
                 .then( function(resp){
                     return resp.body;
                 });
@@ -15,7 +15,7 @@ module.exports = {
 
         findAllReal: function(){
 
-            return ProxyService.get('http://localhost:2000/venue/all', { virtual: false })
+            return ProxyService.get( sails.config.uservice.belliniCore.url + '/venue/all', { virtual: false })
                 .then( function(resp){
                     return resp.body;
                 });

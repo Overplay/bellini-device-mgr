@@ -12,7 +12,8 @@ app.component( 'mainFrame', {
 
     bindings:   {
         crawler: '<',
-        widget:  '<'
+        widget:  '<',
+        vid:     '<'
     },
     controller: function ( toastr, $log ) {
 
@@ -24,7 +25,7 @@ app.component( 'mainFrame', {
         }
 
         this.widgetPos = function () {
-            return 'wpos-'+(ctrl.widget.pos+1);
+            return 'wpos-' + (ctrl.widget.pos + 1);
         }
 
         this.$onInit = function () {
@@ -35,6 +36,9 @@ app.component( 'mainFrame', {
     },
     template:   `
         <div class="tvframe">
+            <video class="simvid" autoplay loop>
+                <source src="{{ $ctrl.vid }}" type="video/mp4">
+            </video>
             <iframe class="crawler" ng-class="$ctrl.crawlerPos()" src="{{ $ctrl.crawler.src }}" scrolling="no"></iframe>
             <iframe class="widget" ng-class="$ctrl.widgetPos()" src="{{ $ctrl.widget.src }}" scrolling="no"></iframe>
 
