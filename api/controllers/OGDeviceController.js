@@ -7,6 +7,7 @@
 
 
 var Promise = require( 'bluebird' );
+var util = require('util');
 
 var USE_BC_VENUES = true;
 
@@ -263,6 +264,10 @@ module.exports = {
             return res.badRequest( { error: "Missing app ID" } );
 
         sails.log.silly( "MOVE called at: " + new Date() + " by IP: " + req.ip );
+        sails.log.silly( "------ Subs in Room -------");
+        sails.sockets.subscribers( "device_" + params.deviceUDID, function(subs){
+            sails.log.silly( "SUBS: " + util.inspect( subs ) );
+        });
 
         sails.sockets.broadcast( "device_" + params.deviceUDID,
             'DEVICE-DM',
