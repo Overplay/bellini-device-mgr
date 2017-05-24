@@ -492,6 +492,11 @@ module.exports = {
         if ( !params.command )
             return res.badRequest( { error: "Missing command you're acking" } );
 
+        sails.log.silly( "CMDACK from: "+ params.deviceUDID +
+            " for command: "+params.command +
+            " called at: " + new Date() );
+
+
         switch ( params.command ) {
 
             case 'launch':
