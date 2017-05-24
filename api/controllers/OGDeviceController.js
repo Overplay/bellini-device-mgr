@@ -249,7 +249,6 @@ module.exports = {
 
     move: function ( req, res ) {
 
-        sails.log.silly("MOVE called at: "+new Date());
 
         if ( req.method != 'POST' )
             return res.badRequest( { error: "That's not how to message, sparky!" } );
@@ -262,6 +261,8 @@ module.exports = {
 
         if ( !params.appId )
             return res.badRequest( { error: "Missing app ID" } );
+
+        sails.log.silly( "MOVE called at: " + new Date() + " by IP: " + req.ip );
 
         sails.sockets.broadcast( "device_" + params.deviceUDID,
             'DEVICE-DM',
