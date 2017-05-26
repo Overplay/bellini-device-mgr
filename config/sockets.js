@@ -50,7 +50,7 @@ module.exports.sockets = {
   // db: 0,
   // pass: '<redis auth password>',
 
-
+ // Wgagagaga
 
  /***************************************************************************
   *                                                                          *
