@@ -227,11 +227,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( stripData );
             }
 
-            function joinDeviceRoom() {
+            function joinDeviceAppRoom() {
                 return $q( function ( resolve, reject ) {
 
-                    io.socket.post( '/ogdevice/joinroom', {
-                        deviceUDID: _deviceUDID
+                    io.socket.post( '/socketconnection/join', {
+                        room: _appId + ':' + _deviceUDID
                     }, function ( resData, jwres ) {
                         console.log( resData );
                         if ( jwres.statusCode != 200 ) {
@@ -333,7 +333,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 io.socket.on( "connect", function () {
                     $log.debug( "(Re)Connecting to websockets rooms" );
-                    joinDeviceRoom();
+                    joinDeviceAppRoom();
                     subscribeToAppData();
                 } );
 
@@ -348,7 +348,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     } )
                     .then( function () {
                         $log.debug( "ogAPI: Subscribing to message changes" );
-                        return joinDeviceRoom();
+                        return joinDeviceAppRoom();
                     } )
                     .then( function () {
                         return service.model;

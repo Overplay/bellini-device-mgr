@@ -130,6 +130,9 @@ module.exports = {
 
     },
 
+    // OK, so the only guy who needs to receive Websocket messages via this room, is the device.
+    // So each join, will first clean the old room. Otherwise, you get a bunch of members who
+    // are the same device. (I think).
     joinroom: function ( req, res ) {
 
         if ( !req.isSocket ) {
@@ -147,16 +150,27 @@ module.exports = {
 
         var room = "device_" + params.deviceUDID;
 
-        sails.sockets.join( req, room );
+        var io = sails.io;
+        var clients = io.sockets.clients();
 
-        // Broadcast a notification to all the sockets who have joined
-        // the "funSockets" room, excluding our newly added socket:
-        sails.sockets.broadcast( room,
-            'DEVICE-JOIN',
-            { message: 'Welcome to the OGDevice room for ' + params.deviceUDID },
-            req );
+        io.of('/').in(room).clients( function(e, c){
+            sails.log.silly("SIO in room: "+util.inspect(c));
+        });
 
-        return res.ok( { message: 'joined' } );
+        // TODO error can be in done obj
+        sails.sockets.leaveAll(room, function(done){
+            sails.sockets.join( req, room );
+            // Broadcast a notification to all the sockets who have joined
+            // the "funSockets" room, excluding our newly added socket:
+            sails.sockets.broadcast( room,
+                'DEVICE-JOIN',
+                { message: 'Welcome to the OGDevice room for ' + params.deviceUDID },
+                req );
+
+            return res.ok( { message: 'joined' } );
+
+        });
+
 
     },
 
@@ -212,7 +226,8 @@ module.exports = {
                         fullUrl: '/blueline/opp/' + params.appId + '/app/tv',
                         width:   model.appWidth || 15,
                         height:  model.appHeight || 40,
-                        appType: model.appType || 'widget'
+                        appType: model.appType || 'widget',
+                        ts: new Date().getTime() // hack for multiples
                     },
                     req );
 
@@ -241,7 +256,8 @@ module.exports = {
             'DEVICE-DM',
             {
                 action: 'kill',
-                appId:  params.appId
+                appId:  params.appId,
+                ts:     new Date().getTime() // hack for multiples
             },
             req );
 
@@ -265,15 +281,15 @@ module.exports = {
 
         sails.log.silly( "MOVE called at: " + new Date() + " by IP: " + req.ip );
         sails.log.silly( "------ Subs in Room -------");
-        sails.sockets.subscribers( "device_" + params.deviceUDID, function(subs){
-            sails.log.silly( "SUBS: " + util.inspect( subs ) );
-        });
+        var subs = sails.sockets.subscribers( "device_" + params.deviceUDID);
+        sails.log.silly("SUBS: "+ util.inspect(subs));
 
         sails.sockets.broadcast( "device_" + params.deviceUDID,
             'DEVICE-DM',
             {
                 action: 'move',
-                appId:  params.appId
+                appId:  params.appId,
+                ts:     new Date().getTime() // hack for multiples
             },
             req );
 
@@ -407,7 +423,8 @@ module.exports = {
                     'DEVICE-DM',
                     {
                         action:  'tune',
-                        channel: parseInt( params.channel )
+                        channel: parseInt( params.channel ),
+                        ts:      new Date().getTime() // hack for multiples
                     } );
                 res.ok( { message: "thank you for your patronage" } );
             } )
@@ -441,7 +458,8 @@ module.exports = {
                 sails.sockets.broadcast( "device_" + params.deviceUDID,
                     'DEVICE-DM',
                     {
-                        action: 'new-program'
+                        action: 'new-program',
+                        ts:     new Date().getTime() // hack for multiples
                     } );
                 res.ok( { message: "thank you for your patronage" } );
             } )
