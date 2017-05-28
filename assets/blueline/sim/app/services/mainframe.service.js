@@ -140,7 +140,7 @@ app.factory( 'bellini', function ( $http, $log ) {
 
 } )
 
-app.factory( 'mainframe', function ( bellini, toastr, $log, $rootScope, $q, $interval ) {
+app.factory( 'mainframe', function ( bellini, toastr, $log, $rootScope, $q, $interval, $http ) {
 
     var service = {};
 
@@ -169,7 +169,7 @@ app.factory( 'mainframe', function ( bellini, toastr, $log, $rootScope, $q, $int
 
     $interval(function(){
 
-        $http.get('ogdevice/tickle')
+        $http.get('/ogdevice/tickle?deviceUDID='+DEVICE_UDID)
             .then(function(){
                 $log.debug("Tickled ogcloud, hee hee.");
             })

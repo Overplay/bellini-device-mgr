@@ -647,6 +647,7 @@ module.exports = {
     // Used by simulator to update alive status without logging
     tickle: function(req, res){
 
+        sails.log.silly("Just got OGCevice/ticked by: "+ req.allParams().deviceUDID)
         OGDevice.update( { deviceUDID: req.allParams().deviceUDID }, { lastContact: new Date() } )
             .then(res.ok)
             .catch(res.serverError);
