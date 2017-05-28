@@ -635,6 +635,13 @@ module.exports = {
             .catch( res.serverError );
 
 
+    },
+
+    // TODO this needs some better protection :p
+    purge: function (req, res ){
+        OGDevice.destroy({})
+            .then(res.ok)
+            .catch(res.serverError)
     }
 
 

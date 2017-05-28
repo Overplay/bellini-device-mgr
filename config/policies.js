@@ -93,6 +93,16 @@ module.exports.policies = {
         'uiApp': [ 'forceAnonToLogin', 'authDecorator', 'sessionAuth' ]
     },
 
+    OGDevice: {
+        '*': 'isRingAdmin',
+        'purge': ['isRingAdmin', 'isDELETE'],
+        'regcode': ['isDevice'],
+        'findByRegCode': true,
+        'findByUDID': true,
+        'changeName': true,
+        'register': true
+    }
+
     // Override this in local.js for testing
     wideOpen: false
 
