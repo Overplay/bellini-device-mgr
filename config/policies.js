@@ -101,7 +101,7 @@ module.exports.policies = {
         'findByUDID': true,
         'changeName': true,
         'register': true
-    }
+    },
 
     // Override this in local.js for testing
     wideOpen: false
