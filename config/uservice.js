@@ -20,7 +20,7 @@ module.exports = {
         },
 
         belliniCore: {
-            url: 'http://138.68.230.239:2000'
+            url: 'http://localhost:2000'
         },
 
         bcSyncSettings: {
