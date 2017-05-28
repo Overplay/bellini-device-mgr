@@ -16,7 +16,7 @@
 
     // TODO this should come from somewhere else!
 var DEVICE_UDID = 'apple-sim-1';
-var VENUE_UUID = 'da56668b-a336-443d-9f05-ec991411855b'; // simulation station
+var VENUE_UUID = 'da56668b-a336-443d-9f05-ec991411855b';
 
 app.factory( 'bellini', function ( $http, $log ) {
 
@@ -38,7 +38,7 @@ app.factory( 'bellini', function ( $http, $log ) {
 
 
     service.associateDeviceWithVenueUUID = function ( venueUUID ) {
-        return $http.post( "/ogdevice/associateWithVenue", { deviceUDID: DEVICE_UDID, venueUDID: VENUE_UUID } )
+        return $http.post( "/ogdevice/associateWithVenue", { deviceUDID: DEVICE_UDID, venueUDID: venueUUID } )
             .then( stripData );
     }
 
@@ -114,11 +114,31 @@ app.factory( 'bellini', function ( $http, $log ) {
 
     }
 
+    service.getVenues = function(){
+        return $http.get( "/venue/all")
+            .then( stripData );
+    }
+
+    service.getVenueByName = function(name){
+        return service.getVenues()
+            .then( function(venues){
+
+                var matches = _.filter(venues, { 'name': name });
+                if (matches && matches.length>0){
+                    return matches[ 0 ]
+                } else {
+                    return undefined
+                }
+
+
+            })
+    }
+
     return service;
 
 } )
 
-app.factory( 'mainframe', function ( bellini, toastr, $log, $rootScope ) {
+app.factory( 'mainframe', function ( bellini, toastr, $log, $rootScope, $q ) {
 
     var service = {};
 
@@ -133,10 +153,23 @@ app.factory( 'mainframe', function ( bellini, toastr, $log, $rootScope ) {
         udid: DEVICE_UDID
     }
 
-    bellini.registerDeviceWithBellini()
-        .then( function ( resp ) {
+    $q.all( [ bellini.registerDeviceWithBellini(), bellini.getVenueByName('Simulation Station')] )
+        .then( function(res){
+            //toastr.success( "Simulated Device Registered with Back End" );
+            return bellini.associateDeviceWithVenueUUID(res[1].uuid);
+        })
+        .then( function(res){
             toastr.success( "Simulated Device Registered with Back End" );
-        } );
+        })
+
+    // bellini.registerDeviceWithBellini()
+    //     .then( function ( resp ) {
+    //         toastr.success( "Simulated Device Registered with Back End" );
+    //         return resp;
+    //     } )
+    //     .then( function(reginfo){
+    //
+    //     });
 
     io.socket.on( "connect", function () {
         $log.debug( "(Re)Connecting to websockets rooms" );
