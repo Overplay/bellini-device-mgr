@@ -134,11 +134,13 @@ app.factory( 'bellini', function ( $http, $log ) {
             })
     }
 
+
+
     return service;
 
 } )
 
-app.factory( 'mainframe', function ( bellini, toastr, $log, $rootScope, $q ) {
+app.factory( 'mainframe', function ( bellini, toastr, $log, $rootScope, $q, $interval ) {
 
     var service = {};
 
@@ -163,7 +165,17 @@ app.factory( 'mainframe', function ( bellini, toastr, $log, $rootScope, $q ) {
         })
         .catch( function(err){
             toastr.error("Oh crap, couldn't venassoc");
-        })
+        });
+
+    $interval(function(){
+
+        $http.get('ogdevice/tickle')
+            .then(function(){
+                $log.debug("Tickled ogcloud, hee hee.");
+            })
+
+
+    }, 5000);
 
     // bellini.registerDeviceWithBellini()
     //     .then( function ( resp ) {

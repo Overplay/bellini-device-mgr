@@ -100,7 +100,8 @@ module.exports.policies = {
         'findByRegCode': true,
         'findByUDID': true,
         'changeName': true,
-        'register': true
+        'register': true,
+        'tickle': true
     },
 
     // Override this in local.js for testing

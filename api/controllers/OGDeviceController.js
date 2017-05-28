@@ -642,6 +642,15 @@ module.exports = {
         OGDevice.destroy({})
             .then(res.ok)
             .catch(res.serverError)
+    },
+
+    // Used by simulator to update alive status without logging
+    tickle: function(req, res){
+
+        OGDevice.update( { deviceUDID: req.allParams().deviceUDID }, { lastContact: new Date() } )
+            .then(res.ok)
+            .catch(res.serverError);
+
     }
 
 
