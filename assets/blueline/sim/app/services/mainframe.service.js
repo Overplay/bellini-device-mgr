@@ -161,6 +161,9 @@ app.factory( 'mainframe', function ( bellini, toastr, $log, $rootScope, $q ) {
         .then( function(res){
             toastr.success( "Simulated Device Registered with Back End" );
         })
+        .catch( function(err){
+            toastr.error("Oh crap, couldn't venassoc");
+        })
 
     // bellini.registerDeviceWithBellini()
     //     .then( function ( resp ) {
