@@ -38,7 +38,7 @@ app.factory( 'bellini', function ( $http, $log ) {
 
 
     service.associateDeviceWithVenueUUID = function ( venueUUID ) {
-        return $http.post( "/ogdevice/associateWithVenue", { deviceUDID: DEVICE_UDID, venueUDID: venueUUID } )
+        return $http.post( "/ogdevice/associateWithVenue", { deviceUDID: DEVICE_UDID, venueUUID: venueUUID } )
             .then( stripData );
     }
 
