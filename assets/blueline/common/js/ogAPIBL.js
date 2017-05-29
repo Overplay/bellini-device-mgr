@@ -202,6 +202,12 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             var _appType;
 
             var _deviceUDID = getOGSystem().udid;
+            var _jwt = getOGSystem().jwt;
+
+            if (_jwt){
+                $http.defaults.headers.common.Authorization = 'Bearer '+_jwt;
+            }
+
             var _lockKey;
 
             // Data callback when data on BL has changed
