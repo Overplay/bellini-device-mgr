@@ -93,9 +93,9 @@ module.exports.policies = {
         'uiApp': [ 'forceAnonToLogin', 'authDecorator', 'sessionAuth' ]
     },
 
-    // TODO: this is very open, needs to be fixed!
+    // TODO: this is very insecure, for now
     OGDevice: {
-        '*': 'sessionOrMagicMobileAuth',
+        '*': true,
         'purge': ['isRingAdmin', 'isDELETE'],
         'regcode': ['isDevice'],
         // 'findByRegCode': true,
