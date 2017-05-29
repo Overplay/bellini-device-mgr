@@ -67,6 +67,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
         var qParamUDID = getParameterByName("deviceUDID");
 
+        var jwt = getParameterByName("jwt");
+
         if ( qParamUDID )
             dudid = qParamUDID;
 
@@ -79,6 +81,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             wifiMacAddress: '00:11:22:33',
             outputRes:      { height: 1080, width: 1920 },
             udid:           dudid,
+            jwt:            jwt,
             venue:          'testvenue',
             osApiLevel:     99,
             mock:           true
