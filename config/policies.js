@@ -95,7 +95,7 @@ module.exports.policies = {
 
     // TODO: this is very insecure, for now
     OGDevice: {
-        '*': 'sessionAuth',
+        '*': true,
         'purge': ['isRingAdmin', 'isDELETE'],
         'regcode': ['isDevice'],
         // 'findByRegCode': true,
