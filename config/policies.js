@@ -94,7 +94,7 @@ module.exports.policies = {
     },
 
     OGDevice: {
-        '*': 'isRingAdmin',
+        '*': 'sessionAuth',
         'purge': ['isRingAdmin', 'isDELETE'],
         'regcode': ['isDevice'],
         'findByRegCode': true,
