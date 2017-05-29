@@ -101,7 +101,8 @@ module.exports.policies = {
         'findByUDID': true,
         'changeName': true,
         'register': true,
-        'tickle': true
+        'tickle': true,
+        'appstatus': true
     },
 
     // Override this in local.js for testing
