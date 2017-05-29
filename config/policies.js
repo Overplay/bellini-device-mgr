@@ -95,7 +95,7 @@ module.exports.policies = {
 
     // TODO: this is very open, needs to be fixed!
     OGDevice: {
-        '*': true,
+        '*': 'sessionOrMagicMobileAuth',
         'purge': ['isRingAdmin', 'isDELETE'],
         'regcode': ['isDevice'],
         // 'findByRegCode': true,

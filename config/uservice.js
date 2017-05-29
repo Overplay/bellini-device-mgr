@@ -28,7 +28,12 @@ module.exports = {
             bcport:    2000
         }
 
-    }
+    },
+
+    security: {
+        // This should be commented out for production. Bypasses JWT check and only looks for the signature below.
+        magicJwt: 'Bearer of_good_tidings'
+        }
 
 
 }
