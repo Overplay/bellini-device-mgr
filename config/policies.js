@@ -93,16 +93,17 @@ module.exports.policies = {
         'uiApp': [ 'forceAnonToLogin', 'authDecorator', 'sessionAuth' ]
     },
 
+    // TODO: this is very open, needs to be fixed!
     OGDevice: {
-        '*': 'sessionAuth',
+        '*': true,
         'purge': ['isRingAdmin', 'isDELETE'],
         'regcode': ['isDevice'],
-        'findByRegCode': true,
-        'findByUDID': true,
-        'changeName': true,
-        'register': true,
-        'tickle': true,
-        'appstatus': true
+        // 'findByRegCode': true,
+        // 'findByUDID': true,
+        // 'changeName': true,
+        // 'register': true,
+        // 'tickle': true,
+        // 'appstatus': true
     },
 
     // Override this in local.js for testing
