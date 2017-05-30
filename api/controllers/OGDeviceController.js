@@ -121,7 +121,8 @@ module.exports = {
 
                 sendDeviceDM( params.deviceUDID, {
                     action: 'cloud_record_update',
-                    change: { name: devices[ 0 ].name }
+                    change: { name: devices[ 0 ].name },
+                    ts: new Date().getTime() // hack for multiples
                 }, req );
                 return res.ok( devices[ 0 ] );
 
