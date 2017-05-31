@@ -5,6 +5,7 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
+// Alex Westlake training, yay!
 
 module.exports = {
 
