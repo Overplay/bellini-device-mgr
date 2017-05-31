@@ -56,7 +56,8 @@ module.exports = {
         },
 
         lastContact: {
-            type: 'date'
+            type: 'date',
+            defaultsTo: new Date()
         },
 
         guideInfo: {
