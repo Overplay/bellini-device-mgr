@@ -347,13 +347,17 @@ module.exports = {
 
         OGDevice.findOne( { tempRegCode: params.regcode } )
             .then( function ( dev ) {
-                if ( !dev )
+                if ( !dev ){
+                    sails.log.silly("NO device for reg code: "+params.regCode);
                     return res.notFound( { error: "no such device" } );
+                }
 
                 if ( !dev.atVenueUUID ) {
+                    sails.log.silly( "Returning unassigned device reg code: " + params.regCode );
                     return res.ok( dev );
                 }
 
+                sails.log.silly( "Found device for reg code: " + params.regCode + " now grabbing venue info.");
                 return Promise.props( { device: dev, venue: findVenueByUUID( dev.atVenueUUID ) } );
 
             } )
