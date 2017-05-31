@@ -363,6 +363,7 @@ module.exports = {
             } )
             .then( function ( props ) {
 
+                sails.log.silly("Attaching venue name to device.");
                 if ( props.venue ) {
                     props.device.venueName = props.venue.name;
                 }
@@ -371,7 +372,11 @@ module.exports = {
 
             } )
 
-            .catch( res.serverError );
+            .catch( function(err){
+                sails.log.silly("Something bad happened. Here comes the error.");
+                sails.log.error(err.message);
+                return res.serverError(err);
+            } );
 
     },
 

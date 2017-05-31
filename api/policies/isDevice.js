@@ -16,7 +16,7 @@ module.exports = function(req, res, next) {
   //   return next();
   // }
 
-  if ( req.headers.authorization && req.headers.authorization.indexOf('x-ogdevice-1234')>=0)
+  if ( req.headers.authorization && req.headers.authorization==='x-ogdevice-1234')
     return next();
 
   // User is not allowed
