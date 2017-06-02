@@ -507,7 +507,10 @@ module.exports = {
 
         var query = includeVirtual ? { uuid: uuid } : { uuid: uuid, virtual: false };
 
-        Venue.findOne( query )
+        var promise = USE_BC_VENUES ? BCService.Venue.findByUUID( uuid ) : Venue.findOne( query );
+        var ehandler = USE_BC_VENUES ? res.proxyError : res.serverError;
+
+        promise
             .then( function ( venue ) {
 
                 if ( !venue ) {
@@ -516,7 +519,7 @@ module.exports = {
 
                 return res.ok( venue );
             } )
-            .catch( res.serverError );
+            .catch( ehandler );
 
     },
 

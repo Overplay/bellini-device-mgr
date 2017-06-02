@@ -21,6 +21,7 @@ module.exports.socialscraper = {
     twitter: {
         CONSUMER_KEY: "ZKGjeMcDZT3BwyhAtCgYtvrb5",
         CONSUMER_SECRET: "iXnv6zwFfvHzZr0Y8pvnEJM9hPT0mYV1HquNCzbPrGb5aHUAtk"
+
     }
 
 };

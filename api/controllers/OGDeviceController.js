@@ -7,7 +7,7 @@
 
 
 var Promise = require( 'bluebird' );
-var util = require('util');
+var util = require( 'util' );
 
 var USE_BC_VENUES = true;
 
@@ -25,6 +25,14 @@ function findVenueByUUID( uuid ) {
     return USE_BC_VENUES ? BCService.Venue.findByUUID( uuid ) :
         Venue.findOne( { uuid: uuid } );
 
+}
+
+function broadcastToClient( deviceUDID, message, req ){
+    var room = "device_client_" + deviceUDID;
+    sails.sockets.broadcast( room,
+        'DEVICE-DM',
+        message,
+        req );
 }
 
 
@@ -122,7 +130,7 @@ module.exports = {
                 sendDeviceDM( params.deviceUDID, {
                     action: 'cloud_record_update',
                     change: { name: devices[ 0 ].name },
-                    ts: new Date().getTime() // hack for multiples
+                    ts:     new Date().getTime() // hack for multiples
                 }, req );
                 return res.ok( devices[ 0 ] );
 
@@ -154,12 +162,12 @@ module.exports = {
         var io = sails.io;
         var clients = io.sockets.clients();
 
-        io.of('/').in(room).clients( function(e, c){
-            sails.log.silly("SIO in room: "+util.inspect(c));
-        });
+        io.of( '/' ).in( room ).clients( function ( e, c ) {
+            sails.log.silly( "SIO in room: " + util.inspect( c ) );
+        } );
 
         // TODO error can be in done obj
-        sails.sockets.leaveAll(room, function(done){
+        sails.sockets.leaveAll( room, function ( done ) {
             sails.sockets.join( req, room );
             // Broadcast a notification to all the sockets who have joined
             // the "funSockets" room, excluding our newly added socket:
@@ -170,12 +178,41 @@ module.exports = {
 
             return res.ok( { message: 'joined' } );
 
-        });
+        } );
 
 
     },
 
-    dm: function ( req, res ) {
+    // Room for receiving messages FROM a device
+    joinclientroom: function ( req, res ) {
+
+        if ( !req.isSocket ) {
+            return res.badRequest( { error: "Sockets only, sonny" } );
+        }
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "That's not how to subscribe, sparky!" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing params" } );
+
+        var room = "device_client_" + params.deviceUDID;
+
+        sails.sockets.join( req, room );
+        // Broadcast a notification to all the sockets who have joined
+        sails.sockets.broadcast( room,
+            'CLIENT-JOIN',
+            { message: 'Welcome to the OGDevice client room for ' + params.deviceUDID },
+            req );
+
+        return res.ok( { message: 'joined' } );
+
+    },
+
+    message: function ( req, res ) {
 
         if ( !req.isSocket ) {
             return res.badRequest( { error: "Sockets only, sonny" } );
@@ -193,7 +230,27 @@ module.exports = {
         if ( !params.message )
             return res.badRequest( { error: "Missing message" } );
 
-        sails.sockets.broadcast( "device_" + params.deviceUDID, 'DEVICE-DM', params.message, req );
+        if ( !params.destination )
+            return res.badRequest( { error: "No destination"});
+
+        var room;
+
+        switch (params.destination){
+            case 'clients':
+            case 'client':
+                room = "device_client_"+params.deviceUDID;
+                break;
+            case 'device':
+                room = "device_"+params.deviceUDID;
+                break;
+            default:
+                return res.badRequest({ error: "Bad destination"});
+        }
+
+        // timestamp for deduplicaiton
+        // TODO figure out why this be broken
+        params.message.ts = new Date().getTime();
+        sails.sockets.broadcast( room, 'DEVICE-DM', params.message, req );
 
         return res.ok( params );
 
@@ -228,7 +285,7 @@ module.exports = {
                         width:   model.appWidth || 15,
                         height:  model.appHeight || 40,
                         appType: model.appType || 'widget',
-                        ts: new Date().getTime() // hack for multiples
+                        ts:      new Date().getTime() // hack for multiples
                     },
                     req );
 
@@ -263,7 +320,8 @@ module.exports = {
             req );
 
         return res.ok( { status: "ok" } );
-    },
+    }
+    ,
 
     move: function ( req, res ) {
 
@@ -281,9 +339,9 @@ module.exports = {
             return res.badRequest( { error: "Missing app ID" } );
 
         sails.log.silly( "MOVE called at: " + new Date() + " by IP: " + req.ip );
-        sails.log.silly( "------ Subs in Room -------");
-        var subs = sails.sockets.subscribers( "device_" + params.deviceUDID);
-        sails.log.silly("SUBS: "+ util.inspect(subs));
+        sails.log.silly( "------ Subs in Room -------" );
+        var subs = sails.sockets.subscribers( "device_" + params.deviceUDID );
+        sails.log.silly( "SUBS: " + util.inspect( subs ) );
 
         sails.sockets.broadcast( "device_" + params.deviceUDID,
             'DEVICE-DM',
@@ -295,7 +353,8 @@ module.exports = {
             req );
 
         return res.ok( { status: "ok" } );
-    },
+    }
+    ,
 
     findByUDID: function ( req, res ) {
 
@@ -347,8 +406,8 @@ module.exports = {
 
         OGDevice.findOne( { tempRegCode: params.regcode } )
             .then( function ( dev ) {
-                if ( !dev ){
-                    sails.log.silly("NO device for reg code: "+params.regCode);
+                if ( !dev ) {
+                    sails.log.silly( "NO device for reg code: " + params.regCode );
                     return res.notFound( { error: "no such device" } );
                 }
 
@@ -357,13 +416,13 @@ module.exports = {
                     return res.ok( dev );
                 }
 
-                sails.log.silly( "Found device for reg code: " + params.regCode + " now grabbing venue info.");
+                sails.log.silly( "Found device for reg code: " + params.regCode + " now grabbing venue info." );
                 return Promise.props( { device: dev, venue: findVenueByUUID( dev.atVenueUUID ) } );
 
             } )
             .then( function ( props ) {
 
-                sails.log.silly("Attaching venue name to device.");
+                sails.log.silly( "Attaching venue name to device." );
                 if ( props.venue ) {
                     props.device.venueName = props.venue.name;
                 }
@@ -372,17 +431,19 @@ module.exports = {
 
             } )
 
-            .catch( function(err){
-                sails.log.silly("Something bad happened. Here comes the error.");
-                sails.log.error(err.message);
-                return res.serverError(err);
+            .catch( function ( err ) {
+                sails.log.silly( "Something bad happened. Here comes the error." );
+                sails.log.error( err.message );
+                return res.serverError( err );
             } );
 
-    },
+    }
+    ,
 
     pingcloud: function ( req, res ) {
         return res.ok( { response: "Bellini-DM is here." } );
-    },
+    }
+    ,
 
     regstbpairing: function ( req, res ) {
 
@@ -406,7 +467,8 @@ module.exports = {
             } )
             .catch( res.serverError );
 
-    },
+    }
+    ,
 
     changechannel: function ( req, res ) {
 
@@ -440,7 +502,8 @@ module.exports = {
             } )
             .catch( res.serverError );
 
-    },
+    }
+    ,
 
     programchange: function ( req, res ) {
 
@@ -509,7 +572,8 @@ module.exports = {
             } )
             .catch( res.serverError );
 
-    },
+    }
+    ,
 
     //TODO needs a refactor. A lot of the actions have replicated code!
     commandack: function ( req, res ) {
@@ -526,8 +590,8 @@ module.exports = {
         if ( !params.command )
             return res.badRequest( { error: "Missing command you're acking" } );
 
-        sails.log.silly( "CMDACK from: "+ params.deviceUDID +
-            " for command: "+params.command +
+        sails.log.silly( "CMDACK from: " + params.deviceUDID +
+            " for command: " + params.command +
             " called at: " + new Date() );
 
 
@@ -565,6 +629,7 @@ module.exports = {
                                     return a.appType == launchedAppType;
                                 } );
                                 results.device.runningApps.push( results.app );
+                                broadcastToClient(params.deviceUDID, { ack: "launch", appid: params.appId });
                                 results.device.save();
                                 return res.ok( results.device );
                                 break;
@@ -574,12 +639,14 @@ module.exports = {
                                 _.remove( results.device.runningApps, function ( a ) {
                                     return a.appId == results.app.appId;
                                 } )
+                                broadcastToClient( params.deviceUDID, { ack: "kill", appid: params.appId } );
                                 results.device.save();
                                 return res.ok( results.device );
                                 break;
 
                             case 'move':
-                                return res.ok( { iheadthat: 'but i did nothing' } )
+                                broadcastToClient( params.deviceUDID, { ack: "move", appid: params.appId } );
+                                return res.ok( { iheardthat: 'but i did nothing' } )
 
                         }
 
@@ -597,7 +664,8 @@ module.exports = {
         }
 
 
-    },
+    }
+    ,
 
     regcode: function ( req, res ) {
 
@@ -633,7 +701,8 @@ module.exports = {
                 return res.ok( { code: devices[ 0 ].tempRegCode } );
             } )
             .catch( res.serverError );
-    },
+    }
+    ,
 
     all: function ( req, res ) {
 
@@ -645,25 +714,28 @@ module.exports = {
             .catch( res.serverError );
 
 
-    },
+    }
+    ,
 
     // TODO this needs some better protection :p
-    purge: function (req, res ){
-        OGDevice.destroy({})
-            .then(res.ok)
-            .catch(res.serverError)
-    },
+    purge: function ( req, res ) {
+        OGDevice.destroy( {} )
+            .then( res.ok )
+            .catch( res.serverError )
+    }
+    ,
 
     // Used by simulator to update alive status without logging
-    tickle: function(req, res){
+    tickle: function ( req, res ) {
 
-        sails.log.silly("Just got OGCevice/ticked by: "+ req.allParams().deviceUDID)
+        sails.log.silly( "Just got OGCevice/ticked by: " + req.allParams().deviceUDID )
         OGDevice.update( { deviceUDID: req.allParams().deviceUDID }, { lastContact: new Date() } )
-            .then(res.ok)
-            .catch(res.serverError);
+            .then( res.ok )
+            .catch( res.serverError );
 
     }
 
 
-};
+}
+;
 

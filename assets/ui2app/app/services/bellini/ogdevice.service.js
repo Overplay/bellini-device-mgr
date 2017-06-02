@@ -3,7 +3,7 @@
  */
 
 
-app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel ) {
+app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel, $q ) {
 
 
     var getAll = function ( queryString ) {
@@ -59,7 +59,7 @@ app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel ) {
         this.populateVenue = function(){
 
             if (!this.atVenueUUID)
-                return; // nothing to do
+                return $q.when({ name: "#unassigned#", id: "" });
 
             var _this = this;
             return sailsApi.apiGet( '/venue/findByUUID?uuid=' + this.atVenueUUID )
@@ -67,6 +67,17 @@ app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel ) {
                     _this.atVenue = v;
                     return _this;
                 })
+                .catch( function(err){
+                    _this.atVenue = { name: "*** error ***", id: "" };
+                    throw err;
+                })
+        }
+
+        this.lastContactAgo = function(){
+            if (!this.lastContact)
+                return 'never';
+
+            return moment(this.lastContact).fromNow();
         }
 
     }

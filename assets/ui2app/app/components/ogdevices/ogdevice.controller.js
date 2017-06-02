@@ -8,25 +8,20 @@
 
 app.controller( 'listOGDeviceController', function ( $scope, $log, ogdevices ) {
 
-
     $log.debug( "Loading listOGDeviceController" );
-
     $scope.ogdevices = ogdevices;
-
     $scope.ogdevices.forEach( function ( og ) {
         og.populateVenue();
     } );
 
-    $scope.$parent.ui = { pageTitle: "OG Boxes", panelHeading: "All Boxes" }
-
-
 } );
 
 app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toastr, $timeout,
-        belliniDM, uibHelper, venues, sailsOGLogs ) {
+        belliniDM, uibHelper, sailsOGLogs, sailsVenues ) {
 
     var pingStartTime;
     var pingWaitPromise;
+    var identWaitPromise;
 
 
     $log.debug( "Loading listOGDeviceDetailController" );
@@ -34,7 +29,15 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
     $scope.form = { launchAppId: '', killAppId: '' };
 
     $scope.ogdevice = device;
-    $scope.ogdevice.populateVenue();
+
+    function populateVenue(){
+        $scope.ogdevice.populateVenue()
+            .catch( function ( err ) {
+                toastr.error( "Peer might be down or the venue assigned may have been deleted from it", "Bellini Core Error" );
+            } );
+    }
+
+    populateVenue();
 
     $scope.$parent.ui = { pageTitle: "OG Box Detail", panelHeading: "For UDID: " + device.deviceUDID };
 
@@ -45,13 +48,13 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
             $timeout.cancel( pingWaitPromise );
         } else if ( data.action == 'ident-ack' ) {
             $scope.identResponse = data.payload;
+            $timeout.cancel( identWaitPromise );
         }
     }
 
     function joinDeviceRoom() {
-        io.socket.post( '/ogdevice/joinroom', { deviceUDID: device.deviceUDID },
+        io.socket.post( '/ogdevice/joinclientroom', { deviceUDID: device.deviceUDID },
             function gotResponse( data, jwRes ) {
-                "use strict";
                 if ( jwRes.statusCode != 200 ) {
                     $log.error( "Could not connect to device room!!!" );
                 } else {
@@ -89,37 +92,39 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
 
     $scope.changeVenue = function () {
 
-        var venueList = venues.map( function(v){
-            return v.name;
-        });
+        sailsVenues.getAll()
+            .then( function(venues){
 
-        uibHelper.selectListModal( "Device Venue", "Pick the new device venue from the list below.", venueList, 0 )
-            .then( function ( idx ) {
-                $log.info( "New venue chosen: " + idx );
-                $scope.ogdevice.atVenueUUID = venues[idx].uuid;
-                $scope.ogdevice.save()
-                    .then( function(d){
-                        toastr.success("Venue Changed");
-                    })
-                    .catch( function ( err ) {
-                        toastr.error( "Venue Could not be Changed" );
+                var venueList = venues.map( function ( v ) {
+                    return v.name;
+                } );
+
+                uibHelper.selectListModal( "Device Venue", "Pick the new device venue from the list below.", venueList, 0 )
+                    .then( function ( idx ) {
+                        $log.info( "New venue chosen: " + idx );
+                        $scope.ogdevice.atVenueUUID = venues[ idx ].uuid;
+                        $scope.ogdevice.save()
+                            .then( function ( d ) {
+                                toastr.success( "Venue Changed" );
+                                populateVenue();
+                            } )
+                            .catch( function ( err ) {
+                                toastr.error( "Venue Could not be Changed" );
+                            } )
+
                     } )
 
-            } )
+            })
+            .catch( function(err){
+                $log.error("Couldn't get venues, peer BC service may be down.");
+                toastr.error( err.message, "Venues Could Not Be Retrieved" );
+
+            })
+
+
 
 
     }
-
-
-
-    //
-    // io.socket.on( "connect", function () {
-    //     $log.debug( "(Re)Connecting to websockets rooms" );
-    //     joinDeviceRoom();
-    //     //subscribeToAppData();
-    // } );
-    //
-    //
 
     function endPingWait() {
         $log.error( "No ping response in 5 second window!" );
@@ -131,9 +136,10 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
         $scope.pingResponse = { response: "ISSUING PING..." };
         pingStartTime = new Date().getTime();
 
-        io.socket.post( '/ogdevice/dm', {
+        io.socket.post( '/ogdevice/message', {
             deviceUDID: device.deviceUDID,
-            message:    { dest: device.deviceUDID, action: 'ping', payload: 'Ping me back, bro!' }
+            destination: 'device',
+            message:    {  action: 'ping', payload: 'Ping me back, bro!' }
         }, function ( resData, jwres ) {
             if ( jwres.statusCode == 200 ) {
                 toastr.success( "Ping Issued" );
@@ -141,7 +147,7 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
             }
             else {
                 $scope.pingResponse = { response: "PING FAILED to connect to Bellini!" };
-                toastr.error( "Could not issue ping!" );
+                toastr.error(  jwres.error.error, "Could not issue ping!");
             }
 
         } );
@@ -150,13 +156,17 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
 
     $scope.identify = function () {
         $scope.identResponse = {};
-        io.socket.post( '/ogdevice/dm', {
+        io.socket.post( '/ogdevice/message', {
             deviceUDID: device.deviceUDID,
-            message:    { dest: device.deviceUDID, action: 'identify' }
+            destination: 'device',
+            message:    { action: 'identify' }
         }, function ( resData, jwres ) {
             if ( jwres.statusCode == 200 ) {
                 toastr.success( "Ident Issued" );
-                pingWaitPromise = $timeout( endPingWait, 5000 );
+                identWaitPromise = $timeout( function(){
+                    $log.error( "No ident response in 5 second window!" );
+                    $scope.identResponse = "No response in 5 seconds.";
+                }, 5000);
             }
             else {
                 $scope.identResponse = { response: "IDENT FAILED" };

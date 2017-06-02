@@ -32,10 +32,11 @@
                         <!--{{ device.atVenueUUID ? device.atVenueUUID : "Unassigned" }}-->
                         <!--</span>-->
                         <!--</td>-->
-                        <td>{{ device.atVenue.name }}&nbsp;({{ device.atVenue.address.city }}&nbsp;{{
-                            device.atVenue.address.state }})
+                        <td>{{ device.atVenue.id ? device.atVenue.name : '[missing or service down]' }}<br>
+                            <span class="text-muted" {{ device.atVenue.address.city }}{{ device.atVenue.address.state ? ',':'' }}{{
+                            device.atVenue.address.state }}
                         </td>
-                        <td>TBI</td>
+                        <td>{{ device.lastContactAgo() }}</td>
 
                     </tr>
                     </tbody>

@@ -182,10 +182,10 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             resolve:     {
                 device: function ( sailsOGDevice, $stateParams ) {
                     return sailsOGDevice.get( $stateParams.id );
-                },
-                venues: function( sailsVenues){
-                    return sailsVenues.getAll();
-                }
+                }//,
+                // venues: function( sailsVenues){
+                //     return sailsVenues.getAll();
+                // }
             }
         } )
 

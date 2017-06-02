@@ -27,7 +27,7 @@
                     </tr>
                     <tr>
                         <td style="font-weight: bold; width: 20%;">Venue UUID</td>
-                        <td style="text-align: left;">{{ ogdevice.atVenue ? ogdevice.atVenue.uuid : "Not Associated "}}
+                        <td style="text-align: left;">{{ ogdevice.atVenueUUID }}
                         </td>
                     </tr>
                     <tr>
@@ -37,27 +37,22 @@
                     </tr>
                     <tr>
                         <td style="font-weight: bold; width: 20%;">Last Contact</td>
-                        <td style="text-align: left;">{{ ogdevice.lastContact ? ogdevice.lastContact : "NEVER"}}
+                        <td style="text-align: left;">{{ ogdevice.lastContact ? ogdevice.lastContact : "NEVER"}}<br>
+                        <span class="text-muted">{{ ogdevice.lastContactAgo() }}</span>
                         </td>
                     </tr>
-                    <tr>
-                        <td style="font-weight: bold; width: 20%;">Installed Apps</td>
-                        <td style="text-align: left;">
-                            <pre>{{ ogdevice.installedApps | json }}</pre>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold; width: 20%;">Software</td>
-                        <td style="text-align: left;">
-                            <pre>{{ ogdevice.software | json }}</pre>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold; width: 20%;">Hardware</td>
-                        <td style="text-align: left;">
-                            <pre>{{ ogdevice.hardware | json }}</pre>
-                        </td>
-                    </tr>
+                    <!--<tr>-->
+                        <!--<td style="font-weight: bold; width: 20%;">Software</td>-->
+                        <!--<td style="text-align: left;">-->
+                            <!--<pre>{{ ogdevice.software | json }}</pre>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<td style="font-weight: bold; width: 20%;">Hardware</td>-->
+                        <!--<td style="text-align: left;">-->
+                            <!--<pre>{{ ogdevice.hardware | json }}</pre>-->
+                        <!--</td>-->
+                    <!--</tr>-->
                     </tbody>
                 </table>
 

@@ -239,7 +239,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             function joinDeviceAppRoom() {
                 return $q( function ( resolve, reject ) {
 
-                    io.socket.post( '/socketconnection/join', {
+                    io.socket.post( '/socket/join', {
                         room: _appId + ':' + _deviceUDID
                     }, function ( resData, jwres ) {
                         console.log( resData );
@@ -255,6 +255,29 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                                 } else {
                                     console.log( 'Dropping sio message rx (no cb):' + JSON.stringify( data ) );
                                 }
+                            } );
+
+                            resolve();
+                        }
+                    } );
+                } );
+
+            }
+
+            function joinOGClientRoom() {
+                return $q( function ( resolve, reject ) {
+
+                    io.socket.post( '/ogdevice/joinclientroom', {
+                        deviceUDID: _deviceUDID
+                    }, function ( resData, jwres ) {
+                        console.log( resData );
+                        if ( jwres.statusCode != 200 ) {
+                            reject( jwres );
+                        } else {
+                            $log.debug( "Successfully joined device client room for this device" );
+                            io.socket.on( 'DEVICE-DM', function ( data ) {
+                                console.log( 'Got OGDevice client message: ' + JSON.stringify( data ) );
+
                             } );
 
                             resolve();
@@ -359,6 +382,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                         $log.debug( "ogAPI: Subscribing to message changes" );
                         return joinDeviceAppRoom();
                     } )
+                    .then( function(){
+                        return joinOGClientRoom();
+                    })
                     .then( function () {
                         return service.model;
                     } );
