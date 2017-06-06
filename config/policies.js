@@ -69,7 +69,7 @@ module.exports.policies = {
     OGLogController: {
         '*':       'isRingAdmin',
         'create':  false,
-        'postlog': [ 'isDevice', 'hasValidatedDeviceUDID' ],
+        'postlog': true, // TODO: Bad policy?? [ 'isDevice', 'hasValidatedDeviceUDID' ],
         'wipeem' : [ 'isRingAdmin', 'isDELETE']
     },
 
