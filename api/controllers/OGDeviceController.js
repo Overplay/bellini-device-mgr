@@ -173,8 +173,7 @@ module.exports = {
             // the "funSockets" room, excluding our newly added socket:
             sails.sockets.broadcast( room,
                 'DEVICE-JOIN',
-                { message: 'Welcome to the OGDevice room for ' + params.deviceUDID },
-                req );
+                { message: 'Welcome to the OGDevice room for ' + params.deviceUDID } );
 
             return res.ok( { message: 'joined' } );
 
@@ -320,8 +319,8 @@ module.exports = {
             req );
 
         return res.ok( { status: "ok" } );
-    }
-    ,
+
+    },
 
     move: function ( req, res ) {
 
@@ -353,8 +352,20 @@ module.exports = {
             req );
 
         return res.ok( { status: "ok" } );
-    }
-    ,
+    },
+
+    // Policy: isDevice, isSOCKETPOST, hasDeviceUDID
+    checkconnection: function (req, res ){
+
+        sails.log.silly("Inbound connection check from device: "+ req.allParams().deviceUDID);
+        sails.sockets.broadcast( "device_" + req.allParams().deviceUDID,
+            'CHECK-GOOD', { timestamp: (new Date().getTime()) } );
+
+        OGDevice.update( { deviceUDID: req.allParams().deviceUDID }, { lastContact: new Date() } )
+            .then(res.ok)
+            .catch(res.serverError);
+
+    },
 
     findByUDID: function ( req, res ) {
 
@@ -442,8 +453,7 @@ module.exports = {
 
     pingcloud: function ( req, res ) {
         return res.ok( { response: "Bellini-DM is here." } );
-    }
-    ,
+    },
 
     regstbpairing: function ( req, res ) {
 
@@ -502,8 +512,7 @@ module.exports = {
             } )
             .catch( res.serverError );
 
-    }
-    ,
+    },
 
     programchange: function ( req, res ) {
 

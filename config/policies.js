@@ -98,6 +98,7 @@ module.exports.policies = {
         '*': true,
         'purge': ['isRingAdmin', 'isDELETE'],
         'regcode': ['isDevice'],
+        'checkconnection': [ 'isSOCKETPOST', 'hasDeviceUDID' ]
         // 'findByRegCode': true,
         // 'findByUDID': true,
         // 'changeName': true,

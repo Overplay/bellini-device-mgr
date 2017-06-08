@@ -71,6 +71,7 @@ module.exports = {
             return res.badRequest({ error: 'no valid logtype' })
         }
 
+        sails.log.silly("Device: "+ req.allParams().deviceUDID + " is posting OGLog file");
         // schema: true is in the model, protecting it from random shit
         OGLog.create(allParams)
             .then(function(newLog){
