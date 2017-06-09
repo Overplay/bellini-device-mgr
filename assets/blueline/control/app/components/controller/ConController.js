@@ -4,13 +4,19 @@
 
 // Really does nothing much in this version
 app.controller("conController",
-    function ( $scope, $log, $cookies, $state ) {
+    function ( $scope, $log, $state, ogAPI, $timeout ) {
 
         $log.info("Loading conController");
 
-        //Here for testing passing cookies to AB http server for security later
-        $cookies.put("ourglass", "yoyoy");
-
         $state.go("dashboard");
+
+        $scope.deviceUDID = ogAPI.getDeviceUDID();
+        $log.debug("UDID is: "+$scope.deviceUDID);
+
+        $timeout( function(){
+
+            JSMpeg.CreateVideoElements();
+
+        }, 1000);
 
     });

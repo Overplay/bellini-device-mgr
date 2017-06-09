@@ -17,6 +17,7 @@
 
     <!-- App Main and AngularJS Routes -->
 
+    <script src="../common/js/jsmpeg.js"></script>
     <script src="../common/js/ogAPIBL.js"></script>
     <script src="../common/js/uiOGMobile/uiOGMobile.js"></script>
     <script src="app/ogConApp.module.js"></script>
@@ -81,6 +82,14 @@
 
 <ui-view></ui-view>
 
-
+<div class="ogaudio"
+     data-autoplay="true"
+     data-audio="true"
+     data-video="false"
+     data-max-audio-lag="0.95"
+     data-volume="1"
+     data-url="ws://192.241.217.88:3000/"
+     data-protocol="{{ deviceUDID }}"
+     >
 </body>
 </html>
