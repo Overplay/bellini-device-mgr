@@ -23,8 +23,13 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
             .then(function(d) {
                 return $http.put( '/api/v1/ogdevice/' + d.id, { name: name } );
             });
-            
+
     };
+
+    service.changeSystemName = function(name){
+        return $http.post('/ogdevice/changeName', { name: name, deviceUDID: _deviceUDID })
+            .then(stripData);
+    }
     
     
     service.getApps  = function() {

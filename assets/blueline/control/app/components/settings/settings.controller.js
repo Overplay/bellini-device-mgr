@@ -3,7 +3,7 @@
  */
 
 app.controller( "settingsController",
-    function ( $scope, ogDevice, $log, uibHelper, $cookies, ogNet, $timeout ) {
+    function ( $scope, ogDevice, $log, uibHelper, $cookies, ogNet ) {
 
         $log.info( "Loading settingsController" );
         $scope.ui = { loading: true, loadError: false };
@@ -11,14 +11,14 @@ app.controller( "settingsController",
         $scope.system = { name: ogDevice.name, locationWithinVenue: ogDevice.locationWithinVenue };
 
         $scope.updateSystemName = function () {
-            uibHelper.confirmModal( "Update?", "Are you sure you want to update the name and location?", true )
+            uibHelper.confirmModal( "Update?", "Are you sure you want to update the system name to: "+ $scope.system.name +"?", true )
                 .then( function ( resp ) {
                     $log.debug( "Responded yes..." );
                     var hud = uibHelper.curtainModal('Updating...');
-                    ogNet.updateSystemNameLocation( $scope.system.name, $scope.system.locationWithinVenue )
+                    ogNet.changeSystemName( $scope.system.name )
                         .then( function ( response ) {
                             hud.dismiss();
-                            uibHelper.headsupModal('Settings Changed', 'Name and or location successfully updated.');
+                            uibHelper.headsupModal('Settings Changed', 'Name successfully updated.');
                         } )
                 } )
         }
