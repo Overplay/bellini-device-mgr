@@ -48,7 +48,7 @@ app.controller("addController", function ($scope, $log, waitList, $state ) {
         }
 
         function formatPhoneNumber( phone ) {
-            phone = phone.toString();
+            //phone = phone.toString();
             var phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
             return !phoneRegex.test( phone ) ? null : phone.replace(phoneRegex, "($1) $2-$3");
         }
@@ -63,7 +63,7 @@ app.controller("addController", function ($scope, $log, waitList, $state ) {
             
             $log.debug("Provided phone number is "+$scope.newParty.mobile);
 
-            if ( $scope.newParty.name.trim() && $scope.newParty.partySize > 0 && verifyPhoneNumber($scope.newParty.mobile)) {
+            if ( $scope.newParty.name.trim() && $scope.newParty.partySize > 0 ) {
 
                 $scope.newParty.mobile = formatPhoneNumber( $scope.newParty.mobile );
                 $log.debug("formatted phone number: " + $scope.newParty.mobile );
@@ -79,7 +79,7 @@ app.controller("addController", function ($scope, $log, waitList, $state ) {
                 // Fill in all fields
                 if (!$scope.newParty.name.trim()) $scope.addErrors.name = true;
                 if (!$scope.newParty.partySize) $scope.addErrors.partySize = true;
-                if (!verifyPhoneNumber($scope.newParty.mobile)) $scope.addErrors.mobile = true;
+
             }
         }
 

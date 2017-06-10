@@ -28,7 +28,7 @@ app.factory( 'waitList', function ( $log, $http, $timeout, $rootScope, ogAPI, $q
         return {
             name: params && params.name,
             partySize: params && params.partySize,
-            phone: params && params.phone,
+            mobile: params && params.mobile,
             dateCreated: ( params && params.dateCreated ) || new Date(),
             tableReady : ( params && params.tableReady ) || false
         }
@@ -95,6 +95,9 @@ app.factory( 'waitList', function ( $log, $http, $timeout, $rootScope, ogAPI, $q
             service.removeParty( party );
         } else {
             party.tableReady = new Date();
+            if (party.mobile) {
+                ogAPI.sendSMS( party.mobile, party.name + " your table at $$venue$$ is ready!");
+            }
         }
 
         updateRemoteModel();

@@ -559,11 +559,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              * posts up an SMS message request
              * @param args
              */
-            service.sendSms = function ( phoneNumber, message ) {
-                //TODO need to implement the endpoint in AB and need some security...
-                return $http.post( API_PATH + 'app/' + appid + '/notify', {
+            service.sendSMS = function ( phoneNumber, message ) {
+                return $http.post( '/ogdevice/sms', {
                     phoneNumber: phoneNumber,
-                    message:     message
+                    message:     message,
+                    deviceUDID:  _deviceUDID
                 } );
             }
 

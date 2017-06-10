@@ -41,7 +41,7 @@
 
 <div class="party-holder" ng-click="tapped()">
     <div class="party-name" ng-class="{ 'table-ready': party.tableReady }">
-        {{party.name}}  <span class="pull-right party-num">{{party.partySize}}</span>
+        {{party.name}} <span ng-if="party.mobile" style="font-size: 0.9rem; color: #b1b1b1;">{{ party.mobile }}</span> <span class="pull-right party-num">{{party.partySize}}</span>
 
     </div>
      <div class="party-time">{{party.dateCreated | timeAgo}}</div>

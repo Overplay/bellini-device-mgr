@@ -731,8 +731,7 @@ module.exports = {
         OGDevice.destroy( {} )
             .then( res.ok )
             .catch( res.serverError )
-    }
-    ,
+    },
 
     // Used by simulator to update alive status without logging
     tickle: function ( req, res ) {
@@ -742,9 +741,44 @@ module.exports = {
             .then( res.ok )
             .catch( res.serverError );
 
+    },
+
+    sms: function (req, res ){
+        sails.log.silly("Inbound SMS request");
+
+        var params = req.allParams();
+
+        if (!params.phoneNumber || !params.message){
+            res.badRequest({ error: "missing params"} );
+        }
+
+        var message = params.message;
+
+        OGDevice.findOne({ deviceUDID: params.deviceUDID })
+            .then( function(device){
+
+                if (!device){
+                    return res.badRequest({ error: "No such device "});
+                }
+
+                return BCService.Venue.findByUUID(device.atVenueUUID);
+            })
+            .then( function(venue){
+
+                var venueName = "";
+                if (venue){
+                    venueName = venue.name;
+                }
+
+                var message = params.message.replace("$$venue$$", venueName);
+
+                return TwilioService.sendText(params.phoneNumber, message);
+            })
+            .then(res.ok)
+            .catch(res.serverError);
+
     }
 
 
-}
-;
+};
 

@@ -122,9 +122,9 @@ module.exports = {
         , loopRestartOnSuccessDelay: (1000 * 60 * .5)
         , loopRestartOnFailDelay: (100 * 60 * 0.5)
         , sweepThresholdHour: 1
-        , accountSid: 'AC0370b6a7c73ed846f7821b9a97a01c6a'
-        , authToken: '6afd3558f79ba5e344197ab01607778e'
-        , from: "+18052108963"
+        , accountSid: 'AC9ca1d755950337ca0531af1eb9cd97f8'
+        , authToken: 'fb6c94c1f2363b1fbecec3be86964aa5'
+        , from: "+14159430928"
     },
 
     tempAuth: {
