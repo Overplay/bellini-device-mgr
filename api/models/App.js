@@ -41,6 +41,17 @@ module.exports = {
     appType: {
       type: 'string'
     },
+
+    patronControllable: {
+      type: 'boolean',
+      defaultsTo: false
+    },
+
+    releaseLevel: {
+      type: 'string',
+      enum: ['dev', 'alpha', 'beta', 'release'],
+      defaultsTo: 'dev'
+    },
     
     // Virtual apps do not appear on the app picker in the System Control app. They are for things like DirecTV
     // tweet scraping.

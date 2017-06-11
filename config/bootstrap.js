@@ -64,7 +64,10 @@ module.exports.bootstrap = function ( cb ) {
 
             parr.push( AdminService.addUserAtRing('jonny@lowstatus.com','password', 3, { firstName: 'Jonnie', lastName: 'looser '}));
 
-            return Promise.all(parr);
+            return Promise.all(parr)
+                .catch(function(err){
+                    sails.log.error(err.message);
+                });
 
         } )
         .then( function () {

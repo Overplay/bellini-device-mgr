@@ -549,11 +549,18 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     } )
             }
 
+            service.relocToControlApp = function ( app ) {
+                // window.location.href = "/blueline/opp/" + app.appId +
+                //     '/app/control/index.html?deviceUDID=' + _deviceUDID + '&displayName=' + app.displayName;
 
-            service.relocToControlApp = function( app ){
-                window.location.href = "/blueline/opp/" + app.appId +
-                    '/app/control/index.html?deviceUDID=' + _deviceUDID + '&displayName=' + app.displayName;
+                window.location.href =  '/appcontrol/' + app.appId + '/' + _deviceUDID ;
             }
+
+
+            // service.relocToControlApp = function( app ){
+            //     window.location.href = "/blueline/opp/" + app.appId +
+            //         '/app/control/index.html?deviceUDID=' + _deviceUDID + '&displayName=' + app.displayName;
+            // }
 
             /**
              * posts up an SMS message request

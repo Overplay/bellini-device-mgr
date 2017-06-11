@@ -13,7 +13,7 @@ var stockApps = [
         appType:      'mobile',
         appWidth:     10,
         appHeight:    50
-    },
+        },
     {
         appId:        "io.ourglass.nowserving",
         displayName:  "Now Serving",
@@ -21,7 +21,8 @@ var stockApps = [
         defaultModel: { ticketNumber: 0 },
         appType: 'widget',
         appWidth: 10,
-        appHeight: 35
+        appHeight: 35,
+        patronControllable: false
     },
     {
         appId:        "io.ourglass.ogcrawler",
@@ -34,7 +35,18 @@ var stockApps = [
         },
         appType:   'crawler',
         appWidth:  100,
-        appHeight: 10
+        appHeight: 10,
+        patronControllable: false
+    },
+    {
+        appId:              "io.ourglass.foodbliminal",
+        displayName:        "Foodbliminal!",
+        icon:               "space.png",
+        defaultModel:       {},
+        appType:            'crawler',
+        appWidth:           100,
+        appHeight:          30,
+        patronControllable: false
     },
     {
         appId:        "io.ourglass.waitinglist",
@@ -45,7 +57,8 @@ var stockApps = [
         },
         appType:     'widget',
         appWidth:     10,
-        appHeight:    50
+        appHeight:    50,
+        patronControllable: true
     },
     {
         appId:        "io.ourglass.bltest",
@@ -78,7 +91,8 @@ var stockApps = [
         },
         appType:   'widget',
         appWidth:  10,
-        appHeight: 50
+        appHeight: 50,
+        patronControllable: true
     },
     {
         appId:        "tuner",

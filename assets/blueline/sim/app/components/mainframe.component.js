@@ -21,7 +21,7 @@ app.component( 'mainFrame', {
 
 
         this.crawlerPos = function () {
-            return (ctrl.crawler.pos === 0) ? 'cpos-top' : 'cpos-bot';
+            return (ctrl.crawler.pos !== 0) ? 'cpos-top' : 'cpos-bot';
         }
 
         this.widgetPos = function () {

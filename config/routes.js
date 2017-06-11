@@ -55,6 +55,16 @@ module.exports.routes = {
         skipAssets: true
     },
 
+    /****************************************************************************
+     * App Client Control Routes
+     ****************************************************************************/
+
+    '/appcontrol/:appId/:deviceUDID': {
+        controller: "AppControlController",
+        action:     "chooseEndpoint",
+        skipAssets: true
+    },
+
 
     /****************************************************************************
      *  SocialScrape vanity routes

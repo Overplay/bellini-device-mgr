@@ -17,7 +17,7 @@ app.controller( 'listOGDeviceController', function ( $scope, $log, ogdevices ) {
 } );
 
 app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toastr, $timeout,
-        belliniDM, uibHelper, sailsOGLogs, sailsVenues ) {
+        belliniDM, uibHelper, sailsOGLogs, sailsVenues, $state ) {
 
     var pingStartTime;
     var pingWaitPromise;
@@ -226,6 +226,22 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
             } );
 
     };
+
+    $scope.delete = function(){
+
+        uibHelper.confirmModal("Are you Sure?", "Really Delete?", true)
+            .then(function(){
+                return $scope.ogdevice.delete();
+            })
+            .then(function(){
+                toastr.success("Nuked");
+                $state.go('devices.allactive');
+            })
+            .catch(function(){
+                toastr.error("Whoops");
+            })
+
+    }
 
     $scope.pingResponse = { response: "WAITING to PING" };
 

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html ng-app="ogFoodApp">
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=1280">
+
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+
+    <script src="../../../../common/bower_components/angular/angular.min.js"></script>
+    <script src="../../../../common/bower_components/lodash/dist/lodash.min.js"></script>
+
+    <script src="../../../../common/bower_components/angular-animate/angular-animate.min.js"></script>
+
+    <!-- App Main and AngularJS Routes -->
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="../../../../common/js/ogAPIBL.js"></script>
+    <script src="app/ogfoodapp.module.js"></script>
+
+    <!-- Controllers -->
+
+    <!-- App Specific and Overridden CSS -->
+    <link href="assets/css/popup.css" rel="stylesheet"/>
+    <link href="assets/css/animate.css" rel="stylesheet">
+
+
+    <title>Crawler (TV)</title>
+</head>
+
+<body ng-controller="popUpController">
+<div style="width: 100vw;" class="appholder">
+    <pop-up popup="popup"></pop-up>
+</div>
+</body>
+</html>
