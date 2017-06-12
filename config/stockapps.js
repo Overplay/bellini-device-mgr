@@ -35,7 +35,7 @@ var stockApps = [
         },
         appType:   'crawler',
         appWidth:  100,
-        appHeight: 10,
+        appHeight: 9,  // 97 in 1080, 64 in 720
         patronControllable: false
     },
     {
