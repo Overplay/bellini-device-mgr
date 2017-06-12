@@ -3,7 +3,7 @@
  */
 
 var Promise = require('bluebird');
-var BYPASS = false;
+var BYPASS = true;
 
 module.exports = {
 
