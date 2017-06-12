@@ -26,7 +26,7 @@ var stockApps = [
     },
     {
         appId:        "io.ourglass.ogcrawler",
-        displayName:  "OG Cralwer",
+        displayName:  "Crawler",
         icon: "space.png",
         defaultModel: {
             "messages":       [ "Ourglass TV", "Check Ourglass out at www.ourglass.tv" ],
