@@ -3,7 +3,7 @@
  */
 
 app.controller( "dashboardController",
-    function ( $scope, ogDevice, $log, uibHelper, ogNet, $state, $timeout ) {
+    function ( $scope, ogDevice, $log, uibHelper, ogNet, $state, $timeout, ogAPI ) {
 
         $log.info( "Loading dashboardController" );
         $scope.availableApps = [];
