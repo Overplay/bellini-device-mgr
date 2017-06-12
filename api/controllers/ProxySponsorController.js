@@ -20,8 +20,11 @@ module.exports = {
         if (!(sails.config.uservice && sails.config.uservice.sponsorProxy))
             return res.serverError({error: 'Bad sponsor proxy setup. This is not recoverable'});
 
+        // var proxypath = sails.config.uservice.sponsorProxy.endpoint +
+        //     sails.config.uservice.sponsorProxy.allAds;
+
         var proxypath = sails.config.uservice.sponsorProxy.endpoint +
-            sails.config.uservice.sponsorProxy.allAds;
+            '/api/v1/ad?where={"reviewed":true,"accepted":true,"deleted":false,"paused":false}';
 
         request.get( proxypath )
             .then( function(d){
