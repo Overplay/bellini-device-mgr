@@ -3,7 +3,7 @@
  */
 
 var Promise = require('bluebird');
-var BYPASS = true;
+var BYPASS = false;
 
 module.exports = {
 
@@ -13,8 +13,9 @@ module.exports = {
 
         if (BYPASS){
 
+            var displayName = params.displayName || 'OURGLASS';
             var base = "/blueline/opp/" + params.appId +
-                '/app/control/index.html?deviceUDID=' + params.deviceUDID + '&displayName=' + 'FIXME';
+                '/app/control/index.html?deviceUDID=' + params.deviceUDID + '&displayName=' + displayName;
 
             return res.redirect( base );
 
