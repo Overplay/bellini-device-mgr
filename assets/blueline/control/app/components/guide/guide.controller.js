@@ -136,6 +136,10 @@ app.controller( "guideController",
             $scope.stationSearch = imageSearch;
         };
 
+        $scope.meplay = function(){
+            window.location.href = "http://138.68.230.239:8080/nghack/player/#!/play/" + ogAPI.getDeviceUDID();
+        }
+
     } );
 
 
