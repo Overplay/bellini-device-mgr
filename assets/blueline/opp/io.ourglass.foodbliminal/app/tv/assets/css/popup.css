@@ -6,6 +6,7 @@ html, body {
 
 .appholder {
     width: 100%;
+    height: 100vh;
     /*height: 200px;*/
     /*border: 2px solid deeppink;*/
     overflow: hidden;
@@ -16,7 +17,7 @@ html, body {
     height: 125px;
     overflow: hidden;
     position: relative;
-    transition: all 1.0s ;
+    transition: all 0.35s ;
     top: 0px;
     margin: 10px;
     /*transition-timing-function: cubic-bezier(0, 1, 1, 0);*/

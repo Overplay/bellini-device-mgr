@@ -45,7 +45,7 @@ var stockApps = [
         defaultModel:       {},
         appType:            'crawler',
         appWidth:           100,
-        appHeight:          30,
+        appHeight:          20,
         patronControllable: false
     },
     {
