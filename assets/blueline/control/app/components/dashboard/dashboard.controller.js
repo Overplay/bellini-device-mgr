@@ -7,7 +7,9 @@ app.controller( "dashboardController",
 
         $log.info( "Loading dashboardController" );
         $scope.availableApps = [];
-        
+
+        $scope.ui = { isPaired: ogDevice.isPairedToSTB };
+
         function reloadAppList() {
             ogNet.getApps()
                 .then( function ( apps ) {
@@ -32,6 +34,10 @@ app.controller( "dashboardController",
                     }, 1000 );
             }
         );
+
+        $scope.meplay = function () {
+            window.location.href = "http://138.68.230.239:8080/nghack/player/#!/play/" + ogAPI.getDeviceUDID();
+        }
 
         if ( !ogDevice.atVenueUUID ) {
             uibHelper.confirmModal( "Register?", "This Ourglass device has not been registered with a venue. Would you like to do that now?", true )
