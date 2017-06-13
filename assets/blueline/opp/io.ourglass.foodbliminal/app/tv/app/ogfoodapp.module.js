@@ -19,7 +19,7 @@ app.controller("popUpController", function($scope, $log, $interval, $timeout){
         { img: 'pizza.gif', text: '' },
         { img: 'ogbrooklyn.png', text: '' },
         { img: 'sushi.gif', text: '' },
-        // { img: 'sierranevada.png', text: ''},
+        { img: 'mitch.gif', text: ''},
         // { img: 'wings.png', text: ''}
 
     ];
