@@ -100,6 +100,9 @@ app.controller( "crawlerController",
                             crawlerModel.twitter = _.shuffle( tempArr );
 
                         $log.debug( "Processed tweets are this long: " + tempArr.length );
+                        if (crawlerModel.twitter.length>2){
+                            crawlerModel.twitter = crawlerModel.twitter.slice(0,3);
+                        }
                     }
 
                     return true;
