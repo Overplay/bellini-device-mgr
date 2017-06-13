@@ -15,12 +15,12 @@ var app = angular.module('ogFoodApp', ['ourglassAPI']);
 app.controller("popUpController", function($scope, $log, $interval, $timeout){
 
     var popups = [
-        { img: 'burger.png', text: ''},
-        { img: 'nachos.png', text: '' },
+        { img: 'hamburger-gif-8.gif', text: ''},
+        { img: 'pizza.gif', text: '' },
         { img: 'ogbrooklyn.png', text: '' },
-        { img: 'ogsierra.png', text: '' },
-        { img: 'sierranevada.png', text: ''},
-        { img: 'wings.png', text: ''}
+        { img: 'sushi.gif', text: '' },
+        // { img: 'sierranevada.png', text: ''},
+        // { img: 'wings.png', text: ''}
 
     ];
 
