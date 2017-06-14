@@ -42,7 +42,7 @@
             <h4>Answers For:&nbsp;{{ ui.name }}</h4>
             <div ng-repeat="c in model.challenges">
                 <p style="color: #d0d0d0";>Q{{$index+1}}</p>
-                <input type="text" style="margin-bottom: 10px; width: 100%;" ng-model="answers[$index]"/>
+                <input type="text" style="margin-bottom: 10px; width: 100%;" ng-model="localAnswers[$index]"/>
             </div>
         </div>
     </div>

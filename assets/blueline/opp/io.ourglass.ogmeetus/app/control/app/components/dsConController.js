@@ -65,18 +65,16 @@ app.controller("dsConController",
 
 
         $scope.update = function () {
-            // ogAPI.model.messages = $scope.messages;
-            // ogAPI.model.comingUpMessages = $scope.comingUpMessages;
-            //
-            // ogAPI.model.twitterQueries = $scope.twitterQueries;
-            // ogAPI.model.hideTVTweets = $scope.hideTVTweets;
-            
-            uibHelper.curtainModal('Saving...');
-            ogAPI.save()
-                .then( function(){
-                    return ogAPI.updateTwitterQuery( ogAPI.model.twitterQueries );
+
+            uibHelper.curtainModal( 'Saving...' );
+
+            ogAPI.getModel()
+                .then(function(latest){
+                    latest.scores[user.id] = $scope.localAnswers;
+                    return ogAPI.save();
                 })
                 .finally( uibHelper.dismissCurtain );
+
             
         };
 
