@@ -65,6 +65,12 @@ module.exports.routes = {
         skipAssets: true
     },
 
+    // The trick below actually works! But isn't needed now
+    // '/blueline/control': {
+    //     controller: "AppControlController",
+    //     action:     "chooseEndpoint",
+    //     skipAssets: true
+    // },
 
     /****************************************************************************
      *  SocialScrape vanity routes

@@ -107,6 +107,24 @@ module.exports = require('waterlock').actions.user({
             })
     },
 
+    // Sends a query to bellini core using the passed JWT
+    coreuserfortoken: function(req, res){
+
+        if ( req.method !== 'POST'){
+            return res.badRequest({ error: 'bad verb'});
+        }
+
+        var params = req.allParams();
+        if (!params.jwt){
+            return res.badRequest( { error: 'no token' } );
+        }
+
+        BCService.User.checkJwt(params.jwt)
+            .then(res.ok)
+            .catch(res.proxyError);
+
+    }
+
 
 });
 
