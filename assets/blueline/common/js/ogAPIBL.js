@@ -204,6 +204,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             var _deviceUDID = getOGSystem().udid;
             var _jwt = getOGSystem().jwt;
 
+            var _userPermissions;
+            var _user;
+
             if (_jwt){
                 $http.defaults.headers.common.Authorization = 'Bearer '+_jwt;
             }
@@ -216,6 +219,30 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             var _msgCb;
 
             var service = { model: {} };
+
+            service.getPermissions = function(){
+                return _userPermissions;
+            }
+            
+            function checkUserLevel(){
+
+                if (!_jwt){
+                    $log.debug("No jwt, no permissions");
+                    return $q.when();
+                }
+
+                return $http.post('/user/coreuserfortoken', { jwt: _jwt })
+                    .then( stripData )
+                    .then( function(user){
+                        _user = user;
+                        return $http.post('/user/isusermanager', { jwt: _jwt, deviceUDID: _deviceUDID })
+                    })
+                    .then( stripData )
+                    .then( function(permissions){
+                        _userPermissions = permissions;
+                        return permissions;
+                    })
+            }
 
             function updateModel( newData ) {
                 service.model = newData;
@@ -385,7 +412,12 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( function(){
                         return joinOGClientRoom();
                     })
-                    .then( function () {
+                    .then( function(){
+                        $log.debug("Checking user level for this device");
+                        return checkUserLevel();
+                    })
+                    .then( function (userLevel) {
+                        $log.debug("User level: "+userLevel);
                         return service.model;
                     } );
 
@@ -630,6 +662,10 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             service.pairedSTB = function(){
                 return getOGSystem();
             };
+
+            service.userIsManager = function(){
+
+            }
 
             return service;
         } )

@@ -7,13 +7,21 @@ app.directive( 'appCell',
         return {
             restrict:    'E',
             scope:       {
-                app: '='
+                app: '=',
+                permissions: '='
             },
             templateUrl: 'app/components/directives/appcell.template.html',
             link:        function ( scope, elem, attrs ) {
 
                 scope.running = attrs.running;
-                
+
+                scope.hasMgrPermission = function(){
+
+                    // So this is a little goofy right now. If there are no permissions, then you can see all.
+                    return !scope.permissions || ( scope.permissions.manager || scope.permissions.owner );
+
+                }
+
                 scope.launch = function(){
                     ogAPI.launch(scope.app.appId)
                         .then( function(resp){

@@ -8,7 +8,8 @@
             </div>
             <h4>RUNNING</h4>
             <p class="no-apps" ng-show="runningApps.length < 1">There are no running apps.</p>
-            <app-cell ng-repeat="app in runningApps | orderBy: 'displayName' track by $index" app="app" running="true"></app-cell>
+            <app-cell ng-repeat="app in runningApps | orderBy: 'displayName' track by $index" app="app" running="true"
+                      permissions="permissions"></app-cell>
         </div>
 
     </div>
@@ -16,7 +17,8 @@
         <div class="col-md-12">
             <h4>AVAILABLE</h4>
             <p class="no-apps" ng-show="availableApps.length < 1">There are no avaialable apps.</p>
-            <app-cell ng-repeat="app in availableApps | orderBy: 'displayName' track by $index" app="app"></app-cell>
+            <app-cell ng-repeat="app in availableApps | orderBy: 'displayName' track by $index"
+                app="app" permissions="permissions"></app-cell>
         </div>
     </div>
 </div>

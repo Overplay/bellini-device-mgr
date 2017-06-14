@@ -9,6 +9,7 @@ app.controller( "dashboardController",
         $scope.availableApps = [];
 
         $scope.ui = { isPaired: ogDevice.isPairedToSTB };
+        $scope.permissions = ogAPI.getPermissions();
 
         function reloadAppList() {
             ogNet.getApps()

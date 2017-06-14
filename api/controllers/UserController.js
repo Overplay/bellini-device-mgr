@@ -123,6 +123,54 @@ module.exports = require('waterlock').actions.user({
             .then(res.ok)
             .catch(res.proxyError);
 
+    },
+
+    isusermanager: function(req, res){
+
+        if ( req.method !== 'POST' ) {
+            return res.badRequest( { error: 'bad verb' } );
+        }
+
+        var params = req.allParams();
+
+        if ( !params.jwt || !params.deviceUDID ) {
+            return res.badRequest( { error: 'no token or no udid' } );
+        }
+
+        var prereqs = [
+            BCService.User.checkJwt( params.jwt ),
+            OGDevice.findOne({ deviceUDID: params.deviceUDID })
+        ];
+
+        Promise.all(prereqs)
+            .then( function(results){
+
+                var user = results[0];
+                var device = results[1];
+
+                if (!user){
+                    return res.badRequest({ error: 'invalid jwt'});
+                }
+
+                if ( !device ) {
+                    return res.badRequest( { error: 'no such device' } );
+                }
+
+                if (user.auth.ring === 1){
+                    return res.ok({ owner: true, manager: true });
+                }
+
+                var mgdIdx = _.findIndex(user.managedVenues, { 'uuid': device.atVenueUUID });
+                var ownedIdx = _.findIndex( user.ownedVenues, { 'uuid': device.atVenueUUID } );
+
+                return res.ok({ manager: mgdIdx>=0, owner: ownedIdx>=0 });
+
+            })
+            .catch(res.serverError);
+
+
+
+
     }
 
 

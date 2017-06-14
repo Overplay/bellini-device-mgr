@@ -80,7 +80,8 @@ module.exports.policies = {
 
     UserController: {
         '*': 'isRingAdmin',
-        'coreuserfortoken': true
+        'coreuserfortoken': true,
+        'isusermanager': true
     },
 
     // TODO this needs to check auth on 2000
