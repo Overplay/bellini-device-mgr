@@ -37,8 +37,7 @@
 
 <og-app-header name="Meet the OGs"></og-app-header>
 <div class="container">
-    <div class="row" ng-if="ui.isAdmin && ui.isLoaded">
-        Is Admin
+    <div class="row" ng-if="!ui.isAdmin && ui.isLoaded">
         <div class="col-md-12">
             <h4>Answers For:&nbsp;{{ ui.name }}</h4>
             <div ng-repeat="c in model.challenges">
@@ -47,11 +46,11 @@
             </div>
         </div>
     </div>
-    <div class="row" ng-if="!ui.isAdmin && ui.isLoaded">
+    <div class="row" ng-if="ui.isAdmin && ui.isLoaded">
         <div class="col-md-12">
             <h2>Scorecard For:&nbsp;{{ ui.name }}</h2>
         </div>
-        Is not Admin
+        Is Admin
     </div>
 
 </div>
