@@ -6300,8 +6300,8 @@ button.close {
 .og-tab-bar .btn {
 
   width: 49vw;
-  background-color: #0c6887;
-  color: #d0d0d0;
+  background-color: #52B85E!important;
+  color: white!important;
   flex-grow: 1;
   margin-left: 2px;
 
