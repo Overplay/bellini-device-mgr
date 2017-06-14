@@ -66,7 +66,7 @@ app.controller("dsConController",
 
         $scope.update = function () {
 
-            uibHelper.curtainModal( 'Saving...' );
+            uibHelper.curtainModal( 'Saving yo...' );
 
             ogAPI.loadModel()
                 .then(function(latest){
