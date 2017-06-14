@@ -1,0 +1,22 @@
+{
+  "appId": "io.ourglass.ogmeetus",
+  "appType": "crawler",
+  "appName": "MeetTheOGs",
+
+  "icon": "space.png",
+  "iconLabel": "MeetTheOGs",
+
+  "primaryColorHex": "#00b300",
+  "secondaryColorHex": "#006600",
+
+  "height": 5,
+
+  "initialValue": {
+    "messages": ["Ourglass TV", "Check Ourglass out at www.ourglass.tv"],
+    "twitterQueries": [ "@Warriors" ],
+    "hideTVTweets" : false
+  },
+
+  "version": 1.0,
+  "installDate": 1475073632093
+}

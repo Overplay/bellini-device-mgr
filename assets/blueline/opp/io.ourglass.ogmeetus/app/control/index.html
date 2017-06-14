@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html ng-app="optvDSConApp">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- ALL COMMON LIBS NEED TO COMMON FROM THE /COMMON PATH -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="../../../../common/bower_components/angular/angular.min.js"></script>
+    <script src="../../../../common/bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="../../../../common/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+
+    <script src="../../../../common/js/uiOGMobile/uiOGMobile.js"></script>
+    <!-- App Main and AngularJS Routes -->
+
+    <script src="app/optvDSConApp.module.js"></script>
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="../../../../common/js/ogAPIBL.js"></script>
+
+    <!-- Controllers -->
+
+    <script src="app/components/dsConController.js"></script>
+
+
+    <!-- App Specific and Overridden CSS -->
+    <link rel="stylesheet" href="../../../../common/css/og.css"/>
+
+    <title>Crawler Control</title>
+</head>
+
+<body ng-controller="dsConController">
+
+<og-app-header name="Meet the OGs"></og-app-header>
+<div class="container">
+    <div class="row" ng-if="ui.isAdmin && ui.isLoaded">
+        Is Admin
+        <div class="col-md-12">
+            <h4>Answers For:&nbsp;{{ ui.name }}</h4>
+            <div ng-repeat="c in model.challenges">
+                <p style="color: #d0d0d0";>Q{{$index+1}}</p>
+                <input type="text" style="margin-bottom: 10px; width: 100%;" ng-model="answers[$index]"/>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-if="!ui.isAdmin && ui.isLoaded">
+        <div class="col-md-12">
+            <h2>Scorecard For:&nbsp;{{ ui.name }}</h2>
+        </div>
+        Is not Admin
+    </div>
+
+</div>
+<button class="btn btn-primary btn-full" style="position: absolute; bottom: 0;" ng-click="update()">UPDATE</button>
+</body>
+</html>

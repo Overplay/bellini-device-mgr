@@ -223,7 +223,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             service.getPermissions = function(){
                 return _userPermissions;
             }
-            
+
+            service.getUser = function(){
+                return _user;
+            }
+
             function checkUserLevel(){
 
                 if (!_jwt){
