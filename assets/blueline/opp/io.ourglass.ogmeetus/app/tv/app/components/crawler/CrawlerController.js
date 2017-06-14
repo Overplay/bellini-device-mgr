@@ -139,9 +139,27 @@ app.controller( "crawlerController",
                     "Answer on your phone", "Have Fun!" ]
             } );
 
-            if (rawModel.scores.length > 0 ){
+            var numplayers = Object.keys( rawModel.scores ).length;
+            $log.debug("This many players: "+numplayers);
 
-                var sorted = _.sortBy(rawModel.scores, 'score');
+            if ( numplayers > 0 ){
+
+                var sarray = [];
+                _.forEach(rawModel.scores, function( value, key ){
+
+                    var nchal = rawModel.challenges.length;
+                    var score = 0;
+                    for (var i=0; i<nchal; i++){
+                        if (value.answers[i]==rawModel.challenges[i].a)
+                            score+=10;
+                    }
+
+                    value.score = score;
+
+                    sarray.push(value);
+                });
+
+                var sorted = _.sortBy(sarray, 'score');
                 var scoreEntries = sorted.map(function(s){
                     return s.name + ' | '+s.score;
                 });

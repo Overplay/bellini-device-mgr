@@ -46,7 +46,9 @@ var stockApps = [
             "challenges":       [ { q: 'Q1: Find an OG who has wrestled Jimmy Kimmel on national TV', a: 'Mitch'},
                                  { q: 'Q2: This OG grew up in NJ, but went to college in CA', a: 'Kristin'},
                 { q: 'Q3: Ourglass is based in this California city', a:'Campbell'},
-                { q: 'Q4: How much does OurglassTV cost to install?', a:'0'}
+                { q: 'Q4: How much does OurglassTV cost to install?', a:'0'},
+                { q: 'Q5: Which OG ran rides at a major amusement park?', a: 'Treb' },
+                { q: 'Q6: Which OG just got back from sunny Mexico?', a: 'Kristin' },
 
              ],
             "twitterQueries": [ "@OurglassTV" ],

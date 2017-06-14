@@ -21,9 +21,9 @@ app.controller("dsConController",
         function processModel( modelData ){
 
             $scope.model = modelData;
-            $scope.localAnswers = modelData.scores[user.id];
+            $scope.localAnswers = modelData.scores[user.id] && modelData.scores[ user.id ].answers;
             if (!$scope.localAnswers){
-                $scope.localAnswers = _.fill( Array( 10 ), '' );
+                $scope.localAnswers = _.fill( Array( $scope.model.challenges.length ), '' );
             };
 
         }
@@ -70,7 +70,7 @@ app.controller("dsConController",
 
             ogAPI.loadModel()
                 .then(function(latest){
-                    latest.scores[user.id] = $scope.localAnswers;
+                    latest.scores[user.id] = { answers: $scope.localAnswers, name: user.firstName };
                     return ogAPI.save();
                 })
                 .finally( uibHelper.dismissCurtain );
