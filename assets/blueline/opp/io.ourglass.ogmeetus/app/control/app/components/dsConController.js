@@ -68,7 +68,7 @@ app.controller("dsConController",
 
             uibHelper.curtainModal( 'Saving...' );
 
-            ogAPI.getModel()
+            ogAPI.loadModel()
                 .then(function(latest){
                     latest.scores[user.id] = $scope.localAnswers;
                     return ogAPI.save();
