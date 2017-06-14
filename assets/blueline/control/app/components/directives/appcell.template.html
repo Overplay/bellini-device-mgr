@@ -64,9 +64,9 @@
         </div>
     </div>
 
-    <div class="app-cell-left" ng-if="!running" style="padding-top: 15px;" ng-if="hasMgrPermission()">
+    <div class="app-cell-left" ng-if="!running" style="padding-top: 15px;" >
         <span class="app-name">{{app.displayName}} </span>
-        <button class="btn btn-success btn-xs pull-right" ng-click="launch()">
+        <button class="btn btn-success btn-xs pull-right" ng-click="launch()" ng-if="hasMgrPermission()">
             <!--<span class="glyphicon glyphicon-expand"></span>-->
             LAUNCH
         </button>
