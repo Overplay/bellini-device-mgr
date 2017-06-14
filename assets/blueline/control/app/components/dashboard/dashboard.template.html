@@ -6,7 +6,7 @@
                         ng-click="meplay()"><span class="glyphicon glyphicon-headphones"></span>&nbsp;LISTEN
                 </button>
             </div>
-            <h4>RUNNING</h4>
+            <h4>RUNNING&nbsp;<span ng-if="ui.isAdmin">[ MANAGER MODE ]</span></h4>
             <p class="no-apps" ng-show="runningApps.length < 1">There are no running apps.</p>
             <app-cell ng-repeat="app in runningApps | orderBy: 'displayName' track by $index" app="app" running="true"
                       permissions="permissions"></app-cell>
