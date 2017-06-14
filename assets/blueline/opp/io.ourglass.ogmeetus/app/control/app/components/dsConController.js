@@ -7,6 +7,7 @@ app.controller("dsConController",
 
         $scope.tabs = ['Messages', 'Coming Up', 'Twitter'];
         $scope.ui = { isLoaded: false, isAdmin: false };
+
         var user;
 
         $scope.getSelectedTabTitle = function () {
@@ -17,10 +18,19 @@ app.controller("dsConController",
             return tab.toLowerCase().replace(' ', '');
         };
 
-        function modelUpdate( data ) {
+        function processModel( modelData ){
 
-            $scope.model = data;
-            $scope.myanswers = _.find(data.scores, { id: user.id });
+            $scope.model = modelData;
+            $scope.localAnswers = modelData.scores[user.id];
+            if (!$scope.localAnswers){
+                $scope.localAnswers = _.fill( Array( 10 ), '' );
+            };
+
+        }
+
+        function modelUpdate( data ) {
+            $log.debug("There was a model update, but I don't give a shit.");
+
 
         }
 
@@ -45,7 +55,7 @@ app.controller("dsConController",
                     $scope.ui.isLoaded = true;
                     user = ogAPI.getUser();
                     $scope.ui.name =  user.firstName;
-                    modelUpdate( data );
+                    processModel( data );
                 })
                 .catch( function ( err ) {
                     $log.error("crawler controller: something bad happened: " + err);

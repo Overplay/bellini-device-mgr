@@ -50,8 +50,7 @@ var stockApps = [
 
              ],
             "twitterQueries": [ "@OurglassTV" ],
-            "hideTVTweets":   false,
-            "scores": []
+            "hideTVTweets":   false
         },
         appType:            'crawler',
         appWidth:           100,
