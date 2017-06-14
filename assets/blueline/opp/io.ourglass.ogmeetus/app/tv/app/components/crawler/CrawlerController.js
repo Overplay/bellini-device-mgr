@@ -139,38 +139,48 @@ app.controller( "crawlerController",
                     "Answer on your phone", "Have Fun!" ]
             } );
 
-            var numplayers = Object.keys( rawModel.scores ).length;
-            $log.debug("This many players: "+numplayers);
+            ogAPI.loadModel()
+                .then( function(m){
 
-            if ( numplayers > 0 ){
+                    rawModel = m;
 
-                var sarray = [];
-                _.forEach(rawModel.scores, function( value, key ){
+                    var numplayers = Object.keys( rawModel.scores ).length;
+                    $log.debug( "This many players: " + numplayers );
 
-                    var nchal = rawModel.challenges.length;
-                    var score = 0;
-                    for (var i=0; i<nchal; i++){
-                        if (value.answers[i]==rawModel.challenges[i].a)
-                            score+=10;
+                    if ( numplayers > 0 ) {
+
+                        var sarray = [];
+                        _.forEach( rawModel.scores, function ( value, key ) {
+
+                            var nchal = rawModel.challenges.length;
+                            var score = 0;
+                            for ( var i = 0; i < nchal; i++ ) {
+                                if ( value.answers[ i ] == rawModel.challenges[ i ].a )
+                                    score += 10;
+                            }
+
+                            value.score = score;
+
+                            sarray.push( value );
+                        } );
+
+                        var sorted = _.sortBy( sarray, 'score' );
+                        var scoreEntries = sorted.map( function ( s ) {
+                            return s.name + ' | ' + s.score;
+                        } );
+                        newVerts.push( {
+                            header:   'Standings',
+                            messages: scoreEntries
+                        } )
+
                     }
 
-                    value.score = score;
+                    $scope.vertMessages = newVerts;
 
-                    sarray.push(value);
-                });
 
-                var sorted = _.sortBy(sarray, 'score');
-                var scoreEntries = sorted.map(function(s){
-                    return s.name + ' | '+s.score;
-                });
-                newVerts.push({
-                    header: 'Standings',
-                    messages: scoreEntries
                 })
 
-            }
 
-            $scope.vertMessages = newVerts;
 
 
         }
