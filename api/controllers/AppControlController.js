@@ -15,7 +15,8 @@ module.exports = {
 
             var displayName = params.displayName || 'OURGLASS';
             var base = "/blueline/opp/" + params.appId +
-                '/app/control/index.html?deviceUDID=' + params.deviceUDID + '&displayName=' + displayName;
+                '/app/control/index.html?deviceUDID=' + params.deviceUDID + '&displayName=' + displayName +
+                '&jwt='+params.jwt || '^^';
 
             return res.redirect( base );
 

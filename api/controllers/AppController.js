@@ -17,8 +17,8 @@ module.exports =  {
             return res.badRequest({ error: 'missing app parameter' });
         }
 
-        var SkipperDisk = require( 'skipper-disk' );
-        var fileAdapter = SkipperDisk( /* optional opts */ );
+        // var SkipperDisk = require( 'skipper-disk' );
+        // var fileAdapter = SkipperDisk( /* optional opts */ );
 
         var appPath = '/blueline/opp/'+appId+'/app/tv/index.html';
 
