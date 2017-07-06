@@ -3,8 +3,10 @@
 </div>
 <div class="modal-body">
     <p>{{ modalUi.body }}</p>
-    <input class="form-control input-lg" type="text" ng-model="modalUi.editString" placeholder="{{ modalUi.placeholder }}">
-    </div>
+    <input ng-if="!modalUi.textarea" class="form-control input-lg" type="text" ng-model="modalUi.editString" placeholder="{{ modalUi.placeholder }}">
+    <textarea ng-if="modalUi.textarea" class="form-control" ng-model="modalUi.editString" rows="8"
+                  placeholder="{{ modalUi.placeholder }}"></textarea>
+</div>
 
 <div class="modal-footer">
     <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>

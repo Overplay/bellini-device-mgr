@@ -16,7 +16,7 @@
 
     // TODO this should come from somewhere else!
 var DEVICE_UDID = 'apple-sim-1';
-var VENUE_UUID = 'da56668b-a336-443d-9f05-ec991411855b';
+var VENUE_UUID = 'sim-001';
 
 app.factory( 'bellini', function ( $http, $log ) {
 

@@ -672,6 +672,19 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             }
 
+            /**
+             * This method bounces a GET off of Bellini-DM as a proxy. Use this
+             * instead of trying to GET right from a service to avoid CORS fails.
+             * This will only work if no authorization header stuff is needed for
+             * the call performed by the server.
+             *
+             * @param url
+             */
+            service.proxyGet = function(url){
+                return $http.get('/proxy/get?url='+url)
+                    .then(stripData);
+            }
+
             return service;
         } )
 
@@ -833,7 +846,7 @@ angular.module( "ourglassAPI" ).run( [ "$templateCache",
         $templateCache.put( 'ogdirectives/appheader.html', '<style>.ogappheader{display:table;' +
             'font-size:2em;font-weight:bold;height:60px;margin:0 0 10px 0}' +
             '.ogappheadertext{display:table-cell;vertical-align:middle}' +
-            '.ogappheaderside{height:60px;width:20px;background-color:#21b9e6;float:left;margin-right:10px}</style>' +
+            '.ogappheaderside{height:60px;width:20px;background-color:#52B85E;float:left;margin-right:10px}</style>' +
             '<div class="ogappheader"><div class="ogappheaderside"></div>' +
             '<div class="ogappheadertext">{{name | uppercase}}</div></div>' );
 
