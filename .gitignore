@@ -122,4 +122,4 @@ nbproject
 .vscode/*
 
 !.gitkeep
-.eslintrc
+.eslintrc.js
