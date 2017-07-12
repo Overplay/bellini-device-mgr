@@ -124,9 +124,13 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
     
     }
 
-    
+    /**
+     * Definition of the ourglassAPI module
+     */
     angular.module( 'ourglassAPI', [] )
-    // Advertising service
+        /**
+         * Definition for the ogAds factory (advertising service)
+         */
         .factory( 'ogAds', function ( $http, $q, $log ) {
 
             var _forceAllAds = true;
@@ -184,7 +188,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             /**
              * Resolves a promise for currentAds running 
              * 
-             * @returns a promisified currentAds request
+             * @returns {Promise} a promisified currentAds request
              */
             service.getCurrentAd = function () {
                 return $q( function ( resolve, reject ) {
@@ -196,7 +200,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              * Returns ad's image if there are ads, and a default if not
              * 
              * @param {string} adType 
-             * @returns location of ad's image
+             * @returns {string} location of ad's image
              */
             service.getImgUrl = function ( adType ) {
 
@@ -269,6 +273,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             var service = { model: {} };
 
+            /**
+             * Returns _userPermissions variable
+             *
+             * 
+             */
             service.getPermissions = function(){
                 return _userPermissions;
             };
