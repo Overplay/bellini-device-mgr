@@ -51,10 +51,10 @@ app.controller('mfController', function($scope, $log, $interval, bellini, mainfr
     function launchApp(data){
         if ( data.appType === 'crawler' ) {
             $scope.crawler.src = '/blueline/opp/' + data.appId + '/app/tv/index.html?deviceUDID=' + DEVICE_UDID;
-            $scope.crawler.height = data.appHeight;
+            $scope.crawler.height = data.appHeight ? data.appHeight : data.height;
         } else {
             $scope.widget.src = '/blueline/opp/' + data.appId + '/app/tv/index.html?deviceUDID=' + DEVICE_UDID;
-            $scope.widget.height = data.appHeight;            
+            $scope.widget.height = data.appHeight ? data.appHeight : data.height;            
         }
     }
 
