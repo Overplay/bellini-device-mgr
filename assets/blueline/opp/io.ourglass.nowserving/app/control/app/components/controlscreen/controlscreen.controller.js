@@ -2,7 +2,7 @@
  * Created by mkahn on 11/18/16.
  */
 
-app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelper ) {
+app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelper, $timeout ) {
 
     $log.debug( "loaded ogNowServingController" );
 
@@ -63,6 +63,11 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
 
     };
 
+    $scope.curtainDebug = function () {
+        var curtain = uibHelper.curtainModal('Curtain');
+        $timeout(function () { uibHelper.dismissCurtain(); }, 5000);
+    };
+
     function modelChanged( newValue ) {
 
         $log.info( "Model changed, yay!" );
@@ -95,6 +100,8 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
         });
 
     }
+
+
 
 
     initialize();
