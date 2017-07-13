@@ -6320,3 +6320,7 @@ button.close {
   color: inherit;
   transition: all .5s;
 }
+
+body.curtain-open {
+  overflow: hidden;
+}
