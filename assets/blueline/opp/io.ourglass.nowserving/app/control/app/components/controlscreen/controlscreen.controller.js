@@ -51,9 +51,11 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
             $scope.ticketNumber,
             'order number'
         ).then(function (result) {
-            if (result) {
-                $scope.ticketNumber = result;                
-                saveModel();                
+            if (!isNaN(result)) {
+                $scope.ticketNumber = result;       
+                saveModel();
+            } else {
+                uibHelper.dryToast("You must enter a number.");
             }
         }).catch(function (err) {
             $log.error(err);
