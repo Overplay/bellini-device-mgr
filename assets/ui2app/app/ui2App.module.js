@@ -28,9 +28,18 @@ app.run( function ( $log, $rootScope, toastr, $state, uibHelper ) {
 
     $log.info( "Bellini is pouring!" );
 
+    $rootScope.$on( "$stateChangeSuccess", function ( event, toState, toParams, from, fromParams ) {
+        // always reset scroll to 0. This is a clusterfuck in ui-router
+        document.body.scrollTop = document.documentElement.scrollTop = 0;
+        // save for recovery from bad state changes, cancel outs etc.
+        $rootScope.lastUiState = { state: from, params: fromParams };
+
+
+    } );
+
     $rootScope.$on( '$stateChangeError',
         function ( event, toState, toParams, fromState, fromParams, error ) {
-            $log.error( "State change fail!" );
+            $log.error( "State change fail! "+ error.message );
 
             if (!fromState.name){
                 $log.debug('FromState is nil, prolly a reload, bailing out to root');
