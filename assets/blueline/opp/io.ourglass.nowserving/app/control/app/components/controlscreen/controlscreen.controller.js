@@ -51,7 +51,7 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
             $scope.ticketNumber,
             'order number'
         ).then(function (result) {
-            if (!isNaN(result)) {
+            if (_.isNumber(result)) {
                 $scope.ticketNumber = result;       
                 saveModel();
             } else {
