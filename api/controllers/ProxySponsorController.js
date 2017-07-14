@@ -24,7 +24,7 @@ module.exports = {
         //     sails.config.uservice.sponsorProxy.allAds;
 
         var proxypath = sails.config.uservice.sponsorProxy.endpoint +
-            '/api/v1/ad?where={"reviewed":true,"accepted":true,"deleted":false,"paused":false}';
+            '/ad?where={"reviewState":"Accepted", "paused":false}';
 
         request.get( proxypath )
             .then( function(d){
