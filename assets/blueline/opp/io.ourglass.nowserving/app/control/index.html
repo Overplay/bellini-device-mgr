@@ -16,6 +16,10 @@
         <!-- App Main and AngularJS Routes -->
         <script src="app/ogNowServingControlApp.module.js"></script>
         <script src="../../../../common/js/ogAPIBL.js"></script>
+        <script src="../../../../common/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+        <script src="../../../../common/js/uiOGMobile/uiOGMobile.js"></script>
+
+
 
         <!-- Controllers -->
         <script src="app/components/controlscreen/controlscreen.controller.js"></script>
@@ -75,6 +79,14 @@
 
                 <div class="row">
                     <button class="btn btn-danger btn-lg ticket-button" ng-click="clear()">RESET TO ZERO</button>
+                </div>
+                
+                <div class="row">
+                    <button class="btn btn-warning btn-lg ticket-button" ng-click="setTicket()">INPUT TICKET #</button>
+                </div>
+
+                <div class="row">
+                    <button class="btn btn-warning btn-lg ticket-button" ng-click="curtainDebug()">CURTAIN DEBUG BUTTON</button>
                 </div>
             </div>
 

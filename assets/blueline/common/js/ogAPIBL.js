@@ -49,6 +49,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
     /**
      * This relies on the addJsonInterface on the Android side!
+     *
+     * @param none
      * @returns {any}
      */
     function getOGSystem() {
@@ -90,20 +92,35 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
         return simSys;
     }
 
+    /**
+     * Returns if you're running in the system by querying the window.OGSystem variable (if it exists or not)
+     * 
+     * @returns {boolean} OGSystem
+     */
     function isRunningInAndroid() {
         return window.OGSystem;
     }
     
+    /**
+     * Sends an http request to /ogdevice/findByUDID and returns the data
+     * 
+     * @param {string} udid 
+     * @returns {Object} data
+     */
     function getOGDeviceFromCloud(udid){
         
         return $http.get('/ogdevice/findByUDID?deviceUDID='+udid)
-            .then(stripData);
+                    .then(stripData);
     
     }
 
+    /**
+     * Definition of the ourglassAPI module
+     */
     angular.module( 'ourglassAPI', [] )
-
-    // Advertising service
+        /**
+         * Definition for the ogAds factory (advertising service)
+         */
         .factory( 'ogAds', function ( $http, $q, $log ) {
 
             var _forceAllAds = true;
@@ -117,6 +134,12 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             var service = {};
 
+            /**
+             * Process new ads length 
+             * 
+             * @param {any} newAds 
+             * @returns {Object} _adRotation
+             */
             function processNewAds( newAds ) {
                 $log.debug( "ogAds loaded " + newAds.length + " ads. Enjoy!" );
                 _adRotation = newAds;
@@ -124,6 +147,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return _adRotation;
             }
 
+            /**
+             * Makes an http query to either VenueAds or AllAds and returns _adRotation
+             * 
+             * @returns {Object} _adRotation
+             */
             service.refreshAds = function () {
                 var url = ( getOGSystem().venue && !_forceAllAds ) ? (urlForVenueAds + getOGSystem().venue) : urlForAllAds;
                 return $http.get( url )
@@ -131,6 +159,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( processNewAds )
             };
 
+            /**
+             * Returns next advertisiment in the rotation 
+             * 
+             * @returns {Object} advertisiment
+             */
             service.getNextAd = function () {
 
                 if ( !_adRotation.length )
@@ -142,18 +175,28 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             };
 
             // TODO: This needs to be implemented for ogCrawler
+            /**
+             * Resolves a promise for currentAds running 
+             * 
+             * @returns {Promise} a promisified currentAds request
+             */
             service.getCurrentAd = function () {
                 return $q( function ( resolve, reject ) {
                     resolve({"currentAds": []});
                 })
             };
 
-
+            /**
+             * Returns ad's image if there are ads, and a default if not
+             * 
+             * @param {string} adType 
+             * @returns {string} location of ad's image
+             */
             service.getImgUrl = function ( adType ) {
 
-                if ( _adRotation.length ) {
+                if ( _adRotation.length && _adRotation[ _adIndex ].advert.media ) { //This makes sure there is actually an advert to pull
                     // TODO this needs more checking or a try catch because it can blow up if an ad does not have
-                    // a particular kind (crawler, widget, etc.
+                    // a particular kind (crawler, widget, etc.)
                     var ad = _adRotation[ _adIndex ];
                     return ad.mediaBaseUrl + ad.advert.media[ adType ];
 
@@ -220,6 +263,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             var service = { model: {} };
 
+            /**
+             * Returns _userPermissions variable
+             *
+             * 
+             */
             service.getPermissions = function(){
                 return _userPermissions;
             }
