@@ -280,6 +280,13 @@ module.exports = {
         }, res.negotiate );
 
 
+    },
+
+    downloadFromCore: function(req, res){
+
+        BCService.Media.download(req.allParams().id, res);
+
+
     }
 };
 
