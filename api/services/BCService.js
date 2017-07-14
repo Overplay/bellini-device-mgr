@@ -42,6 +42,7 @@ module.exports = {
 
         download: function ( id, res ) {
 
+            res.
             return request
                 .get( sails.config.uservice.belliniCore.url + '/media/download/' + id )
                 //.set( 'Authorization', 'Bearer ' + jwt )

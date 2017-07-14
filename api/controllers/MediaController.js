@@ -284,6 +284,8 @@ module.exports = {
 
     downloadFromCore: function(req, res){
 
+        res.header( "Content-Type", "image/png" );
+
         BCService.Media.download(req.allParams().id, res);
 
 
