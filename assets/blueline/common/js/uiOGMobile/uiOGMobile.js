@@ -220,8 +220,8 @@
              *
              * Usage:  uibHelper.stringEditModal("My Title", "Body Text", string2Edit)
              *          .then( function(confirmed){
-     *              // do something with confirmation
-     *          });
+             *              // do something with confirmation
+             *          });
              *
              * @param title
              * @param body

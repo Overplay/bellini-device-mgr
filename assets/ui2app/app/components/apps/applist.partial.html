@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-lg-10 material-panel">
+            <h1><i class="fa fa-gears" aria-hidden="true" style="color: #999999"></i>&nbsp;&nbsp;All Apps</h1>
+            <div ng-if="apps.length">
+                <input type="text" ng-model="searchTerm" class="form-control" placeholder="app...">
+                <div style="overflow-y: scroll; height: 100vh; margin-top: 10px;">
+                    <table class="table table-striped" ng-if="apps.length">
+                        <thead>
+                        <tr>
+                            <th>App Id</th>
+                            <th>Display Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Virtual</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="a in apps | orderBy: 'a.appId' | filter:searchTerm" class="table-hilite">
+                            <!--<td><img style="width: 40px;" ng-src="/media/download/{{ v.logoId }}"></td>-->
+                            <td>{{ a.appId }}</td>
+                            <td>{{ a.displayName }}</td>
+                            <td>{{ a.appType }}</td>
+                            <td>{{ a.description }}</td>
+                            <td>{{ a.isVirtual ? 'X' : '' }}</td>
+                            <td>
+                                <button ui-sref="apps.edit({id: a.id})" class="tbtn tbtn-blue">edit</button>
+                                <button ng-click="delete(e)" class="tbtn tbtn-red">delete</button>
+
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <h3 ng-if="!apps.length" style="text-align: center; padding-bottom: 10px;">No Apps in Database</h3>
+
+        </div>
+    </div>
+</div>
+

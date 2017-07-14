@@ -6,7 +6,7 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
 
     $log.debug( "loaded ogNowServingController" );
 
-    $scope.ticketNumber = 12456;
+    $scope.ticketNumber = '---';
 
     function saveModel() {
 
@@ -18,7 +18,7 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
             } )
             .catch( function ( err ) {
                 $log.error( "WTF?!?!?" );
-                $scope.ticketNumber = "Error Talking to AB";
+                $scope.ticketNumber = "&*$!";
             } );
     }
 

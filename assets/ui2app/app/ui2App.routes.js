@@ -238,5 +238,40 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
 
         } )
 
+        .state( 'apps', {
+            abstract: true,
+            url:      '/apps',
+            views:    buildCompleteView( { template: '<ui-view></ui-view>', } ),
+            resolve:  {
+                sm: function ( sideMenu ) {
+                    sideMenu.change( 'appsMenu' );
+                }
+            }
+        } )
+
+        .state( 'apps.list', {
+            url:         '/list',
+            templateUrl: '/ui2app/app/components/apps/applist.partial.html',
+            controller:  'appListController',
+            resolve:     {
+                apps: function ( sailsApps ) {
+                    return sailsApps.getAll();
+                }
+            }
+
+        } )
+
+        .state( 'apps.edit', {
+            url:         '/edit/:id',
+            templateUrl: '/ui2app/app/components/apps/appedit.partial.html',
+            controller:  'appEditController',
+            resolve:     {
+                app:    function ( sailsApps, $stateParams ) {
+                    return sailsApps.get( $stateParams.id );
+                }
+            }
+
+        } )
+
 
 } );

@@ -37,7 +37,7 @@ module.exports = {
     appHeight: {
       type: 'integer'
     },
-    
+
     appType: {
       type: 'string'
     },
@@ -58,6 +58,11 @@ module.exports = {
     isVirtual: {
       type: 'boolean',
       defaultsTo: false
+    },
+
+    description: {
+      type: 'string',
+      defaultsTo: ''
     },
 
     toJSON: function () {

@@ -22,6 +22,11 @@ app.factory( 'sideMenu', function ( $rootScope ) {
             { label: "All Users", sref: "admin.userlist", icon: "users" },
             { label: "Add User", sref: "admin.edituser({id: 'new'})", icon: "user" },
             { label: "Maintenance", sref: "admin.maint", icon: "gears" }
+        ],
+        appsMenu: [
+            { label: "Home", sref: "dashboard", icon: "home" },
+            { label: "All Apps", sref: "apps.list", icon: "gears" },
+            { label: "Add App", sref: "apps.edit({id: 'new'})", icon: "gear" }
         ]
     };
 
