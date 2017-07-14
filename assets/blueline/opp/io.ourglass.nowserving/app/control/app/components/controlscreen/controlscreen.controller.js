@@ -2,7 +2,7 @@
  * Created by mkahn on 11/18/16.
  */
 
-app.controller( "ogNowServingController", function ( $scope, $log, ogAPI ) {
+app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelper, $timeout ) {
 
     $log.debug( "loaded ogNowServingController" );
 
@@ -42,6 +42,32 @@ app.controller( "ogNowServingController", function ( $scope, $log, ogAPI ) {
 
     };
 
+    $scope.setTicket = function () {
+
+        $log.debug("Change Ticket Pressed ");
+        uibHelper.stringEditModal(
+            'Change Order Number?',
+            'Do you really want to change?',
+            $scope.ticketNumber,
+            'order number'
+        ).then(function (result) {
+            if (!isNaN(result)) {
+                $scope.ticketNumber = result;       
+                saveModel();
+            } else {
+                uibHelper.dryToast("You must enter a number.");
+            }
+        }).catch(function (err) {
+            $log.error(err);
+        });
+
+    };
+
+    $scope.curtainDebug = function () {
+        var curtain = uibHelper.curtainModal('Curtain');
+        $timeout(function () { uibHelper.dismissCurtain(); }, 5000);
+    };
+
     function modelChanged( newValue ) {
 
         $log.info( "Model changed, yay!" );
@@ -64,16 +90,19 @@ app.controller( "ogNowServingController", function ( $scope, $log, ogAPI ) {
             modelCallback: modelChanged,
             messageCallback: inboundMessage,
             appType: 'mobile',
-            deviceUDID: "test"
+            deviceUDID: 'test'
         })
-            .then ( function ( data ) {
-                $scope.ticketNumber = data.ticketNumber
-            })
-            .catch( function ( err ) {
-                $log.error("Something failed: " + err);
-            })
+        .then(function (data) {
+            $scope.ticketNumber = data.ticketNumber;
+        })
+        .catch(function (err) {
+            $log.error("Something failed: " + err);
+        });
 
     }
+
+
+
 
     initialize();
 
