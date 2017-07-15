@@ -52,7 +52,7 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
             'order number'
         ).then(function (result) {
             if (_.isNumber(result)) {
-                $scope.ticketNumber = result;       
+                $scope.ticketNumber = _.parseInt(result);       
                 saveModel();
             } else {
                 uibHelper.dryToast("You must enter a number.");
@@ -63,10 +63,10 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
 
     };
 
-    $scope.curtainDebug = function () {
-        var curtain = uibHelper.curtainModal('Curtain');
-        $timeout(function () { uibHelper.dismissCurtain(); }, 5000);
-    };
+    // $scope.curtainDebug = function () {
+    //     var curtain = uibHelper.curtainModal('Curtain');
+    //     $timeout(function () { uibHelper.dismissCurtain(); }, 5000);
+    // };
 
     function modelChanged( newValue ) {
 
