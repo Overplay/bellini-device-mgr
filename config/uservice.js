@@ -14,7 +14,7 @@ module.exports = {
     uservice: {
         // Where to get ads
         sponsorProxy: {
-            endpoint:    'http://107.170.209.248',
+            endpoint:    'http://localhost:2000',
             allAds:      '/ad/getAccepted',
             adsForVenue: '/ad/forVenue/'
         },

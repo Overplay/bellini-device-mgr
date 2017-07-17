@@ -131,6 +131,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             var urlForAllAds = '/proxysponsor/all';
             var urlForVenueAds = '/proxysponsor/venue/';
+            var urlForProxiedImages = '/media/downloadFromCore/'
 
             var service = {};
 
@@ -198,7 +199,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     // TODO this needs more checking or a try catch because it can blow up if an ad does not have
                     // a particular kind (crawler, widget, etc.)
                     var ad = _adRotation[ _adIndex ];
-                    return ad.mediaBaseUrl + ad.advert.media[ adType ];
+
+                    return urlForProxiedImages + ad.advert.media[ adType ].id;
 
                 } else {
 
@@ -736,10 +738,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             return service;
         } )
 
+        // Main directive for inserting an advert in BL apps
         .directive( 'ogAdvert', function ( $log, ogAds, $interval, $timeout ) {
             return {
                 restrict: 'E',
-                template: '<img width="100%" height="100%" style="-webkit-transition: opacity 0.5s; transition: opacity 0.5s;" ' +
+                template: '<img width="100%" height="100%" style="-webkit-transition: opacity 0.5s; transition: opacity 0.35s;" ' +
                           'ng-style="adstyle" ng-src=\"{{adurl}}\"/>',
                 link:     function ( scope, elem, attrs ) {
 

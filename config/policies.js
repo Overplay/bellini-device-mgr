@@ -63,7 +63,8 @@ module.exports.policies = {
     },
 
     MediaController: {
-        '*': 'isRingAdmin'
+        '*': 'isRingAdmin',
+        'downloadFromCore': true
     },
 
     OGLogController: {
