@@ -8,7 +8,8 @@ app.controller( "guideController",
 
         $log.info( "Loading guideController" );
 
-        $scope.ui = { loadError: false, refineSearch: 'all', isPaired: ogDevice.isPairedToSTB };
+        //$scope.ui = { loadError: false, refineSearch: 'all', isPaired: ogDevice.isPairedToSTB };
+        $scope.ui = { loadError: false, refineSearch: 'all', isPaired: true };
 
         var slideIdx = 0;
         var WINDOW_SIZE = 30;
@@ -101,7 +102,7 @@ app.controller( "guideController",
         };
 
         
-        if (ogDevice.isPairedToSTB){
+        if ($scope.ui.isPaired){
         
             var refreshListings = $interval( loadListings, 15000 ); // $interval to run every 5 min or 300000ms
 
