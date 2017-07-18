@@ -34,8 +34,11 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
 
     $scope.incrementTicket = function () {
     
-        $log.debug( "Increment pressed" );
-        $scope.ticketNumber += 1;
+        $log.debug("Increment pressed");
+        if ($scope.ticketNumber === '---')
+            $scope.ticketNumber = 1;
+        else
+            $scope.ticketNumber += 1;
         // ogControllerModel.model.ticketNumber = $scope.ticketNumber;
 
         saveModel();
@@ -51,7 +54,7 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
             $scope.ticketNumber,
             'order number'
         ).then(function (result) {
-            if (_.isNumber(result)) {
+            if (_.isNumber(parseInt(result))) {
                 $scope.ticketNumber = _.parseInt(result);       
                 saveModel();
             } else {
