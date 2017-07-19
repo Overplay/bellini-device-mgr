@@ -777,6 +777,13 @@ module.exports = {
             .then(res.ok)
             .catch(res.serverError);
 
+    },
+
+    isloggedin: function ( req, res ){
+
+        var loggedin = !!req.session.authenticated && !!req.session.device;
+        return res.json( { loggedIn:  loggedin });
+
     }
 
 

@@ -12,6 +12,10 @@ module.exports = function(req, res, next) {
   if ( sails.config.policies.wideOpen )
     return next();
 
+  // OG device is authenticated
+  if (req.session.authenticated && req.session.device)
+    return next();
+
   // User is allowed, proceed to the next policy, 
   // or if this is the last policy, the controller
   if (req.session.authenticated && !req.session.user.auth.blocked ) {

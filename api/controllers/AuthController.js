@@ -124,7 +124,6 @@ module.exports = require( 'waterlock' ).waterlocked( {
     },
 
 
-
     resetPwd: function ( req, res ) {
 
         return res.view( 'users/resetPassword' + ThemeService.getTheme() );
@@ -198,5 +197,63 @@ module.exports = require( 'waterlock' ).waterlocked( {
     //
     // }
 
+    device: function( req, res ){
+
+        sails.log.debug('Device logging in');
+
+        var params = req.allParams();
+
+        // can search by passing a deviceUDID or database ID
+        var query = params.deviceUDID ? { deviceUDID: params.deviceUDID } : { id: params.id };
+
+        OGDevice.findOne(query)
+            .then( function(device){
+                if (!device){
+                    sails.log.debug("No login for you, bad device!");
+                    req.session.device = null;
+                    req.session.authenticated = false;
+                    return res.forbidden( { error: 'no such device' } );
+                } else {
+                    req.session.device = device;
+                    req.session.authenticated = true;
+                    return res.ok();
+                }
+            })
+
+        //
+        // // store user in && authenticate the session
+        // req.session.user = user;
+        // req.session.authenticated = true;
+        // // now respond or redirect
+        // var postResponse = pr || this._resolvePostAction( waterlock.config.postActions.login.success,
+        //         user );
+        // if ( postResponse === 'jwt' ) {
+        //     //Returns the token immediately
+        //     var jwtData = waterlock._utils.createJwt( req, res, user );
+        //
+        //     Jwt.create( { token: jwtData.token, uses: 0, owner: user.id } ).exec( function ( err ) {
+        //         if ( err ) {
+        //             return res.serverError( 'JSON web token could not be created' );
+        //         }
+        //
+        //         var result = {};
+        //
+        //         result[ waterlock.config.jsonWebTokens.tokenProperty ] = jwtData.token || 'token';
+        //         result[ waterlock.config.jsonWebTokens.expiresProperty ] = jwtData.expires || 'expires';
+        //
+        //         if ( waterlock.config.jsonWebTokens.includeUserInJwtResponse ) {
+        //             result[ 'user' ] = user;
+        //         }
+        //
+        //         res.json( result );
+        //     } );
+        // } else if ( typeof postResponse === 'string' && this._isURI( postResponse ) ) {
+        //     res.redirect( postResponse );
+        // } else {
+        //     res.ok( postResponse );
+        // }
+        //
+
+    }
 
 } );

@@ -49,7 +49,8 @@ module.exports.policies = {
         '*':         'isRingAdmin', //really protect auth
         'loginPage': true,
         // TODO some sort of policy on to many logins from same IP address
-        'login':     true
+        'login':     true,
+        'device':    [ 'isDevice', 'isPOST' ]
         // 'find':    [ 'isRingAdmin' ],
         // 'findOne': [ 'authProtection' ], //tricky for manager list and whatnot
         // 'update':  [ 'authProtection' ],
@@ -96,12 +97,13 @@ module.exports.policies = {
         'uiApp': [ 'forceAnonToLogin', 'authDecorator', 'sessionAuth' ]
     },
 
-    // TODO: this is very insecure, for now
     OGDevice: {
         '*': true,
         'purge': ['isRingAdmin', 'isDELETE'],
-        'regcode': ['isDevice'],
-        'checkconnection': [ 'isSOCKETPOST', 'hasDeviceUDID' ]
+        'regcode': ['isDevice', 'sessionAuth'],
+        'checkconnection': [ 'isSOCKETPOST', 'hasDeviceUDID' ],
+        'isloggedin': [ 'isDevice', 'isGET' ],
+        'register': ['isDevice', 'isPOST']
         // 'findByRegCode': true,
         // 'findByUDID': true,
         // 'changeName': true,
