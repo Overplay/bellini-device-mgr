@@ -2,39 +2,41 @@
  * Created by mkahn on 4/21/17.
  */
 
-app.controller( "navTopController", function ( $scope, $log, user, $rootScope, userAuthService ) {
+app.controller( "navTopController", function ( $scope, $log, $rootScope, navService, userAuthService, $state ) {
 
     $log.debug( "Loading navTopController" );
 
-    $scope.showBurgerMenu = false;
+    $rootScope.showSideMenu = true;
 
-    $scope.links = [];
+    // moved out of route resolves because it is always needed and became a PITAS
+    userAuthService.getCurrentUser()
+        .then( function(user) {
+            if ( !user ) {
+                $window.location = '/';
+            } else {
+                $scope.links = navService.topMenu.buildForUser( user );
+                $scope.account = function () {
+                    $state.go( 'user.edit', { id: user.id } );
+                }
+            }
+        })
+        .catch( function(err) {
+            $log.error("Navbar could not determine user, bailing out");
+            $window.location = '/';
+        });
 
-    if (!user){
-        $window.location = '/';
-    } else {
 
-
-        $scope.links = [
-            { label: "dash", sref: "dashboard", icon: "cube" },
-            { label: "devices", sref: "devices.allactive", icon: "television" },
-            { label: "network", sref: "network.dashboard", icon: "arrows-alt" },
-            { label: "venues", sref: "venues.list", icon: "globe" },
-            { label: "apps", sref: "apps.list", icon: "gears" }
-
-        ]
-
-
-    }
-
-    $scope.logout = function(){
+    $scope.logout = function () {
         userAuthService.logout();
     }
 
+    // $scope.account = function () {
+    //     $state.go( 'user.edit', { id: user.id } );
+    // }
 
-    
-    $scope.toggleSideMenu = function(){
-        $rootScope.$broadcast("TOGGLE_SIDEMENU");
+    $scope.toggleSideMenu = function () {
+        $rootScope.showSideMenu = !$rootScope.showSideMenu;
+        $rootScope.$broadcast( "TOGGLE_SIDEMENU", { show: $rootScope.showSideMenu } );
     }
 
 } );

@@ -10,11 +10,11 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
         "navtop":  {
             templateUrl: '/ui2app/app/components/navtop/navtop.partial.html',
             controller:  'navTopController',
-            resolve:     {
-                user: function ( userAuthService ) {
-                    return userAuthService.getCurrentUser();
-                }
-            }
+            // resolve:     {
+            //     user: function ( userAuthService ) {
+            //         return userAuthService.getCurrentUser();
+            //     }
+            // }
         },
         "navside": {
             templateUrl: '/ui2app/app/components/navside/navside.partial.html',
@@ -24,6 +24,14 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
 
     function buildCompleteView( withView ) {
         return _.extend( navViews, { "appbody": withView } );
+    }
+
+    function withUserResolve( resolvers ) {
+        return _.extend( resolvers, {
+            user: function ( userAuthService ) {
+                return userAuthService.getCurrentUser();
+            }
+        } );
     }
 
     $urlRouterProvider.otherwise( '/' );
@@ -36,8 +44,8 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
                 templateUrl: '/ui2app/app/components/dashboard/dashboard.partial.html'
             } ),
             resolve: {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'dashMenu' );
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'dashMenu' );
                 }
             }
         } )
@@ -50,15 +58,11 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
                 templateUrl: '/ui2app/app/components/account/myaccount.partial.html',
                 controller: 'myAccountController'
                  }),
-            resolve: {
-                me: function ( sailsUsers ) {
-                    return sailsUsers.getMe();
-                },
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'accountMenu' );
+            resolve: withUserResolve( {
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'accountMenu' );
                 }
-            }
-
+            })
         })
 
         // Copied from BC
@@ -71,8 +75,8 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             views:    buildCompleteView( { template: '<ui-view></ui-view>', } ),
             // This little hack sets the side menu for each major state
             resolve:  {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'dashMenu' );
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'dashMenu' );
                 }
             }
         } )
@@ -81,22 +85,25 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             url:         '/userlist',
             templateUrl: '/ui2app/app/components/admin/userlist.partial.html',
             controller:  'adminUserListController',
-            resolve:     {
+            resolve:     withUserResolve({
                 users: function ( sailsUsers ) {
                     return sailsUsers.getAll();
+                },
+                sm:    function ( navService ) {
+                    navService.sideMenu.change( 'adminUserMenu' );
                 }
-            }
+            })
         } )
 
         .state( 'admin.edituser', {
             url:         '/edituser/:id',
             templateUrl: '/ui2app/app/components/admin/edituser.partial.html',
             controller:  'adminUserEditController',
-            resolve:     {
-                user:      function ( sailsUsers, $stateParams ) {
+            resolve:     withUserResolve({
+                user2edit:      function ( sailsUsers, $stateParams ) {
                     return sailsUsers.get( $stateParams.id );
                 }
-            }
+            })
 
         } )
 
@@ -111,8 +118,8 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             views:    buildCompleteView( { template: '<ui-view></ui-view>', } ),
             // This little hack sets the side menu for each major state
             resolve:  {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'adminMenu' );
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'adminMenu' );
                 }
             }
         } )
@@ -132,9 +139,9 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             url:      '/devices',
             views:    buildCompleteView( { template: '<ui-view></ui-view>', } ),
             // This little hack sets the side menu for each major state
-            resolve:  {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'deviceMenu' );
+            resolve: {
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'deviceMenu' );
                 }
             }
         })
@@ -179,14 +186,14 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             url:         '/detail/:id',
             templateUrl: '/ui2app/app/components/ogdevices/ogdevicedetail.partial.html',
             controller:  'oGDeviceDetailController',
-            resolve:     {
+            resolve:     withUserResolve({
                 device: function ( sailsOGDevice, $stateParams ) {
                     return sailsOGDevice.get( $stateParams.id );
                 }//,
                 // venues: function( sailsVenues){
                 //     return sailsVenues.getAll();
                 // }
-            }
+            })
         } )
 
         .state( 'venues', {
@@ -194,22 +201,22 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             url:      '/venues',
             views:    buildCompleteView( { template: '<ui-view></ui-view>', } ),
             // This little hack sets the side menu for each major state
-            resolve:  {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'venueMenu' );
+            resolve:  withUserResolve({
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'venueMenu' );
                 }
-            }
+            })
         } )
 
         .state( 'venues.list', {
             url:         '/list',
             templateUrl: '/ui2app/app/components/admin/venuelist.partial.html',
             controller:  'adminVenueListController',
-            resolve:     {
+            resolve:     withUserResolve({
                 venues: function ( sailsVenues ) {
                     return sailsVenues.getAll();
                 }
-            }
+            })
 
         } )
 
@@ -219,11 +226,11 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             url:      '/network',
             views:    buildCompleteView( { template: '<ui-view></ui-view>', } ),
             // This little hack sets the side menu for each major state
-            resolve:  {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'networkMenu' );
+            resolve:  withUserResolve({
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'networkMenu' );
                 }
-            }
+            })
         } )
 
         .state( 'network.dashboard', {
@@ -242,22 +249,22 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             abstract: true,
             url:      '/apps',
             views:    buildCompleteView( { template: '<ui-view></ui-view>', } ),
-            resolve:  {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'appsMenu' );
+            resolve:  withUserResolve({
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'appsMenu' );
                 }
-            }
+            })
         } )
 
         .state( 'apps.list', {
             url:         '/list',
             templateUrl: '/ui2app/app/components/apps/applist.partial.html',
             controller:  'appListController',
-            resolve:     {
+            resolve:     withUserResolve({
                 apps: function ( sailsApps ) {
                     return sailsApps.getAll();
                 }
-            }
+            })
 
         } )
 
@@ -265,11 +272,11 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             url:         '/edit/:id',
             templateUrl: '/ui2app/app/components/apps/appedit.partial.html',
             controller:  'appEditController',
-            resolve:     {
+            resolve:     withUserResolve({
                 app:    function ( sailsApps, $stateParams ) {
                     return sailsApps.get( $stateParams.id );
                 }
-            }
+            })
 
         } )
 

@@ -3,7 +3,7 @@
  */
 
 
-app.factory( "sailsUsers", [ 'sailsApi', 'sailsCoreModel', 'sailsAuth', function ( sailsApi, sailsCoreModel, sailsAuth ) {
+app.factory( "sailsUsers", function ( sailsApi, sailsCoreModel, sailsAuth, userAuthService ) {
 
 
     var getAll = function ( queryString ) {
@@ -30,18 +30,15 @@ app.factory( "sailsUsers", [ 'sailsApi', 'sailsCoreModel', 'sailsAuth', function
             this.address = json && json.address;
             this.demographics = json && json.demographics;
             this.registeredAt = json && json.registeredAt;
+            this.roles = json && json.roles;
             this.ownedVenues = json && json.ownedVenues;
             this.managedVenues = json && json.managedVenues;
             this.organization = json && json.organization;
             this.email = json && json.auth && json.auth.email;
+            this.roleTypes = json && json.roleTypes;
             this.auth = json && json.auth && sailsAuth.new( json.auth );
             this.blocked = this.auth && this.auth.blocked;
-            this.ring = this.auth && this.auth.ring || 10;
-
-            this.isAdmin = this.ring === 1;
-            this.isOwner = (this.ring === 3) && this.ownedVenues.length > 0;
-            this.isManager = this.ring === 3 && this.managedVenues.length > 0;
-            this.isAdvertiser = this.ring === 4;
+            this.ring = this.auth && this.auth.ring;
 
             this.parseCore( json );
         };
@@ -64,14 +61,14 @@ app.factory( "sailsUsers", [ 'sailsApi', 'sailsCoreModel', 'sailsAuth', function
             return this.auth.save();
         }
 
-        this.setRing = function ( ring ) {
+        this.setRing = function(ring){
             var _this = this;
             this.auth.ring = ring;
             return this.auth.save()
-                .then( function ( val ) {
+                .then( function(val){
                     _this.ring = ring;
                     return val;
-                } );
+                });
         }
 
         // TODO: lots of replicated code below
@@ -130,20 +127,9 @@ app.factory( "sailsUsers", [ 'sailsApi', 'sailsCoreModel', 'sailsAuth', function
             .then( newUser );
     }
 
-
-    var getByEmail = function( emailAddress ){
-        return sailsApi.getModels( 'auth', 'email='+emailAddress)
-            .then( function(models){
-                if (!models.length){
-                    var eobj = { status: 404, body: { error: 'no such user' } };
-                    throw new Error();
-                }
-
-                return models[0].user.id;
-            })
-            .then( function(id){
-                return getUser(id);
-            })
+    var getMe = function(){
+        return userAuthService.getCurrentUser()
+            .then( newUser );
     }
 
     var analyze = function(){
@@ -151,14 +137,13 @@ app.factory( "sailsUsers", [ 'sailsApi', 'sailsCoreModel', 'sailsAuth', function
     }
 
 
-
     // Exports...new pattern to prevent this/that crap
     return {
         getAll: getAll,
         new:    newUser,
         get:    getUser,
-        analyze: analyze,
-        getByEmail: getByEmail
-        }
+        getMe:  getMe,
+        analyze: analyze
+    }
 
-}] );
+} );

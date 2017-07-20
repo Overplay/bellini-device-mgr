@@ -2,14 +2,11 @@
  * Created by mkahn on 4/21/17.
  */
 
-
-app.factory('userAuthService', [ '$http', '$log', 'sailsUsers', function($http, $log, sailsUsers){
+app.factory('userAuthService', function($http, $log ){
 
     $log.debug("Loading userAuthService");
 
-    var userPromise = $http.get( '/user/checksession' )
-        .then( stripHttpData )
-        .then(sailsUsers.new);
+    var userPromise = $http.get( '/user/checksession' ).then( stripHttpData );
 
     function stripData(data){ return data.data; }
 
@@ -19,13 +16,15 @@ app.factory('userAuthService', [ '$http', '$log', 'sailsUsers', function($http, 
         return userPromise;
     };
 
-    service.getCurrentUserRing = function () {
-        return userPromise
-            .then( function(user){
-                return user.ring;
-            });
+    // =========== ROLES ==========
+    service.getRole = function ( userId ) {
+        var endPoint = '/api/v1/role' + (userId ? '/' + userId : '');
+        return $http.get( endPoint ).then(stripData);
     };
-
+    
+    service.getRoles = function(){
+        return this.getRole();
+    };
 
     // ========== ADDING USERS ===========
     //TODO test validate TODO handle facebookId
@@ -65,17 +64,5 @@ app.factory('userAuthService', [ '$http', '$log', 'sailsUsers', function($http, 
     };
 
 
-    service.genRandomPassword = function()
-    {
-        var words = [ 'bunny', 'fish', 'puppy', 'taco', 'bottle', 'tumbler', 'spoon' ];
-        return _.sample( words ) + _.random( 100, 999 ) + _.sample( [ '!', '@', '#', '$', '^' ] );
-    }
-
-    service.getCurrentUserRing()
-        .then( function(){
-            $log.debug('ucached');
-        })
-
     return service;
-
-}]);
+})

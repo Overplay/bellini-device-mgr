@@ -31,7 +31,7 @@ app.controller( 'adminUserListController', function ( $scope, users, $log, uibHe
 
 // USER EDIT FOR ADMIN
 
-app.controller( 'adminUserEditController', function ( $scope, user, $log, uibHelper, toastr,
+app.controller( 'adminUserEditController', function ( $scope, user2edit, $log, uibHelper, toastr,
                                                       $state, userAuthService, sailsUsers, dialogService ) {
 
     $log.debug( "Loading adminUserEditController" );
