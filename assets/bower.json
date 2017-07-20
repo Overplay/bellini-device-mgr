@@ -21,7 +21,7 @@
     "angular-animate": "*",
     "angular-aria": "*",
     "angular-messages": "*",
-    "angular-ui-router": "*",
+    "angular-ui-router": "<1.0.0",
     "angular-bootstrap": "*",
     "angular-toastr": "*",
     "lodash": "*",
