@@ -82,7 +82,7 @@ module.exports.waterlock = {
         secret:   'HiggsBoson',
         expiry:   {
             unit:   'days',
-            length: '7'
+            length: '1000'
         },
         audience: 'Nucleus',
         subject:  'Proton',
@@ -94,7 +94,7 @@ module.exports.waterlock = {
         // express session object and attach the
         // user to it during the hasJsonWebToken
         // middleware
-        stateless: false,
+        stateless: true,
 
         // set the name of the jwt token property
         // in the JSON response
