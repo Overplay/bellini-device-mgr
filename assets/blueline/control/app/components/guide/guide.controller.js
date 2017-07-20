@@ -9,13 +9,13 @@ app.controller( "guideController",
         $log.info( "Loading guideController" );
 
         //$scope.ui = { loadError: false, refineSearch: 'all', isPaired: ogDevice.isPairedToSTB };
-        $scope.ui = { loadError: false, refineSearch: 'all', isPaired: true };
+        $scope.ui = { loadError: false, refineSearch: 'all', isPaired: true }; // I did this so I could get listings on my laptop
 
-        var slideIdx = 0;
-        var WINDOW_SIZE = 30;
-        var fullGrid = [];
-        $scope.displayedGrid = [];
-        $scope.scrollLimits = { top: true, bottom: false };
+        var slideIndex = 0; //renamed this from slideIdx so I could think about it better
+        const WINDOW_SIZE = 30; //Predefined window size that does not change
+        var fullGrid = []; //Our grid of channels and listings
+        $scope.displayedGrid = []; //The grid we are actually displaying
+        $scope.scrollLimits = { top: true, bottom: false }; //Where to limit scroll, starting at top we don't want up scroll but do want down
 
         $rootScope.currentChannel = {};
 
@@ -29,35 +29,39 @@ app.controller( "guideController",
         //
         // getCurrentChannel();
 
-        function loadListings(){
-            ogAPI.getGrid(false)
-                .then( function ( g ) {
-                    fullGrid = g;
+        /**
+         * Load listings from the database
+         * 
+         */
+        function loadListings(){ 
+            ogAPI.getGrid() //Make a call to the ogAPI getGrid function
+                .then( function ( g ) { //Callback success
+                    fullGrid = g; //set internal full grid to grid return
 
-                    var currentChannel = parseInt(ogDevice.currentProgram.channelNumber);
-                    $rootScope.currentChannel = _.find( fullGrid, { channel: { channelNumber: currentChannel } } );
+                    var currentChannelNumber = parseInt(ogDevice.currentProgram.channelNumber); //Set current channel to our current channel number
+                    $rootScope.currentChannel = _.find( fullGrid, { channel: { channelNumber: currentChannelNumber } } ); //Set scope current channel to loadash channelNumber
 
-                    filterGrid();
+                    filterGrid(); //Filter the grid
                 } )
                 .catch(function(err){
-                    $scope.ui.loadError = true;
+                    $scope.ui.loadError = true; //On error, show ui load error
                 })
-                .finally( hud.dismiss );
+                .finally( hud.dismiss ); //Dismiss the hud when done
         }
 
-        function refineSearchFilter(inputArray){
+        function refineSearchFilter(inputArray){ //Refines our search filter
 
-            switch ($scope.ui.refineSearch){
+            switch ($scope.ui.refineSearch){ //Switch over favorites, sports, news, or all / default
             
-                case 'favorites':
+                case 'favorites': //Not really implemented yet
                     return _.filter( inputArray, function ( gentry ) {
                         return gentry.channel.favorite;
                     } );
                     
-                case 'sports':
+                case 'sports': //If it's sports, filter by Sports (to get sports channels)
                     return $filter('filter')(inputArray, 'Sports');
 
-                case 'news':
+                case 'news': //If it's news, filter by News (to get news channels)
                     return $filter( 'filter' )( inputArray, 'News' );
             
                 case 'all':
@@ -69,72 +73,73 @@ app.controller( "guideController",
 
         function filterGrid(){
 
-            var channelFiltered = $filter('filter')(fullGrid, $scope.stationSearch);
-            var refineFiltered = refineSearchFilter(channelFiltered);
-            $scope.displayedGrid = refineFiltered.slice(slideIdx, WINDOW_SIZE+slideIdx);
-            $scope.scrollLimits.top = !slideIdx;  //at top when index is 0
-            $scope.scrollLimits.bottom = ( slideIdx >= refineFiltered.length-WINDOW_SIZE );
+            var channelFiltered = $filter('filter')(fullGrid, $scope.stationSearch); //Angular's filter of the full grid when searching
+            var refineFiltered = refineSearchFilter(channelFiltered); //Filter more if someone selected a certain type of filter
+            $scope.displayedGrid = refineFiltered.slice(slideIndex, WINDOW_SIZE+slideIndex); //Display a section from the current index to the next 30 (+ index) items
+            $scope.scrollLimits.top = !slideIndex;  //at top when index is 0 (slideIndex is falsy at 0)
+            $scope.scrollLimits.bottom = ( slideIndex >= refineFiltered.length-WINDOW_SIZE ); //Make sure it's not at the bottom of the list
 
         }
 
-        $scope.refineSearch = function(searchType){
-            $scope.ui.refineSearch = searchType;
-            slideIdx = 0;
-            filterGrid();
+        $scope.refineSearch = function (searchType) { //Changes refine search type for refineSearchFilter
+            $scope.ui.refineSearch = searchType; //sets refineSearchFilter's filter string to searchType
+            slideIndex = 0; //Sets slide index back to 0 (moving to the top)
+            filterGrid(); //Filter the grid based on new filter
         };
 
-        $scope.atEdge = function(edge){
+        $scope.atEdge = function(edge){ //This function is passed to the scrollWindow controller
         
-            $log.debug("In controller @ edge: "+edge);
-            if (edge=='end'){
-                slideIdx = slideIdx + 1;
-            } else {
-                if (!slideIdx)
-                    return;
-                slideIdx = slideIdx - 1;
-                if (slideIdx<=0){
-                    slideIdx = 0;
+            $log.debug("In controller @ edge: "+edge); //We are at the edge and need to load more content
+            if (edge=='end'){ //If the edge is the end of the list we don't load anything and just increase the index by 1
+                slideIndex = slideIndex + 1; //Just keep going until we find a load-triggering location
+            } else { 
+                //If we aren't at the end
+                if (!slideIndex) //If we are at the top of our list
+                    return; //Return
+                slideIndex = slideIndex - 1; //Otherwise, we're moving up and need to keep increasing the slide index
+                if (slideIndex<=0){ //Unless we are now <= 0 
+                    slideIndex = 0; //Then just set it to zero
                 }
             }
 
-            filterGrid();
+            filterGrid(); //Filter the grid
 
         };
 
         
         if ($scope.ui.isPaired){
         
-            var refreshListings = $interval( loadListings, 15000 ); // $interval to run every 5 min or 300000ms
+            var refreshListings = $interval( loadListings, 15 * 1000 ); // $interval to run every 5 min or 300000ms //Logan's note: This is only 15 seconds currently. Made that more clear
 
-            var hud = uibHelper.curtainModal( 'Loading Guide' );
-            loadListings();
+            var hud = uibHelper.curtainModal( 'Loading Guide' ); //Show our little curtain
+            loadListings(); //Load the listings from the server
 
-            $scope.$on( "$destroy",
-                function ( event ) {
-                    $interval.cancel( refreshListings );
-                    $log.debug( "destroy called - canceled listings refresh $interval" );
+            $scope.$on( "$destroy", //Wait until there is a $destroy event on the uibHelper.curtainModal
+                function ( event ) { 
+                    $interval.cancel(refreshListings); // stop refreshing the listings (this way we don't keep loading over and over)
+                    $log.debug( "destroy called - canceled listings refresh $interval" ); 
                 }
             );
         }
         
-        $scope.$watch('stationSearch', function() {
-            $log.debug("stationSearch Modified - need to reset the scroll position");
+        $scope.$watch('stationSearch', function() { //Watch to see if a change was made to stationSearch model 
+            $log.debug("stationSearch Modified - need to reset the scroll position"); 
             $log.debug("slideIdx reset to 0, scrolling to scroller-anchor-top");
-            slideIdx = 0;
+            slideIndex = 0; //Reset our location to the top
 
-            $location.hash('scroller-anchor-top');
-            $anchorScroll();
+            $location.hash('scroller-anchor-top'); //Sets location hash to top
+            $anchorScroll(); //Scrolls to the location hash
 
-            filterGrid();
+            filterGrid(); //Filter our grid baby
         });
 
         $scope.clearSearch = function () {
-            $scope.stationSearch = "";
+            $scope.stationSearch = ""; //Clears search
             $log.debug("search cleared");
         };
 
         $scope.imageSearch = function ( imageSearch ) {
-            $scope.stationSearch = imageSearch;
+            $scope.stationSearch = imageSearch; //Sets search to image text
         };
 
 
