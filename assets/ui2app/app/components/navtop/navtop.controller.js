@@ -10,7 +10,7 @@ app.controller( "navTopController", function ( $scope, $log, $rootScope, navServ
 
     // moved out of route resolves because it is always needed and became a PITAS
     userAuthService.getCurrentUser()
-        .then( user => {
+        .then( function(user) {
             if ( !user ) {
                 $window.location = '/';
             } else {
@@ -20,10 +20,10 @@ app.controller( "navTopController", function ( $scope, $log, $rootScope, navServ
                 }
             }
         })
-        .catch( err => {
+        .catch( function(err) {
             $log.error("Navbar could not determine user, bailing out");
             $window.location = '/';
-        })
+        });
 
 
     $scope.logout = function () {
