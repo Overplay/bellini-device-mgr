@@ -24,9 +24,27 @@ app.config( function ( toastrConfig ) {
 // }])
 
 
-app.run( function ( $log, $rootScope, toastr, $state, uibHelper ) {
+app.run( function ( $log, $rootScope, toastr, $state, $stateParams, $location, userAuthService  ) {
 
     $log.info( "Bellini is pouring!" );
+
+    userAuthService.getCurrentUserRing()
+        .then( function ( r ) {
+            $rootScope.authring = r;
+            $log.debug( 'beep ' + r );
+        } );
+
+    $rootScope.$on( "$stateChangeStart", function ( event, next ) {
+        if ( 'ring' in next ) {
+            $log.debug( "Next state has ring restriction." );
+            if ( next.ring < $rootScope.authring ) {
+                $log.error( "User is not authorized for this page" );
+                event.preventDefault();
+                $rootScope.$broadcast( 'AUTH_FAIL' );
+            }
+        }
+
+    } )
 
     $rootScope.$on( "$stateChangeSuccess", function ( event, toState, toParams, from, fromParams ) {
         // always reset scroll to 0. This is a clusterfuck in ui-router
@@ -39,13 +57,12 @@ app.run( function ( $log, $rootScope, toastr, $state, uibHelper ) {
 
     $rootScope.$on( '$stateChangeError',
         function ( event, toState, toParams, fromState, fromParams, error ) {
-            $log.error( "State change fail! "+ error.message );
+            $log.error( "State change fail!" );
 
-            if (!fromState.name){
-                $log.debug('FromState is nil, prolly a reload, bailing out to root');
+            if ( !fromState.name ) {
+                $log.debug( 'FromState is nil, prolly a reload, bailing out to root' );
                 window.location = '/';
-            } else
-            if ( error && error.status ) {
+            } else if ( error && error.status ) {
 
                 switch ( error.status ) {
                     case 401:
@@ -57,24 +74,14 @@ app.run( function ( $log, $rootScope, toastr, $state, uibHelper ) {
                         $log.debug( 'forbidden fruit' );
                         toastr.error( "Yeah, we're gonna need you not to do that.", "Not Authorized" );
                         event.preventDefault();
-                        $state.go('dashboard');
+                        $state.go( 'welcome' );
                         break;
-
-                    case 500:
-                        $log.debug( "Something bad...500" );
-                        var ej = error.data && error.data.error;
-                        if ( ej == "peer down" ) {
-                            $log.error( "Peer down" );
-                            event.preventDefault();
-                            uibHelper.headsupModal("This is Bad!", "A peer service is down. This is non recoverable!")
-                                .then(function(){});
-                            break;
-                        }
                 }
 
             }
 
         } );
+
 
 } );
 

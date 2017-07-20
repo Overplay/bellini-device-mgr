@@ -26,6 +26,14 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
         return _.extend( navViews, { "appbody": withView } );
     }
 
+    function withUserResolve( resolvers ) {
+        return _.extend( resolvers, {
+            user: function ( userAuthService ) {
+                return userAuthService.getCurrentUser();
+            }
+        } );
+    }
+
     $urlRouterProvider.otherwise( '/' );
 
     $stateProvider
@@ -36,8 +44,8 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
                 templateUrl: '/ui2app/app/components/dashboard/dashboard.partial.html'
             } ),
             resolve: {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'dashMenu' );
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'dashMenu' );
                 }
             }
         } )
@@ -50,15 +58,11 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
                 templateUrl: '/ui2app/app/components/account/myaccount.partial.html',
                 controller: 'myAccountController'
                  }),
-            resolve: {
-                me: function ( sailsUsers ) {
-                    return sailsUsers.getMe();
-                },
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'accountMenu' );
+            resolve: withUserResolve( {
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'accountMenu' );
                 }
-            }
-
+            })
         })
 
         // Copied from BC
@@ -71,8 +75,8 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             views:    buildCompleteView( { template: '<ui-view></ui-view>', } ),
             // This little hack sets the side menu for each major state
             resolve:  {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'dashMenu' );
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'dashMenu' );
                 }
             }
         } )
@@ -84,6 +88,9 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             resolve:     {
                 users: function ( sailsUsers ) {
                     return sailsUsers.getAll();
+                },
+                sm:    function ( navService ) {
+                    navService.sideMenu.change( 'adminUserMenu' );
                 }
             }
         } )
@@ -111,8 +118,8 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             views:    buildCompleteView( { template: '<ui-view></ui-view>', } ),
             // This little hack sets the side menu for each major state
             resolve:  {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'adminMenu' );
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'adminMenu' );
                 }
             }
         } )
@@ -133,8 +140,8 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             views:    buildCompleteView( { template: '<ui-view></ui-view>', } ),
             // This little hack sets the side menu for each major state
             resolve:  {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'deviceMenu' );
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'deviceMenu' );
                 }
             }
         })
@@ -195,8 +202,8 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             views:    buildCompleteView( { template: '<ui-view></ui-view>', } ),
             // This little hack sets the side menu for each major state
             resolve:  {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'venueMenu' );
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'venueMenu' );
                 }
             }
         } )
@@ -220,8 +227,8 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             views:    buildCompleteView( { template: '<ui-view></ui-view>', } ),
             // This little hack sets the side menu for each major state
             resolve:  {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'networkMenu' );
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'networkMenu' );
                 }
             }
         } )
@@ -243,8 +250,8 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             url:      '/apps',
             views:    buildCompleteView( { template: '<ui-view></ui-view>', } ),
             resolve:  {
-                sm: function ( sideMenu ) {
-                    sideMenu.change( 'appsMenu' );
+                sm: function ( navService ) {
+                    navService.sideMenu.change( 'appsMenu' );
                 }
             }
         } )
