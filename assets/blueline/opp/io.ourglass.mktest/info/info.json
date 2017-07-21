@@ -1,22 +1,21 @@
 {
-  "appId": "io.ourglass.bltest",
-  "appType": "widget",
-  "appName": "BLTest",
-
-  "icon": "nowserve.png",
-  "iconLabel": "BLTest",
-
-  "primaryColorHex": "#A9A9A9",
-  "secondaryColorHex": "#000000",
-
-  "height": 35,
-  "width": 10,
-
-  "initialValue": {
-    "ticketNumber": 0
+  "appId": "io.ourglass.mktest",
+  "displayName": "MK Test",
+  "icon": "testapp.png",
+  "defaultModel": {
+    "mydata": {
+      "value": 0,
+      "setBy": "sails"
+    }
   },
-
-  "version": 1.0,
-  "installDate": 1475073632093
-
+  "appType": "widget",
+  "appWidth": 10,
+  "appHeight": 50,
+  "patronControllable": false,
+  "releaseLevel": "dev",
+  "isVirtual": false,
+  "createdAt": "2017-06-14T15:26:18.622Z",
+  "updatedAt": "2017-06-14T15:26:18.622Z",
+  "id": "5941559a69ddba17adc030a9",
+  "iconPath": "/blueline/opp/io.ourglass.mktest/assets/icons/testapp.png"
 }

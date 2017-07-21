@@ -1,21 +1,18 @@
 {
   "appId": "io.ourglass.waitinglist",
-  "appType": "widget",
-  "appName": "Waiting List",
-
+  "displayName": "Waiting List",
   "icon": "waitlist@3x.png",
-  "iconLabel": "Waiting List",
-
-  "primaryColorHex": "#8080ff",
-  "secondaryColorHex": "#4d4dff",
-
-  "height": 55,
-  "width": 12,
-
-  "initialValue": {
+  "defaultModel": {
     "parties": []
   },
-
-  "version": 2.0,
-  "installDate": 1475073632093
+  "appType": "widget",
+  "appWidth": 10,
+  "appHeight": 50,
+  "patronControllable": true,
+  "releaseLevel": "dev",
+  "isVirtual": false,
+  "createdAt": "2017-07-12T07:30:50.686Z",
+  "updatedAt": "2017-07-12T07:30:50.686Z",
+  "id": "5965d02ad3a5467aad4a34d8",
+  "iconPath": "/blueline/opp/io.ourglass.waitinglist/assets/icons/waitlist@3x.png"
 }

@@ -1,22 +1,18 @@
 {
-  "appId": "io.ourglass.nowserving",
-  "appType": "widget",
-  "appName": "NowServing",
-
-  "icon": "nowserve.png",
-  "iconLabel": "NowServing",
-
-  "primaryColorHex": "#A9A9A9",
-  "secondaryColorHex": "#000000",
-
-  "height": 15,
-  "width": 10,
-
-  "initialValue": {
-    "ticketNumber": 0
-  },
-
-  "version": 1.0,
-  "installDate": 1475073632093
-
+	"appId": "io.ourglass.nowserving",
+	"displayName": "Now Serving",
+	"icon": "nowserve.png",
+	"defaultModel": {
+		"ticketNumber": 0
+	},
+	"appType": "widget",
+	"appWidth": 10,
+	"appHeight": 35,
+	"patronControllable": false,
+	"releaseLevel": "dev",
+	"isVirtual": false,
+	"createdAt": "2017-07-12T07:30:50.681Z",
+	"updatedAt": "2017-07-12T07:30:50.681Z",
+	"id": "5965d02ad3a5467aad4a34d5",
+	"iconPath": "/blueline/opp/io.ourglass.nowserving/assets/icons/nowserve.png"
 }

@@ -1,22 +1,24 @@
 {
   "appId": "io.ourglass.bltest",
-  "appType": "widget",
-  "appName": "BLTest",
-
-  "icon": "nowserve.png",
-  "iconLabel": "BLTest",
-
-  "primaryColorHex": "#A9A9A9",
-  "secondaryColorHex": "#000000",
-
-  "height": 35,
-  "width": 10,
-
-  "initialValue": {
-    "ticketNumber": 0
+  "displayName": "BlueLine Test",
+  "icon": "testapp.png",
+  "defaultModel": {
+    "mydata": [{
+        "song": "My Milkshake"
+      },
+      {
+        "song": "Mr. Roboto "
+      }
+    ]
   },
-
-  "version": 1.0,
-  "installDate": 1475073632093
-
+  "appType": "widget",
+  "appWidth": 10,
+  "appHeight": 50,
+  "patronControllable": false,
+  "releaseLevel": "dev",
+  "isVirtual": false,
+  "createdAt": "2017-06-14T15:26:18.616Z",
+  "updatedAt": "2017-06-14T15:26:18.616Z",
+  "id": "5941559a69ddba17adc030a7",
+  "iconPath": "/blueline/opp/io.ourglass.bltest/assets/icons/testapp.png"
 }
