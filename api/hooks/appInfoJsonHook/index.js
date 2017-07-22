@@ -1,14 +1,14 @@
-
 var Promise = require('bluebird');
 var sails = require('sails');
 var fs = Promise.promisifyAll(require('fs'));
+var glob = require('glob');
+
 
 
 
 module.exports = function appInfoJsonHook(sails) {
 
-	var cronDelay = 1000 * 60 * 60; //1 hour
-	var topFolderStructure = "./assets/blueline/opp/";
+	var topFolderStructure = "assets/blueline/opp/";
 
 	var config;
 
@@ -19,11 +19,14 @@ module.exports = function appInfoJsonHook(sails) {
 				sails.log.warn("There's no config file for appInfoJsonSync or its hook is disabled... ");
 			}
 
-			config = sails.config.hooks.infoJsonSync;
+			config = sails.config.hooks.infoJsonSync || {
+				hookEnabled: true,
+				syncDelay: 1000 * 60 * 60
+			};
 		},
 
-		initialize: function (cb) { 
-
+		initialize: function (cb) {
+			//If hookEnabled == false don't do anything
 			cronDelay = config.syncDelay;
 			sails.log.debug('appInfo will sync in this time: ' + config.syncDelay / 1000 + 's');
 			setTimeout(sails.hooks.appinfojsonhook.sync, config.syncDelay);
@@ -32,73 +35,103 @@ module.exports = function appInfoJsonHook(sails) {
 		},
 
 
-		sync: async function () {
-			sails.log.silly("RUNNING APP INFO JSON HOOK")
-			fs.readdirAsync(topFolderStructure).then(function (folderArray) {
-				
+		sync: function () {
+			//sails.log.silly("RUNNING APP INFO JSON HOOK")
 
-				for (var i = 0; i < folderArray.length; i++){
-					fs.readFileAsync(topFolderStructure + folderArray[i] + "/info/info.json")
-						.then(function (fileContents) { 
-							try {
-								sails.hooks.appinfojsonhook.process(JSON.parse(fileContents));
-							} catch (error) {
-								if (!error instanceof SyntaxError || !folderArray[i]) return;
-								sails.hooks.appinfojsonhook.process({ 'appId': folderArray[i] });
-							}
-							}).catch(function (err) { 
-							//File exists but cannot be read
-							 sails.log.error(err);
-						})
+
+			// glob(topFolderStructure + "**/info.js", function (err, matches) {
+			glob("./assets/blueline/**/info.json", function (err, matches) {
+
+				for (var i = 0; i < matches.length; i++) {
+					sails.hooks.appinfojsonhook.process(matches[i]);
 				}
 
-			})
-			
-			
-			.catch(function (err) {
-				sails.log.silly("APP INFO JSON HOOK: " + err);
+				if (!err)
+					setTimeout(sails.hooks.appinfojsonhook.sync, config.syncDelay);
 			});
-			
-			
-			
-			
-			setTimeout(sails.hooks.appinfojsonhook.sync, config.syncDelay);
-			
+
+
+			// fs.readdirAsync(topFolderStructure).then(function (folderArray) {
+
+			// 	for (var i = 0; i < folderArray.length; i++) {
+			// 		fs.readFileAsync(topFolderStructure + folderArray[i] + "/info/info.json")
+
+			// 		.then(function (fileContents) {
+			// 			try {
+			// 				sails.hooks.appinfojsonhook.process(JSON.parse(fileContents));
+			// 			} catch (error) {
+			// 				if (!error instanceof SyntaxError || !folderArray[i]) return;
+			// 				sails.hooks.appinfojsonhook.process({
+			// 					'appId': folderArray[i]
+			// 				});
+			// 			}
+			// 		}).catch(function (err) {
+			// 			//File exists but cannot be read
+			// 			sails.log.error(err);
+			// 		})
+
+			// 	}
+
+			// })
+
+			// .catch(function (err) {
+			// 	sails.log.silly("APP INFO JSON HOOK: " + err);
+			// });
+
+
 		},
 
-		process: async function (localObj) {
+		process: function (fileLocation) {
 			//TODO: Talk to mitch about proper way to do the next line
-			var serverJson = await ProxyService.get('http://localhost:2001/app').then(function (d) { return d.body }).catch(function (err) { console.log(err); })
-			var serverObj = _.find(serverJson, { 'appId': localObj.appId });
+			fs.readFileAsync(fileLocation)
+				.then(function (infoJsonObj) {
+					infoJsonObj = JSON.parse(infoJsonObj);
 
-			// sails.log.silly("Local Obj:", localObj);
-			// sails.log.silly("Server Obj: ", serverObj);
-
-			if (!serverObj) //If we couldn't download anything from the server, we have to upload
-				return;
-
-			if (!localObj.updatedAt && serverObj.updatedAt) //If we passed only a appId name to localObj and serverObj has data, write the data
-				sails.hooks.appinfojsonhook.writeJson(topFolderStructure + serverObj.appId + "/info/info.json", serverObj)
+					App.findOne({
+							appId: infoJsonObj.appId
+						})
+						.then(function (serverDbObj) {
 
 
-			if (localObj.updatedAt > serverObj.updatedAt)
-			{
-				//Write something to the server
-			} else if (serverObj.updatedAt > localObj.updatedAt) { //Server data is newer than local data
-				sails.hooks.appinfojsonhook.writeJson(topFolderStructure + serverObj.appId + "/info/info.json", serverObj)
-			}
+							fs.statAsync(fileLocation)
+								.then(function (fileStats) {
+									if (new Date(fileStats.mtime) < new Date(serverDbObj.updatedAt)) {
+										return;
+									}
 
+
+									if (!serverDbObj) {
+										if (infoJsonObj.appId)
+											return App.create(infoJsonObj);
+									} else {
+										//If info.json is newer than the server data, update the server data.
+										return App.update(serverDbObj.id, infoJsonObj).exec(function after(err, updated) {
+											if (err) {
+												sails.log.error(`Error updating, perhaps the info.json ${fileLocation} isn't the newest version?`)
+												sails.log.error(err);
+												return;
+											}
+											sails.log.info(updated[0].appId, 'updated in database.');
+										})
+									};
+									// return App.destroy(app.id).then(function () {
+									// 	return App.create(localObj);
+									// })
+								});
+						}).catch(function (err) {
+							sails.log.error(err);
+						});
+				})
 		},
 
 		writeJson: function (path, data) {
 			fs.writeFileAsync(path, JSON.stringify(data, null, 2), 'utf8');
 		}
 
-		
+
 	}
 
 
 
 
 }
-
