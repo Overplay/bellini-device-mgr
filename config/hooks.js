@@ -17,7 +17,7 @@ module.exports.hooks = {
     },
     infoJsonSync: {
         hookEnabled: true,
-        syncDelay: 1000 * 10 , //5 minutes
+        syncDelay: 1000 * 10 * 5 , //5 minutes
     },
     
     
