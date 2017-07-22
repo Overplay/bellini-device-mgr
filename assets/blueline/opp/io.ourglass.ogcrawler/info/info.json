@@ -13,8 +13,5 @@
 	"patronControllable": false,
 	"releaseLevel": "dev",
 	"isVirtual": false,
-	"createdAt": "2017-07-12T07:30:50.687Z",
-    "updatedAt": "2017-07-12T07:30:50.687Z",
-	"id": "5965d02ad3a5467aad4a34d9",
 	"iconPath": "/blueline/opp/io.ourglass.ogcrawler/assets/icons/space.png"
 }
