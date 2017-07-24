@@ -34,14 +34,15 @@ app.directive( 'stationCell',
                 }
 
                 // timeStr is utc time, so we need to add the proper offset for our TZ
-                scope.displayTime = function ( timeStr ) {
-
-                    var date = new Date(Date.parse(timeStr + " +0000"));
+                scope.displayTime = function (timeStr) {
+                    var parsedTimeStr = moment(timeStr); //Use Moment.js to parse
+                    var date = parsedTimeStr.toDate();
                     var hour = (date.getHours() > 12 ? date.getHours() - 12 : date.getHours());
                     var min = date.getMinutes();
 
+                    if (isNaN(hour)) return "On Later";
                     return hour + ':' + (min < 10 ? '0' + min : min);
-                }
+                };
 
 
                 scope.favoriteChannel = function ( channel ) {

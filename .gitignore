@@ -123,6 +123,7 @@ nbproject
 
 !.gitkeep
 .eslintrc.js
-*.paw
 
+*.paw
 *.mp4
+
