@@ -65,23 +65,17 @@ module.exports = function appInfoJsonHook(sails) {
 
 									if (!serverDbObj) { //If it is only local, add it to the database
 										if (infoJsonObj.appId) {
-											return App.create(infoJsonObj).exec(function (err, added) {
-												if (err) {
-													sails.log.error(`Bad info.JSON for app ${infoJsonObj.appId}.`);
-													// sails.log.error(err);
-													return;
-												}
+											return App.create(infoJsonObj).then(function (added) {
 												sails.log.info(added[0].appId, 'added to database.');
+											}).catch(function (err) {
+												sails.log.error(`Bad info.JSON for app ${infoJsonObj.appId}.`);
 											});
 										}
 									} else { //Otherwise it needs to be updated
-										return App.update(serverDbObj.id, infoJsonObj).exec(function after(err, updated) {
-											if (err) {
-												sails.log.error(`Bad info.JSON for app ${serverDbObj.appId}`);
-												// sails.log.error(err);
-												return;
-											}
+										return App.update(serverDbObj.id, infoJsonObj).then(function after(updated) {
 											sails.log.info(updated[0].appId, 'updated in database.');
+										}).catch(function (err) { 
+											`Bad info.JSON for app ${infoJsonObj.appId || serverDbObj.appId}.`;
 										});
 									}
 									// return App.destroy(app.id).then(function () {
