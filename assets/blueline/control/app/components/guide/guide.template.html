@@ -80,7 +80,7 @@
             <form class="search-box" style="margin-bottom: -1vh;">
                 <div class="form-group">
                     <input type="text" class="form-control" id="inputStationName" placeholder="Search by anything..."
-                           ng-model="stationSearch" ng-model-options="{ debounce: 100 }">
+                           ng-model="stationSearch" ng-model-options="{ debounce: 500 }">
                     <button ng-if="stationSearch" style="width: 100%; margin-top: 1vh;" class="btn btn-info" ng-click="clearSearch()">Clear Search</button>
                 </div>
             </form>
