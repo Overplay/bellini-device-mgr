@@ -17,7 +17,7 @@ var _ = require("lodash");
 var moment = require('moment');
 
 
-function lineupForDevice(deviceUDID){
+function lineupForDevice(deviceUDID, searchQuery){
     return OGDevice.findOne( { deviceUDID: deviceUDID } )
         .then( function ( dev ) {
 
@@ -47,6 +47,12 @@ function lineupForDevice(deviceUDID){
                             return isOver;
 
                         });
+
+                        if (searchQuery) {
+                            _.remove(chanLup.channel, function (channel) { //This should remove all channels that aren't in the search.
+                                return channel.name.toLowerCase().indexOf(searchQuery.toLowerCase()) == -1; 
+                            });
+                        }    
 
                         return chanLup;
                     });
