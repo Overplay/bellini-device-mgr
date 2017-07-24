@@ -34,8 +34,11 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
 
     $scope.incrementTicket = function () {
     
-        $log.debug( "Increment pressed" );
-        $scope.ticketNumber += 1;
+        $log.debug("Increment pressed");
+        if ($scope.ticketNumber === '---')
+            $scope.ticketNumber = 1;
+        else
+            $scope.ticketNumber += 1;
         // ogControllerModel.model.ticketNumber = $scope.ticketNumber;
 
         saveModel();
@@ -51,8 +54,8 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
             $scope.ticketNumber,
             'order number'
         ).then(function (result) {
-            if (!isNaN(result)) {
-                $scope.ticketNumber = result;       
+            if (_.isNumber(parseInt(result))) {
+                $scope.ticketNumber = _.parseInt(result);       
                 saveModel();
             } else {
                 uibHelper.dryToast("You must enter a number.");
@@ -63,10 +66,10 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
 
     };
 
-    $scope.curtainDebug = function () {
-        var curtain = uibHelper.curtainModal('Curtain');
-        $timeout(function () { uibHelper.dismissCurtain(); }, 5000);
-    };
+    // $scope.curtainDebug = function () {
+    //     var curtain = uibHelper.curtainModal('Curtain');
+    //     $timeout(function () { uibHelper.dismissCurtain(); }, 5000);
+    // };
 
     function modelChanged( newValue ) {
 
