@@ -67,8 +67,8 @@ module.exports = function appInfoJsonHook(sails) {
 										if (infoJsonObj.appId) {
 											return App.create(infoJsonObj).exec(function (err, added) {
 												if (err) {
-													sails.log.error(`Error adding ${added[0].appId}.`)
-													sails.log.error(err);
+													sails.log.error(`Bad info.JSON for app ${infoJsonObj.appId}.`);
+													// sails.log.error(err);
 													return;
 												}
 												sails.log.info(added[0].appId, 'added to database.');
@@ -77,8 +77,8 @@ module.exports = function appInfoJsonHook(sails) {
 									} else { //Otherwise it needs to be updated
 										return App.update(serverDbObj.id, infoJsonObj).exec(function after(err, updated) {
 											if (err) {
-												sails.log.error(`Error updating, perhaps the info.json ${fileLocation} isn't the newest version?`)
-												sails.log.error(err);
+												sails.log.error(`Bad info.JSON for app ${serverDbObj.appId}`);
+												// sails.log.error(err);
 												return;
 											}
 											sails.log.info(updated[0].appId, 'updated in database.');
