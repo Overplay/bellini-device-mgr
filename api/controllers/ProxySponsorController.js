@@ -6,11 +6,10 @@ var path = require('path');
 var request = require( 'superagent-bluebird-promise' );
 var Promise = require( "bluebird" );
 
-function decorateMediaEP( entry ) {
+function decorateMediaEP(entry) {
     entry.mediaBaseUrl = sails.config.uservice.sponsorProxy.endpoint + '/media/download/';
     return entry;
-};
-
+}
 
 // TODO clean this up using proxy service
 module.exports = {
@@ -23,16 +22,14 @@ module.exports = {
         // var proxypath = sails.config.uservice.sponsorProxy.endpoint +
         //     sails.config.uservice.sponsorProxy.allAds;
 
-        var proxypath = sails.config.uservice.sponsorProxy.endpoint +
-            '/ad?where={"reviewState":"Accepted", "paused":false}';
-
-        request.get( proxypath )
-            .then( function(d){
-                return res.ok(d.body.map( decorateMediaEP ));
+        BCService.Ad.all()
+            .then(function (d) {
+                return res.ok(d.body.map(decorateMediaEP));
             })
-            .catch( function(err){
+            .catch(function (err) {
                 return res.serverError(err);
-            } );
+            });
+            
 
     },
 
@@ -46,16 +43,13 @@ module.exports = {
         if (!params.venueId)
             return res.badRequest({ error: "need venueId, sparky! "});
 
-        var proxypath = sails.config.uservice.sponsorProxy.endpoint +
-            sails.config.uservice.sponsorProxy.allAds + '/'+ params.venueId;
-
-        request.get( proxypath )
-            .then( function ( d ) {
-                return res.ok( d.body.map( decorateMediaEP ) );
-            } )
-            .catch( function ( err ) {
-                return res.serverError( err );
-            } );
+        BCService.Ad.venue()
+            .then(function (d) {
+                return res.ok(d.body.map(decorateMediaEP));
+            })
+            .catch(function (err) {
+                return res.serverError(err);
+            });
 
     }
 }

@@ -1,23 +1,25 @@
-var request = require( 'superagent-bluebird-promise' );
+var request = require('superagent-bluebird-promise');
+
+
 
 module.exports = {
 
     Venue: {
 
-        findByUUID: function ( uuid ) {
+        findByUUID: function (uuid) {
 
-            return ProxyService.get( sails.config.uservice.belliniCore.url + '/venue/findByUUID', { uuid: uuid } )
-                .then( function ( resp ) {
+            return ProxyService.get(sails.config.uservice.belliniCore.url + '/venue/findByUUID', { uuid: uuid })
+                .then(function (resp) {
                     return resp.body;
-                } );
+                });
         },
 
         findAllReal: function () {
 
-            return ProxyService.get( sails.config.uservice.belliniCore.url + '/venue/all', { virtual: false } )
-                .then( function ( resp ) {
+            return ProxyService.get(sails.config.uservice.belliniCore.url + '/venue/all', { virtual: false })
+                .then(function (resp) {
                     return resp.body;
-                } );
+                });
 
         }
 
@@ -25,14 +27,14 @@ module.exports = {
 
     User: {
 
-        checkJwt: function ( jwt ) {
+        checkJwt: function (jwt) {
 
             return request
-            .get( sails.config.uservice.belliniCore.url + '/user/checkjwt' )
-            .set( 'Authorization', 'Bearer ' + jwt )
-            .then( function ( resp ) {
+                .get(sails.config.uservice.belliniCore.url + '/user/checkjwt')
+                .set('Authorization', 'Bearer ' + jwt)
+                .then(function (resp) {
                     return resp.body;
-                } );
+                });
 
         }
 
@@ -40,15 +42,34 @@ module.exports = {
 
     Media: {
 
-        download: function ( id, res ) {
+        download: function (id, res) {
 
             return request
-                .get( sails.config.uservice.belliniCore.url + '/media/download/' + id )
+                .get(sails.config.uservice.belliniCore.url + '/media/download/' + id)
                 //.set( 'Authorization', 'Bearer ' + jwt )
                 .pipe(res);
 
         }
 
+    },
+
+    Ad: {
+        all: function () {
+
+            var proxypath = sails.config.uservice.sponsorProxy.endpoint +
+                '/ad?where={"reviewState":"Accepted", "paused":false}';
+
+            return request.get(proxypath);
+
+        },
+        
+        venue: function (params) {
+
+            var proxypath = sails.config.uservice.sponsorProxy.endpoint +
+                sails.config.uservice.sponsorProxy.allAds + '/' + params.venueId;
+
+            return request.get(proxypath);
+        }
     }
 
-}
+};
