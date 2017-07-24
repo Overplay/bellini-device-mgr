@@ -52,8 +52,8 @@ module.exports = function appInfoJsonHook(sails) {
 					infoJsonObj = JSON.parse(infoJsonObj);
 
 					App.findOne({
-							appId: infoJsonObj.appId
-						})
+						appId: infoJsonObj.appId
+					})
 						.then(function (serverDbObj) {
 
 							fs.statAsync(fileLocation)
@@ -82,8 +82,8 @@ module.exports = function appInfoJsonHook(sails) {
 												return;
 											}
 											sails.log.info(updated[0].appId, 'updated in database.');
-										})
-									};
+										});
+									}
 									// return App.destroy(app.id).then(function () {
 									// 	return App.create(localObj);
 									// })
@@ -91,10 +91,10 @@ module.exports = function appInfoJsonHook(sails) {
 						}).catch(function (err) {
 							sails.log.error(err);
 						});
-				})
+				});
 		},
 		writeJson: function (path, data) {
 			fs.writeFileAsync(path, JSON.stringify(data, null, 2), 'utf8');
 		}
-	}
-}
+	};
+};
