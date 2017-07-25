@@ -9,7 +9,7 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
     var navViews = {
         "navtop":  {
             templateUrl: '/ui2app/app/components/navtop/navtop.partial.html',
-            controller:  'navTopController',
+            controller:  'navTopController'
             // resolve:     {
             //     user: function ( userAuthService ) {
             //         return userAuthService.getCurrentUser();
@@ -42,11 +42,15 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             url:     '/',
             views:   buildCompleteView( {
                 templateUrl: '/ui2app/app/components/dashboard/dashboard.partial.html',
-                controller: 'listOGDeviceController'
+                controller: 'ogDeviceNumberTileController'
+
             } ),
             resolve: {
                 sm: function ( navService ) {
                     navService.sideMenu.change( 'dashMenu' );
+                },
+                ogdevices: function (sailsOGDevice) {
+                    return sailsOGDevice.getAll();
                 }
             }
         } )
