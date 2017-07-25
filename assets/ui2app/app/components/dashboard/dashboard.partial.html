@@ -1,7 +1,24 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-lg-8  material-panel">
-            <h1>Bellini-DM Dashboard</h1>
+            <h1><i class="fa fa-star-o" aria-hidden="true" style="color: #999999"></i> Bellini-DM Dashboard</h1>
+
+            <div class="col-lg-5 col-md-5">
+                <h4>Devices in the System</h4>
+                <div>{{ogdevices}}</div>
+                <h3 ng-if="!ogdevices.length" class="text-danger">There are no devices registered</h3>
+
+                <div ng-if="ogdevices.length">
+                    <h3>Total Number of Devices:</h3>
+                        <p> {{ogdevices.length}} </p>
+                </div>
+
+                <div ng-if="ogdevices.length">
+                    <h3>Devices in Use:</h3>
+                    <p> {{ogdevices.length}} </p>
+                </div>
+            </div>
         </div>
+
     </div>
 </div>

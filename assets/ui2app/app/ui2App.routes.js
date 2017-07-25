@@ -41,7 +41,8 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
         .state( 'dashboard', {
             url:     '/',
             views:   buildCompleteView( {
-                templateUrl: '/ui2app/app/components/dashboard/dashboard.partial.html'
+                templateUrl: '/ui2app/app/components/dashboard/dashboard.partial.html',
+                controller: 'listOGDeviceController'
             } ),
             resolve: {
                 sm: function ( navService ) {

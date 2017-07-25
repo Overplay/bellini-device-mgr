@@ -174,7 +174,7 @@ app.controller( 'oGDeviceDetailController', function ( device, $scope, $log, toa
             }
 
         } );
-    }
+    };
 
     $scope.launch = function () {
 
