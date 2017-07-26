@@ -43,7 +43,6 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             views:   buildCompleteView( {
                 templateUrl: '/ui2app/app/components/dashboard/dashboard.partial.html',
                 controller: 'ogDeviceNumberTileController'
-
             } ),
             resolve: {
                 sm: function ( navService ) {
