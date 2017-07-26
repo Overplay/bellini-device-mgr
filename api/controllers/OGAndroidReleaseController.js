@@ -5,7 +5,7 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-const noReleases = { majorRev: 0, minorRev: 0, filename: "" };
+const noReleases = { majorRev: 0, minorRev: 0, filename: "", versionCode: 0 };
 
 module.exports = {
 
@@ -14,7 +14,9 @@ module.exports = {
         const allParams = req.allParams();
         const level = allParams.level || 'release';
 
-	    OGAndroidRelease.find({ where: { releaseLevel: level }, sort: { majorRev: 0, minorRev: 0} })
+	    OGAndroidRelease
+	        .find( { releaseLevel: level })
+            .sort( { versionCode: 'desc'})
             .then(function(releases){
                 if (!releases || !releases.length){
                     return res.ok(noReleases)

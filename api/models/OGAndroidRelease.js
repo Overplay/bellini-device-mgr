@@ -19,6 +19,11 @@ module.exports = {
       required: true
     },
 
+    versionCode: {
+        type: 'integer',
+        required: true
+    },
+
     filename: {
       type: 'string',
       required: true
