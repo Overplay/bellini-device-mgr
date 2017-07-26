@@ -57,6 +57,12 @@ module.exports = {
             type: 'datetime'
         },
 
+        // Used to flag whether developer options should appear in the mobile app
+        isDev: {
+            type: 'boolean',
+            defaultsTo: false
+        },
+
 
         toJSON: function() {
 
