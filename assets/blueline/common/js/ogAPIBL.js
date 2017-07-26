@@ -284,16 +284,27 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             /**
              * Returns _userPermissions variable
              *
-             * 
+             * @return {any} _userPermissions
              */
             service.getPermissions = function(){
                 return _userPermissions;
             };
 
+            /**
+             * Gets user
+             * 
+             * @returns {Object} _user
+             */
             service.getUser = function(){
                 return _user;
             };
 
+            /**
+             * Checks user level
+             * Queries /user/coreuserfortoken and /user/isusermanager
+             * 
+             * @returns {Promise<any>}
+             */
             function checkUserLevel(){
 
                 if (!_jwt){
@@ -314,25 +325,45 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     });
             }
 
+            /**
+             * update that model like one of my jQuery girls
+             * 
+             * @param {any} newData 
+             * @returns {Object} Model
+             */
             function updateModel( newData ) {
                 service.model = newData;
                 if ( _dataCb ) _dataCb( service.model );
                 return service.model;
             }
 
-            // updated for BlueLine
+            
+            /**
+             * I AM THE CAPTAIN OF THIS SHIP AND I WILL
+             * 
+             * @returns {Object} data from the server appModel
+             */
             function getDataForApp() {
                 return $http.get( '/appmodel/' + _appId + '/' + _deviceUDID )
                     .then( stripData )
                     .then( stripData ); // conveniently the object goes resp.data.data
             }
 
-            // TODO someone should implement locking someday :D [mak]
+            /**
+             * Someone should implement this locking one day on the server one day
+             * 
+             * @returns 
+             */
             function getDataForAppAndLock() {
                 return $http.get( API_PATH + 'appdata/' + _appId + "?lock" )
                     .then( stripData );
             }
 
+            /**
+             * Join device into app room
+             * 
+             * @returns {Promise} promise if a socket posting room: appID+deviceID
+             */
             function joinDeviceAppRoom() {
                 return $q( function ( resolve, reject ) {
 
@@ -361,6 +392,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             }
 
+            /**
+             * 
+             * 
+             * @returns 
+             */
             function joinOGClientRoom() {
                 return $q( function ( resolve, reject ) {
 
@@ -740,12 +776,23 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( stripData );
             };
 
+            /**
+             * 
+             * 
+             * @param {any} channelNum 
+             * @returns 
+             */
             service.changeChannel = function ( channelNum ) {
                 return $http.post( '/ogdevice/changechannel?deviceUDID=' + _deviceUDID
                      + '&channel=' + channelNum )
                      .then(stripData);
             };
 
+            /**
+             * Figures out what channel is currently running and calls getGridForChannel
+             * 
+             * @returns {Object} channel listings
+             */
             service.getGridForCurrentChannel = function(){
 
                 var prog = this.getCurrentProgram();
@@ -755,6 +802,13 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             };
 
+            /**
+             * Gets the grid for a channel
+             * Does an http call to listingsforchannel and strips the data
+             * 
+             * @param {number} channelNum 
+             * @returns {Object} channel listings
+             */
             service.getGridForChannel = function ( channelNum ){
 
                 return $http.get( '/pgs/listingsforchannel?deviceUDID=' + _deviceUDID
@@ -763,12 +817,22 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             };
             
+            /**
+             * Checks if a device is paired by querying getOGSystem
+             * 
+             * @returns {Function} getOGSystem();
+             */
             service.pairedSTB = function(){
                 return getOGSystem();
             };
 
+            /**
+             * user is manager check | CURRENTLY EMPTY
+             *
+             * @param {none}
+             */
             service.userIsManager = function(){
-
+                throw new Error("userIsManager: NotImplementedError");
             };
 
             /**
@@ -831,6 +895,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
         } )
 
+
+        //directive for placing an advertisiment in a project
         .directive( 'ogAdvertisement', function () {
             return {
                 restrict:   'E',
@@ -860,6 +926,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     } else {
                         setCurrentAdUrl();
                     }
+                    /**
+                     * Sets current ad url depending on type
+                     *
+                     * @param {none}
+                     */
                     function setCurrentAdUrl() {
                         console.log( $scope );
                         console.log( $scope.type );
