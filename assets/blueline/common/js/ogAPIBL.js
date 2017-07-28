@@ -393,9 +393,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             }
 
             /**
+             * Join OGClientRoom
              * 
-             * 
-             * @returns 
+             * @returns {Promise} socket resolve or reject joining a device room
              */
             function joinOGClientRoom() {
                 return $q( function ( resolve, reject ) {
@@ -424,6 +424,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             }
 
+            /**
+             * 
+             * 
+             * @returns 
+             */
             function subscribeToAppData() {
 
                 return $q( function ( resolve, reject ) {
@@ -456,6 +461,12 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 } );
             }
 
+            /**
+             * Initialization function. 
+             * 
+             * @param {any} params required
+             * @returns 
+             */
             service.init = function ( params ) {
 
                 if ( !params )
@@ -529,7 +540,14 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             };
 
-            // TODO if we were cool kids we might make this an Observable
+            // TODO: if we were cool kids we might make this an Observable
+            /**
+             * Sends a message to the socket with the url and wrapped message
+             * 
+             * @param {any} url 
+             * @param {any} message 
+             * @returns 
+             */
             function sendSIOMessage( url, message ) {
                 var wrappedMessage = { deviceUDID: _deviceUDID, message: message };
                 return $q( function ( resolve, reject ) {
@@ -545,6 +563,13 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             }
 
 
+            /**
+             * sends a put request to a socket io. Pass in url and params for it to send
+             * 
+             * @param {any} url 
+             * @param {any} params 
+             * @returns {Promise}
+             */
             function sioPut( url, params ) {
                 return $q( function ( resolve, reject ) {
                     io.socket.put( url, params, function ( resData, jwRes ) {
@@ -582,17 +607,33 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             };
 
 
+            /**
+             * Queries the socialscrape result controller for information about social scraping
+             * 
+             * @returns {Promise<Object>} Data from socialscrape result
+             */
             service.getTweets = function () {
                 return $http.get( '/socialscrape/result?deviceUDID='+_deviceUDID+'&appId='+_appId )
                     .then( stripData );
             };
             
             
+            /**
+             * Queries the socialscrape channeltweets controller for information about a channel's tweets
+             * 
+             * @returns {Promise<Object>}
+             */
             service.getChannelTweets = function () {
                 return $http.get( '/socialscrape/channeltweets?deviceUDID=' + _deviceUDID )
                     .then( stripData );
             };
             
+            /**
+             * Posts to /socialscrape/add with queryString, deviceUDID, and appID 
+             * 
+             * @param {any} paramsArr 
+             * @returns {Promise} promiseResolveReject  
+             */
             service.updateTwitterQuery = function ( paramsArr ) {
                 var query = paramsArr.join( '+OR+' );
                 return $http.post( '/socialscrape/add', { queryString: query, deviceUDID: _deviceUDID, appId: _appId } );
@@ -601,6 +642,12 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             // updated for BlueLine
             // TODO replace with socketIO?
+            /**
+             * HTTP Put to save appmodel for appid and deviceUDID
+             * This is where we'd want to look at saving based on venueUDID instead
+             * 
+             * @returns {Promise}
+             */
             service.saveHTTP = function () {
                 return $http.put( '/appmodel/' + _appId + '/' + _deviceUDID, { data: service.model } )
                     .then( stripData )
@@ -610,6 +657,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     } );
             };
 
+            /**
+             * Calls sioPut to save appmodel, appId, and deviceUDID
+             * 
+             * @returns {Promise}
+             */
             service.save = function () {
                 return sioPut( '/appmodel/' + _appId + '/' + _deviceUDID, { data: service.model } )
                     .then( function ( data ) {
@@ -619,9 +671,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             };
 
             /**
+             * Loads model by calling getDataForApp and then updateModel
              * 
-             * 
-             * @returns 
+             * @returns {Promise}
              */
             service.loadModel = function () {
                 return getDataForApp()
@@ -760,6 +812,12 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             service.getOGSystem = getOGSystem;
 
+            /**
+             * calls getOGSystem to check onHardware
+             * 
+             * @returns {undefined}
+             * @returns {sys.nowShowing}
+             */
             service.getCurrentProgram = function(){
                 var sys = getOGSystem();
                 if (!sys.onHardware)
@@ -768,16 +826,26 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return sys.nowShowing;
             };
             
+            /**
+             * Returns _deviceUDID
+             * 
+             * @returns {_deviceUDID}
+             */
             service.getDeviceUDID = function(){ return _deviceUDID; };
 
 
+            /**
+             * Returns striped data from /pgs/grid
+             * 
+             * @returns {Promise<Object>}
+             */
             service.getGrid = function () {
                 return $http.get( '/pgs/grid?deviceUDID='+ _deviceUDID )
                     .then( stripData );
             };
 
             /**
-             * 
+             * Changes the channel by making a post to /ogdevice/changechannel
              * 
              * @param {any} channelNum 
              * @returns 
