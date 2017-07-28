@@ -19,8 +19,30 @@ app.controller("dsConController",
         $scope.getTabURI = function (tab) {
             return tab.toLowerCase().replace(' ', '');
         };
+        function deviceModelUpdate( data ) {
+            
+            if (data.useVenueDataModel && $scope.messages.length == 0) { //We want to wait for venue information at this point
+                $scope.messages = [];
+                $scope.comingUpMessages = [];
+                $scope.twitterQueries = [];
+                $scope.hideTVTweets = true;
+                return;
+            }
 
-        function modelUpdate( data ) {
+            if (data.messages && data.messages.length != $scope.messages.length) {
+                $scope.messages = data.messages || [];
+            }
+            if (data.comingUpMessages && data.comingUpMessages.length != $scope.comingUpMessages.length) {
+                $scope.comingUpMessages = data.comingUpMessages || [];
+            }
+            if (data.twitterQueries && data.twitterQueries.length != $scope.twitterQueries.length) {
+                $scope.twitterQueries = data.twitterQueries || [];
+            }
+
+            $scope.hideTVTweets = data.hideTVTweets;
+        }
+
+        function venueModelUpdate(data) {
             if (data.messages && data.messages.length != $scope.messages.length) {
                 $scope.messages = data.messages || [];
             }
@@ -45,16 +67,18 @@ app.controller("dsConController",
                 appName: "io.ourglass.ogcrawler",
                 endpoint: "control",
                 deviceUDID: "test",
-                modelCallback: modelUpdate,
+                deviceModelCallback: deviceModelUpdate,
+                venueModelCallback: venueModelUpdate,
                 messageCallback: inboundMessage
             })
-                .then( function ( data ) {
-                    $log.debug("crawler control: init complete");
-                    modelUpdate( data );
-                })
-                .catch( function ( err ) {
-                    $log.error("crawler controller: something bad happened: " + err);
-                })
+            .then(function (data) {
+                $log.debug("crawler control: init complete");
+                // deviceModelUpdate(data);
+                data.useVenueData ? venueModelUpdate( data ) : deviceModelUpdate( data );
+            })
+            .catch(function (err) {
+                $log.error("crawler controller: something bad happened: " + err);
+            });
         }
 
         $scope.newMessage = function () {
@@ -77,6 +101,11 @@ app.controller("dsConController",
             $scope.update();
         };
 
+        $scope.swapDataLocation = function (index) {
+            $scope.useVenueData = !$scope.useVenueData;
+            $scope.update();
+        };
+
         $scope.delComingUpMessage = function (index) {
             $scope.comingUpMessages.splice(index, 1);
             $scope.update();
@@ -93,15 +122,31 @@ app.controller("dsConController",
 
             ogAPI.model.twitterQueries = $scope.twitterQueries;
             ogAPI.model.hideTVTweets = $scope.hideTVTweets;
+
+            if ($scope.useVenueData === true && ogAPI.model.useVenueData) { //If we use venue data
+                
+                ogAPI.saveDevice(); //Save that we are using venueData to the deviceModel
+                
+                delete ogAPI.model.useVenueData; //Delete it before we save to venueModel
+                
+            } else { //If we don't use venue data
+                ogAPI.model.useVenueData = false;
+            }
             
             uibHelper.curtainModal('Saving...');
-            ogAPI.save()
-                .then( function(){
-                    return ogAPI.updateTwitterQuery( ogAPI.model.twitterQueries );
-                })
-                .finally( uibHelper.dismissCurtain );
-            
+
+            if ($scope.useVenueData) {
+                afterOGAPISave(ogAPI.saveVenue());
+            } else {
+                afterOGAPISave(ogAPI.saveDevice());
+            }
         };
+
+        function afterOGAPISave(savePromise) {
+            savePromise.then(function () {
+                return ogAPI.updateTwitterQuery(ogAPI.model.twitterQueries);
+            }).finally(uibHelper.dismissCurtain);
+        }
 
         $scope.toggleTVTweets = function(){
             $log.debug("Toggling tweets");
