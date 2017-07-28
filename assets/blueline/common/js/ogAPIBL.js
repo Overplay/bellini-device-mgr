@@ -25,16 +25,27 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
     OG_SYSTEM_GLOBALS.updatedAt = new Date();
 }
 
-
 (function ( window, angular, undefined ) {
 
 
-    //Helper with chaining Angular $http
+    /**
+     * Returns object.data | Helper with chaining Angular $http
+     * 
+     * @param {Object} response 
+     * @returns response.data
+     */
     function stripData( response ) {
         return response.data;
     }
 
-    //Helper to pull url params
+
+    /**
+     * Helper to pull url params
+     * 
+     * @param {any} name The name to search for
+     * @param {any} url The url to get parameter of 
+     * @returns 
+     */
     function getParameterByName( name, url ) {
         if ( !url ) {
             url = window.location.href;
@@ -131,7 +142,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             var urlForAllAds = '/proxysponsor/all';
             var urlForVenueAds = '/proxysponsor/venue/';
-            var urlForProxiedImages = '/media/downloadFromCore/'
+            var urlForProxiedImages = '/media/downloadFromCore/';
 
             var service = {};
 
@@ -157,7 +168,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 var url = ( getOGSystem().venue && !_forceAllAds ) ? (urlForVenueAds + getOGSystem().venue) : urlForAllAds;
                 return $http.get( url )
                     .then( stripData )
-                    .then( processNewAds )
+                    .then( processNewAds );
             };
 
             /**
@@ -184,7 +195,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             service.getCurrentAd = function () {
                 return $q( function ( resolve, reject ) {
                     resolve({"currentAds": []});
-                })
+                });
             };
 
             /**
@@ -219,6 +230,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 }
             };
 
+            /**
+             * Sets up a force on all ads
+             * 
+             * @param {any} alwaysGetAll 
+             */
             service.setForceAllAds = function ( alwaysGetAll ) {
                 _forceAllAds = alwaysGetAll;
             };
@@ -268,16 +284,27 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             /**
              * Returns _userPermissions variable
              *
-             * 
+             * @return {any} _userPermissions
              */
             service.getPermissions = function(){
                 return _userPermissions;
-            }
+            };
 
+            /**
+             * Gets user
+             * 
+             * @returns {Object} _user
+             */
             service.getUser = function(){
                 return _user;
-            }
+            };
 
+            /**
+             * Checks user level
+             * Queries /user/coreuserfortoken and /user/isusermanager
+             * 
+             * @returns {Promise<any>}
+             */
             function checkUserLevel(){
 
                 if (!_jwt){
@@ -289,34 +316,54 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( stripData )
                     .then( function(user){
                         _user = user;
-                        return $http.post('/user/isusermanager', { jwt: _jwt, deviceUDID: _deviceUDID })
+                        return $http.post('/user/isusermanager', { jwt: _jwt, deviceUDID: _deviceUDID });
                     })
                     .then( stripData )
                     .then( function(permissions){
                         _userPermissions = permissions;
                         return permissions;
-                    })
+                    });
             }
 
+            /**
+             * update that model like one of my jQuery girls
+             * 
+             * @param {any} newData 
+             * @returns {Object} Model
+             */
             function updateModel( newData ) {
                 service.model = newData;
                 if ( _dataCb ) _dataCb( service.model );
                 return service.model;
             }
 
-            // updated for BlueLine
+            
+            /**
+             * I AM THE CAPTAIN OF THIS SHIP AND I WILL
+             * 
+             * @returns {Object} data from the server appModel
+             */
             function getDataForApp() {
                 return $http.get( '/appmodel/' + _appId + '/' + _deviceUDID )
                     .then( stripData )
                     .then( stripData ); // conveniently the object goes resp.data.data
             }
 
-            // TODO someone should implement locking someday :D [mak]
+            /**
+             * Someone should implement this locking one day on the server one day
+             * 
+             * @returns 
+             */
             function getDataForAppAndLock() {
                 return $http.get( API_PATH + 'appdata/' + _appId + "?lock" )
                     .then( stripData );
             }
 
+            /**
+             * Join device into app room
+             * 
+             * @returns {Promise} promise if a socket posting room: appID+deviceID
+             */
             function joinDeviceAppRoom() {
                 return $q( function ( resolve, reject ) {
 
@@ -345,6 +392,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             }
 
+            /**
+             * Join OGClientRoom
+             * 
+             * @returns {Promise} socket resolve or reject joining a device room
+             */
             function joinOGClientRoom() {
                 return $q( function ( resolve, reject ) {
 
@@ -372,6 +424,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             }
 
+            /**
+             * 
+             * 
+             * @returns 
+             */
             function subscribeToAppData() {
 
                 return $q( function ( resolve, reject ) {
@@ -401,9 +458,15 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                             resolve();
                         }
                     } );
-                } )
+                } );
             }
 
+            /**
+             * Initialization function. 
+             * 
+             * @param {any} params required
+             * @returns 
+             */
             service.init = function ( params ) {
 
                 if ( !params )
@@ -477,7 +540,14 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             };
 
-            // TODO if we were cool kids we might make this an Observable
+            // TODO: if we were cool kids we might make this an Observable
+            /**
+             * Sends a message to the socket with the url and wrapped message
+             * 
+             * @param {any} url 
+             * @param {any} message 
+             * @returns 
+             */
             function sendSIOMessage( url, message ) {
                 var wrappedMessage = { deviceUDID: _deviceUDID, message: message };
                 return $q( function ( resolve, reject ) {
@@ -493,6 +563,13 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             }
 
 
+            /**
+             * sends a put request to a socket io. Pass in url and params for it to send
+             * 
+             * @param {any} url 
+             * @param {any} params 
+             * @returns {Promise}
+             */
             function sioPut( url, params ) {
                 return $q( function ( resolve, reject ) {
                     io.socket.put( url, params, function ( resData, jwRes ) {
@@ -507,28 +584,56 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             }
 
 
+            /**
+             * Send SIO message to /ogdevice/dm
+             * 
+             * @param {any} message 
+             * @returns 
+             */
             service.sendMessageToDeviceRoom = function ( message ) {
                 // NOTE must have leading slash!
                 return sendSIOMessage( '/ogdevice/dm', message );
             };
 
+            /**
+             * Sends a message to a venue room (/venue/dm)
+             * 
+             * @param {any} message 
+             * @returns 
+             */
             service.sendMessageToVenueRoom = function ( message ) {
                 // NOTE must have leading slash!
                 return sendSIOMessage( '/venue/dm', message );
             };
 
 
+            /**
+             * Queries the socialscrape result controller for information about social scraping
+             * 
+             * @returns {Promise<Object>} Data from socialscrape result
+             */
             service.getTweets = function () {
                 return $http.get( '/socialscrape/result?deviceUDID='+_deviceUDID+'&appId='+_appId )
                     .then( stripData );
             };
             
             
+            /**
+             * Queries the socialscrape channeltweets controller for information about a channel's tweets
+             * 
+             * @returns {Promise<Object>}
+             */
             service.getChannelTweets = function () {
                 return $http.get( '/socialscrape/channeltweets?deviceUDID=' + _deviceUDID )
                     .then( stripData );
             };
             
+            /**
+             * Posts to /socialscrape/add with queryString, deviceUDID, and appID 
+             * 
+             * @param {any} paramsArr 
+             * @returns {Promise} promiseResolveReject  
+             */
             service.updateTwitterQuery = function ( paramsArr ) {
                 var query = paramsArr.join( '+OR+' );
                 return $http.post( '/socialscrape/add', { queryString: query, deviceUDID: _deviceUDID, appId: _appId } );
@@ -537,29 +642,50 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             // updated for BlueLine
             // TODO replace with socketIO?
+            /**
+             * HTTP Put to save appmodel for appid and deviceUDID
+             * This is where we'd want to look at saving based on venueUDID instead
+             * 
+             * @returns {Promise}
+             */
             service.saveHTTP = function () {
                 return $http.put( '/appmodel/' + _appId + '/' + _deviceUDID, { data: service.model } )
                     .then( stripData )
                     .then( function ( data ) {
                         $log.debug( "ogAPI: Model data saved via PUT" );
                         //updateModel( data[0] )
-                    } )
+                    } );
             };
 
+            /**
+             * Calls sioPut to save appmodel, appId, and deviceUDID
+             * 
+             * @returns {Promise}
+             */
             service.save = function () {
                 return sioPut( '/appmodel/' + _appId + '/' + _deviceUDID, { data: service.model } )
                     .then( function ( data ) {
                         $log.debug( "ogAPI: Model data saved via si PUT" );
                         return data.resData;
-                    } )
+                    } );
             };
 
+            /**
+             * Loads model by calling getDataForApp and then updateModel
+             * 
+             * @returns {Promise}
+             */
             service.loadModel = function () {
                 return getDataForApp()
                     .then( updateModel );
             };
 
-            // TODO implement model locking on Bellini side...
+            /**
+             * Updates the model and tries to aquire lockkey. Currently doesn't do anything
+             * TODO implement model locking on Bellini side...
+             *
+             * @returns {Promise} HttpPromise
+             */
             service.loadModelAndLock = function () {
                 return getDataForAppAndLock()
                     .then( function ( model ) {
@@ -575,8 +701,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * performs a post to the move endpoint for either the current app or the appid that is passed in
-             * @param [appid] the app to move, if not included, then move the _appId
-             * @returns {HttpPromise}
+             * 
+             * @param {any} appid the app to move, if not included, then move the _appId
+             * @returns {Promise} HttpPromise
              */
             service.move = function ( appid ) {
                 appid = appid || _appId;
@@ -591,12 +718,14 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                         $rootScope.$broadcast( '$app_state_change_failure', { action: 'move', appId: appid } );
                         throw err; // Rethrow
                     } );
-            }
+            };
 
             /**
              * performs a post to the launch endpoint for either the current app or the appid that is passed in
-             * @param [appid] the app to move, if not included, then move the _appId
-             * @returns {HttpPromise}         */
+             * 
+             * @param {any} appid the app to move, if not included, then move the _appId
+             * @returns {Promise} HttpPromise
+             */
             service.launch = function ( appid ) {
                 appid = appid || _appId;
                 return $http.post( '/ogdevice/launch', { deviceUDID: _deviceUDID, appId: appid } )
@@ -611,8 +740,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                         $log.info( "App launch FAILED for: " + appid );
                         $rootScope.$broadcast( '$app_state_change_failure', { action: 'launch', appId: appid } );
                         throw err; // Rethrow
-                    })
-            }
+                    });
+            };
 
             /**
              * performs a post to the kill endpoint for either the current app or the appid that is passed in
@@ -632,16 +761,21 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                         $log.info( "App kill FAILED for: " + appid );
                         $rootScope.$broadcast( '$app_state_change_failure', { action: 'kill', appId: appid } );
                         throw err; // Rethrow
-                    } )
-            }
+                    } );
+            };
 
+            /**
+             * Relocate window.location.href to control app
+             * 
+             * @param {any} app 
+             */
             service.relocToControlApp = function ( app ) {
                 // window.location.href = "/blueline/opp/" + app.appId +
                 //     '/app/control/index.html?deviceUDID=' + _deviceUDID + '&displayName=' + app.displayName;
 
                 window.location.href =  '/appcontrol/' + app.appId + '/' +
                     _deviceUDID + '?jwt=' + _jwt || '*' + '?displayName=' + app.displayName;
-            }
+            };
 
 
             // service.relocToControlApp = function( app ){
@@ -651,7 +785,10 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * posts up an SMS message request
-             * @param args
+             * 
+             * @param {any} phoneNumber 
+             * @param {any} message 
+             * @returns {Promise<Object>}
              */
             service.sendSMS = function ( phoneNumber, message ) {
                 return $http.post( '/ogdevice/sms', {
@@ -659,7 +796,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     message:     message,
                     deviceUDID:  _deviceUDID
                 } );
-            }
+            };
 
             /**
              *
@@ -668,13 +805,19 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              */
             service.sendSpam = function ( email ) {
                 return $http.post( API_PATH + 'spam', email );
-            }
+            };
 
 
             // New methods for BlueLine Architecture
 
             service.getOGSystem = getOGSystem;
 
+            /**
+             * calls getOGSystem to check onHardware
+             * 
+             * @returns {undefined}
+             * @returns {sys.nowShowing}
+             */
             service.getCurrentProgram = function(){
                 var sys = getOGSystem();
                 if (!sys.onHardware)
@@ -683,20 +826,41 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return sys.nowShowing;
             };
             
-            service.getDeviceUDID = function(){ return _deviceUDID; }
+            /**
+             * Returns _deviceUDID
+             * 
+             * @returns {_deviceUDID}
+             */
+            service.getDeviceUDID = function(){ return _deviceUDID; };
 
 
+            /**
+             * Returns striped data from /pgs/grid
+             * 
+             * @returns {Promise<Object>}
+             */
             service.getGrid = function () {
                 return $http.get( '/pgs/grid?deviceUDID='+ _deviceUDID )
                     .then( stripData );
             };
 
+            /**
+             * Changes the channel by making a post to /ogdevice/changechannel
+             * 
+             * @param {any} channelNum 
+             * @returns 
+             */
             service.changeChannel = function ( channelNum ) {
                 return $http.post( '/ogdevice/changechannel?deviceUDID=' + _deviceUDID
                      + '&channel=' + channelNum )
                      .then(stripData);
             };
 
+            /**
+             * Figures out what channel is currently running and calls getGridForChannel
+             * 
+             * @returns {Object} channel listings
+             */
             service.getGridForCurrentChannel = function(){
 
                 var prog = this.getCurrentProgram();
@@ -704,8 +868,15 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 return this.getGridForChannel(prog.channelNumber);
 
-            }
+            };
 
+            /**
+             * Gets the grid for a channel
+             * Does an http call to listingsforchannel and strips the data
+             * 
+             * @param {number} channelNum 
+             * @returns {Object} channel listings
+             */
             service.getGridForChannel = function ( channelNum ){
 
                 return $http.get( '/pgs/listingsforchannel?deviceUDID=' + _deviceUDID
@@ -714,13 +885,23 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             };
             
+            /**
+             * Checks if a device is paired by querying getOGSystem
+             * 
+             * @returns {Function} getOGSystem();
+             */
             service.pairedSTB = function(){
                 return getOGSystem();
             };
 
+            /**
+             * user is manager check | CURRENTLY EMPTY
+             *
+             * @param {none}
+             */
             service.userIsManager = function(){
-
-            }
+                throw new Error("userIsManager: NotImplementedError");
+            };
 
             /**
              * This method bounces a GET off of Bellini-DM as a proxy. Use this
@@ -733,7 +914,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             service.proxyGet = function(url){
                 return $http.get('/proxy/get?url='+url)
                     .then(stripData);
-            }
+            };
 
             return service;
         } )
@@ -753,7 +934,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     scope.adstyle = { opacity: 0.0 };
 
                     if ( adType != 'widget' && adType != 'crawler' ) {
-                        throw Error( "Unsupported ad type. Must be widget or crawler" )
+                        throw Error( "Unsupported ad type. Must be widget or crawler" );
                     }
 
                     function update() {
@@ -778,10 +959,12 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     } );
 
                 }
-            }
+            };
 
         } )
 
+
+        //directive for placing an advertisiment in a project
         .directive( 'ogAdvertisement', function () {
             return {
                 restrict:   'E',
@@ -807,10 +990,15 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                             currentAd = retAd.data;
                             console.log( currentAd );
                             setCurrentAdUrl();
-                        } )
+                        } );
                     } else {
                         setCurrentAdUrl();
                     }
+                    /**
+                     * Sets current ad url depending on type
+                     *
+                     * @param {none}
+                     */
                     function setCurrentAdUrl() {
                         console.log( $scope );
                         console.log( $scope.type );
@@ -826,7 +1014,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                         console.log( $scope.adurl );
                     }
                 }
-            }
+            };
         } )
 
         .directive( 'ogAppHeader', function () {
@@ -849,7 +1037,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     } );
 
                 }
-            }
+            };
         } )
 
         .directive( 'ogHud', [ "$log", "$timeout", function ( $log, $timeout ) {
