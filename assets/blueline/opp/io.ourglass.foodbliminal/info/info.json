@@ -1,22 +1,13 @@
 {
-  "appId": "io.ourglass.ogcrawler",
-  "appType": "crawler",
-  "appName": "Crawler",
-
+  "appId": "io.ourglass.foodbliminal",
+  "displayName": "Foodbliminal!",
   "icon": "space.png",
-  "iconLabel": "Crawler",
-
-  "primaryColorHex": "#00b300",
-  "secondaryColorHex": "#006600",
-
-  "height": 5,
-
-  "initialValue": {
-    "messages": ["Ourglass TV", "Check Ourglass out at www.ourglass.tv"],
-    "twitterQueries": [ "@Warriors" ],
-    "hideTVTweets" : false
-  },
-
-  "version": 1.0,
-  "installDate": 1475073632093
+  "defaultModel": {},
+  "appType": "crawler",
+  "appWidth": 100,
+  "appHeight": 20,
+  "patronControllable": false,
+  "releaseLevel": "dev",
+  "isVirtual": false,
+  "iconPath": "/blueline/opp/io.ourglass.foodbliminal/assets/icons/space.png"
 }

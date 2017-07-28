@@ -1,22 +1,39 @@
 {
-  "appId": "io.ourglass.ogmeetus",
-  "appType": "crawler",
-  "appName": "MeetTheOGs",
-
-  "icon": "space.png",
-  "iconLabel": "MeetTheOGs",
-
-  "primaryColorHex": "#00b300",
-  "secondaryColorHex": "#006600",
-
-  "height": 5,
-
-  "initialValue": {
-    "messages": ["Ourglass TV", "Check Ourglass out at www.ourglass.tv"],
-    "twitterQueries": [ "@Warriors" ],
-    "hideTVTweets" : false
-  },
-
-  "version": 1.0,
-  "installDate": 1475073632093
+	"appId": "io.ourglass.ogmeetus",
+	"displayName": "Meet the OGs",
+	"icon": "space.png",
+	"defaultModel": {
+		"challenges": [{
+			"q": "Q1: Find an OG who has wrestled Jimmy Kimmel on national TV",
+			"a": "Mitch"
+		}, {
+			"q": "Q2: This OG grew up in NJ, but went to college in CA",
+			"a": "Kristin"
+		}, {
+			"q": "Q3: Ourglass is based in this California city",
+			"a": "Campbell"
+		}, {
+			"q": "Q4: How much does OurglassTV cost to install?",
+			"a": "0"
+		}, {
+			"q": "Q5: Which OG ran rides at a major amusement park?",
+			"a": "Treb"
+		}, {
+			"q": "Q6: Which OG just got back from sunny Mexico?",
+			"a": "Kristin"
+		}],
+		"twitterQueries": ["@OurglassTV"],
+		"hideTVTweets": false,
+		"scores": {}
+	},
+	"appType": "crawler",
+	"appWidth": 100,
+	"appHeight": 9,
+	"patronControllable": false,
+	"releaseLevel": "dev",
+	"isVirtual": false,
+	"createdAt": "2017-07-12T07:30:50.687Z",
+	"updatedAt": "2017-07-12T07:30:50.687Z",
+	"id": "5965d02ad3a5467aad4a34da",
+	"iconPath": "/blueline/opp/io.ourglass.ogmeetus/assets/icons/space.png"
 }
