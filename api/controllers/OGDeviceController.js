@@ -46,9 +46,6 @@ module.exports = {
      */
     register: function ( req, res ) {
 
-        if ( req.method != 'POST' )
-            return res.badRequest( { error: 'bad verb' } );
-
         var params = req.allParams();
 
         if ( !params.deviceUDID )

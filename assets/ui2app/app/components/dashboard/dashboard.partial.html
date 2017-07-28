@@ -3,25 +3,27 @@
         <div class="col-md-8 col-lg-8  material-panel">
             <h1><i class="fa fa-star-o" aria-hidden="true" style="color: #999999"></i> Bellini-DM Dashboard</h1>
 
-            <div class="col-md-8 col-lg-8  material-panel">
-                <h4>Devices in the System</h4>
+            <div class="col-md-5 col-lg-5  material-panel">
+                <h2>Devices in the System</h2>
 
                 <h3 ng-if="!ogdevices.length" class="text-danger">There are no devices registered</h3><br>
 
                 <div ng-if="ogdevices.length">
-                    <h3>Total Number of Devices:</h3>
-                        <p> {{ogdevices.length}} </p>
+                    <h3>Total Number of Devices: {{ogdevices.length}} </h3>
                         <br>
                 </div>
+            </div>
 
-                <h4>Devices in the System in Use</h4>
+            <div class="col-md-5 col-lg-5  material-panel" >
+                <h2>Active Devices</h2>
 
-                <h3 ng-if="!ogdeviceActiveCount.length" class="text-danger">There are no devices being used</h3>
+                <h3 ng-if="!activeDevices.length" class="text-danger">There are no devices being used</h3>
 
-                <div ng-if="ogdeviceActiveCount.length">
-                    <h3>Devices in Use:</h3>
-                    <p> {{ogdeviceActiveCount}} </p>
+                <div ng-if="activeDevices.length">
+                    <h3>Active Devices: {{activeDevices.length}} </h3>
                 </div>
+            </div>
+
             </div>
         </div>
 
