@@ -25,6 +25,7 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI ) {
 
     function inboundMessage( msg ) {
         $log.info( "New message: " + msg );
+        $scope.sourceVenue = false;
         $scope.ogsystem = msg;
     }
 
