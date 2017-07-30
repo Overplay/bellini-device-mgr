@@ -5,7 +5,8 @@
 	"defaultModel": {
 		"messages": ["Ourglass TV", "Check Ourglass out at www.ourglass.tv"],
 		"twitterQueries": ["@Warriors"],
-		"hideTVTweets": false
+		"hideTVTweets": false,
+		"useVenueData": true
 	},
 	"appType": "crawler",
 	"appWidth": 100,
