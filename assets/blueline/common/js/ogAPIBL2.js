@@ -579,7 +579,6 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 return $http.post( '/appmodel/initialize', { appid: _appId, deviceUDID: _deviceUDID } )
                     .then( stripData )
-                    .then( stripData ) // Yes, twice because data.data.data
                     .then( function ( model ) {
                         $log.debug( "ogAPI: Model data init complete" );
                         $log.debug( "ogAPI: Subscribing to model changes" );
