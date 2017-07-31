@@ -1,6 +1,8 @@
 /**
  *
- * ogAPI rewritten for Blueline Architecture
+ * ogAPIBL2.js
+ *
+ * ogAPI rewritten for Bellini/Blueline Architecture
  *
  * Rewrite for venue data and general cleanliness
  * July 2017
