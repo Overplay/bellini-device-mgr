@@ -1039,7 +1039,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             return {
                 restrict: 'E',
                 template: '<img width="100%" height="100%" style="-webkit-transition: opacity 0.5s; transition: opacity 0.35s;" ' +
-                          'ng-style="adstyle" ng-src=\"{{adurl}}ss\" failed-image/>',
+                          'ng-style="adstyle" ng-src=\"{{adurl}}\" failed-image/>',
                 link:     function ( scope, elem, attrs ) {
 
                     var interval = parseInt( attrs.interval ) || 15000;
