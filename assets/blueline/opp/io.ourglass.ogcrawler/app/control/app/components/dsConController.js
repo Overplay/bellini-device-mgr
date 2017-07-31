@@ -125,7 +125,7 @@ app.controller("dsConController",
 
             if ($scope.useVenueData === true && ogAPI.model.useVenueData) { //If we use venue data
                 
-                ogAPI.saveDevice(); //Save that we are using venueData to the deviceModel
+                ogAPI.saveDeviceModel(); //Save that we are using venueData to the deviceModel
                 
                 delete ogAPI.model.useVenueData; //Delete it before we save to venueModel
                 
@@ -136,9 +136,9 @@ app.controller("dsConController",
             uibHelper.curtainModal('Saving...');
 
             if ($scope.useVenueData) {
-                afterOGAPISave(ogAPI.saveVenue());
+                afterOGAPISave(ogAPI.saveVenueModel());
             } else {
-                afterOGAPISave(ogAPI.saveDevice());
+                afterOGAPISave(ogAPI.saveDeviceModel());
             }
         };
 
