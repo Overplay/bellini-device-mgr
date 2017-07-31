@@ -49,8 +49,8 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
 
         $log.debug("Change Ticket Pressed ");
         uibHelper.stringEditModal(
-            'Change Order Number?',
-            'Do you really want to change?',
+            'Change Order Number',
+            'Enter the new order number below.',
             $scope.ticketNumber,
             'order number'
         ).then(function (result) {
@@ -72,10 +72,13 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
     // };
 
     function modelChanged( newValue ) {
+        $log.info( "Device model changed, yay!" );
+        $scope.ticketNumber = newValue.ticketNumber;
+    }
 
-        $log.info( "Model changed, yay!" );
-        // $scope.ticketNumber = newValue.ticketNumber;
-        // $scope.$apply();
+    function venueModelChanged( newValue ) {
+        $log.info( "Venue model changed, yay!" );
+        $scope.ticketNumber = newValue.ticketNumber;
     }
 
     function inboundMessage( msg ) {
@@ -89,23 +92,25 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
 
         ogAPI.init({
             appName: "io.ourglass.nowserving",
-            sockets: true,
-            modelCallback: modelChanged,
-            messageCallback: inboundMessage,
+            deviceModelCallback: modelChanged,
+            venueModelCallback:  venueModelChanged,
+            messageCallback:     inboundMessage,
             appType: 'mobile',
             deviceUDID: 'test'
         })
         .then(function (data) {
-            $scope.ticketNumber = data.ticketNumber;
+            $log.debug( "ogAPI init complete!" );
+            if ( data.venue && data.device.useVenueData ) {
+                $scope.ticketNumber = data.venue.ticketNumber || '??';
+            } else {
+                $scope.ticketNumber = data.device.ticketNumber;
+            }
         })
         .catch(function (err) {
             $log.error("Something failed: " + err);
         });
 
     }
-
-
-
 
     initialize();
 

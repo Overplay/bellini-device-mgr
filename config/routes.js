@@ -55,6 +55,12 @@ module.exports.routes = {
         skipAssets: true
     },
 
+    '/appmodel/initializeVenueData': {
+        controller: 'AppDataController',
+        action:     'initializeVenueData',
+        skipAssets: true
+    },
+
     /****************************************************************************
      * App Client Control Routes
      ****************************************************************************/

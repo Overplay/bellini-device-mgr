@@ -5,6 +5,7 @@
 
 
 module.exports.hooks = {
+
     deviceCleaner: {
         regCodeTimeout: 1000 * 60 * 60 * 24, //1 day , change to whatever
         hookEnabled: true,
@@ -13,6 +14,12 @@ module.exports.hooks = {
     userCleaner: {
         hookEnabled: true,
         cleanDelay: 1000 * 60 * 60, //1 hour
-    }
+    },
+    infoJsonSync: {
+        hookEnabled: true,
+        syncDelay: 1000 * 10 * 5 , //5 minutes
+    },
+    
+    
 
 };
