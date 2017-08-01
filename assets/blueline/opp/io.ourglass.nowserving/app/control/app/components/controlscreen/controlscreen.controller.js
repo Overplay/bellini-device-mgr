@@ -66,6 +66,10 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
 
     };
 
+    $scope.swapDataLocation = function () {
+        $scope.usingVenueData = !$scope.usingVenueData;
+    };
+
     // $scope.curtainDebug = function () {
     //     var curtain = uibHelper.curtainModal('Curtain');
     //     $timeout(function () { uibHelper.dismissCurtain(); }, 5000);
