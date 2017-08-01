@@ -496,13 +496,13 @@ module.exports = {
                 var promises = [
                     // A+D
                     AppData.findOne( {
-                        forDeviceUDID: params.deviceUDID,
-                        forAppId:      params.appid
+                        forAppId:      params.appid,
+                        forDeviceUDID: params.deviceUDID
                     } ),
                     // A+V
                     AppData.findOne( {
                         forAppId:      params.appid,
-                        forVenueId:    device.atVenueUUID,
+                        forVenueUUID:    device.atVenueUUID,
                         forDeviceUDID: 'venue'
                     } ) ];
 
