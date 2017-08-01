@@ -7,19 +7,27 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
     $log.debug( "loaded ogNowServingController" );
 
     $scope.ticketNumber = '---';
+    $scope.usingVenueData = true;
 
     function saveModel() {
 
-        ogAPI.model = {ticketNumber: $scope.ticketNumber};
+        ogAPI.model = { ticketNumber: $scope.ticketNumber };
+        if ($scope.usingVenueData) {
+            savePromiseThen(ogAPI.saveVenueModel());
+        } else {
+            savePromiseThen(ogAPI.saveDeviceModel());
+        }
 
-        ogAPI.save()
-            .then( function ( response ) {
-                $log.debug( "Save was cool" );
-            } )
-            .catch( function ( err ) {
-                $log.error( "WTF?!?!?" );
+    }
+
+    function savePromiseThen(savePromise) {
+        savePromise.then(function (response) {
+            $log.debug("Save was cool");
+        })
+            .catch(function (err) {
+                $log.error("WTF?!?!?");
                 $scope.ticketNumber = "&*$!";
-            } );
+            });
     }
 
     $scope.clear = function () {
@@ -54,11 +62,11 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
             $scope.ticketNumber,
             'order number'
         ).then(function (result) {
-            if (_.isFinite(_.parseInt(result))) {
+            if (_.isFinite(_.parseInt(result)) && _.parseInt(result) >= 0) {
                 $scope.ticketNumber = _.parseInt(result);       
                 saveModel();
             } else {
-                uibHelper.dryToast("You must enter a number.");
+                uibHelper.dryToast("You must enter a positive number.");
             }
         }).catch(function (err) {
             $log.error(err);
@@ -67,7 +75,9 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
     };
 
     $scope.swapDataLocation = function () {
+        $log.debug("Using venue data:", $scope.usingVenueData);
         $scope.usingVenueData = !$scope.usingVenueData;
+        saveModel();
     };
 
     // $scope.curtainDebug = function () {
@@ -100,7 +110,7 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
             venueModelCallback:  venueModelChanged,
             messageCallback:     inboundMessage,
             appType: 'mobile',
-            deviceUDID: 'test'
+            deviceUDID: 'apple-sim-1'
         })
         .then(function (data) {
             $log.debug( "ogAPI init complete!" );
