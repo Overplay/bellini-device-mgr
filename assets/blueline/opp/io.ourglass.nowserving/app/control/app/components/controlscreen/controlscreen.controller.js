@@ -2,16 +2,19 @@
  * Created by mkahn on 11/18/16.
  */
 
-app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelper, $timeout ) {
+app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelper, $timeout) {
 
-    $log.debug( "loaded ogNowServingController" );
+    $log.debug("loaded ogNowServingController");
 
-    $scope.ticketNumber = '---';
-    $scope.usingVenueData = true;
+    $scope.deviceTicketNumber = '---';
+    $scope.venueTicketNumber = '---';
+    $scope.usingVenueData = false;
 
     function saveModel() {
 
-        ogAPI.model = { ticketNumber: $scope.ticketNumber };
+        ogAPI.model = { ticketNumber: $scope.deviceTicketNumber };
+        ogAPI.venueModel = { ticketNumber: $scope.venueTicketNumber };
+        
         if ($scope.usingVenueData) {
             savePromiseThen(ogAPI.saveVenueModel());
         } else {
@@ -26,14 +29,19 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
         })
             .catch(function (err) {
                 $log.error("WTF?!?!?");
-                $scope.ticketNumber = "&*$!";
+                $scope.deviceTicketNumber = "&*$!";
+                $scope.venueTicketNumber = "&*$!";
             });
     }
 
     $scope.clear = function () {
     
-        $log.debug( "Clear pressed" );
-        $scope.ticketNumber = 0;
+        $log.debug("Clear pressed");
+        if ($scope.usingVenueData) {
+            $scope.venueTicketNumber = 0;
+        } else {
+            $scope.deviceTicketNumber = 0;
+        }
         // ogControllerModel.model = {ticketNumber: 0};
 
         saveModel();
@@ -43,11 +51,25 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
     $scope.incrementTicket = function () {
     
         $log.debug("Increment pressed");
-        if ($scope.ticketNumber === '---')
-            $scope.ticketNumber = 1;
-        else
-            $scope.ticketNumber += 1;
-        // ogControllerModel.model.ticketNumber = $scope.ticketNumber;
+
+        var toCheck = $scope.usingVenueData ? $scope.venueTicketNumber : $scope.deviceTicketNumber;
+
+        if (toCheck === '---') {
+
+            if ($scope.usingVenueData) {
+                $scope.venueTicketNumber = 1;
+            } else {
+                $scope.deviceTicketNumber = 1; 
+            }
+        }
+        else {
+            if ($scope.usingVenueData) {
+                $scope.venueTicketNumber += 1;
+            } else {
+                $scope.deviceTicketNumber += 1; 
+            }
+        }
+        // ogControllerModel.model.ticketNumber = $scope.deviceTicketNumber;
 
         saveModel();
 
@@ -59,11 +81,18 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
         uibHelper.stringEditModal(
             'Change Order Number',
             'Enter the new order number below.',
-            $scope.ticketNumber,
+            $scope.usingVenueData ? $scope.venueTicketNumber : $scope.deviceTicketNumber,
             'order number'
         ).then(function (result) {
-            if (_.isFinite(_.parseInt(result)) && _.parseInt(result) >= 0) {
-                $scope.ticketNumber = _.parseInt(result);       
+
+            if (isFinite(result) && _.parseInt(result) >= 0) {
+                
+                var numberResult = _.parseInt(result);
+                if ($scope.usingVenueData) {
+                    $scope.venueTicketNumber = numberResult;
+                } else {
+                    $scope.deviceTicketNumber = numberResult;
+                }   
                 saveModel();
             } else {
                 uibHelper.dryToast("You must enter a positive number.");
@@ -87,12 +116,12 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
 
     function modelChanged( newValue ) {
         $log.info( "Device model changed, yay!" );
-        $scope.ticketNumber = newValue.ticketNumber;
+        $scope.deviceTicketNumber = newValue.ticketNumber;
     }
 
     function venueModelChanged( newValue ) {
         $log.info( "Venue model changed, yay!" );
-        $scope.ticketNumber = newValue.ticketNumber;
+        $scope.venueTicketNumber = newValue.ticketNumber;
     }
 
     function inboundMessage( msg ) {
@@ -115,9 +144,9 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
         .then(function (data) {
             $log.debug( "ogAPI init complete!" );
             if ( data.venue && data.device.useVenueData ) {
-                $scope.ticketNumber = data.venue.ticketNumber || '??';
+                $scope.deviceTicketNumber = data.venue.ticketNumber || '??';
             } else {
-                $scope.ticketNumber = data.device.ticketNumber;
+                $scope.deviceTicketNumber = data.device.ticketNumber;
             }
         })
         .catch(function (err) {
