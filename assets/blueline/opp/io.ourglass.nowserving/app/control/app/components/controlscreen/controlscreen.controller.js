@@ -54,7 +54,7 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
             $scope.ticketNumber,
             'order number'
         ).then(function (result) {
-            if (_.isNumber(parseInt(result))) {
+            if (_.isFinite(_.parseInt(result))) {
                 $scope.ticketNumber = _.parseInt(result);       
                 saveModel();
             } else {
