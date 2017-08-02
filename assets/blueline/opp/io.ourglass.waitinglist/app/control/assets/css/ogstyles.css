@@ -90,6 +90,10 @@ html, body {
 
 }
 
+.venue-data {
+    color: orange;
+}
+
 a {
     color: #c9dbff;
 }

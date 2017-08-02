@@ -502,7 +502,7 @@ module.exports = {
                     // A+V
                     AppData.findOne( {
                         forAppId:      params.appid,
-                        forVenueId:    device.atVenueUUID,
+                        forVenueUUID:    device.atVenueUUID,
                         forDeviceUDID: 'venue'
                     } ) ];
 

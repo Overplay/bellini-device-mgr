@@ -2,91 +2,98 @@
  * Created by mkahn on 4/28/15.
  */
 
-app.controller("addController", function ($scope, $log, waitList, $state ) {
+app.controller("addController", function ($scope, $log, waitList, $state) {
 
-        $log.info("Loading addController");
-        $scope.addErrors = { name: false, partySize: false, nameExists: false, phone: false}
+    $scope.usingVenueData = waitList.getUsingVenueData;
 
-        function sendTextToParty(party) {
-            // var phone = party.phone;
-            // console.log('Sending text alert to', phone, '...');
-            // // SEND TEXT HERE
-            // // Set to false so doesn't send again but it should never get here but just in case
-            // party.phone = false;
+    $log.info("Loading addController");
+    $scope.addErrors = {
+        name: false,
+        partySize: false,
+        nameExists: false,
+        phone: false
+    }
+
+    function sendTextToParty(party) {
+        // var phone = party.phone;
+        // console.log('Sending text alert to', phone, '...');
+        // // SEND TEXT HERE
+        // // Set to false so doesn't send again but it should never get here but just in case
+        // party.phone = false;
+    }
+
+
+    function checkAndSendTextAlert() {
+        // var currentDate = new Date();
+        // for (var i in ogControllerModel.model.parties) {
+        //     var party = ogControllerModel.model.parties[i];
+        //     if (!party.phone || party.alreadySent) continue;
+        //     if ((currentDate - party.dateCreated) / 1000 / 60 >= WAIT_TIME_BEFORE_SEND) {
+        //         // Send text
+        //         sendTextToParty(party);
+        //     }
+        // }
+        // $timeout(checkAndSendTextAlert, CHECK_INTERVAL);
+    }
+
+
+    function emptyNewParty() {
+        $scope.newParty = {
+            name: '',
+            partySize: undefined,
+            dateCreated: undefined,
+            mobile: undefined,
+            tableReady: false
+        };
+    }
+
+
+    function verifyPhoneNumber(phone) {
+        phone = phone.toString();
+        var phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+        return phoneRegex.test(phone);
+    }
+
+    function formatPhoneNumber(phone) {
+        //phone = phone.toString();
+        var phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+        return !phoneRegex.test(phone) ? null : phone.replace(phoneRegex, "($1) $2-$3");
+    }
+
+    $scope.add = function () {
+
+        if ($scope.newParty.name == "*Demo") {
+            waitList.loadTestData();
+            $state.go('home');
+            return;
         }
 
+        $log.debug("Provided phone number is " + $scope.newParty.mobile);
 
-        function checkAndSendTextAlert() {
-            // var currentDate = new Date();
-            // for (var i in ogControllerModel.model.parties) {
-            //     var party = ogControllerModel.model.parties[i];
-            //     if (!party.phone || party.alreadySent) continue;
-            //     if ((currentDate - party.dateCreated) / 1000 / 60 >= WAIT_TIME_BEFORE_SEND) {
-            //         // Send text
-            //         sendTextToParty(party);
-            //     }
-            // }
-            // $timeout(checkAndSendTextAlert, CHECK_INTERVAL);
-        }
-    
+        if ($scope.newParty.name.trim() && $scope.newParty.partySize > 0) {
 
-        function emptyNewParty() {
-            $scope.newParty = {
-                name: '',
-                partySize: undefined,
-                dateCreated: undefined,
-                mobile: undefined,
-                tableReady: false
-            };
-        }
+            $scope.newParty.mobile = formatPhoneNumber($scope.newParty.mobile);
+            $log.debug("formatted phone number: " + $scope.newParty.mobile);
 
-
-        function verifyPhoneNumber( phone ) {
-            phone = phone.toString();
-            var phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-            return phoneRegex.test( phone );
-        }
-
-        function formatPhoneNumber( phone ) {
-            //phone = phone.toString();
-            var phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-            return !phoneRegex.test( phone ) ? null : phone.replace(phoneRegex, "($1) $2-$3");
-        }
-
-        $scope.add = function () {
-        
-            if ($scope.newParty.name == "*Demo"){
-                waitList.loadTestData();
+            if (waitList.addParty($scope.newParty)) {
+                $log.debug("Party added OK");
                 $state.go('home');
-                return;
-            }
-            
-            $log.debug("Provided phone number is "+$scope.newParty.mobile);
-
-            if ( $scope.newParty.name.trim() && $scope.newParty.partySize > 0 ) {
-
-                $scope.newParty.mobile = formatPhoneNumber( $scope.newParty.mobile );
-                $log.debug("formatted phone number: " + $scope.newParty.mobile );
-
-                if ( waitList.addParty( $scope.newParty )){
-                    $log.debug("Party added OK");
-                    $state.go('home');
-                } else {
-                    $scope.addErrors.nameExists = true;
-                }
-                
             } else {
-                // Fill in all fields
-                if (!$scope.newParty.name.trim()) $scope.addErrors.name = true;
-                if (!$scope.newParty.partySize) $scope.addErrors.partySize = true;
-
+                $scope.addErrors.nameExists = true;
             }
+
+        } else {
+            // Fill in all fields
+            if (!$scope.newParty.name.trim()) $scope.addErrors.name = true;
+            if (!$scope.newParty.partySize) $scope.addErrors.partySize = true;
+
         }
+    }
 
-        emptyNewParty();
- 
+    emptyNewParty();
 
-    });
+
+});
 
 app.directive('phoneInput', function ($filter, $browser) {
     return {
@@ -176,4 +183,3 @@ app.filter('tel', function () {
 
     };
 });
-
