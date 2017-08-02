@@ -91,7 +91,7 @@ app.controller('waitingListController', ['$scope', 'ogAPI', '$log', '$timeout', 
 
 	function handleModelCallback(data) {
 		$scope.usingVenueData = false;
-		if (data.length != ogAPI.model.parties.length) {
+		if (data && data.length != ogAPI.model.parties.length) {
 			ogAPI.model.parties = data.parties;
 		}
 	}
