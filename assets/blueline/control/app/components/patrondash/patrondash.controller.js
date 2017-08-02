@@ -3,12 +3,12 @@
  */
 
 app.controller( "dashboardController",
-    function ( $scope, ogDevice, $log, uibHelper, ogNet, $state, $timeout, ogAPI, permissions ) {
+    function ( $scope, ogDevice, $log, uibHelper, ogNet, $state, $timeout, ogAPI ) {
 
         $log.info( "Loading dashboardController" );
         $scope.availableApps = [];
 
-        $scope.permissions = permissions; //ogAPI.getPermissions();
+        $scope.permissions = ogAPI.getPermissions();
         var _isAdmin = !$scope.permissions || ( $scope.permissions.manager || $scope.permissions.owner );
         $scope.ui = { isPaired: ogDevice.isPairedToSTB, isAdmin: _isAdmin};
 

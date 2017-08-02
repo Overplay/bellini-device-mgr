@@ -6324,3 +6324,60 @@ button.close {
 body.curtain-open {
   overflow: hidden;
 }
+
+.bkg-og-orange {
+  background-color: #F69320;
+}
+
+.bkg-og-blue {
+  background-color: #27B9EC;
+}
+
+.bkg-og-red {
+  background-color: #EF4839;
+}
+
+.bkg-og-green {
+  background-color: #52B85E;
+}
+
+.bkg-og-dark-gray {
+  background-color: #333333;
+}
+
+.bkg-og-medium-gray {
+  background-color: #555555;
+}
+
+.text-og-orange {
+  color: #F69320;
+}
+
+.text-og-blue {
+  color: #27B9EC;
+}
+
+.text-og-red {
+  color: #EF4839;
+}
+
+.text-og-green {
+  color: #52B85E;
+}
+
+.text-og-dark-gray {
+  color: #333333;
+}
+
+.text-og-medium-gray {
+  color: #555555;
+}
+
+/*
+ <color name="OGGREEN">#52B85E</color>
+    <color name="OGDARKGRAY">#333333</color>
+    <color name="OGLIGHTGRAY">#4e4e4e</color>
+    <color name="OGHURRICANE_BLUE">#27B9EC</color>
+    <color name="OGOLDFASH_ORANGE">#F69320</color>
+    <color name="OGVODKACRAN_RED">#EF4839</color>
+ */

@@ -2,22 +2,25 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
 
     console.debug( "Loading routes" );
 
-    $urlRouterProvider.otherwise( '/root/dashboard' );
+    $urlRouterProvider.otherwise( '/dashboard' );
 
     $stateProvider
 
 
-        .state( 'root', {
-            abstract: true,
-            url:      '/root',
-            resolve:  {
-                permissions: function ( ogAPI ) {
-                    return ogAPI.getPermissions();
-                }
-            }
-        })
+        // .state( 'root', {
+        //     abstract: true,
+        //     url:      '/',
+        //     template: '<ui-view></ui-view>',
+        //     resolve:  {
+        //         permissions: function ( ogAPI ) {
+        //             return ogAPI.getPermissions();
+        //         }
+        //     }
+        //
+        //
+        // })
 
-        .state( 'root.dashboard', {
+        .state( 'dashboard', {
             url:         '/dashboard',
             templateUrl: 'app/components/dashboard/dashboard.template.html',
             controller: 'dashboardController',

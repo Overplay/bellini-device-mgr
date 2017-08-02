@@ -343,24 +343,15 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             } );
 
+            function getUserForJwt(){
+                return $http.post( '/user/coreuserfortoken', { jwt: _jwt } )
+                    .then( stripData );
+            }
 
-            /**
-             * Returns _userPermissions variable
-             *
-             * @return {any} _userPermissions
-             */
-            service.getPermissions = function(){
-                return _userPermissions;
-            };
-
-            /**
-             * Gets user
-             * 
-             * @returns {Object} _user
-             */
-            service.getUser = function(){
-                return _user;
-            };
+            function getUsersPermissionsForThisDevice() {
+                return $http.post( '/user/isusermanager', { jwt: _jwt, deviceUDID: _deviceUDID } )
+                    .then( stripData)
+            }
 
             /**
              * Checks user level
@@ -372,18 +363,29 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 if (!_jwt){
                     $log.debug("No jwt, no permissions");
-                    return $q.when();
+                    return $q.when({ manager: false, owner: false });
+                }
+
+                if (_jwt==='oooo'){
+                    $log.debug('Faux owner jwt for testing');
+                    return $q.when( { manager: true, owner: true } );
+                }
+
+                if ( _jwt === 'mmmm' ) {
+                    $log.debug( 'Faux manager jwt for testing' );
+                    return $q.when( { manager: true, owner: false } );
                 }
 
                 return $http.post('/user/coreuserfortoken', { jwt: _jwt })
                     .then( stripData )
                     .then( function(user){
                         _user = user;
-                        return $http.post('/user/isusermanager', { jwt: _jwt, deviceUDID: _deviceUDID });
+                        ;
                     })
                     .then( stripData )
                     .then( function(permissions){
                         _userPermissions = permissions;
+                        _userPermissions.anyManager = permissions.manager || permissions.owner;
                         return permissions;
                     })
                     .catch( function(err){
@@ -601,7 +603,6 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             };
 
-            // TODO: if we were cool kids we might make this an Observable
             /**
              * Sends a message to the socket with the url and wrapped message
              * 
@@ -667,6 +668,39 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return sendSIOMessage( '/venue/dm', message );
             };
 
+            /**
+             * Returns _userPermissions variable
+             *
+             * @return {any} Promise
+             */
+            service.getPermissionsPromise = function () {
+                return getUsersPermissionsForThisDevice();
+            };
+
+            /**
+             * DEPRECATED
+             * @returns {*}
+             */
+            service.getPermissions = function(){
+                return _userPermissions;
+            }
+
+            /**
+             * Gets user
+             *
+             * @returns {Object} Promise
+             */
+            service.getUserPromise = function () {
+                return getUserForJwt();
+            };
+
+            /**
+             * DEPRECATED
+             * @returns {*}
+             */
+            service.getUser = function() {
+                return _user;
+            }
 
             /**
              * Queries the socialscrape result controller for information about social scraping
