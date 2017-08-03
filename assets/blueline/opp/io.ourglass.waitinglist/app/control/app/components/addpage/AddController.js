@@ -63,8 +63,10 @@ app.controller("addController", function ($scope, $log, waitList, $state) {
     $scope.add = function () {
 
         if ($scope.newParty.name == "*Demo") {
-            waitList.loadTestData();
-            $state.go('home');
+            waitList.loadTestData()
+                .then(function(){
+                    $state.go( 'home' );
+                });
             return;
         }
 
@@ -75,12 +77,14 @@ app.controller("addController", function ($scope, $log, waitList, $state) {
             $scope.newParty.mobile = formatPhoneNumber($scope.newParty.mobile);
             $log.debug("formatted phone number: " + $scope.newParty.mobile);
 
-            if (waitList.addParty($scope.newParty)) {
-                $log.debug("Party added OK");
-                $state.go('home');
-            } else {
-                $scope.addErrors.nameExists = true;
-            }
+            waitList.addParty($scope.newParty)
+                .then( function(){
+                    $log.debug( "Party added OK" );
+                    $state.go( 'home' );
+                })
+                .catch( function(err) {
+                    $scope.addErrors.nameExists = true;
+                });
 
         } else {
             // Fill in all fields

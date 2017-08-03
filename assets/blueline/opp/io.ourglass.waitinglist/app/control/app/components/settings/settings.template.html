@@ -1,0 +1,19 @@
+<div class="container">
+
+
+    <div style="display: flex; font-size: 1.5rem; margin-top: 12px;">
+        <div style="flex: 2; text-align: center;" ng-click="toggleSource()">
+            <span class="glyphicon" ng-class="checkIcon('s')"></span><span>&nbsp;&nbsp;USE VENUE WIDE WAITING LIST</span>
+        </div>
+    </div>
+    <br>
+    <p ng-if="isVenueData()">
+        The waiting list controlled by this device is <span class="text-og-orange">shared</span> for the entire venue. Updates made here will show up on <i>all</i> Ourglass devices.
+    </p>
+    <p ng-if="!isVenueData()">
+        The waiting list controlled by this device is <span class="text-og-orange">NOT SHARED</span> for the entire venue. Updates made here will show up <i>ONLY on THIS</i>
+        Ourglass device.
+    </p>
+</div>
+<a class="btn btn-sm btn-default" style="position: fixed; bottom: 0; width: 100%;" ui-sref="home">DONE</a>
+

@@ -2,17 +2,25 @@
  * Created by noah on 6/28/16.
  */
 
-app.config(function($stateProvider, $urlRouterProvider) {
-    $urlRouterProvider.otherwise('/home');
+app.config( function ( $stateProvider, $urlRouterProvider ) {
+    $urlRouterProvider.otherwise( '/home' );
     $stateProvider
-        .state('home', {
-            url: "/home",
+        .state( 'home', {
+            url:         "/home",
             templateUrl: 'app/components/homepage/home.html',
-            controller: 'homeController'
-        })
-        .state('add', {
-            url: "/add",
+            controller:  'homeController',
+            resolve: {
+
+            }
+        } )
+        .state( 'add', {
+            url:         "/add",
             templateUrl: 'app/components/addpage/add.html',
-            controller: 'addController'
-        });
+            controller:  'addController'
+        } )
+        .state( 'settings', {
+            url:         "/settings",
+            templateUrl: 'app/components/settings/settings.template.html',
+            controller:  'settingsController'
+        } );
 });

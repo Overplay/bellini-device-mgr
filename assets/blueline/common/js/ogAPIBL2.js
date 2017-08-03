@@ -1153,6 +1153,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             };
         } )
 
+
         .directive( 'ogFallbackImg', function ( $log ) {
             return {
                 restrict: 'A',

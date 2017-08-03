@@ -9,23 +9,15 @@
 
     </div>
 
-    <div style="display: flex; font-size: 2rem; margin-top: 12px;">
-        <div style="flex: 1;"></div>
-        <div style="flex: 2; text-align: center;" ng-click="swapDataLocation()">
-            <span class="glyphicon" ng-class="venueData?'glyphicon-check':'glyphicon-unchecked'"></span><span>&nbsp;&nbsp;SYNC WITH DEVICES</span>
-        </div>
-        <div style="flex: 1;"></div>
-    </div>
+    <h4>{{ ui.isVenueData ? "VENUE WAITLIST" : "LOCAL WAITLIST" }}</h4>
     <div class="row">
         <div class="col-md-12" style="margin-top: 10px;">
-            <party-cell ng-if="!venueData" ng-repeat="party in deviceParties track by $index" party="party"></party-cell>
-            <party-cell ng-if="venueData" ng-repeat="party in venueParties track by $index" party="party"></party-cell>
+            <party-cell ng-repeat="party in parties track by $index" party="party"></party-cell>
             <!-- <p ng-if="((venueData ? !venueParties : !deviceParties) || (venueData ? !venueParties.length : !deviceParties.length))"  style="text-align: center;">There is currently no waiting list.</p> -->
-            <p ng-if="venueData && (!venueParties || !venueParties.length) &&  !ui.firstLoad"  style="text-align: center;">There is currently no waiting list for the venue.</p>
-            <p ng-if="!venueData && (!deviceParties || !deviceParties.length) && !ui.firstLoad"  style="text-align: center;">There is currently no waiting list for the device.</p>
-            <p ng-if="ui.firstLoad" style="text-align: center;">Checking for updates to list.</p>
-
+            <p ng-if="!parties.length"  style="text-align: center;">There is currently no waiting list.</p>
         </div>
     </div>
 
+
 </div>
+<a class="btn btn-sm btn-default" style="position: fixed; bottom: 0; width: 100vw;" ui-sref="settings"><i class="glyphicon glyphicon-lamp"></i>&nbsp;SETTINGS</a>
