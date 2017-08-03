@@ -409,13 +409,20 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             
             /**
              * I AM THE CAPTAIN OF THIS SHIP AND I WILL
-             * 
+             * https://www.youtube.com/watch?v=dQw4w9WgXcQ
              * @returns {Object} data from the server appModel
              */
-            function getDataForApp() {
-                return $http.get( '/appmodel/' + _appId + '/' + _deviceUDID )
-                    .then( stripData )
-                    .then( stripData ); // conveniently the object goes resp.data.data
+            function getDataForApp(getVenue) {
+                if (getVenue) 
+                {
+                    return $http.get('/appmodel/' + _appId + '/venue')
+                        .then(stripData)
+                        .then(stripData); // conveniently the object goes resp.data.data
+                } else {
+                    return $http.get('/appmodel/' + _appId + '/' + _deviceUDID)
+                        .then(stripData)
+                        .then(stripData); // conveniently the object goes resp.data.data
+                }
             }
 
             /**
@@ -807,9 +814,14 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              * 
              * @returns {Promise}
              */
-            service.loadModel = function () {
-                return getDataForApp()
-                    .then( updateModel );
+            service.loadModel = function (getVenue) {
+                if (getVenue) {
+                    return getDataForApp('venue')
+                           .then(updateModel);
+                } else {
+                    return getDataForApp()
+                           .then(updateModel);
+                }
             };
 
             /**
@@ -1174,6 +1186,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 templateUrl: 'ogdirectives/appheader.html'
             };
         } )
+
 
         .directive( 'ogFallbackImg', function ( $log ) {
             return {

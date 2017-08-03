@@ -26,7 +26,7 @@
     <!--<script src="../../../../common/js/ogAPI2.js"></script>-->
 
     <script src="/js/dependencies/sails.io.js"></script>
-    <script src="../../../../common/js/ogAPIBL.js"></script>
+    <script src="../../../../common/js/ogAPIBL2.js"></script>
 
 
     <!-- Controllers -->
@@ -34,6 +34,8 @@
 
     <script src="app/components/addpage/AddController.js"></script>
     <script src="app/components/homepage/HomeController.js"></script>
+    <script src="app/components/settings/settings.controller.js"></script>
+
     <script src="app/components/partycell/partycell.directive.js"></script>
 
     <!-- App Specific and Overridden CSS -->
@@ -55,6 +57,6 @@
 <!--</div>-->
 <ui-view></ui-view>
 
-
+<og-app-settings to-state="settings"></og-app-settings>
 </body>
 </html>
