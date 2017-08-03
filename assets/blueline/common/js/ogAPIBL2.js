@@ -344,11 +344,27 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             } );
 
             function getUserForJwt(){
+
+                if (!_jwt){
+                    return $q.when({
+                        firstName: 'Petro',
+                        lastName: 'McPatron',
+                        mobilePhone: '408-555-1212'
+                    })
+                }
+
                 return $http.post( '/user/coreuserfortoken', { jwt: _jwt } )
                     .then( stripData );
             }
 
             function getUsersPermissionsForThisDevice() {
+
+                // mostly for testing convenience
+                if (!_jwt){
+                    return $q.when({ owner: false, manager: false, anymanager: false });
+                }
+
+                // Actual call
                 return $http.post( '/user/isusermanager', { jwt: _jwt, deviceUDID: _deviceUDID } )
                     .then( stripData)
             }
@@ -363,34 +379,32 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 if (!_jwt){
                     $log.debug("No jwt, no permissions");
-                    return $q.when({ manager: false, owner: false });
+                    return $q.when({ manager: false, owner: false, anymanager: false });
                 }
 
                 if (_jwt==='oooo'){
                     $log.debug('Faux owner jwt for testing');
-                    return $q.when( { manager: true, owner: true } );
+                    return $q.when( { manager: true, owner: true, anymanager: true } );
                 }
 
                 if ( _jwt === 'mmmm' ) {
                     $log.debug( 'Faux manager jwt for testing' );
-                    return $q.when( { manager: true, owner: false } );
+                    return $q.when( { manager: true, owner: false, anymanager: true } );
                 }
 
-                return $http.post('/user/coreuserfortoken', { jwt: _jwt })
-                    .then( stripData )
+                // TODO
+                return getUserForJwt()
                     .then( function(user){
                         _user = user;
-                        ;
                     })
-                    .then( stripData )
+                    .then( getUsersPermissionsForThisDevice )
                     .then( function(permissions){
                         _userPermissions = permissions;
-                        _userPermissions.anyManager = permissions.manager || permissions.owner;
                         return permissions;
                     })
                     .catch( function(err){
                         $log.error("Problem checking permissions. "+err.message);
-                        return $q.when(); // swallow for now
+                        return $q.when( { manager: false, owner: false, anymanager: false } ); // swallow for now
                     });
             }
 

@@ -212,6 +212,18 @@ app.factory( 'waitList', function ( $log, $http, $timeout, $rootScope, ogAPI, $q
         });
     };
 
+    service.getPermissions = function () {
+        return service.init.then( function () {
+            return ogAPI.getPermissionsPromise();
+        } );
+    };
+
+    service.getUser = function () {
+        return service.init.then( function () {
+            return ogAPI.getUserPromise();
+        } );
+    };
+
     function inboundMessage( msg ) {
         $log.info( "New message: " + msg );
     }

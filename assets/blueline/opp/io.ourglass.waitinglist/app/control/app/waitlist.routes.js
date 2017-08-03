@@ -9,9 +9,11 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             url:         "/home",
             templateUrl: 'app/components/homepage/home.html',
             controller:  'homeController',
-            resolve: {
-
-            }
+            resolve:     {
+                permissions: function ( waitList ) {
+                    return waitList.getPermissions();
+                }
+            },
         } )
         .state( 'add', {
             url:         "/add",
@@ -22,5 +24,15 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             url:         "/settings",
             templateUrl: 'app/components/settings/settings.template.html',
             controller:  'settingsController'
+        } )
+        .state( 'patron', {
+            url:         "/patron",
+            templateUrl: 'app/components/patron/patron.template.html',
+            controller:  'patronController',
+            resolve: {
+                user: function( waitList ){
+                    return waitList.getUser();
+                }
+            }
         } );
-});
+} );
