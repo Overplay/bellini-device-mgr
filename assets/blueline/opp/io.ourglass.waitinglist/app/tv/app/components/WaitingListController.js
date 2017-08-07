@@ -90,17 +90,14 @@ app.controller('waitingListController', ['$scope', 'ogAPI', '$log', '$timeout', 
 	}
 
 	function handleModelCallback(data) {
-		$scope.usingVenueData = false;
-		if (data && data.length != ogAPI.model.parties.length) {
-			ogAPI.model.parties = data.parties;
-		}
+
+		$log.debug("Got a device data update...");
+		$scope.usingVenueData = data.useVenueData;
+
 	}
 
 	function handleVenueModelCallback(data) {
-		$scope.usingVenueData = true;	
-		if (data.length != ogAPI.venueModel.parties.length) {
-			ogAPI.venueModel.parties = data.parties;
-		}
+        $log.debug("Got a venue data callback");
 	}
 
 	function initialize() {

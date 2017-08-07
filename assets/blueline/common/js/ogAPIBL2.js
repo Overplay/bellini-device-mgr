@@ -359,11 +359,21 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             function getUsersPermissionsForThisDevice() {
 
-                // mostly for testing convenience
-                if (!_jwt){
-                    return $q.when({ owner: false, manager: false, anymanager: false });
+                // TODO: Replicated below
+                if ( !_jwt ) {
+                    $log.debug( "No jwt, no permissions" );
+                    return $q.when( { manager: false, owner: false, anymanager: false } );
                 }
 
+                if ( _jwt === 'oooo' ) {
+                    $log.debug( 'Faux owner jwt for testing' );
+                    return $q.when( { manager: true, owner: true, anymanager: true } );
+                }
+
+                if ( _jwt === 'mmmm' ) {
+                    $log.debug( 'Faux manager jwt for testing' );
+                    return $q.when( { manager: true, owner: false, anymanager: true } );
+                }
                 // Actual call
                 return $http.post( '/user/isusermanager', { jwt: _jwt, deviceUDID: _deviceUDID } )
                     .then( stripData)
