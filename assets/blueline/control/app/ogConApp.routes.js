@@ -15,7 +15,7 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             resolve: {
                 permissions: function(ogAPI, ogNet){
                     return ogNet.init().then( function(){
-                        return ogAPI.getPermissions();
+                        return ogAPI.getPermissionsPromise();
                     });
                 },
                 ogDevice: function ( ogNet ) {
