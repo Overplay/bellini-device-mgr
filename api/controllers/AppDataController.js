@@ -496,8 +496,8 @@ module.exports = {
                 var promises = [
                     // A+D
                     AppData.findOne( {
-                        forDeviceUDID: params.deviceUDID,
-                        forAppId:      params.appid
+                        forAppId:      params.appid,
+                        forDeviceUDID: params.deviceUDID
                     } ),
                     // A+V
                     AppData.findOne( {
