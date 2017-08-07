@@ -2,57 +2,110 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
 
     console.debug( "Loading routes" );
 
-    $urlRouterProvider.otherwise( '/root/dashboard' );
+
+    $urlRouterProvider.otherwise( '/top' );
 
     $stateProvider
 
 
-        .state( 'root', {
-            abstract: true,
-            url:      '/root',
-            resolve:  {
-                permissions: function ( ogAPI ) {
-                    return ogAPI.getPermissions();
-                }
-            }
-        })
-
-        .state( 'root.dashboard', {
-            url:         '/dashboard',
-            templateUrl: 'app/components/dashboard/dashboard.template.html',
-            controller: 'dashboardController',
-            resolve:     {
-                 ogDevice: function ( ogNet ) {
-                     return ogNet.init().
-                        then( function(){ return ogNet.getDeviceInfo() });
-                 }
-            }
-
-        } )
-
-        .state( 'guide', {
-            url:         '/guide',
-            templateUrl: 'app/components/guide/guide.template.html',
-            controller:  'guideController',
-            resolve:     {
+        .state( 'top', {
+            url:   '/top',
+            template: '<div ui-view="toptab"></div><div ui-view="appbody"></div>',
+            controller: 'switchController',
+            resolve: {
+                permissions: function(ogAPI, ogNet){
+                    return ogNet.init().then( function(){
+                        return ogAPI.getPermissions();
+                    });
+                },
                 ogDevice: function ( ogNet ) {
-                    return ogNet.getDeviceInfo();
+                    return ogNet.init().then( function () { return ogNet.getDeviceInfo() } );
                 }
             }
 
         } )
 
-        .state( 'settings', {
+        .state( 'top.mdash', {
+            url:         '/mdash',
+            views: {
+                "toptab":  {
+                    templateUrl: 'app/components/toptabbar/toptabbar.template.html',
+                    controller: 'topTabBarController'
+                },
+                "appbody": {
+                    templateUrl: 'app/components/dashboard/managerdashboard.template.html',
+                    controller:  'managerDashboardController'
+                }
+            }
+
+        } )
+
+        .state( 'top.mguide', {
+            url:         '/mguide',
+            views: {
+                "toptab":  {
+                    templateUrl:    'app/components/toptabbar/toptabbar.template.html',
+                    controller:     'topTabBarController'
+                },
+                "appbody": {
+                    templateUrl:    'app/components/guide/guide.template.html',
+                    controller:     'guideController'
+                }
+            },
+
+        } )
+
+        .state( 'top.settings', {
             url:         '/settings',
-            templateUrl: 'app/components/settings/settings.template.html',
-            controller:  'settingsController',
-            resolve:     {
-                ogDevice: function ( ogNet ) {
-                    return ogNet.getDeviceInfo();
+            views: {
+                "toptab":  {
+                    templateUrl: 'app/components/toptabbar/toptabbar.template.html',
+                    controller:  'topTabBarController'
+                },
+                "appbody": {
+                    templateUrl: 'app/components/settings/settings.template.html',
+                    controller:  'settingsController'
                 }
             }
 
         } )
+
+
+        // PATRON IN THE HOUSE
+
+        .state( 'top.pdash', {
+            url:   '/pdash',
+            views: {
+                "toptab":  {
+                    templateUrl: 'app/components/toptabbar/toptabbar.template.html',
+                    controller:  'topTabBarController'
+                },
+                "appbody": {
+                    templateUrl: 'app/components/dashboard/patrondashboard.template.html',
+                    controller:  'patronDashboardController'
+                }
+            }
+
+        } )
+
+        .state( 'top.tv', {
+            url:   '/tv',
+            views: {
+                "toptab":  {
+                    templateUrl: 'app/components/toptabbar/toptabbar.template.html',
+                    controller:  'topTabBarController'
+                },
+                "appbody": {
+                    templateUrl: 'app/components/guide/guide.template.html',
+                    controller:  'guideController'
+                }
+            },
+
+        } )
+
+
+
+
 
         .state( 'register', {
             url:         '/register',
@@ -66,6 +119,5 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
 
         } )
 
-        
 
-});
+} );

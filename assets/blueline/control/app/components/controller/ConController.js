@@ -8,8 +8,6 @@ app.controller("conController",
 
         $log.info("Loading conController");
 
-        $state.go("dashboard");
-
         $scope.deviceUDID = ogAPI.getDeviceUDID();
         $log.debug("UDID is: "+$scope.deviceUDID);
 

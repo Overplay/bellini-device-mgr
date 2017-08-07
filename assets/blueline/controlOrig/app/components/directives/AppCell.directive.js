@@ -15,8 +15,6 @@ app.directive( 'appCell',
 
                 scope.running = attrs.running;
 
-                scope.patron = attrs.patron;
-
                 scope.hasMgrPermission = function(){
 
                     // So this is a little goofy right now. If there are no permissions, then you can see all.

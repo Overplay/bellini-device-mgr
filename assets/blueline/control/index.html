@@ -19,13 +19,15 @@
     <!-- App Main and AngularJS Routes -->
 
     <script src="../common/js/jsmpeg.js"></script>
-    <script src="../common/js/ogAPIBL.js"></script>
+    <script src="../common/js/ogAPIBL2.js"></script>
     <script src="../common/js/uiOGMobile/uiOGMobile.js"></script>
     <script src="app/ogConApp.module.js"></script>
     <script src="app/ogConApp.routes.js"></script>
     <script src="app/shared/ognet.service.js"></script>
 
     <script src="app/components/controller/ConController.js"></script>
+    <script src="app/components/switch/switch.controller.js"></script>
+    <script src="app/components/toptabbar/toptabbar.controller.js"></script>
     <script src="app/components/dashboard/dashboard.controller.js"></script>
     <script src="app/components/guide/guide.controller.js"></script>
     <script src="app/components/settings/settings.controller.js"></script>
@@ -42,9 +44,23 @@
     <link href="../common/bower_components/angular-toastr/dist/angular-toastr.css"/>
 
     <style>
+        .og-bottom-banner {
+            width: 100%;
+            padding: 5px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            z-index: 1000;
+        }
+
         .og-tab-bar{
             /*border: 1px solid #a0a0a0;*/
             width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            background-color: rgba(0,0,0, 0.25);
+
         }
         .og-tab-bar .btn {
 
@@ -64,6 +80,27 @@
             overflow-y: scroll;
         }
 
+        .appholder {
+            position: relative;
+            top: 35px;
+            /*border: 1px solid white;*/
+            width: 100vw;
+        }
+
+        [ui-view].ng-enter {
+            opacity: 0;
+            -webkit-transition: all 0.5s;
+            -moz-transition: all 0.5s;
+            -ms-transition: all 0.5s;
+            -o-transition: all 0.5s;
+            transition: all 0.5s;
+
+        }
+
+        [ui-view].ng-enter-active {
+            opacity: 1;
+        }
+
     </style>
     <title>OGTV Control</title>
 </head>
@@ -75,22 +112,10 @@
 </div>
 
 
-<div class="og-tab-bar">
-    <a class="btn btn-default" style="background-color: #52B85E;" ui-sref="dashboard" ui-sref-active="tabon">APPS</a>
-    <a class="btn btn-default" ui-sref="guide" ui-sref-active="tabon">TV</a>
-    <a class="btn btn-default" ui-sref="settings" ui-sref-active="tabon">SETTINGS</a>
+<div class="appholder">
+    <ui-view></ui-view>
 </div>
 
-<ui-view></ui-view>
 
-<!--<div class="ogaudio"-->
-     <!--data-autoplay="true"-->
-     <!--data-audio="true"-->
-     <!--data-video="false"-->
-     <!--data-max-audio-lag="0.95"-->
-     <!--data-volume="1"-->
-     <!--data-url="wss://cloud-listen.ourglass.tv/"-->
-     <!--data-protocol="{{ deviceUDID }}"-->
-     <!--&gt;-->
 </body>
 </html>

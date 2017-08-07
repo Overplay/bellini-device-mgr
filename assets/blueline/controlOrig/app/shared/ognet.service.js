@@ -1,4 +1,4 @@
-app.factory('ogNet', function($log, $http, $q, ogAPI, $rootScope){
+app.factory('ogNet', function($log, $http, $q, ogAPI){
 
     var service = {};
 
@@ -65,21 +65,10 @@ app.factory('ogNet', function($log, $http, $q, ogAPI, $rootScope){
             return resp
         });
 
-    initter.then( function(models){
-        $log.debug('Init really complete');
-    });
 
     service.init = function(){
         return initter
     };
-
-    service.isMasqueradingAsPatron = false;
-
-    service.toggleMasquerade = function(){
-        service.isMasqueradingAsPatron = !service.isMasqueradingAsPatron;
-        $rootScope.$broadcast('MASQUERADE_MODE_CHANGE', { isMasquerading: service.isMasqueradingAsPatron });
-        return service.isMasqueradingAsPatron;
-    }
 
     return service;
 
