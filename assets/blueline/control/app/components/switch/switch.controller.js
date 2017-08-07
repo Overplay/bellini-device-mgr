@@ -7,7 +7,7 @@ app.controller('switchController', function($scope, permissions, $log, $state, o
     $log.debug('loaded switchController');
     $scope.permissions = permissions;
 
-    if (permissions.anyManager && !ogNet.isMasqueradingAsPatron){
+    if (permissions.anymanager && !ogNet.isMasqueradingAsPatron){
         $state.go('top.mdash');
     } else {
         $state.go('top.pdash');

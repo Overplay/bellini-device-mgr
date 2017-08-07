@@ -7,7 +7,7 @@
                 </button>
             </div>
             <h4 class="text-og-green">APPS</h4>
-            <p class="no-apps" ng-show="!controllableApps.length">There are no interactive apps currently running, fucker.</p>
+            <p class="no-apps" ng-show="!controllableApps.length">There are no interactive apps currently running.</p>
             <app-cell ng-repeat="app in controllableApps | orderBy: 'displayName' track by $index" app="app" running="true"
                       permissions="permissions" patron="true"></app-cell>
         </div>
