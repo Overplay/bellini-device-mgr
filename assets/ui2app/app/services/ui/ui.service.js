@@ -20,7 +20,7 @@ app.factory( 'navService', function ( $rootScope, userAuthService ) {
         deviceMenu:  [
             { label: "All Active", sref: "devices.allactive", icon: "tv" },
             { label: "All By Venue", sref: "devices.byvenue", icon: "building" },
-            { label: "In Bullpen", sref: "devices.bullpen", icon: "child" },
+            { label: "In Bullpen", sref: "devices.bullpen", icon: "child" }
         ],
         venueMenu:   [
             { label: "All Venues", sref: "venues.all", icon: "building" }
