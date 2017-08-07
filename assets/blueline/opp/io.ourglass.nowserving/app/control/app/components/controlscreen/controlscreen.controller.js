@@ -12,14 +12,14 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
 
     function saveModel() {
 
-        ogAPI.model = { ticketNumber: $scope.deviceTicketNumber };
-        ogAPI.venueModel = { ticketNumber: $scope.venueTicketNumber };
+        ogAPI.model = { ticketNumber: $scope.deviceTicketNumber, usingVenueData: $scope.usingVenueData };
+        ogAPI.venueModel = { ticketNumber: $scope.venueTicketNumber, usingVenueData: $scope.usingVenueData };
         
-        if ($scope.usingVenueData) {
+        // if ($scope.usingVenueData) {
             savePromiseThen(ogAPI.saveVenueModel());
-        } else {
+        // } else {
             savePromiseThen(ogAPI.saveDeviceModel());
-        }
+        // }
 
     }
 
@@ -142,16 +142,22 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
             deviceUDID: 'apple-sim-1'
         })
         .then(function (data) {
+            
+            $scope.deviceTicketNumber = data.device.ticketNumber;
+            $scope.venueTicketNumber = data.venue.ticketNumber;
+            $scope.usingVenueData = data.device.usingVenueData;
+
             $log.debug( "ogAPI init complete!" );
-            if ( data.venue && data.device.useVenueData ) {
-                $scope.deviceTicketNumber = data.venue.ticketNumber || '??';
-            } else {
-                $scope.deviceTicketNumber = data.device.ticketNumber;
-            }
+            // if ( data.venue && data.device.useVenueData ) {
+            //     $scope.deviceTicketNumber = data.venue.ticketNumber || '??';
+            // } else {
+            //     $scope.deviceTicketNumber = data.device.ticketNumber;
+            // }
         })
         .catch(function (err) {
             $log.error("Something failed: " + err);
         });
+        
 
     }
 
