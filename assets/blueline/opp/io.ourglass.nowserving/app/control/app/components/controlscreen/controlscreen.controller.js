@@ -143,9 +143,9 @@ app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelpe
         })
         .then(function (data) {
             
-            $scope.deviceTicketNumber = data.device.ticketNumber;
-            $scope.venueTicketNumber = data.venue.ticketNumber;
-            $scope.usingVenueData = data.device.usingVenueData;
+            $scope.deviceTicketNumber = data.device ? data.device.ticketNumber   : 0;
+            $scope.venueTicketNumber  = data.venue  ? data.venue.ticketNumber    : 0;
+            $scope.usingVenueData     = data.device ? data.device.usingVenueData : false;
 
             $log.debug( "ogAPI init complete!" );
             // if ( data.venue && data.device.useVenueData ) {
