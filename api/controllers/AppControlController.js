@@ -1,5 +1,5 @@
 /**
- * Created by mkahn on 6/10/17.
+ * Created by mkahn on 6/10/17. *
  */
 
 var Promise = require('bluebird');
