@@ -1,4 +1,4 @@
-app.factory('nowServing', function ($log, ogAPI, uibHelper, $timeout) {
+app.factory('nowServing', function ($log, ogAPI, uibHelper, $timeout, $rootScope) {
 	var service = {};
 
 	$log.debug("loaded nowServing");
@@ -16,6 +16,8 @@ app.factory('nowServing', function ($log, ogAPI, uibHelper, $timeout) {
 		// } else {
 		savePromiseThen(ogAPI.saveDeviceModel());
 		// }
+
+		$rootScope.$broadcast('DATA_CHANGED', {device: ogAPI.model, venue: ogAPI.venueModel});
 	}
 
 	function savePromiseThen(savePromise) {
@@ -101,6 +103,7 @@ app.factory('nowServing', function ($log, ogAPI, uibHelper, $timeout) {
 	service.swapDataLocation = function () {
 		$log.debug("Using venue data:", service.usingVenueData);
 		service.usingVenueData = !service.usingVenueData;
+		$rootScope.$broadcast('DATA_LOC_CHANGED', service.usingVenueData);		
 		saveModel();
 	};
 
@@ -141,6 +144,12 @@ app.factory('nowServing', function ($log, ogAPI, uibHelper, $timeout) {
 				service.deviceTicketNumber = data.device ? data.device.ticketNumber : 0;
 				service.venueTicketNumber = data.venue ? data.venue.ticketNumber : 0;
 				service.usingVenueData = data.device ? data.device.usingVenueData : false;
+
+				$rootScope.$broadcast('DATA_LOADED', {
+						deviceTicketNumber: service.deviceTicketNumber,
+						venueTicketNumber: service.venueTicketNumber,
+						usingVenueData: service.usingVenueData
+					});
 
 				$log.debug("ogAPI init complete!");
 				// if ( data.venue && data.device.useVenueData ) {
