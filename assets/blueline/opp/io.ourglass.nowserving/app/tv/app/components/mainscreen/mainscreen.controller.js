@@ -42,7 +42,7 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI ) {
         .then(function (data) {
             $log.debug("ogAPI init complete!");
             if (data.venue && data.device.usingVenueData) {
-                $scope.ticketNumber = data.venue.ticketNumber || '??';
+                $scope.ticketNumber = _.isFinite(data.venue.ticketNumber) ? data.venue.ticketNumber : '??';
             } else {
                 $scope.ticketNumber = data.device.ticketNumber;
             }
