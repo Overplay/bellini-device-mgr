@@ -1,0 +1,8 @@
+<div class="row">
+	<button ng-if="!isVenueData()" class="btn btn-success btn-lg ticket-button" ng-click="toggleSource()">USE VENUE DATA</button>
+	<button ng-if="isVenueData()" class="btn btn-success btn-lg ticket-button" ng-click="toggleSource()">USE DEVICE DATA</button>
+</div>
+
+<div class="row">
+	<button class="btn btn-danger btn-lg ticket-button" ng-click="cancel()">CANCEL</button>	
+</div>

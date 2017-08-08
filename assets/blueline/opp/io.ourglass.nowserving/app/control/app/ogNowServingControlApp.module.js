@@ -3,5 +3,5 @@
  */
 
 var app = angular.module( "ogNowServingControlApp", [
-    'ui.bootstrap', 'ourglassAPI', 'ui.ogMobile'
+    'ui.bootstrap', 'ourglassAPI', 'ui.ogMobile', 'ui.router'
 ] );

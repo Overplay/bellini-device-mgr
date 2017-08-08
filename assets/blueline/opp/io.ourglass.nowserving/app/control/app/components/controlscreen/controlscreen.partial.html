@@ -1,0 +1,24 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="ticket-number" ng-class="{'venue-data': usingVenueData}">{{ usingVenueData ? venueTicketNumber : deviceTicketNumber }}</div>
+	</div>
+
+	<div class="row">
+		<button class="btn btn-primary btn-lg ticket-button" ng-click="incrementTicket()">NEXT TICKET</button>
+	</div>
+
+	<div class="row">
+		<button class="btn btn-danger btn-lg ticket-button" ng-click="clear()">RESET TO ZERO</button>
+	</div>
+
+	<div class="row">
+		<button class="btn btn-warning btn-lg ticket-button" ng-click="setTicket()">INPUT TICKET #</button>
+	</div>
+
+
+
+	<!-- <div class="row">
+                    <button class="btn btn-warning btn-lg ticket-button" ng-click="curtainDebug()">CURTAIN DEBUG BUTTON</button>
+				</div> -->
+				
+</div>

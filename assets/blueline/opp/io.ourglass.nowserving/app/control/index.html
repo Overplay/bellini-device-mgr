@@ -9,20 +9,22 @@
         <script src="../../../../common/bower_components/angular/angular.min.js"></script>
         <script src="../../../../common/bower_components/lodash/dist/lodash.min.js"></script>
         <script src="../../../../common/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+        <script src="../../../../common/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
 
         <script src="/js/dependencies/sails.io.js"></script>
 
 
         <!-- App Main and AngularJS Routes -->
         <script src="app/ogNowServingControlApp.module.js"></script>
+        <script src="app/ogNowServingControlApp.routes.js"></script>
+        <script src="app/ogNowServingControlApp.service.js"></script>
         <script src="../../../../common/js/ogAPIBL2.js"></script>
         <script src="../../../../common/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
         <script src="../../../../common/js/uiOGMobile/uiOGMobile.js"></script>
 
-
-
         <!-- Controllers -->
         <script src="app/components/controlscreen/controlscreen.controller.js"></script>
+        <script src="app/components/settings/settings.controller.js"></script>
 
         <!-- App Specific and Overridden CSS -->
         <link href="../../../../common/css/og.css" rel="stylesheet">
@@ -49,6 +51,7 @@
                 font-family: POPREG, monospace;
                 width: 100%;
                 height: 100%;
+                overflow: hidden;
             }
             .ticket-number {
                 font-size: 50vw;
@@ -76,35 +79,9 @@
         </style>
     </head>
 
-    <body ng-controller="ogNowServingController">
+    <body>
         <og-app-header name="Now Serving"></og-app-header>
-
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="ticket-number" ng-class="{'venue-data': usingVenueData}">{{ usingVenueData ? venueTicketNumber : deviceTicketNumber }}</div>
-                </div>
-
-                <div class="row">
-                    <button class="btn btn-primary btn-lg ticket-button" ng-click="incrementTicket()">NEXT TICKET</button>
-                </div>
-
-                <div class="row">
-                    <button class="btn btn-danger btn-lg ticket-button" ng-click="clear()">RESET TO ZERO</button>
-                </div>
-                
-                <div class="row">
-                    <button class="btn btn-warning btn-lg ticket-button" ng-click="setTicket()">INPUT TICKET #</button>
-                </div>
-
-                <div class="row">
-                    <button ng-if="!usingVenueData" class="btn btn-success btn-lg ticket-button" ng-click="swapDataLocation()">USE VENUE DATA</button>
-                    <button ng-if="usingVenueData" class="btn btn-success btn-lg ticket-button" ng-click="swapDataLocation()">USE DEVICE DATA</button>
-                </div>
-
-                <!-- <div class="row">
-                    <button class="btn btn-warning btn-lg ticket-button" ng-click="curtainDebug()">CURTAIN DEBUG BUTTON</button>
-                </div> -->
-            </div>
-
+        <ui-view></ui-view>
+        <a class="btn btn-sm btn-default" style="position: absolute; bottom: 0; width: 100vw;" ui-sref="settings"><i class="glyphicon glyphicon-lamp"></i>&nbsp;SETTINGS</a>
     </body>
 </html>
