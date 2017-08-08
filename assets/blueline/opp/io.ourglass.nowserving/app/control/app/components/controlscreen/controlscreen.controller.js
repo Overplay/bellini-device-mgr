@@ -2,19 +2,25 @@
  * Created by mkahn on 11/18/16.
  */
 
-app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelper, $timeout, nowServing) {
+app.controller("homeController", function ($scope, $log, ogAPI, uibHelper, nowServing) {
 
-    $log.debug("loaded ogNowServingController");
+    $log.debug("loaded homeController");
 
+
+    //Value Pull (Doesn't sync on remote change)
     $scope.deviceTicketNumber = nowServing.deviceTicketNumber || "---";
     $scope.venueTicketNumber = nowServing.venueTicketNumber || "---";
     $scope.usingVenueData = nowServing.usingVenueData;
 
+
+    //Function Bind-Through
     $scope.clear = nowServing.clear;
     $scope.incrementTicket = nowServing.incrementTicket;
     $scope.setTicket = nowServing.setTicket;
     $scope.swapDataLocation = nowServing.swapDataLocation;
 
+
+    //Syncs values from nowServing when they change
     $scope.$on('DATA_CHANGED', function (event, {device, venue}) {
         $scope.deviceTicketNumber = device.ticketNumber;
         $scope.venueTicketNumber = venue.ticketNumber;        

@@ -4,7 +4,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 		.state('home', {
 			url: "/home",
 			templateUrl: 'app/components/controlscreen/controlscreen.partial.html',
-			controller: 'ogNowServingController'
+			controller: 'homeController'
 		})
 		.state('settings', {
 			url: "/settings",
