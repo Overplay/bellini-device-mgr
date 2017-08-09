@@ -13,7 +13,7 @@
 * Players model keeps track of white cards, score, and black cards earned
 
 * Should be resiliant to temporary lapses in internet connectivity. This could arguably be accomplished by allowing a round or two of no response mentioned above.
-* Should be visually pleasing
+* Should be visually pleasing, according to company style
 
 #### Suggested Directives
 
