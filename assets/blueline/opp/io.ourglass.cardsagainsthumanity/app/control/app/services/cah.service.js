@@ -72,7 +72,9 @@ app.factory('cah', function () {
 	};
 
 	service.availableCards = _.clone(service.allCards);
-	service.playingCards = []; //One of these will look like {id: 0, text: "123", submittedBy: {name: 'Logan', id: 0}}
+	shuffle(service.availableCards.white);
+	shuffle(service.availableCards.black);
+	service.roundPlayingCards = []; //One of these will look like {id: 0, text: "123", submittedBy: {name: 'Logan', id: 0}}
 	service.discard = []; //This will just be {id: 0, text: 'someText'}
 	service.players = []; //A player will look like        { id: 0, cards: {white: [], black: []}, name: "Logan" }
 
@@ -91,9 +93,9 @@ app.factory('cah', function () {
 
 	service.submitCard = function submitCard({ id, text }, { player }) {
 		
-		if (_.findIndex(playingCards, function (card) { return card.id == id; }) < 0) return;
+		if (_.findIndex(service.roundPlayingCards, function (card) { return card.id == id; }) < 0) return;
 
-		service.playingCards.push({
+		service.roundPlayingCards.push({
 			id: id,
 			text: text,
 			submittedBy: {
@@ -102,18 +104,18 @@ app.factory('cah', function () {
 			}
 		});
 
-		$rootScope.$broadcast('PLAYING_CARDS_CHANGED', service.playingCards)
+		$rootScope.$broadcast('PLAYING_CARDS_CHANGED', service.roundPlayingCards);
 
 	};
 
 	service.discardCards = function discardCards() {
-		for (var i = 0; i < service.playingCards.length; i++) {
-			var card = service.playingCards[i];
+		for (var i = 0; i < service.roundPlayingCards.length; i++) {
+			var card = service.roundPlayingCards[i];
 			service.discard.push({ id: card.id, text: card.text });
 		}
-		service.playingCards = [];
+		service.roundPlayingCards = [];
 
-		$rootScope.$broadcast('PLAYING_CARDS_CHANGED', service.playingCards);
+		$rootScope.$broadcast('PLAYING_CARDS_CHANGED', service.roundPlayingCards);
 	};
 
 	service.assignCards = function assignCards() {
@@ -130,14 +132,18 @@ app.factory('cah', function () {
 
 	service.getCard = function getCard() {
 		if (service.availableCards.length <= 0) service.reshuffle();
-	}
+		$rootScope.$broadcast('AVAIL_CARDS_CHANGED')
+		return service.availableCards.shift();
+	};
 
 	service.reshuffle = function reshuffle() {
 		if (service.discard.length <= 0) {
 			throw Error("No cards to reshuffle!");
 		}
 
-		for (var i = 0; i < service.discard.length; i++) { 
+		shuffle(service.availableCards);
+
+		for (var i = 0; i < service.discard.length; i++) {
 
 			service.availableCards.push(service.discard[0]);
 
@@ -146,7 +152,32 @@ app.factory('cah', function () {
 		service.discard = [];
 		//As of right now, I don't think we need to tell the client we put cards from default to available.
 		
+	};
+
+
+
+
+	//Fisher-Yates (or Knuth) Shuffle, taken from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+	function shuffle(array) {
+		var currentIndex = array.length, temporaryValue, randomIndex;
+
+		// While there remain elements to shuffle...
+		while (0 !== currentIndex) {
+
+			// Pick a remaining element...
+			randomIndex = Math.floor(Math.random() * currentIndex);
+			currentIndex -= 1;
+
+			// And swap it with the current element.
+			temporaryValue = array[currentIndex];
+			array[currentIndex] = array[randomIndex];
+			array[randomIndex] = temporaryValue;
+		}
+
+		return array; //This returns because it is convenient but the shuffle happens in place so shuffle(array) is sufficient
 	}
+
+
 
 
 
