@@ -196,6 +196,17 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             })
         } )
 
+        .state( 'devices.releaseslist', {
+            url:         '/releaseslist',
+            templateUrl: '/ui2app/app/components/ogdevices/ogdevicereleaseslist.partial.html',
+            controller:  'listOGReleasesController',
+            resolve:     withUserResolve({
+                releases: function ( sailsOGAndroidRelease ) {
+                    return sailsOGAndroidRelease.getAll();
+                }
+            })
+        } )
+
         .state( 'venues', {
             abstract: true,
             url:      '/venues',

@@ -107,4 +107,4 @@ app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel, $q ) {
         get:    get
     }
 
-} )
+} );

@@ -5,6 +5,12 @@
  *
  */
 
+app.controller( 'listOGReleasesController', function ( $scope, $log, releases ) {
+
+    $log.debug( "Loading listOGReleasesController" );
+    $scope.releases = releases;
+
+} );
 
 app.controller( 'listOGDeviceController', function ( $scope, $log, ogdevices ) {
 
