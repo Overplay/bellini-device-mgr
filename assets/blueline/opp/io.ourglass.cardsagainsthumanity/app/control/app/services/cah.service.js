@@ -1,9 +1,7 @@
-app.factory('cah', function () {
+app.factory('cah', function ($rootScope, $log, ogAPI) {
 	var service = {};
 
 	var NUM_CARDS = 4;
-
-	service.players = {};
 
 	service.allCards = {
 
@@ -53,25 +51,29 @@ app.factory('cah', function () {
 		black: [
 			{
 				text: "_____ has the biggest nose in the game.",
+				cardsRequired: 1,
 				id: 0
 			},
 			{
 				text: "_____ is about as friendly as they come.",
+				cardsRequired: 1,
 				id: 1
 			},
 			{
 				text: "_____ will get the job done.",
+				cardsRequired: 1,
 				id: 2
 			}, 
 			{
 				text: "_____ will ridicule you until you cry.",
+				cardsRequired: 1,
 				id: 3
 			}
 		]
 
 	};
 
-	service.availableCards = _.clone(service.allCards);
+	service.availableCards = _.cloneDeep(service.allCards);
 	shuffle(service.availableCards.white);
 	shuffle(service.availableCards.black);
 	service.roundPlayingCards = []; //One of these will look like {id: 0, text: "123", submittedBy: {name: 'Logan', id: 0}}
@@ -154,6 +156,46 @@ app.factory('cah', function () {
 		
 	};
 
+	service.getPlayerById = function getPlayerById(id) {
+
+		return _.find(service.players, function (player) { return player.id == id });
+	
+	}
+
+	service.addPlayer = function addPlayer(name) {
+		var player = {
+			id: service.players.length,
+			cards: {
+				white: [],
+				black: []
+			},
+			name: name
+		}
+
+		service.players.push(player);
+
+		$rootScope.$broadcast('PLAYER_CHANGED', player);
+		$rootScope.$broadcast('PLAYERS_CHANGED', service.players)
+	}
+
+	service.addBlackCardToPlayerById = function addBlackCardToPlayerById(id, card) {
+
+		if (!card.cardsRequired) {
+			$log.error("Cannot add white cards to black card field.");
+			return;
+		}
+
+		var player = service.getPlayerById(id);
+
+		if (!player) {
+			throw Error("No player with id: " + id);
+		}
+
+		player.cards.black.push(id, card)
+
+		$rootScope.$broadcast('PLAYER_CHANGED', player);
+
+	}
 
 
 
@@ -177,6 +219,66 @@ app.factory('cah', function () {
 		return array; //This returns because it is convenient but the shuffle happens in place so shuffle(array) is sufficient
 	}
 
+
+	function modelChanged(newValue) {
+		$log.info("Device model changed, yay!");
+
+
+
+	}
+	function inboundMessage(msg) {
+		$log.info("New message: " + msg);
+		$scope.ogsystem = msg;
+	}
+
+	function initialize() {
+
+		$log.debug("initializing app and data");
+
+		ogAPI.init({
+			appName: "io.ourglass.cardsagainsthumanity",
+			deviceModelCallback: modelChanged,
+			messageCallback: inboundMessage,
+			appType: 'mobile',
+			deviceUDID: 'apple-sim-1'
+		})
+			.then(function (data) {
+
+				data = data.device;
+
+				service.discard = data.discard ? data.discard : [];
+				service.players = data.players ? data.players : [];
+				service.roundPlayingCards = data.roundPlayingCards ? data.roundPlayingCards : [];
+				service.availableCards = data.availableCards ? data.availableCards : _.clone(service.allCards); 
+				shuffle(service.availableCards);
+
+			})
+			.catch(function (err) {
+				$log.error("Something failed: " + err);
+			});
+
+	}
+
+	function saveModel() {
+
+		ogAPI.model = {
+			discard: service.discard, //Needed to prevent reshuffle inconsistencies
+			players: service.players, //Needed to sync scores and taken out cards
+			roundPlayingCards: service.roundPlayingCards, //Needed for the judge to judge
+			availableCards: service.availableCards //Needed so somebody doesn't pull a card someone else has
+		};
+
+		ogAPI.save()
+			.then(function (response) {
+				$log.debug("Save was cool");
+			})
+			.catch(function (err) {
+				$log.error("WTF?!?!?");
+			});
+	}
+
+
+	initialize();
 
 
 

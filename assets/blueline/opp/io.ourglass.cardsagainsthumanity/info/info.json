@@ -3,10 +3,10 @@
 	"displayName": "Cards Against Humanity",
 	"icon": "testapp.png",
 	"defaultModel": {
-		"start": {},
-		"picking": {},
-		"players": {},
-		"end": {}
+		"discard": [],
+		"players": [],
+		"roundPlayingCards": [],
+		"availableCards": []
 	},
 	"appType": "widget",
 	"appWidth": 10,
