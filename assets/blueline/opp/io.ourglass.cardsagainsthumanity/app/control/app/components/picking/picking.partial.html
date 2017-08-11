@@ -1,0 +1,16 @@
+<div ng-if="amJudge()">
+
+	<div>Players: {{players.length}}</div>
+	<br>
+	<div>Submitted Cards: {{roundPlayingCards.length}}</div>
+	<br>
+	<button class="btn btn-danger" ng-click="endPick()">End Picking Phase</button>
+
+</div>
+
+<div ng-if="!amJudge()">
+
+	<div>Your Judge: {{findJudge()}}</div>
+	<br>
+	<card ng-repeat="card in player.cards.white" text="card.text" id="card.id" ng-click="confirmCardChoice(card)"></card>
+</div>

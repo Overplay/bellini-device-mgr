@@ -1,7 +1,7 @@
 app.factory('cah', function ($rootScope, $log, ogAPI) {
 	var service = {};
 
-	var NUM_CARDS = 4;
+	var NUM_CARDS = 2;
 
 	service.allCards = {
 
@@ -80,6 +80,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 	service.roundPlayingCards = []; //One of these will look like {id: 0, text: "123", submittedBy: {name: 'Logan', id: 0}}
 	service.discard = []; //This will just be {id: 0, text: 'someText'}
 	service.players = []; //A player will look like        { id: 0, cards: {white: [], black: []}, name: "Logan" }
+	service.player = {};
 
 	service.getPlayerScoreForId = function getPlayerScoreForId(id) {
 
@@ -107,7 +108,10 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 			}
 		});
 
-		$rootScope.$broadcast('PLAYING_CARDS_CHANGED', service.roundPlayingCards);
+		saveModel();
+		modelChangedBroadcast();
+		
+
 
 	};
 
@@ -118,7 +122,9 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 		}
 		service.roundPlayingCards = [];
 
-		$rootScope.$broadcast('PLAYING_CARDS_CHANGED', service.roundPlayingCards);
+		saveModel();
+		modelChangedBroadcast();
+		
 	};
 
 	service.assignCards = function assignCards() {
@@ -128,17 +134,17 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 		}
 
 		for (var i = 0; i < service.players.length * NUM_CARDS; i++) {
-			service.players[i % service.players.length].white.push(service.getCard());
+			service.players[i % service.players.length].cards.white.push(service.getCard());
 		}
 
-		$rootScope.$broadcast('PLAYING_CARDS_CHANGED', service.roundPlayingCards);		
+		modelChangedBroadcast();
 
 	};
 
 	service.getCard = function getCard() {
 		if (service.availableCards.white.length <= 0) service.reshuffle();
-		$rootScope.$broadcast('AVAIL_CARDS_CHANGED');
-		return service.availableCards.shift();
+		modelChangedBroadcast();
+		return service.availableCards.white.shift();
 	};
 
 	service.reshuffle = function reshuffle() {
@@ -162,7 +168,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 
 	service.getPlayerById = function getPlayerById(id) {
 
-		return _.find(service.players, function (player) { return player.id == id });
+		return _.find(service.players, function (player) { return player.id == id; });
 	
 	};
 
@@ -187,11 +193,21 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 
 		service.players.push(player);
 
-		$rootScope.$broadcast('PLAYER_CHANGED', player);
-		$rootScope.$broadcast('PLAYERS_CHANGED', service.players);
-
+		service.player = player;
+		modelChangedBroadcast();
 		saveModel();
 	};
+
+	function modelChangedBroadcast() {
+		$rootScope.$broadcast('MODEL_CHANGED', {
+			discard: service.discard, //Needed to prevent reshuffle inconsistencies
+			players: service.players, //Needed to sync scores and taken out cards
+			roundPlayingCards: service.roundPlayingCards, //Needed for the judge to judge
+			availableCards: service.availableCards, //Needed so somebody doesn't pull a card someone else has
+			gameInProgress: service.gameInProgress,
+			judgeIndex: service.judgeIndex
+		});
+	}
 
 	service.addBlackCardToPlayerById = function addBlackCardToPlayerById(id, card) {
 
@@ -208,15 +224,15 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 
 		player.cards.black.push(id, card);
 
-		$rootScope.$broadcast('PLAYER_CHANGED', player);
+		modelChangedBroadcast();
 
 	};
 
 	service.startGame = function startGame() {
 
-		$rootScope.$broadcast('GAME_START');
 		service.assignCards();
 		service.gameInProgress = true;
+		modelChangedBroadcast();
 		saveModel();
 
 	};
@@ -230,6 +246,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 		service.players = newValue.players ? newValue.players : [];
 		service.roundPlayingCards = newValue.roundPlayingCards ? newValue.roundPlayingCards : [];
 		service.availableCards = newValue.availableCards ? newValue.availableCards : _.cloneDeep(service.allCards);
+		service.judgeIndex = newValue.judgeIndex ? newValue.judgeIndex : 0;
 
 		if (!service.gameInProgress && newValue.gameInProgress) { 
 			$rootScope.$broadcast('GAME_START'); //Game wasn't in progress but now is so broadcast start
@@ -237,9 +254,8 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 
 		service.gameInProgress = newValue.gameInProgress ? newValue.gameInProgress : false;
 
-		$rootScope.$broadcast('PLAYERS_CHANGED', service.players);
-		$rootScope.$broadcast('AVAIL_CARDS_CHANGED');
-		$rootScope.$broadcast('PLAYING_CARDS_CHANGED', service.roundPlayingCards);		
+		modelChangedBroadcast();
+
 
 
 
@@ -273,10 +289,9 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 			_.shuffle(service.availableCards.white);
 			_.shuffle(service.availableCards.black);
 			service.gameInProgress = data.gameInProgress ? data.gameInProgress : false;
+			service.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
 
-			$rootScope.$broadcast('PLAYERS_CHANGED', service.players);
-			$rootScope.$broadcast('AVAIL_CARDS_CHANGED');
-			$rootScope.$broadcast('PLAYING_CARDS_CHANGED', service.roundPlayingCards);	
+			modelChangedBroadcast();
 
 		})
 		.catch(function (err) {
@@ -292,7 +307,8 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 			players: service.players, //Needed to sync scores and taken out cards
 			roundPlayingCards: service.roundPlayingCards, //Needed for the judge to judge
 			availableCards: service.availableCards, //Needed so somebody doesn't pull a card someone else has
-			gameInProgress: service.gameInProgress
+			gameInProgress: service.gameInProgress,
+			judgeIndex: service.judgeIndex
 		};
 
 		ogAPI.save()
@@ -305,15 +321,6 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 		
 	}
 
-	function loadModel() {
-		ogAPI.loadModel()
-			.then(function (response) {
-				
-			}).catch(function (err) {
-				$log.error("Issue loading data from database.");
-			})
-	}
-
 
 	initialize();
 
@@ -321,7 +328,8 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 
 		service.discard = [];
 		service.players = [];
-		service.roundPlayingCards =  [];
+		service.roundPlayingCards = [];
+		service.judgeIndex = 0;
 		service.availableCards = _.cloneDeep(service.allCards);
 		_.shuffle(service.availableCards.white);
 		service.gameInProgress = false;

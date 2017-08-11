@@ -1,14 +1,18 @@
 
 
-app.directive('card', function (cah) { 
+app.directive('card', function (cah, $log) {
 	return {
 		restrict: 'E',
+		css: 'app/components/card/card.style.css',
 		scope: {
-			text: '='
+			text: '=',
+			id: '='
 		},
-		templateUrl: 'card.partial.html',
-		link: function (scope, element, attrs) { 
+		templateUrl: 'app/components/card/card.partial.html',
+		link: function (scope, element, attrs) {
+
+			$log.debug("Card directive entered");
 
 		}
-	}
-})
+	};
+});
