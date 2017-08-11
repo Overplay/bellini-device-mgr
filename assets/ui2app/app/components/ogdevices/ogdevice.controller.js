@@ -5,12 +5,109 @@
  *
  */
 
-app.controller( 'listOGReleasesController', function ( $scope, $log, releases ) {
+app.controller( 'listOGReleasesController', function ( $scope, $log, uibHelper, toastr, releases ) {
 
     $log.debug( "Loading listOGReleasesController" );
     $scope.releases = releases;
 
+    $scope.delete = function(release){
+        uibHelper.confirmModal("Confirm", "Do you really want to delete: "+ release.filename+"?")
+            .then(function(){
+                release.delete()
+                    .then( function(){
+                        $scope.releases = _.without( $scope.releases, release );
+                        toastr.success("Release deleted");
+                    })
+                    .catch( function(err){
+                        toastr.error("Could not delete release. "+err.message);
+                    })
+
+            })
+    }
+
 } );
+
+app.controller('editOGReleasesController', function ( $scope, release, $log, uibHelper, toastr,
+                                    $state, dialogService, $rootScope, sailsOGAndroidRelease ) {
+
+        $log.debug( "Loading editOGReleasesEditController" );
+        $scope.release = release;
+
+        $scope.editors = dialogService;
+
+        function terror( err ) {
+            if (err==='cancel'){
+                toastr.warning( 'Edit abandoned');
+            } else {
+                toastr.error( err.message );
+
+            }
+        }
+
+        $scope.changeStringField = function ( field, prompt, textArea ) {
+
+            uibHelper.stringEditModal( prompt, "", $scope.release[ field ], field, textArea )
+                .then( function ( newString ) {
+                    $log.debug( 'String for ' + field + ' changed to: ' + newString );
+                    $scope.release[ field ] = newString;
+                    $scope.release.save()
+                        .then( function () {
+                            toastr.success( "Field changed" );
+                        } )
+                        .catch( terror );
+                } );
+
+        };
+
+        $scope.selectStringField = function ( field, prompt ) {
+
+            var selections;
+
+            switch ( field ) {
+                case 'releaseLevel':
+                    selections = sailsOGAndroidRelease.selections.releaseLevel;
+                    break;
+            }
+
+            uibHelper.selectListModal( prompt, '', selections, $scope.release[ field ] )
+                .then( function ( idx ) {
+                    $log.debug( field + ' changed to: ' + selections[ idx ] );
+                    $scope.release[ field ] = selections[ idx ];
+                    $scope.release.save()
+                        .then( function () {
+                            toastr.success( "Field changed" );
+                        } )
+                        .catch( function () {
+                            toastr.error( "Problem changing field!" );
+                        } );
+                } );
+
+
+        };
+
+
+        $scope.boolChanged = function(){
+            $scope.release.save()
+                .then( function ( w ) {
+                    toastr.success( 'Field updated' )
+                } )
+                .catch( terror );
+        };
+
+
+        if ( app.appId === 'new.release' ) {
+            uibHelper.stringEditModal('New Release?', "Please enter the following", $scope.release.filename)
+                .then(function (newfilename) {
+                    // TODO validate!
+                    $scope.release.release.filename = newfilename;
+                    return $scope.release.save();
+                })
+                .catch(function (err) {
+                    $state.go($rootScope.lastUiState.state, $rootScope.lastUiState.params);
+                })
+        }
+
+});
 
 app.controller( 'listOGDeviceController', function ( $scope, $log, ogdevices ) {
 

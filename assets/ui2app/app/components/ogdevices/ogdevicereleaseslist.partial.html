@@ -3,11 +3,39 @@
         <div class="col-sm-10 material-panel">
             <h1><i class="fa fa-list" aria-hidden="true"></i>&nbsp;List of OG Android Releases</h1>
 
-            <h3 ng-if="!releases.length" class="text-danger">No Releases</h3>
+            <h3 ng-if="!releases.length" style="text-align: center; padding-bottom: 10px;">No Releases</h3>
 
             <div ng-if="releases.length">
+                <input type="text" ng-model="searchTerm" class="form-control" placeholder="Search releases...">
+                <table class="table table-striped" ng-if="releases.length">
+                    <thead>
+                    <tr>
+                        <th>MajorRev</th>
+                        <th>MinorRev</th>
+                        <th>Version Code</th>
+                        <th>File Name</th>
+                        <th>Release Level</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="release in releases | filter:searchTerm">
+                        <td>{{ release.majorRev }}</td>
+                        <td>{{ release.minorRev}}</td>
+                        <td>{{ release.versionCode}}</td>
+                        <td>{{ release.filename}}</td>
+                        <td>{{ release.releaseLevel}}</td>
+                        <td>
+                            <a ui-sref="releases.edit({id:release.id})" class="tbtn tbtn-blue">edit</a>
+                            <button ng-click="delete(release)" class="tbtn tbtn-red">delete</button>
 
-T
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <div>
+
 
             </div>
         </div>

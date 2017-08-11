@@ -48,32 +48,21 @@ app.factory( "sailsOGAndroidRelease", function ( sailsApi, sailsCoreModel ) {
 
     var newRelease = function ( params ) {
         return new ModelReleaseObject( params );
-    }
+    };
 
     var get = function ( id ) {
-
         if ( id === 'new' )
             return newRelease();
-
         return sailsApi.getModel( 'ogandroidrelease', id )
             .then( newRelease );
     };
 
-    var del = function (id) {
-
-        // if ( id === 'new' )
-        //     error("Can't delete something that doesn't exist");
-
-        return sailsApi.apiDelete('/ogandroidrelease', id)
-
-    };
 
     // Exports...new pattern to prevent this/that crap
     return {
         getAll:     getAll,
         new:        newRelease,
         get:        get,
-        del:        del,
         selections: {
             releaseLevel: [ 'archive', 'alpha', 'beta', 'release' ]
         }
