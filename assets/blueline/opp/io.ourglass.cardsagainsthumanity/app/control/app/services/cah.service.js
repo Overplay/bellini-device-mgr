@@ -74,8 +74,9 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 	};
 
 	service.availableCards = _.cloneDeep(service.allCards);
-	shuffle(service.availableCards.white);
-	shuffle(service.availableCards.black);
+	service.gameInProgress = false;
+	_.shuffle(service.availableCards.white);
+	_.shuffle(service.availableCards.black);
 	service.roundPlayingCards = []; //One of these will look like {id: 0, text: "123", submittedBy: {name: 'Logan', id: 0}}
 	service.discard = []; //This will just be {id: 0, text: 'someText'}
 	service.players = []; //A player will look like        { id: 0, cards: {white: [], black: []}, name: "Logan" }
@@ -123,7 +124,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 	service.assignCards = function assignCards() {
 
 		if (service.players.length <= 0) {
-			throw Error("No players to assign cards to");
+			throw new Error("No players to assign cards to");
 		}
 
 		for (var i = 0; i < service.players.length * NUM_CARDS; i++) {
@@ -133,8 +134,8 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 	};
 
 	service.getCard = function getCard() {
-		if (service.availableCards.length <= 0) service.reshuffle();
-		$rootScope.$broadcast('AVAIL_CARDS_CHANGED')
+		if (service.availableCards.white.length <= 0) service.reshuffle();
+		$rootScope.$broadcast('AVAIL_CARDS_CHANGED');
 		return service.availableCards.shift();
 	};
 
@@ -143,11 +144,12 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 			throw Error("No cards to reshuffle!");
 		}
 
-		shuffle(service.availableCards);
+		_.shuffle(service.discard);
+		
 
 		for (var i = 0; i < service.discard.length; i++) {
 
-			service.availableCards.push(service.discard[0]);
+			service.availableCards.white.push(service.discard[i]);
 
 		}
 
@@ -160,9 +162,18 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 
 		return _.find(service.players, function (player) { return player.id == id });
 	
-	}
+	};
 
 	service.addPlayer = function addPlayer(name) {
+
+		if (service.gameInProgress) throw new Error("The game you tried to join is in progress"); //Game is running
+
+		if (!name) throw new Error("No name provided"); //No name provided
+
+		if (_.findIndex(service.players, function (player) {
+			return player.name === name;
+		}) >= 0) throw new Error("That name is taken."); //Someone with that name exists
+
 		var player = {
 			id: service.players.length,
 			cards: {
@@ -170,13 +181,15 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 				black: []
 			},
 			name: name
-		}
+		};
 
 		service.players.push(player);
 
 		$rootScope.$broadcast('PLAYER_CHANGED', player);
-		$rootScope.$broadcast('PLAYERS_CHANGED', service.players)
-	}
+		$rootScope.$broadcast('PLAYERS_CHANGED', service.players);
+
+		saveModel();
+	};
 
 	service.addBlackCardToPlayerById = function addBlackCardToPlayerById(id, card) {
 
@@ -191,33 +204,24 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 			throw Error("No player with id: " + id);
 		}
 
-		player.cards.black.push(id, card)
+		player.cards.black.push(id, card);
 
 		$rootScope.$broadcast('PLAYER_CHANGED', player);
 
-	}
+	};
+
+	service.startGame = function startGame() {
+
+		$rootScope.$broadcast('GAME_START');
+		service.assignCards();
+		service.gameInProgress = true;
+		saveModel();
+
+	};
 
 
 
-	//Fisher-Yates (or Knuth) Shuffle, taken from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-	function shuffle(array) {
-		var currentIndex = array.length, temporaryValue, randomIndex;
 
-		// While there remain elements to shuffle...
-		while (0 !== currentIndex) {
-
-			// Pick a remaining element...
-			randomIndex = Math.floor(Math.random() * currentIndex);
-			currentIndex -= 1;
-
-			// And swap it with the current element.
-			temporaryValue = array[currentIndex];
-			array[currentIndex] = array[randomIndex];
-			array[randomIndex] = temporaryValue;
-		}
-
-		return array; //This returns because it is convenient but the shuffle happens in place so shuffle(array) is sufficient
-	}
 
 
 	function modelChanged(newValue) {
@@ -242,20 +246,22 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 			appType: 'mobile',
 			deviceUDID: 'apple-sim-1'
 		})
-			.then(function (data) {
+		.then(function (data) {
 
-				data = data.device;
+			data = data.device;
 
-				service.discard = data.discard ? data.discard : [];
-				service.players = data.players ? data.players : [];
-				service.roundPlayingCards = data.roundPlayingCards ? data.roundPlayingCards : [];
-				service.availableCards = data.availableCards ? data.availableCards : _.clone(service.allCards); 
-				shuffle(service.availableCards);
+			service.discard = data.discard ? data.discard : [];
+			service.players = data.players ? data.players : [];
+			service.roundPlayingCards = data.roundPlayingCards ? data.roundPlayingCards : [];
+			service.availableCards = data.availableCards ? data.availableCards : _.cloneDeep(service.allCards); 
+			_.shuffle(service.availableCards.white);
+			_.shuffle(service.availableCards.black);
+			service.gameInProgress = data.gameInProgress ? data.gameInProgress : false;
 
-			})
-			.catch(function (err) {
-				$log.error("Something failed: " + err);
-			});
+		})
+		.catch(function (err) {
+			$log.error("Something failed: " + err);
+		});
 
 	}
 
@@ -265,7 +271,8 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 			discard: service.discard, //Needed to prevent reshuffle inconsistencies
 			players: service.players, //Needed to sync scores and taken out cards
 			roundPlayingCards: service.roundPlayingCards, //Needed for the judge to judge
-			availableCards: service.availableCards //Needed so somebody doesn't pull a card someone else has
+			availableCards: service.availableCards, //Needed so somebody doesn't pull a card someone else has
+			gameInProgress: service.gameInProgress
 		};
 
 		ogAPI.save()
@@ -275,12 +282,32 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 			.catch(function (err) {
 				$log.error("WTF?!?!?");
 			});
+		
+	}
+
+	function loadModel() {
+		ogAPI.loadModel()
+			.then(function (response) {
+				
+			}).catch(function (err) {
+				$log.error("Issue loading data from database.");
+			})
 	}
 
 
 	initialize();
 
+	service.clearGame = function clearGame() {
 
+		service.discard = [];
+		service.players = [];
+		service.roundPlayingCards =  [];
+		service.availableCards = _.cloneDeep(service.allCards);
+		_.shuffle(service.availableCards.white);
+		service.gameInProgress = false;
+		saveModel();
+
+	};
 
 
 	return service;

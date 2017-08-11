@@ -1,11 +1,10 @@
 <div>
 	Players {{players.length}}
 </div>
-
-<button class="btn btn-primary" ng-click="addPlayer()">
+<button class="btn btn-primary" ng-click="addPlayer()" ng-disabled="inLobby">
 	Join Game
 </button>
-<button class="btn btn-success" ng-click="startGame()" ui-sref="picking">
+<button class="btn btn-success" ng-click="startGame()" ng-disabled="players.length < 3">
 	Start Game
 </button>
 

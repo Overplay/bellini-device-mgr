@@ -53,8 +53,12 @@
 
 	<og-app-header name="Cards Against Humanity"></og-app-header>
 
-
+	
 	<div ng-controller="cahController">
+
+		<button class="btn btn-danger" ng-click="clearGame()">CLEAR</button>
+		<br>
+
 		ID: {{player.id}}
 		<br> White Cards:
 		<div ng-repeat="card in player.cards.white">{{card.text}}</div>
