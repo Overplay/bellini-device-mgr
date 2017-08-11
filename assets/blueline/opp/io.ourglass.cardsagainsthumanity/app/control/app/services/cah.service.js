@@ -83,13 +83,13 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 
 	service.getPlayerScoreForId = function getPlayerScoreForId(id) {
 
-		if (service.players.length == 0) throw Error("no players!");
+		if (service.players.length == 0) throw new Error("no players!");
 
 		for (var i = 0; i < service.players.length; i++) {
 			if (id == service.players[i].id) return service.players[i].cards.black.length;
 		}
 
-		throw Error("noUserId:  " + id) ; //Do this if service.players.length == 0 or id not found
+		throw new Error("noUserId:  " + id) ; //Do this if service.players.length == 0 or id not found
 
 	};
 
@@ -131,6 +131,8 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 			service.players[i % service.players.length].white.push(service.getCard());
 		}
 
+		$rootScope.$broadcast('PLAYING_CARDS_CHANGED', service.roundPlayingCards);		
+
 	};
 
 	service.getCard = function getCard() {
@@ -141,7 +143,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 
 	service.reshuffle = function reshuffle() {
 		if (service.discard.length <= 0) {
-			throw Error("No cards to reshuffle!");
+			throw new Error("No cards to reshuffle!");
 		}
 
 		_.shuffle(service.discard);
@@ -201,7 +203,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 		var player = service.getPlayerById(id);
 
 		if (!player) {
-			throw Error("No player with id: " + id);
+			throw new Error("No player with id: " + id);
 		}
 
 		player.cards.black.push(id, card);
@@ -220,16 +222,30 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 	};
 
 
-
-
-
-
 	function modelChanged(newValue) {
+
 		$log.info("Device model changed, yay!");
+
+		service.discard = newValue.discard ? newValue.discard : [];
+		service.players = newValue.players ? newValue.players : [];
+		service.roundPlayingCards = newValue.roundPlayingCards ? newValue.roundPlayingCards : [];
+		service.availableCards = newValue.availableCards ? newValue.availableCards : _.cloneDeep(service.allCards);
+
+		if (!service.gameInProgress && newValue.gameInProgress) { 
+			$rootScope.$broadcast('GAME_START'); //Game wasn't in progress but now is so broadcast start
+		}
+
+		service.gameInProgress = newValue.gameInProgress ? newValue.gameInProgress : false;
+
+		$rootScope.$broadcast('PLAYERS_CHANGED', service.players);
+		$rootScope.$broadcast('AVAIL_CARDS_CHANGED');
+		$rootScope.$broadcast('PLAYING_CARDS_CHANGED', service.roundPlayingCards);		
 
 
 
 	}
+
+
 	function inboundMessage(msg) {
 		$log.info("New message: " + msg);
 		$scope.ogsystem = msg;
@@ -257,6 +273,10 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 			_.shuffle(service.availableCards.white);
 			_.shuffle(service.availableCards.black);
 			service.gameInProgress = data.gameInProgress ? data.gameInProgress : false;
+
+			$rootScope.$broadcast('PLAYERS_CHANGED', service.players);
+			$rootScope.$broadcast('AVAIL_CARDS_CHANGED');
+			$rootScope.$broadcast('PLAYING_CARDS_CHANGED', service.roundPlayingCards);	
 
 		})
 		.catch(function (err) {
