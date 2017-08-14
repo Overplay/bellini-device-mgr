@@ -1,0 +1,10 @@
+<div ng-if="amJudge()">
+
+</div>
+
+<div ng-if="!amJudge()">
+	<div>Your Judge: {{findJudge()}}</div>
+	<div>Your Card:</div>
+	<br>
+	<card text="findCard().text" id="findCard().id" white='true'></card>
+</div>
