@@ -6,7 +6,8 @@ app.directive('card', function (cah, $log) {
 		css: 'app/components/card/card.style.css',
 		scope: {
 			text: '=',
-			id: '='
+			id: '=',
+			white: '='
 		},
 		templateUrl: 'app/components/card/card.partial.html',
 		link: function (scope, element, attrs) {
