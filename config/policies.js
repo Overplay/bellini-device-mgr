@@ -35,6 +35,10 @@ module.exports.policies = {
         admin:      [ 'authDecorator', 'isRingAdmin' ]
     },
 
+    TestController: {
+        session: ['coreSessionAuth']
+    },
+
     /**
      *
      *  The login page is open to all, as it should be.
@@ -103,13 +107,17 @@ module.exports.policies = {
         'regcode': ['isDevice', 'sessionAuth'],
         'checkconnection': [ 'isSOCKETPOST', 'hasDeviceUDID' ],
         'isloggedin': [ 'isDevice', 'isGET' ],
-        'register': ['isDevice', 'isPOST']
+        'register': ['isDevice', 'isPOST'],
         // 'findByRegCode': true,
         // 'findByUDID': true,
         // 'changeName': true,
         // 'register': true,
         // 'tickle': true,
-        // 'appstatus': true
+        'appstatus': [ 'coreSessionAuth' ]
+    },
+
+    UserInteraction: {
+        '*': true
     },
 
     // Override this in local.js for testing

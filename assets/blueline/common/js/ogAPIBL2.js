@@ -22,7 +22,7 @@
  * @type {{}}
  */
 
-// TODO Deprecate
+    // TODO Deprecate
 var OG_SYSTEM_GLOBALS = {};
 
 function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
@@ -35,8 +35,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
     /**
      * Returns object.data | Helper with chaining Angular $http
-     * 
-     * @param {Object} response 
+     *
+     * @param {Object} response
      * @returns response.data
      */
     function stripData( response ) {
@@ -46,10 +46,10 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
     /**
      * Helper to pull url params
-     * 
+     *
      * @param {any} name The name to search for
-     * @param {any} url The url to get parameter of 
-     * @returns 
+     * @param {any} url The url to get parameter of
+     * @returns
      */
     function getParameterByName( name, url ) {
         if ( !url ) {
@@ -72,20 +72,20 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
     function getOGSystem() {
 
         if ( window.OGSystem ) {
-            console.log("%c Detected code running on emulator or OG H/W ",
+            console.log( "%c Detected code running on emulator or OG H/W ",
                 'background: #921992; font-size: 20px; color: #fff' );
             var rval = JSON.parse( window.OGSystem.getSystemInfo() );
             rval.onHardware = true;  // so code can easily tell it is on Emu or H/W
             return rval;
         }
 
-        console.log('%c CODE RUNNING IN BROWSER or WEBVIEW ', 'background: #3c931a; font-size: 20px; color: #fff');
+        console.log( '%c CODE RUNNING IN BROWSER or WEBVIEW ', 'background: #3c931a; font-size: 20px; color: #fff' );
 
         var dudid = 'testy-mctesterson';
 
-        var qParamUDID = getParameterByName("deviceUDID");
+        var qParamUDID = getParameterByName( "deviceUDID" );
 
-        var jwt = getParameterByName("jwt");
+        var jwt = getParameterByName( "jwt" );
 
         if ( qParamUDID )
             dudid = qParamUDID;
@@ -110,33 +110,33 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
     /**
      * Returns if you're running in the system by querying the window.OGSystem variable (if it exists or not)
-     * 
+     *
      * @returns {boolean} OGSystem
      */
     function isRunningInAndroid() {
         return window.OGSystem;
     }
-    
+
     /**
      * Sends an http request to /ogdevice/findByUDID and returns the data
-     * 
-     * @param {string} udid 
+     *
+     * @param {string} udid
      * @returns {Object} data
      */
-    function getOGDeviceFromCloud(udid){
-        
-        return $http.get('/ogdevice/findByUDID?deviceUDID='+udid)
-                    .then(stripData);
-    
+    function getOGDeviceFromCloud( udid ) {
+
+        return $http.get( '/ogdevice/findByUDID?deviceUDID=' + udid )
+            .then( stripData );
+
     }
 
     /**
      * Definition of the ourglassAPI module
      */
     angular.module( 'ourglassAPI', [] )
-        /**
-         * Definition for the ogAds factory (advertising service)
-         */
+    /**
+     * Definition for the ogAds factory (advertising service)
+     */
         .factory( 'ogAds', function ( $http, $q, $log ) {
 
             var _forceAllAds = true;
@@ -152,9 +152,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             var service = {};
 
             /**
-             * Process new ads length 
-             * 
-             * @param {any} newAds 
+             * Process new ads length
+             *
+             * @param {any} newAds
              * @returns {Object} _adRotation
              */
             function processNewAds( newAds ) {
@@ -166,7 +166,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * Makes an http query to either VenueAds or AllAds and returns _adRotation
-             * 
+             *
              * @returns {Object} _adRotation
              */
             service.refreshAds = function () {
@@ -177,8 +177,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             };
 
             /**
-             * Returns next advertisiment in the rotation 
-             * 
+             * Returns next advertisiment in the rotation
+             *
              * @returns {Object} advertisiment
              */
             service.getNextAd = function () {
@@ -193,20 +193,20 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             // TODO: This needs to be implemented for ogCrawler
             /**
-             * Resolves a promise for currentAds running 
-             * 
+             * Resolves a promise for currentAds running
+             *
              * @returns {Promise} a promisified currentAds request
              */
             service.getCurrentAd = function () {
                 return $q( function ( resolve, reject ) {
-                    resolve({"currentAds": []});
-                });
+                    resolve( { "currentAds": [] } );
+                } );
             };
 
             /**
              * Returns ad's image if there are ads, and a default if not
-             * 
-             * @param {string} adType 
+             *
+             * @param {string} adType
              * @returns {string} location of ad's image
              */
             service.getImgUrl = function ( adType ) {
@@ -237,8 +237,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * Sets up a force on all ads
-             * 
-             * @param {any} alwaysGetAll 
+             *
+             * @param {any} alwaysGetAll
              */
             service.setForceAllAds = function ( alwaysGetAll ) {
                 _forceAllAds = alwaysGetAll;
@@ -274,8 +274,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             var _userPermissions;
             var _user;
 
-            if (_jwt){
-                $http.defaults.headers.common.Authorization = 'Bearer '+_jwt;
+            if ( _jwt ) {
+                $http.defaults.headers.common.Authorization = 'Bearer ' + _jwt;
             }
 
             var _lockKey;
@@ -309,11 +309,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 // The custom broadcast calls in AppDataController pull off one of the "datas"
                 // The 'previous' field is only on the blueprint generated callbacks
-                var modelData = data.previous ? data.data.data: data.data;
+                var modelData = data.previous ? data.data.data : data.data;
 
-                if ( data.id == _deviceModelDBId ){
+                if ( data.id == _deviceModelDBId ) {
 
-                    $log.debug("Received an A+D model update");
+                    $log.debug( "Received an A+D model update" );
                     service.model = modelData;
                     if ( _deviceDataCb ) {
                         $rootScope.$apply( function () {
@@ -337,20 +337,20 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     }
 
                 } else {
-                    $log.error("Got a data SIO update and it is for an unknown DB Id!!");
+                    $log.error( "Got a data SIO update and it is for an unknown DB Id!!" );
                 }
 
 
             } );
 
-            function getUserForJwt(){
+            function getUserForJwt() {
 
-                if (!_jwt){
-                    return $q.when({
-                        firstName: 'Petro',
-                        lastName: 'McPatron',
+                if ( !_jwt ) {
+                    return $q.when( {
+                        firstName:   'Petro',
+                        lastName:    'McPatron',
                         mobilePhone: '408-555-1212'
-                    })
+                    } )
                 }
 
                 return $http.post( '/user/coreuserfortoken', { jwt: _jwt } )
@@ -376,24 +376,24 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 }
                 // Actual call
                 return $http.post( '/user/isusermanager', { jwt: _jwt, deviceUDID: _deviceUDID } )
-                    .then( stripData)
+                    .then( stripData )
             }
 
             /**
              * Checks user level
              * Queries /user/coreuserfortoken and /user/isusermanager
-             * 
+             *
              * @returns {Promise<any>}
              */
-            function checkUserLevel(){
+            function checkUserLevel() {
 
-                if (!_jwt){
-                    $log.debug("No jwt, no permissions");
-                    return $q.when({ manager: false, owner: false, anymanager: false });
+                if ( !_jwt ) {
+                    $log.debug( "No jwt, no permissions" );
+                    return $q.when( { manager: false, owner: false, anymanager: false } );
                 }
 
-                if (_jwt==='oooo'){
-                    $log.debug('Faux owner jwt for testing');
+                if ( _jwt === 'oooo' ) {
+                    $log.debug( 'Faux owner jwt for testing' );
                     return $q.when( { manager: true, owner: true, anymanager: true } );
                 }
 
@@ -404,24 +404,24 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 // TODO
                 return getUserForJwt()
-                    .then( function(user){
+                    .then( function ( user ) {
                         _user = user;
-                    })
+                    } )
                     .then( getUsersPermissionsForThisDevice )
-                    .then( function(permissions){
+                    .then( function ( permissions ) {
                         _userPermissions = permissions;
                         return permissions;
-                    })
-                    .catch( function(err){
-                        $log.error("Problem checking permissions. "+err.message);
+                    } )
+                    .catch( function ( err ) {
+                        $log.error( "Problem checking permissions. " + err.message );
                         return $q.when( { manager: false, owner: false, anymanager: false } ); // swallow for now
-                    });
+                    } );
             }
 
             /**
              * update that model like one of my jQuery girls
-             * 
-             * @param {any} newData 
+             *
+             * @param {any} newData
              * @returns {Object} Model
              */
             function updateModel( newData ) {
@@ -430,29 +430,28 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return service.model;
             }
 
-            
+
             /**
              * I AM THE CAPTAIN OF THIS SHIP AND I WILL
              * https://www.youtube.com/watch?v=dQw4w9WgXcQ
              * @returns {Object} data from the server appModel
              */
-            function getDataForApp(getVenue) {
-                if (getVenue) 
-                {
-                    return $http.get('/appmodel/' + _appId + '/venue')
-                        .then(stripData)
-                        .then(stripData); // conveniently the object goes resp.data.data
+            function getDataForApp( getVenue ) {
+                if ( getVenue ) {
+                    return $http.get( '/appmodel/' + _appId + '/venue' )
+                        .then( stripData )
+                        .then( stripData ); // conveniently the object goes resp.data.data
                 } else {
-                    return $http.get('/appmodel/' + _appId + '/' + _deviceUDID)
-                        .then(stripData)
-                        .then(stripData); // conveniently the object goes resp.data.data
+                    return $http.get( '/appmodel/' + _appId + '/' + _deviceUDID )
+                        .then( stripData )
+                        .then( stripData ); // conveniently the object goes resp.data.data
                 }
             }
 
             /**
              * Someone should implement this locking one day on the server one day
-             * 
-             * @returns 
+             *
+             * @returns
              */
             function getDataForAppAndLock() {
                 return $http.get( API_PATH + 'appdata/' + _appId + "?lock" )
@@ -461,7 +460,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * Join device into app room
-             * 
+             *
              * @returns {Promise} promise if a socket posting room: appID+deviceID
              */
             function joinDeviceAppRoom() {
@@ -515,8 +514,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
 
             /**
-             * 
-             * 
+             *
+             *
              * @returns { venue: venueData, device: deviceData }
              */
             function subscribeToAppData() {
@@ -533,8 +532,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                         } else {
                             $log.debug( "Successfully subscribed to appData" );
                             var rval = {};
-                            resData.forEach(function(d){
-                                if (d.forDeviceUDID === 'venue'){
+                            resData.forEach( function ( d ) {
+                                if ( d.forDeviceUDID === 'venue' ) {
                                     _venueModelDBId = d.id;
                                     rval.venue = d && d.data;
                                 }
@@ -542,8 +541,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                                     _deviceModelDBId = d.id;
                                     rval.device = d && d.data;
                                 }
-                            });
-                            resolve(rval);
+                            } );
+                            resolve( rval );
                         }
                     } );
                 } );
@@ -551,10 +550,10 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
 
             /**
-             * Initialization function. 
-             * 
+             * Initialization function.
+             *
              * @param {any} params required
-             * @returns 
+             * @returns
              */
             service.init = function ( params ) {
 
@@ -569,23 +568,23 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 _appType = params.appType;
                 $log.debug( "Init called for app type: " + _appType );
                 _deviceUDID = getOGSystem().udid;
-                
+
 
                 // Check the app name
                 if ( !params.appName && !params.appId ) {
                     throw new Error( "appId parameter missing and is required." );
                 }
 
-                if (params.appName)
-                    console.log("%c appName parameter is deprecated and is now appId. Fix it in your code!", "background-color: #cb42f4; color: #fff;");
+                if ( params.appName )
+                    console.log( "%c appName parameter is deprecated and is now appId. Fix it in your code!", "background-color: #cb42f4; color: #fff;" );
 
                 _appName = params.appId || params.appName;
                 _appId = _appName;
-                
+
                 $log.debug( "Init for app: " + _appId );
 
-                if (params.hasOwnProperty("modelCallback")){
-                    $log.warn("modelCallback is deprecated. Use deviceModelCallback.");
+                if ( params.hasOwnProperty( "modelCallback" ) ) {
+                    $log.warn( "modelCallback is deprecated. Use deviceModelCallback." );
                 }
 
                 _deviceDataCb = params.deviceModelCallback || params.modelCallback;
@@ -617,18 +616,18 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                         $log.debug( "ogAPI: Subscribing to model changes" );
                         return subscribeToAppData();
                     } )
-                    .then( function (initialData) {
+                    .then( function ( initialData ) {
                         service.model = initialData.device;
                         service.venueModel = initialData.venue;
                         $log.debug( "ogAPI: Subscribing to messages" );
                         return joinDeviceAppRoom();
                     } )
-                    .then( function(){
-                        $log.debug("Checking user level for this device");
+                    .then( function () {
+                        $log.debug( "Checking user level for this device" );
                         return checkUserLevel();
-                    })
-                    .then( function (userLevel) {
-                        $log.debug("User level: "+userLevel);
+                    } )
+                    .then( function ( userLevel ) {
+                        $log.debug( "User level: " + userLevel );
                         return { device: service.model, venue: service.venueModel };
                     } );
 
@@ -636,10 +635,10 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * Sends a message to the socket with the url and wrapped message
-             * 
-             * @param {any} url 
-             * @param {any} message 
-             * @returns 
+             *
+             * @param {any} url
+             * @param {any} message
+             * @returns
              */
             function sendSIOMessage( url, message ) {
                 var wrappedMessage = { deviceUDID: _deviceUDID, message: message };
@@ -658,9 +657,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * sends a put request to a socket io. Pass in url and params for it to send
-             * 
-             * @param {any} url 
-             * @param {any} params 
+             *
+             * @param {any} url
+             * @param {any} params
              * @returns {Promise}
              */
             function sioPut( url, params ) {
@@ -679,9 +678,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * Send SIO message to /ogdevice/dm
-             * 
-             * @param {any} message 
-             * @returns 
+             *
+             * @param {any} message
+             * @returns
              */
             service.sendMessageToDeviceRoom = function ( message ) {
                 // NOTE must have leading slash!
@@ -690,9 +689,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * Sends a message to a venue room (/venue/dm)
-             * 
-             * @param {any} message 
-             * @returns 
+             *
+             * @param {any} message
+             * @returns
              */
             service.sendMessageToVenueRoom = function ( message ) {
                 // NOTE must have leading slash!
@@ -712,7 +711,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              * DEPRECATED
              * @returns {*}
              */
-            service.getPermissions = function(){
+            service.getPermissions = function () {
                 return _userPermissions;
             }
 
@@ -729,40 +728,44 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              * DEPRECATED
              * @returns {*}
              */
-            service.getUser = function() {
+            service.getUser = function () {
                 return _user;
             }
 
             /**
              * Queries the socialscrape result controller for information about social scraping
-             * 
+             *
              * @returns {Promise<Object>} Data from socialscrape result
              */
             service.getTweets = function () {
-                return $http.get( '/socialscrape/result?deviceUDID='+_deviceUDID+'&appId='+_appId )
+                return $http.get( '/socialscrape/result?deviceUDID=' + _deviceUDID + '&appId=' + _appId )
                     .then( stripData );
             };
-            
-            
+
+
             /**
              * Queries the socialscrape channeltweets controller for information about a channel's tweets
-             * 
+             *
              * @returns {Promise<Object>}
              */
             service.getChannelTweets = function () {
                 return $http.get( '/socialscrape/channeltweets?deviceUDID=' + _deviceUDID )
                     .then( stripData );
             };
-            
+
             /**
-             * Posts to /socialscrape/add with queryString, deviceUDID, and appID 
-             * 
-             * @param {any} paramsArr 
-             * @returns {Promise} promiseResolveReject  
+             * Posts to /socialscrape/add with queryString, deviceUDID, and appID
+             *
+             * @param {any} paramsArr
+             * @returns {Promise} promiseResolveReject
              */
             service.updateTwitterQuery = function ( paramsArr ) {
                 var query = paramsArr.join( '+OR+' );
-                return $http.post( '/socialscrape/add', { queryString: query, deviceUDID: _deviceUDID, appId: _appId } );
+                return $http.post( '/socialscrape/add', {
+                    queryString: query,
+                    deviceUDID:  _deviceUDID,
+                    appId:       _appId
+                } );
             };
 
 
@@ -771,7 +774,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             /**
              * HTTP Put to save appmodel for appid and deviceUDID
              * This is where we'd want to look at saving based on venueUDID instead
-             * 
+             *
              * @returns {Promise}
              */
             service.saveHTTP = function () {
@@ -785,7 +788,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * Calls sioPut to save appmodel, appId, and deviceUDID
-             * 
+             *
              * @returns {Promise}
              */
             service.save = function () {
@@ -797,8 +800,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             };
 
             // Helper
-            service.saveDeviceModel = function(){
-                return service.save('device');
+            service.saveDeviceModel = function () {
+                return service.save( 'device' );
             };
 
             // Helper
@@ -811,16 +814,16 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              *
              * @returns {Promise}
              */
-            service.save = function (scope) {
+            service.save = function ( scope ) {
 
-                if ( scope && [ 'device', 'venue' ].indexOf(scope) < 0){
-                    throw new Error('"device" and "venue" are the only valid scopes, chief.');
+                if ( scope && [ 'device', 'venue' ].indexOf( scope ) < 0 ) {
+                    throw new Error( '"device" and "venue" are the only valid scopes, chief.' );
                 }
 
                 scope = scope || "device"; // default for backwards compat
 
                 var payload = {
-                    data: ( scope === "device" ) ? service.model : service.venueModel,
+                    data:  ( scope === "device" ) ? service.model : service.venueModel,
                     scope: scope
                 };
 
@@ -832,19 +835,18 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             };
 
 
-
             /**
              * Loads model by calling getDataForApp and then updateModel
-             * 
+             *
              * @returns {Promise}
              */
-            service.loadModel = function (getVenue) {
-                if (getVenue) {
-                    return getDataForApp('venue')
-                           .then(updateModel);
+            service.loadModel = function ( getVenue ) {
+                if ( getVenue ) {
+                    return getDataForApp( 'venue' )
+                        .then( updateModel );
                 } else {
                     return getDataForApp()
-                           .then(updateModel);
+                        .then( updateModel );
                 }
             };
 
@@ -869,7 +871,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * performs a post to the move endpoint for either the current app or the appid that is passed in
-             * 
+             *
              * @param {any} appid the app to move, if not included, then move the _appId
              * @returns {Promise} HttpPromise
              */
@@ -890,7 +892,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * performs a post to the launch endpoint for either the current app or the appid that is passed in
-             * 
+             *
              * @param {any} appid the app to move, if not included, then move the _appId
              * @returns {Promise} HttpPromise
              */
@@ -898,17 +900,17 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 appid = appid || _appId;
                 return $http.post( '/ogdevice/launch', { deviceUDID: _deviceUDID, appId: appid } )
                     .then( stripData )
-                    .then( function(d){
-                        $log.info("App launch successful for: "+appid);
+                    .then( function ( d ) {
+                        $log.info( "App launch successful for: " + appid );
                         $rootScope.$broadcast( '$app_state_change', { action: 'launch', appId: appid } );
 
                         return d;
-                    })
-                    .catch(function(err){
+                    } )
+                    .catch( function ( err ) {
                         $log.info( "App launch FAILED for: " + appid );
                         $rootScope.$broadcast( '$app_state_change_failure', { action: 'launch', appId: appid } );
                         throw err; // Rethrow
-                    });
+                    } );
             };
 
             /**
@@ -921,10 +923,10 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 //should be able to return the promise object and act on it
                 return $http.post( '/ogdevice/kill', { deviceUDID: _deviceUDID, appId: appid } )
                     .then( stripData )
-                    .then( function(d){
+                    .then( function ( d ) {
                         $rootScope.$broadcast( '$app_state_change', { action: 'kill', appId: appid } );
                         return d;
-                    })
+                    } )
                     .catch( function ( err ) {
                         $log.info( "App kill FAILED for: " + appid );
                         $rootScope.$broadcast( '$app_state_change_failure', { action: 'kill', appId: appid } );
@@ -934,14 +936,16 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * Relocate window.location.href to control app
-             * 
-             * @param {any} app 
+             *
+             * @param {any} app
              */
             service.relocToControlApp = function ( app ) {
                 // window.location.href = "/blueline/opp/" + app.appId +
                 //     '/app/control/index.html?deviceUDID=' + _deviceUDID + '&displayName=' + app.displayName;
 
-                window.location.href =  '/appcontrol/' + app.appId + '/' +
+                service.logUserInteraction( { interaction: "CONTROL_APP", meta: { appid: app.appId } } );
+
+                window.location.href = '/appcontrol/' + app.appId + '/' +
                     _deviceUDID + '?jwt=' + _jwt || '*' + '?displayName=' + app.displayName;
             };
 
@@ -953,9 +957,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * posts up an SMS message request
-             * 
-             * @param {any} phoneNumber 
-             * @param {any} message 
+             *
+             * @param {any} phoneNumber
+             * @param {any} message
              * @returns {Promise<Object>}
              */
             service.sendSMS = function ( phoneNumber, message ) {
@@ -982,83 +986,83 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             /**
              * calls getOGSystem to check onHardware
-             * 
+             *
              * @returns {undefined}
              * @returns {sys.nowShowing}
              */
-            service.getCurrentProgram = function(){
+            service.getCurrentProgram = function () {
                 var sys = getOGSystem();
-                if (!sys.onHardware)
+                if ( !sys.onHardware )
                     return undefined; // we're not on OG Box or Emu
 
                 return sys.nowShowing;
             };
-            
+
             /**
              * Returns _deviceUDID
-             * 
+             *
              * @returns {_deviceUDID}
              */
-            service.getDeviceUDID = function(){ return _deviceUDID; };
+            service.getDeviceUDID = function () { return _deviceUDID; };
 
 
             /**
              * Returns striped data from /pgs/grid
-             * 
+             *
              * @returns {Promise<Object>}
              */
             service.getGrid = function () {
-                return $http.get( '/pgs/grid?deviceUDID='+ _deviceUDID )
+                return $http.get( '/pgs/grid?deviceUDID=' + _deviceUDID )
                     .then( stripData );
             };
 
             /**
              * Changes the channel by making a post to /ogdevice/changechannel
-             * 
-             * @param {any} channelNum 
-             * @returns 
+             *
+             * @param {any} channelNum
+             * @returns
              */
             service.changeChannel = function ( channelNum ) {
                 return $http.post( '/ogdevice/changechannel?deviceUDID=' + _deviceUDID
-                     + '&channel=' + channelNum )
-                     .then(stripData);
+                    + '&channel=' + channelNum )
+                    .then( stripData );
             };
 
             /**
              * Figures out what channel is currently running and calls getGridForChannel
-             * 
+             *
              * @returns {Object} channel listings
              */
-            service.getGridForCurrentChannel = function(){
+            service.getGridForCurrentChannel = function () {
 
                 var prog = this.getCurrentProgram();
-                if (!prog) return $q.when(undefined);
+                if ( !prog ) return $q.when( undefined );
 
-                return this.getGridForChannel(prog.channelNumber);
+                return this.getGridForChannel( prog.channelNumber );
 
             };
 
             /**
              * Gets the grid for a channel
              * Does an http call to listingsforchannel and strips the data
-             * 
-             * @param {number} channelNum 
+             *
+             * @param {number} channelNum
              * @returns {Object} channel listings
              */
-            service.getGridForChannel = function ( channelNum ){
+            service.getGridForChannel = function ( channelNum ) {
 
                 return $http.get( '/pgs/listingsforchannel?deviceUDID=' + _deviceUDID
                     + '&channel=' + channelNum )
                     .then( stripData );
 
             };
-            
+
             /**
              * Checks if a device is paired by querying getOGSystem
-             * 
+             *
              * @returns {Function} getOGSystem();
              */
-            service.pairedSTB = function(){
+            service.pairedSTB = function () {
                 return getOGSystem();
             };
 
@@ -1067,8 +1071,25 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              *
              * @param {none}
              */
-            service.userIsManager = function(){
-                throw new Error("userIsManager: NotImplementedError");
+            service.userIsManager = function () {
+                throw new Error( "userIsManager: NotImplementedError" );
+            };
+
+            /**
+             * Interaction must be of the form { interaction: "STRING", meta: { obj }}
+             * Fire and forget.
+             * @param interaction
+             */
+            service.logUserInteraction = function ( interaction ) {
+                var postData = _.assignIn( { deviceUDID: _deviceUDID, venueUUID: getOGSystem().venue },
+                    interaction );
+                $http.post( '/userinteraction/log', { userId: _user.id, logdata: postData } )
+                    .then( function () {
+                        $log.debug( "User interaction recorded" );
+                    } )
+                    .catch( function ( err ) {
+                        $log.error( "Failed to record user interaction, oh well oh well" );
+                    } );
             };
 
             /**
@@ -1079,22 +1100,22 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              *
              * @param url
              */
-            service.proxyGet = function(url){
-                return $http.get('/proxy/get?url='+url)
-                    .then(stripData);
+            service.proxyGet = function ( url ) {
+                return $http.get( '/proxy/get?url=' + url )
+                    .then( stripData );
             };
 
             return service;
         } )
 
-        .directive( 'failedImage', function( $log){
+        .directive( 'failedImage', function ( $log ) {
             return {
                 restrict: 'A',
-                link:   function( scope, elem, attrs ){
+                link:     function ( scope, elem, attrs ) {
 
                     elem.bind( 'error', function () {
-                        $log.debug( "Failed to load image!");
-                        attrs.$set( 'src',  '/blueline/common/img/whoops.jpg');
+                        $log.debug( "Failed to load image!" );
+                        attrs.$set( 'src', '/blueline/common/img/whoops.jpg' );
                     } );
 
                 }
@@ -1102,7 +1123,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             }
 
 
-        })
+        } )
 
         // Main directive for inserting an advert in BL apps
         .directive( 'ogAdvert', function ( $log, ogAds, $interval, $timeout ) {

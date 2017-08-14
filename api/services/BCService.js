@@ -1,4 +1,6 @@
 var request = require( 'superagent-bluebird-promise' );
+var Promise = require('bluebird');
+var _ = require('lodash');
 
 module.exports = {
 
@@ -27,9 +29,13 @@ module.exports = {
 
         checkJwt: function ( jwt ) {
 
+            if (jwt.indexOf('Bearer ')<0){
+                jwt = 'Bearer ' + jwt;
+            }
+
             return request
             .get( sails.config.uservice.belliniCore.url + '/user/checkjwt' )
-            .set( 'Authorization', 'Bearer ' + jwt )
+            .set( 'Authorization', jwt )
             .then( function ( resp ) {
                     return resp.body;
                 } );
@@ -47,6 +53,34 @@ module.exports = {
                 //.set( 'Authorization', 'Bearer ' + jwt )
                 .pipe(res);
 
+        }
+
+    },
+
+
+    UserInteraction: {
+
+        log: function( reqOrId, data ) {
+
+            var userId;
+
+            if ( _.isObject( reqOrId) ){
+                if ( !reqOrId.bcuser ) {
+                    sails.log.error( "Requested User Interaction log with no BC User. Ignoring." );
+                    return Promise.resolve();
+                } else {
+                    userId = reqOrId.bcuser && reqOrId.bcuser.id;
+                }
+            } else if ( _.isString( reqOrId)){
+                userId = reqOrId;
+            }
+
+            var postData = _.extend({ userId: userId }, data );
+
+            return ProxyService.post( sails.config.uservice.belliniCore.url + '/userinteraction', postData )
+                .then( function ( resp ) {
+                    return resp.body;
+                } );
         }
 
     }

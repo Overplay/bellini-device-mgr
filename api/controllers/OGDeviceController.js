@@ -505,7 +505,13 @@ module.exports = {
                         channel: parseInt( params.channel ),
                         ts:      new Date().getTime() // hack for multiples
                     } );
-                res.ok( { message: "thank you for your patronage" } );
+
+                BCService.UserInteraction.log( req, {
+                    interaction: 'CHANNEL_CHANGE',
+                    venueId: dev.atVenueUUID,
+                    meta: { toChannel: parseInt( params.channel ) }});
+
+                return res.ok( { message: "thank you for your patronage" } );
             } )
             .catch( res.serverError );
 
@@ -573,6 +579,13 @@ module.exports = {
                 _.remove( results.apps, function ( app ) {
                     return runningAppIds.indexOf( app.appId ) > -1;
                 } );
+
+                BCService.UserInteraction.log( req, {
+                    interaction: 'REQ_APP_STATUS',
+                    venueId:     results.device.atVenueUUID,
+                    meta:        {}
+                } );
+
                 return res.ok( { available: results.apps, running: runningApps } );
 
             } )

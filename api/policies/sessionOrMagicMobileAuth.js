@@ -1,9 +1,8 @@
 /**
- * adminAuth
+ * coreSessionAuth
  *
  * @module      :: Policy
- * @description :: Simple policy to allow authenticated admin user
- *                 Assumes that your login action in one of your controllers sets `req.session.authenticated = true;`
+ * @description :: Makes sure user has a session on Bellini-Core. This will go away once sessions are shared.
  * @docs        :: http://sailsjs.org/#!/documentation/concepts/Policies
  *
  */

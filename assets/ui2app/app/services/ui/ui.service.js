@@ -2,6 +2,27 @@
  * Created by mkahn on 4/22/17.
  */
 
+app.factory( 'sideMenuService', function ( $rootScope ) {
+
+    var _currentMenu = [];
+
+    var _defaultMenu = [ { label: 'Home', sref: "welcome", icon: "home" } ];
+
+    return {
+        setMenu: function ( menu ) {
+            _currentMenu = menu || _defaultMenu;
+            $rootScope.$broadcast( "NEW_SIDEMENU", _currentMenu );
+
+        },
+
+        getMenu: function () {
+            return _currentMenu;
+        }
+
+    }
+
+} );
+
 app.factory( 'navService', function ( $rootScope, userAuthService ) {
 
     var currentSideKey = '';
@@ -43,44 +64,13 @@ app.factory( 'navService', function ( $rootScope, userAuthService ) {
     var topMenuGroups = {
 
         adminMenu: [
-            { label: "dash", sref: "dashboard", icon: "cube" },
-            { label: "devices", sref: "devices.allactive", icon: "television" },
-            { label: "network", sref: "network.dashboard", icon: "arrows-alt" },
-            { label: "venues", sref: "venues.list", icon: "globe" },
-            { label: "apps", sref: "apps.list", icon: "gears" }
+
         ]
 
     }
 
     return {
 
-        sideMenu: {
-
-            change: function ( group ) {
-                if ( group ) {
-                    currentSideKey = group;
-                } else {
-                    switch ( userRing ) {
-                        case 1:
-                            currentSideKey = 'adminMenu';
-                            break;
-                        case 3:
-                            currentSideKey = 'patronMenu';
-
-                    }
-                }
-
-                $rootScope.$broadcast( 'CHANGE_SIDEMENU', sideMenuGroups[ currentSideKey ] || [] );
-
-            },
-
-            getMenu: function () {
-                if ( currentSideKey )
-                    return sideMenuGroups[ currentSideKey ];
-
-                return [];
-            }
-        },
 
         topMenu: {
 

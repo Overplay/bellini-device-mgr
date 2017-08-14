@@ -7,27 +7,29 @@
  * @docs        :: http://sailsjs.org/#!/documentation/concepts/Policies
  *
  */
-module.exports = function(req, res, next) {
-  
-  if ( sails.config.policies.wideOpen )
-    return next();
+module.exports = function ( req, res, next ) {
 
-  // OG device is authenticated
-  if (req.session.authenticated && req.session.device)
-    return next();
+    if ( sails.config.policies.wideOpen )
+        return next();
 
-  // User is allowed, proceed to the next policy, 
-  // or if this is the last policy, the controller
-  if (req.session.authenticated && !req.session.user.auth.blocked ) {
-    return next();
-  }
+    if ( req.headers.authorization ) {
+        var authHeader = req.headers.authorization;
+        if ( authHeader.indexOf( 'Bearer' ) < 0 ) {
+            return res.forbidden( { error: 'no token' } );
+        }
 
-  if (PolicyService.isMagicJwt(req)){
-    return next();
-  }
+        BCService.User.checkJwt( authHeader )
+            .then( function ( user ) {
+                sails.log.silly(user)
+                req.bcuser = user;
+                return next();
+            } )
+            .catch( res.forbidden );
 
-  // User is not allowed
-  // (default res.forbidden() behavior can be overridden in `config/403.js`)
-  return res.forbidden('You are not permitted to perform this action.');
-  
+    } else {
+        return res.forbidden( { error: 'no token' } );
+    }
+
+
+
 };
