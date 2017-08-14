@@ -95,9 +95,12 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 	};
 
 
-	service.submitCard = function submitCard({ id, text }, { player }) {
+	service.submitCard = function submitCard({ id, text }, player ) {
 		
-		if (_.findIndex(service.roundPlayingCards, function (card) { return card.id == id; }) < 0) return;
+		if (_.findIndex(service.roundPlayingCards, function (card) { return card.id == id; }) >= 0) return; //If it exists don't add it again
+
+
+		for (var i = 0; i < player.cards.white.length; i++) delete player.cards.white[i].$$hashKey; //Angular adds this somewhere but idk where
 
 		service.roundPlayingCards.push({
 			id: id,
@@ -252,19 +255,23 @@ app.factory('cah', function ($rootScope, $log, ogAPI) {
 			$rootScope.$broadcast('GAME_START'); //Game wasn't in progress but now is so broadcast start
 		}
 
+		
+
 		service.gameInProgress = newValue.gameInProgress ? newValue.gameInProgress : false;
 
 		modelChangedBroadcast();
-
-
-
-
 	}
+
+	service.endPick = function endPick() {
+		ogAPI.sendMessageToDeviceRoom('JUDGING_PHASE');
+	};
 
 
 	function inboundMessage(msg) {
 		$log.info("New message: " + msg);
-		$scope.ogsystem = msg;
+		if (msg == 'JUDGING_PHASE') {
+			$rootScope.$broadcast(msg.message);
+		}
 	}
 
 	function initialize() {
