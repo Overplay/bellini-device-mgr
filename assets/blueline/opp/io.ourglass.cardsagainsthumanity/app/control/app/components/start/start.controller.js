@@ -33,7 +33,11 @@ app.controller('startController', function ($scope, cah, $state, uibHelper, $log
 		// $scope.inLobby
 	};
 
-	$scope.startGame = cah.startGame;
+
+	$scope.startGame = function startGame() {
+		cah.startGame();
+		$state.go('picking');
+	};
 
 	$scope.$on('GAME_START', function () { 
 		$state.go('picking');
