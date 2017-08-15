@@ -1,5 +1,9 @@
 app.controller('judgingController', function ($scope, cah) {
 
+	if (!cah.gameInProgress) {
+		$state.go('start');
+	}
+
 	var roundPlayingCards = cah.roundPlayingCards;
 	$scope.player = cah.player;
 
