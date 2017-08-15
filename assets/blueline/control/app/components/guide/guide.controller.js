@@ -8,8 +8,8 @@ app.controller( "guideController",
 
         $log.info( "Loading guideController" );
 
-        //$scope.ui = { loadError: false, refineSearch: 'all', isPaired: ogDevice.isPairedToSTB };
-        $scope.ui = { loadError: false, refineSearch: 'all', isPaired: true }; // I did this so I could get listings on my laptop
+        $scope.ui = { loadError: false, refineSearch: 'all', isPaired: ogDevice.isPairedToSTB };
+        // $scope.ui = { loadError: false, refineSearch: 'all', isPaired: true }; // I did this so I could get listings on my laptop
 
         var slideIndex = 0; //renamed this from slideIdx so I could think about it better
         const WINDOW_SIZE = 30; //Predefined window size that does not change
@@ -53,10 +53,10 @@ app.controller( "guideController",
 
             switch ($scope.ui.refineSearch){ //Switch over favorites, sports, news, or all / default
             
-                case 'favorites': //Not really implemented yet
-                    return _.filter( inputArray, function ( gentry ) {
-                        return gentry.channel.favorite;
-                    } );
+                // case 'favorites': //Not really implemented yet
+                //     return _.filter( inputArray, function ( gentry ) {
+                //         return gentry.channel.favorite;
+                //     } );
                     
                 case 'sports': //If it's sports, filter by Sports (to get sports channels)
                     return $filter('filter')(inputArray, 'Sports');
@@ -107,7 +107,7 @@ app.controller( "guideController",
         };
 
         
-        if ($scope.ui.isPaired){
+        if (ogDevice.isPairedToSTB){
         
             var refreshListings = $interval( loadListings, 15 * 1000 ); // $interval to run every 5 min or 300000ms //Logan's note: This is only 15 seconds currently. Made that more clear
 
