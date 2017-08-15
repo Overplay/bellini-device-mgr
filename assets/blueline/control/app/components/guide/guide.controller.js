@@ -53,10 +53,10 @@ app.controller( "guideController",
 
             switch ($scope.ui.refineSearch){ //Switch over favorites, sports, news, or all / default
             
-                case 'favorites': //Not really implemented yet
-                    return _.filter( inputArray, function ( gentry ) {
-                        return gentry.channel.favorite;
-                    } );
+                // case 'favorites': //Not really implemented yet
+                //     return _.filter( inputArray, function ( gentry ) {
+                //         return gentry.channel.favorite;
+                //     } );
                     
                 case 'sports': //If it's sports, filter by Sports (to get sports channels)
                     return $filter('filter')(inputArray, 'Sports');
