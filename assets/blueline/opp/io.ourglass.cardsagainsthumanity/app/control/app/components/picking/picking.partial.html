@@ -1,9 +1,10 @@
+
 <div ng-if="amJudge()">
 
 	<div>Players: {{players.length}}</div>
-	<br>
 	<div>Submitted Cards: {{roundPlayingCards.length}}</div>
 	<br>
+	<card ng-if="roundJudgingCard.text" text="roundJudgingCard.text" id="roundJudgingCard.id" white='false'></card>
 	<button class="btn btn-danger" ng-click="endPick()">End Picking Phase</button>
 
 </div>
@@ -11,13 +12,13 @@
 <div ng-if="!amJudge()">
 
 	<div>Your Judge: {{findJudge()}}</div>
-	<br>
 	<div class="card-container" ng-if="submittedCard.id == -1">
-		<card ng-repeat="card in player.cards.white" text="card.text" id="card.id" ng-click="confirmCardChoice(card)"></card>
+		<card ng-if="roundJudgingCard.text" text="roundJudgingCard.text" id="roundJudgingCard.id" white='false'></card>
+		<card ng-repeat="card in player.cards.white" text="card.text" id="card.id" ng-click="confirmCardChoice(card)" white='true'></card>
 	</div>
-	<div ng-if="submittedCard.id != -1">
-		Your Picked Card:
-		<br>
-		<card text="submittedCard.text" id="card.id" white='true'></card>
+	<div ng-if="submittedCard.id != -1" class="card-container">
+		Submitted:
+		<card ng-if="roundJudgingCard.text" text="roundJudgingCard.text" id="roundJudgingCard.id" white='false'></card>	
+		<card text="submittedCard.text" id="submittedCard.id" white='true'></card>
 	</div>
 </div>

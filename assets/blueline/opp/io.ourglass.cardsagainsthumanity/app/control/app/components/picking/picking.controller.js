@@ -9,12 +9,14 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 	$scope.player = cah.player;
 	$scope.players = cah.players;
 	$scope.roundPlayingCards = cah.roundPlayingCards;
-	$scope.submittedCard = {text: '', id: -1};
+	$scope.submittedCard = { text: '', id: -1 };
+	$scope.roundJudgingCard = cah.roundJudgingCard;
 
 	$scope.$on('MODEL_CHANGED', function () {
 		$scope.players = cah.players;
 		$scope.roundPlayingCards = cah.roundPlayingCards;
 		$scope.player = cah.player;
+		$scope.roundJudgingCard = cah.roundJudgingCard;
 	});
 
 	$scope.findJudge = function findJudge() {
@@ -33,8 +35,11 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 			cah.submitCard(card, $scope.player);
 			$scope.submittedCard = card;
 		}).catch(function (err) {
-			uibHelper.dryToast("An error occurred submitting your card.");
-			$log.error(err);
+			if (err.message != "cancled") {
+				uibHelper.dryToast("Card not submitted.");
+				$log.error(err);
+			}
+
 		});
 	};
 
