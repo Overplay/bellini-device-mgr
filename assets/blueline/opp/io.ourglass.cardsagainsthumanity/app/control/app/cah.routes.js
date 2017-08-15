@@ -1,7 +1,3 @@
-/**
- * Created by noah on 6/28/16.
- */
-
 app.config(function ($stateProvider, $urlRouterProvider) {
 	$urlRouterProvider.otherwise('/start');
 	$stateProvider
@@ -16,8 +12,13 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 			controller: 'pickingController'
 		})
 		.state('judging', {
-			url: 'judging',
-			templateUrl: 'app/components/judging/judging.parital.html',
+			url: '/judging',
+			templateUrl: 'app/components/judging/judging.partial.html',
 			controller: 'judgingController'
+		})
+		.state('allcards', {
+			url: '/allcards',
+			templateUrl: 'app/components/allcards/allcards.partial.html',
+			controller: 'allCardsController'
 		});
 });

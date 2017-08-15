@@ -35,6 +35,8 @@
 	<script src="app/components/start/start.controller.js"></script>
 	<script src="app/components/picking/picking.controller.js"></script>
 	<script src="app/components/judging/judging.controller.js"></script>
+	<script src="app/components/allcards/allcards.controller.js"></script>
+	
 
 	<!-- Directives  -->
 	<script src="app/components/card/card.directive.js"></script>
@@ -54,7 +56,7 @@
 
 	<og-app-header name="Cards Against Humanity"></og-app-header>
 
-	
+
 	<div ng-controller="cahController">
 
 		<button class="btn btn-danger" ng-click="clearGame()">CLEAR</button>
@@ -71,12 +73,9 @@
 
 	<ui-view></ui-view>
 
-	<!-- <card text="'A super de duper cool default card'" id="3"></card>
+	<!-- <card text="'A super de duper cool default card &larr;'" id="3"></card>
 	<card text="'A super de duper cool black card'" id="3" white='false'></card>
 	<card text="'A super de duper cool white card'" id="3" white='true'></card> -->
-	
-	
-
 
 
 
