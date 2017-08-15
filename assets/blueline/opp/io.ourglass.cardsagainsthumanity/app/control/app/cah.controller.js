@@ -2,9 +2,6 @@
 
 app.controller('cahController', function ($scope, cah, $log) {
 
-	
-
-
 	$scope.$on('GAME_START', function () {
 		$scope.player = cah.getPlayerById($scope.player.id);
 	});
