@@ -2,7 +2,7 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 
 	$log.debug("pickingController Started");
 
-	if (!cah.gameInProgress) {
+	if (cah.stage != 'picking') {
 		$state.go('start');
 	}
 
@@ -47,11 +47,10 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 		return $scope.player.id == cah.judgeIndex % cah.players.length;
 	};
 
-	$scope.endPick = function endPick() {
+	$scope.nextStage = function nextStage() {
 		//We could check to see if everyone has submitted, but if someone is AFK let's not
-
 		$state.go('judging');
-		cah.endPick(); //This just does a model broadcast to go to judging for the other players
+		cah.nextStage(); //This just does a model broadcast to go to judging for the other players
 	};
 
 	$scope.$on('JUDGING_PHASE', function () {

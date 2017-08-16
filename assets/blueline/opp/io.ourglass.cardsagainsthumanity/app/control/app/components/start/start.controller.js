@@ -3,14 +3,9 @@ app.controller('startController', function ($scope, cah, $state, uibHelper, $log
 	$scope.inLobby = false;
 	$scope.players = cah.players;	
 
-	$scope.$on('PLAYER_ASSIGNED', function (event, player) {
-
-		$scope.player = player;
-
-	});
-
-	$scope.$on('MODEL_CHANGED', function (event, {players}) {
-		$scope.players = players;
+	$scope.$on('MODEL_CHANGED', function () {
+		$scope.players = cah.players;
+		$scope.player = cah.player;
 	});
 
 	$scope.addPlayer = function () {

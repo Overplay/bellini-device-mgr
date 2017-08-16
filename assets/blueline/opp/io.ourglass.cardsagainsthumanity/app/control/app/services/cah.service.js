@@ -25,82 +25,48 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http) {
 			$log.error(err);
 		});
 
+	service.nextStage = function nextStage() {
+		$log.debug('Service Switch:', service.stage);		
+		switch (service.stage) {
+			case 'start':
+				service.stage = 'picking';
+				break;
+			case 'picking':
+				service.stage = 'judging';
+				break;
+			case 'judging':
+				if (service.getWinner()) {
+					service.stage = 'end';
+					break;
+				}
+				service.stage = 'picking';
+				break;
+			case 'end':
+			default:
+				service.stage = 'start';
+		}
 
+		// saveModel();
+		// modelChangedBroadcast();
+	};
 
-	// service.allCards = {
-	// 	white: [
-	// 		{
-	// 			text: 'Alexa',
-	// 			id: 0
-	// 		},
-	// 		{
-	// 			text: 'Logan',
-	// 			id: 1
-	// 		},
-	// 		{
-	// 			text: 'Catherine',
-	// 			id: 2
-	// 		},
-	// 		{
-	// 			text: 'Melissa',
-	// 			id: 3
-	// 		},
-	// 		{
-	// 			text: 'Treb',
-	// 			id: 4
-	// 		},
-	// 		{
-	// 			text: 'Kristin',
-	// 			id: 5
-	// 		},
-	// 		{
-	// 			text: 'Mitch',
-	// 			id: 6
-	// 		},
-	// 		{
-	// 			text: 'Goldie',
-	// 			id: 7
-	// 		},
-	// 		{
-	// 			text: 'Mike',
-	// 			id: 8
-	// 		},
-	// 		{
-	// 			text: 'Noah',
-	// 			id: 9
-	// 		}
-	// 	],
-	// 	black: [
-	// 		{
-	// 			text: '_____ has the biggest nose in the game.',
-	// 			pick: 1,
-	// 			id: 0
-	// 		},
-	// 		{
-	// 			text: '_____ is about as friendly as they come.',
-	// 			pick: 1,
-	// 			id: 1
-	// 		},
-	// 		{
-	// 			text: '_____ will get the job done.',
-	// 			pick: 1,
-	// 			id: 2
-	// 		}, 
-	// 		{
-	// 			text: '_____ will ridicule you until you cry.',
-	// 			pick: 1,
-	// 			id: 3
-	// 		}
-	// 	]
-	// };
+	/**
+	 * Returns winner object if exists, undefined if not
+	 * 
+	 */
+	service.getWinner = function getWinner() {
+		var winner = false;
+		return _.find(service.players, function (player) {
+			return player.cards.black.length >= 3;
+		});
+	};
 
-	service.gameInProgress = false;
+	service.stage = 'start';
 	service.roundPlayingCards = []; //One of these will look like {id: 0, text: "123", submittedBy: {name: 'Logan', id: 0}}
 	service.roundJudgingCard = {text: '', id: 0};
 	service.discard = []; //This will just be {id: 0, text: 'someText'}
 	service.players = []; //A player will look like        { id: 0, cards: {white: [], black: []}, name: "Logan" }
 	service.player = {};
-
 	service.getPlayerScoreForId = function getPlayerScoreForId(id) {
 
 		if (service.players.length == 0) throw new Error('no players!');
@@ -157,6 +123,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http) {
 			service.players[i % service.players.length].cards.white.push(service.getWhiteCard());
 		}
 
+		saveModel();
 		modelChangedBroadcast();
 
 	};
@@ -200,7 +167,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http) {
 
 	service.addPlayer = function addPlayer(name) {
 
-		if (service.gameInProgress) throw new Error('The game you tried to join is in progress'); //Game is running
+		if (service.stage != 'start') throw new Error('The game you tried to join is in progress'); //Game is running
 
 		if (!name) throw new Error('No name provided'); //No name provided
 
@@ -220,8 +187,8 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http) {
 		service.players.push(player);
 
 		service.player = player;
-		modelChangedBroadcast();
 		saveModel();
+		modelChangedBroadcast();
 	};
 
 	function modelChangedBroadcast() {
@@ -231,7 +198,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http) {
 			roundPlayingCards: service.roundPlayingCards, //Needed for the judge to judge
 			roundJudgingCard: service.roundJudgingCard,
 			availableCards: service.availableCards, //Needed so somebody doesn't pull a card someone else has
-			gameInProgress: service.gameInProgress,
+			stage: service.stage,
 			judgeIndex: service.judgeIndex
 		});
 	}
@@ -251,6 +218,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http) {
 
 		player.cards.black.push(id, card);
 
+		saveModel();
 		modelChangedBroadcast();
 
 	};
@@ -258,10 +226,10 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http) {
 	service.startGame = function startGame() {
 
 		service.assignCards();
-		service.gameInProgress = true;
 		service.roundJudgingCard = service.getBlackCard();
-		modelChangedBroadcast();
+		service.nextStage();
 		saveModel();
+		modelChangedBroadcast();
 
 	};
 
@@ -275,28 +243,27 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http) {
 		service.availableCards = newValue.availableCards ? newValue.availableCards : _.cloneDeep(service.allCards);
 		service.judgeIndex = newValue.judgeIndex ? newValue.judgeIndex : 0;
 
-		if (!service.gameInProgress && newValue.gameInProgress) { 
+		// $log.debug('GAME STARTING DEBUG');
+		// $log.debug(service.stage);
+		// $log.debug(newValue.stage);
+		// $log.debug(service.stage == 'start');
+		// $log.debug(newValue.stage == 'picking');
+
+		if (service.stage == 'start' && newValue.stage == 'picking') { 
 			$rootScope.$broadcast('GAME_START'); //Game wasn't in progress but now is so broadcast start
 		}
 
+		if (service.stage == 'picking' && newValue.stage == 'judging') {
+			$rootScope.$broadcast('JUDGING_PHASE');
+		}
 
-
-		service.gameInProgress = newValue.gameInProgress ? newValue.gameInProgress : false;
+		service.stage = newValue.stage ? newValue.stage : 'start';
 
 		modelChangedBroadcast();
 	}
 
-	service.endPick = function endPick() {
-		ogAPI.sendMessageToDeviceRoom('JUDGING_PHASE');
-	};
 
-
-	function inboundMessage(msg) {
-		$log.info('New message: ' + msg);
-		if (msg == 'JUDGING_PHASE') {
-			$rootScope.$broadcast(msg.message);
-		}
-	}
+	function inboundMessage(msg) { }
 
 	function initialize() {
 
@@ -320,7 +287,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http) {
 			service.availableCards = data.availableCards ? data.availableCards : _.cloneDeep(service.allCards); 
 			service.availableCards.white = _.shuffle(service.availableCards.white);
 			service.availableCards.black = _.shuffle(service.availableCards.black);
-			service.gameInProgress = data.gameInProgress ? data.gameInProgress : false;
+			service.stage = data.stage ? data.stage : 'start';
 			service.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
 
 			modelChangedBroadcast();
@@ -340,7 +307,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http) {
 			roundPlayingCards: service.roundPlayingCards, //Needed for the judge to judge
 			roundJudgingCard: service.roundJudgingCard, //Needed for black card to spread around
 			availableCards: service.availableCards, //Needed so somebody doesn't pull a card someone else has
-			gameInProgress: service.gameInProgress,
+			stage: service.stage,
 			judgeIndex: service.judgeIndex
 		};
 
@@ -367,8 +334,9 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http) {
 		service.availableCards = _.cloneDeep(service.allCards);
 		service.availableCards.white = _.shuffle(service.availableCards.white);
 		service.availableCards.black = _.shuffle(service.availableCards.black);
-		service.gameInProgress = false;
+		service.stage = 'start';
 		saveModel();
+		modelChangedBroadcast();
 
 	};
 

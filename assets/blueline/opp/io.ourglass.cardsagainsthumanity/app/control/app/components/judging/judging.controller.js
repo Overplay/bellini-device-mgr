@@ -1,6 +1,6 @@
 app.controller('judgingController', function ($scope, cah) {
 
-	if (!cah.gameInProgress) {
+	if (cah.stage != 'judging') {
 		$state.go('start');
 	}
 

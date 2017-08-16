@@ -2,13 +2,20 @@
 
 app.controller('cahController', function ($scope, cah, $log) {
 
+	$scope.state = cah.stage;
+
 	$scope.$on('GAME_START', function () {
-		$scope.player = cah.getPlayerById($scope.player.id);
+		$scope.player = cah.player;
 	});
 	$scope.$on('MODEL_CHANGED', function () {
-		$scope.player = cah.player;
-		$log.debug("MODEL CHANGE EVENT", $scope.player);
-		$scope.player.cards = cah.getPlayerById($scope.player.id).cards;
+		$scope.stage = cah.stage;
+		$scope.roundJudgingCard = cah.roundJudgingCard;
+
+		if (cah.player) {
+			$scope.player = cah.player;
+		}
+
+
 	});
 
 	$scope.clearGame = cah.clearGame;
