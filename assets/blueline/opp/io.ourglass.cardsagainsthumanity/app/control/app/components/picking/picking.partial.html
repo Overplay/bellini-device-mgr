@@ -13,12 +13,13 @@
 
 	<div>Your Judge: {{findJudge()}}</div>
 	<div class="card-container" ng-if="submittedCard.id == -1">
-		<card ng-if="roundJudgingCard.text" text="roundJudgingCard.text" id="roundJudgingCard.id" white='false'></card>
+		<card ng-if="roundJudgingCard.text" text="roundJudgingCard.text" id="roundJudgingCard.id" white='false' style='padding-right: 10px;'></card>
 		<card ng-repeat="card in player.cards.white" text="card.text" id="card.id" ng-click="confirmCardChoice(card)" white='true'></card>
 	</div>
 	<div ng-if="submittedCard.id != -1" class="card-container">
 		Submitted:
 		<card ng-if="roundJudgingCard.text" text="roundJudgingCard.text" id="roundJudgingCard.id" white='false'></card>	
+		<br>
 		<card text="submittedCard.text" id="submittedCard.id" white='true'></card>
 	</div>
 </div>

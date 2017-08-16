@@ -4,7 +4,7 @@ app.controller('cahController', function ($scope, cah, $log) {
 
 	$scope.state = cah.stage;
 
-	$scope.$on('GAME_START', function () {
+	$scope.$on('PICKING_PHASE', function () {
 		$scope.player = cah.player;
 	});
 	$scope.$on('MODEL_CHANGED', function () {
@@ -14,7 +14,6 @@ app.controller('cahController', function ($scope, cah, $log) {
 		if (cah.player) {
 			$scope.player = cah.player;
 		}
-
 
 	});
 

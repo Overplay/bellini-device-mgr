@@ -30,11 +30,11 @@ app.controller('startController', function ($scope, cah, $state, uibHelper, $log
 
 
 	$scope.startGame = function startGame() {
-		cah.startGame();
+		cah.nextStage();
 		$state.go('picking');
 	};
 
-	$scope.$on('GAME_START', function () { 
+	$scope.$on('PICKING_PHASE', function () { 
 		$state.go('picking');
 	});
 

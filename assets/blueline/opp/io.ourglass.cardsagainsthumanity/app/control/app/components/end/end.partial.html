@@ -1,0 +1,8 @@
+<h1>
+	WINNER! <span style='color: orange;'>{{getWinner().name}}</span> with
+	<br>
+	<div class="card-container">
+		<card ng-repeat='card in getWinner().cards.black' text='card.text' id='card.id' white='false'></card>
+	</div>
+</h1>
+<button class='btn btn-primary' ng-click='playAgain()'>Play Again?</button>

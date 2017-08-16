@@ -35,6 +35,7 @@
 	<script src="app/components/start/start.controller.js"></script>
 	<script src="app/components/picking/picking.controller.js"></script>
 	<script src="app/components/judging/judging.controller.js"></script>
+	<script src="app/components/end/end.controller.js"></script>
 	<script src="app/components/allcards/allcards.controller.js"></script>
 	
 
@@ -44,7 +45,7 @@
 
 	<!-- App Specific and Overridden CSS -->
 	<link rel="stylesheet" href="assets/css/ogstyles.css">
-	<link rel="stylesheet" href="app/components/picking/picking.style.css">
+	<link rel="stylesheet" href="app/assets/css/style.css">
 	<link rel="stylesheet" href="app/components/card/card.style.css" >
 	<link rel="stylesheet" href="../../../../common/css/og.css" >
 	<link rel="stylesheet" href="assets/css/ogstyles.css" >
@@ -59,12 +60,11 @@
 
 	<div ng-controller="cahController">
 
-		<button class="btn btn-danger" ng-click="clearGame()">CLEAR</button>
-		<br>
+		<!-- <button class="btn btn-danger" ng-click="clearGame()">CLEAR</button> -->
+		<!-- <br> -->
+		<!-- <div>Player Debug</div> -->
 
-		<div>Player Debug</div>
-
-		ID: {{player.id}}
+		<!-- ID: {{player.id}}
 		<br> White Cards:
 		<div ng-repeat="card in player.cards.white">{{card.text}}</div>
 		<br>
@@ -79,10 +79,22 @@
 		Judging Card: <div>{{roundJudgingCard.text}}</div>
 		<br>
 		State: <div>{{stage}}</div>
+		<br> -->
+		<!-- Black Cards: -->
+		<div class="card-container">
+			<card ng-repeat="card in player.cards.black" text='card.text' id='card.id' white='false'></card>
+		</div>
 	</div>
 
 
 	<ui-view></ui-view>
+<!-- 
+	<div ng-controller='cahController'>
+		Black Cards:
+		<div class="card-container">
+			<card ng-repeat="card in player.cards.black" text='card.text' id='card.id' white='false'></card>
+		</div>
+	</div> -->
 
 	<!-- <card text="'A super de duper cool default card &larr;'" id="3"></card>
 	<card text="'A super de duper cool black card'" id="3" white='false'></card>

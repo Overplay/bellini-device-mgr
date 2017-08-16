@@ -16,6 +16,11 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 			templateUrl: 'app/components/judging/judging.partial.html',
 			controller: 'judgingController'
 		})
+		.state('end', {
+			url: '/end',
+			templateUrl: 'app/components/end/end.partial.html',
+			controller: 'endController'
+		})
 		.state('allcards', {
 			url: '/allcards',
 			templateUrl: 'app/components/allcards/allcards.partial.html',

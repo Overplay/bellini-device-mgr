@@ -235,11 +235,7 @@
 		"text": "What's my anti-drug?",
 		"pick": 1,
 		"id": 58
-	}, {
-		"text": "For my next trick, I will pull _ out of _.",
-		"pick": 2,
-		"id": 59
-	}, {
+	},{
 		"text": "_: Good to the last drop.",
 		"pick": 1,
 		"id": 60
@@ -255,26 +251,6 @@
 		"text": "What gets better with age?",
 		"pick": 1,
 		"id": 63
-	}, {
-		"text": "Rumor has it that Vladimir Putin's favorite delicacy is _ stuffed with _.",
-		"pick": 2,
-		"id": 64
-	}, {
-		"text": "Make a haiku.",
-		"pick": 3,
-		"id": 65
-	}, {
-		"text": "_ is a slippery slope that leads to _.",
-		"pick": 2,
-		"id": 66
-	}, {
-		"text": "That's right, I killed _. How, you ask? _.",
-		"pick": 2,
-		"id": 67
-	}, {
-		"text": "_ + _ = _.",
-		"pick": 3,
-		"id": 68
 	}, {
 		"text": "Dear Abby, I'm having some trouble with _ and would like your advice.",
 		"pick": 1,
@@ -520,10 +496,6 @@
 		"pick": 1,
 		"id": 129
 	}, {
-		"text": "Having problems with _? Try _!",
-		"pick": 2,
-		"id": 130
-	}, {
 		"text": "And what did you bring for show and tell?",
 		"pick": 1,
 		"id": 131
@@ -531,10 +503,6 @@
 		"text": "I'm not like the rest of you. I'm too rich and busy for _.",
 		"pick": 1,
 		"id": 132
-	}, {
-		"text": "_: Hours of fun. Easy to use. Perfect for _!",
-		"pick": 2,
-		"id": 133
 	}, {
 		"text": "_. Awesome in theory, kind of a mess in practice.",
 		"pick": 1,
@@ -563,10 +531,6 @@
 		"text": "The Japanese have developed a smaller, more efficient version of _.",
 		"pick": 1,
 		"id": 140
-	}, {
-		"text": "You guys, I saw this crazy movie last night. It opens on _, and then there's some stuff about _, and then it ends with _.",
-		"pick": 3,
-		"id": 141
 	}, {
 		"text": "Wes Anderson's new film tells the story of a precocious child coming to terms with _.",
 		"pick": 1,
@@ -600,10 +564,6 @@
 		"pick": 1,
 		"id": 149
 	}, {
-		"text": "I am become _, destroyer of _!",
-		"pick": 2,
-		"id": 150
-	}, {
 		"text": "It lurks in the night. It hungers for flesh. This summer, no one is safe from _.",
 		"pick": 1,
 		"id": 151
@@ -615,14 +575,6 @@
 		"text": "I'm pretty sure I'm high right now, because I'm absolutely mesmerized by _.",
 		"pick": 1,
 		"id": 153
-	}, {
-		"text": "Every step towards _ gets me a little closer to _.",
-		"pick": 2,
-		"id": 154
-	}, {
-		"text": "Honey, I have a new role-play I want to try tonight! You can be _, and I'll be _.",
-		"pick": 2,
-		"id": 155
 	}, {
 		"text": "Do the Dew ® with our most extreme flavor yet! Get ready for Mountain Dew _!",
 		"pick": 1,
@@ -1339,10 +1291,6 @@
 		"text": "Our relationship is strictly professional. Let's not complicate things with _.",
 		"pick": 1,
 		"id": 334
-	}, {
-		"text": "Because you enjoyed _, we thought you'd like _.",
-		"pick": 2,
-		"id": 335
 	}, {
 		"text": "I can't believe Netflix is using _ to promote House of Cards.",
 		"pick": 1,
