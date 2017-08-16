@@ -62,12 +62,23 @@
 		<button class="btn btn-danger" ng-click="clearGame()">CLEAR</button>
 		<br>
 
+		<div>Player Debug</div>
+
 		ID: {{player.id}}
 		<br> White Cards:
 		<div ng-repeat="card in player.cards.white">{{card.text}}</div>
 		<br>
 		Black Cards:
 		<div ng-repeat="card in player.cards.black">{{card.text}}</div>
+
+		<br>
+		<div>
+			Game Debug
+		</div>
+		<br>
+		Judging Card: <div>{{roundJudgingCard.text}}</div>
+		<br>
+		State: <div>{{stage}}</div>
 	</div>
 
 
