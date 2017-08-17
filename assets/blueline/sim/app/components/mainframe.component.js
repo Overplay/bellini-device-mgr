@@ -42,7 +42,7 @@ app.component( 'mainFrame', {
                 <source src="{{ $ctrl.vid }}" type="video/mp4">
             </video>
             <iframe class="crawler" ng-style="{'height': $ctrl.crawler.height  + '%'}" ng-class="$ctrl.crawlerPos()" src="{{ $ctrl.crawler.src }}" scrolling="no"></iframe>
-            <iframe class="widget"  ng-style="{'height': $ctrl.widget.height + '%'}"  ng-class="$ctrl.widgetPos()" src="{{ $ctrl.widget.src }}" scrolling="no"></iframe>
+            <iframe class="widget"  ng-style="{'height': $ctrl.widget.height + '%', 'width': $ctrl.widget.width + '%'}"  ng-class="$ctrl.widgetPos()" src="{{ $ctrl.widget.src }}" scrolling="no"></iframe>
         </div>
     
     `

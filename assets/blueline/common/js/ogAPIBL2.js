@@ -624,7 +624,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     } )
                     .then( function () {
                         $log.debug( "Checking user level for this device" );
-                        return checkUserLevel();
+                        if ( _appType === 'mobile' ) {
+                            return checkUserLevel();
+                        } else {
+                            return "TV APP";
+                        }
                     } )
                     .then( function ( userLevel ) {
                         $log.debug( "User level: " + userLevel );
@@ -684,18 +688,20 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              */
             service.sendMessageToDeviceRoom = function ( message ) {
                 // NOTE must have leading slash!
-                return sendSIOMessage( '/ogdevice/dm', message );
+                return sendSIOMessage( '/ogdevice/message', message );
             };
 
             /**
              * Sends a message to a venue room (/venue/dm)
+             *
+             * UNFUCKING TESTED, HOMIE!!!
              *
              * @param {any} message
              * @returns
              */
             service.sendMessageToVenueRoom = function ( message ) {
                 // NOTE must have leading slash!
-                return sendSIOMessage( '/venue/dm', message );
+                return sendSIOMessage( '/venue/message', message );
             };
 
             /**
