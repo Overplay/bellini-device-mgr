@@ -41,17 +41,25 @@ html, body {
 .overflow-frame {
 
     height: 60vh;
-    overflow: hidden;
+    /* overflow: hidden; */
 
 }
 
 .overflow-container {
 
     height: 50vh;
-    overflow: hidden;
+    /* overflow: hidden; */
     /*border: 1px dashed red;*/
     margin-right: 5vw;
     margin-left: 5vw;
 
 }
 
+
+.debug {
+    border: 3px solid orange;
+}
+
+.move-right {
+    margin-left: 12px;
+}

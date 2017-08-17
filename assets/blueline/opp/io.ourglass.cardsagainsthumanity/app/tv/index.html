@@ -24,6 +24,72 @@
 
 </head>
 <body ng-controller="cahController">
-    <top-scroller-jank-free id="top-scroller" parties="parties()" title="title"></top-scroller-jank-free>
+
+
+    <div class="applet">
+        <h1 class="apphdr">
+            {{title}}
+        </h1>
+        <br>
+
+        <!-- <div class="debug">
+            Players: {{players.length}} Stage: {{stage}} RPC: {{roundPlayingCards}}
+        </div> -->
+
+        <!-- START -->
+        <div ng-if="stage == 'start'">
+            <h1 class="apphdr">
+                Players: {{players.length}}
+            </h1>
+        </div>
+
+        <!-- PICKING -->
+        <div ng-if="stage == 'picking'">
+            <div class="move-right">
+                <card text="roundJudgingCard.text" cid='roundJudgingCard.id' white='false'></card>
+            </div>
+            <h1 class="apphdr">
+                Players: {{players.length}}
+            </h1>
+            <h1 class='apphdr'>
+                Submitted Cards: {{roundPlayingCards.length}}
+            </h1>
+        </div>
+
+        <!-- JUDGING -->
+        <div ng-if="stage == 'judging'">
+            <div class="move-right">
+                <card height="'140px'" ng-if="!showWinner" text="roundJudgingCard.text" cid='roundJudgingCard.id' white='false'></card>
+                <card height="'140px'" ng-if="showWinner" text="previousRoundJudgingCard.text" cid='previousRoundJudgingCard.id' white='false'></card>
+            </div>
+            <div class="overflow-frame" id="outer-frame">
+                <div class="overflow-container" id="scroll-window">
+                    <div id="card-container" style="position: relative; margin-left: 6px;" ng-style="topPos">
+                        <card height="'140px'" ng-if="!showWinner" text='roundPlayingCards[rotation % roundPlayingCards.length].text' cid='roundPlayingCards[rotation % roundPlayingCards.length].id' id="{{'scroll'+$index}}" white="true"></card>
+                        <card height="'140px'" ng-if="showWinner" submitted='previousWinningCard.submittedBy.text' text='previousWinningCard.text' cid='previousWinningCard.id' id="{{'scroll'+$index}}" white="true"></card>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- END -->
+        <div ng-if="stage == 'end'">
+            <h1 class="apphdr">
+                Winner: {{getWinner().name}} with
+            </h1>
+            <br>
+            <div class="overflow-frame" id="outer-frame">
+                <div class="overflow-container" id="scroll-window">
+                    <div id="card-container" style="position: relative; margin-left: 6px;" ng-style="topPos">
+                        <card height="'230px'" submitted="getWinner().name" text='getWinner().cards.black[rotation % getWinner().cards.black.length].text' cid='getWinner().cards.black[rotation % getWinner().cards.black.length].id' id="{{'scroll'+$index}}" white="false"></card>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
 </body>
 </html>

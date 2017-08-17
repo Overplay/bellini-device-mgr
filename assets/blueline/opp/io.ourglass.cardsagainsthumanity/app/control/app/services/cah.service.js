@@ -232,10 +232,10 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 		});
 	}
 
-	service.addBlackCardToPlayerById = function addBlackCardToPlayerById(id, card) {
+	service.addBlackCardToPlayerById = function addBlackCardToPlayerById(id, blackCard, whiteCard) {
 
-		if (!card.pick) {
-			$log.error('Cannot add white cards to black card field.');
+		if (!blackCard.pick) {
+			$log.error('Cannot add white blackCards to black blackCard field.');
 			return;
 		}
 
@@ -245,11 +245,27 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 			throw new Error('No player with id: ' + id);
 		}
 
-		player.cards.black.push(card);
+		var blackCardText;
+		if (blackCard.text.indexOf('_') != -1) {
+			blackCardText = blackCard.text.replace('_', whiteCard.text);
+		} else {
+			blackCardText = blackCard.text + " " + whiteCard.text;
+		}
+
+
+		blackCard.text = blackCardText;
+		player.cards.black.push(blackCard);
 
 		saveModel();
 		modelChangedBroadcast();
 
+	};
+
+	service.setWinningCard = function setWinningCard(card) {
+		service.previousWinningCard = card;
+
+		saveModel();
+		modelChangedBroadcast();
 	};
 
 	function modelChanged(newValue) {
@@ -381,7 +397,8 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 			roundJudgingCard: service.roundJudgingCard, //Needed for black card to spread around
 			availableCards: service.availableCards, //Needed so somebody doesn't pull a card someone else has
 			stage: service.stage,
-			judgeIndex: service.judgeIndex
+			judgeIndex: service.judgeIndex,
+			previousWinningCard: service.previousWinningCard
 		};
 
 		ogAPI.save()
@@ -415,6 +432,8 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 		modelChangedBroadcast();
 
 	};
+
+
 
 
 	return service;

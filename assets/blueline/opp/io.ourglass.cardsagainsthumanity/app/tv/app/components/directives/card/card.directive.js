@@ -7,13 +7,16 @@ app.directive('card', function ($log) {
 		scope: {
 			text: '=',
 			cid: '=',
-			white: '='
+			white: '=',
+			submitted: '=',
+			height: '='
 		},
 		templateUrl: 'app/components/directives/card/card.partial.html',
 		link: function (scope, element, attrs) {
 			scope.debugMode = false;
 			$log.debug("Card directive entered");
-
+			if (!scope.width) scope.width = '100px';
+			if (!scope.height) scope.height = '140px';
 		}
 	};
 });

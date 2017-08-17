@@ -10,11 +10,13 @@
 	color: white;
 }
 
+.card-dimensions {
+	width: 100px;	
+	height: 140px;
+}
 .card {
-	width: 95%;
-	height: 120px;
 	border-radius: 3px;
-	font-size: 12px;
+	font-size: 10px;
 
 	margin: 2px 2px 2px 2px;
 

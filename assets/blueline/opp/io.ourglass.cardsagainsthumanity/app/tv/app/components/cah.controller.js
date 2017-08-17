@@ -10,7 +10,7 @@
 // 		'dateCreated': new Date()
 // }
 
-app.controller('cahController', ['$scope', 'ogAPI', '$log', function ($scope, ogAPI, $log) {
+app.controller('cahController', ['$scope', 'ogAPI', '$log', '$timeout', function ($scope, ogAPI, $log, $timeout) {
 
 
 
@@ -18,32 +18,81 @@ app.controller('cahController', ['$scope', 'ogAPI', '$log', function ($scope, og
 
 
 
-
 	function handleModelCallback(data) {
 
+		$scope.players = data.players.length ? data.players : [];
+		$scope.roundPlayingCards = data.roundPlayingCards.length ? data.roundPlayingCards : [];
+
+		if ($scope.roundJudgingCard.id != data.roundJudgingCard.id) $scope.roundJudgingCard = data.roundJudgingCard;		
 		
+		$scope.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
+		$scope.previousWinningCard = data.previousWinningCard ? data.previousWinningCard : { text: '', id: 0 };
+
+
+		if ($scope.stage == 'judging' && data.stage == 'picking') {
+			$scope.showWinner = true;
+			$scope.players = [];
+			$scope.roundPlayingCards = [];
+			$timeout(function () {
+				$scope.showWinner = false;
+				if ($scope.stage != 'end') {
+					$scope.roundJudgingCard = data.roundJudgingCard ? data.roundJudgingCard : { text: '', id: 0 };
+					$scope.stage = data.stage ? data.stage : 'start';
+				}
+
+			}, 20 * 1000);
+		} else {
+			$scope.roundJudgingCard = data.roundJudgingCard ? data.roundJudgingCard : { text: '', id: 0 };			
+			$scope.stage = data.stage ? data.stage : 'start';			
+		}
 
 	}
+
+	$scope.getWinner = function getWinner() {
+		return _.find($scope.players, function (player) {
+			return player.cards.black.length >= 3;
+		});
+	};
 
 	function inboundMessage(data) { } //This doesn't do anything currently. ogAPIBL2 machine broke
 
 	function initialize() {
 
 		ogAPI.init({
-			appName: "io.ourglass.waitinglist",
-			modelCallback: handleModelCallback,
+			appName: "io.ourglass.cardsagainsthumanity",
+			deviceModelCallback: handleModelCallback,
 			messageCallback: inboundMessage,
+			deviceUDID: 'apple-sim-1',
 			appType: 'tv'
 		})
-			.then ( function ( data ) {
-				$log.debug("tv init finished");
-			})
-			.catch ( function ( err ) {
-				$log.error("Something failed: " + err);
-			});
+		.then(function (data) {
+			data = data.device;
+			$scope.discard = data.discard ? data.discard : [];
+			$scope.players = data.players ? data.players : [];
+			$scope.roundPlayingCards = data.roundPlayingCards ? data.roundPlayingCards : [];
+			$scope.roundJudgingCard = data.roundJudgingCard ? data.roundJudgingCard : { text: '', id: 0 };
+			$scope.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
+			$scope.stage = data.stage ? data.stage : 'start';
+			$log.debug("tv init finished");
+		})
+		.catch ( function ( err ) {
+			$log.error("Something failed: " + err);
+		});
 	}
 
 	initialize();
+
+
+	$scope.rotation = 0;
+	function doRotation() {
+		$timeout(function () {
+			$scope.rotation++;
+			doRotation();
+		}, 10 * 1000);
+	}
+
+	doRotation();
+
 
 }]);
 
@@ -189,7 +238,7 @@ app.directive('topScrollerJankFree', [
 				}
 
 				function loadCellHeight(){
-					return $timeout( function () {
+					return $timeout(function () {
 						var cellHt = 0;
 						if (scope.cards.length) {
 							var elem = document.getElementById('scroll0'); // should maybe be changed from scroll0 to generic
@@ -200,7 +249,7 @@ app.directive('topScrollerJankFree', [
 							$log.debug("loadCellHeight not found - no cards");
 						}
 						return cellHt;
-					} )
+					});
 				}
 
 

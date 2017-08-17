@@ -30,7 +30,8 @@ app.controller('judgingController', function ($scope, cah, $state, uibHelper, $l
 			card.id
 		).then(function () {
 
-			cah.addBlackCardToPlayerById(card.submittedBy.id, $scope.roundJudgingCard);
+			cah.addBlackCardToPlayerById(card.submittedBy.id, $scope.roundJudgingCard, card);
+			cah.setWinningCard(card);
 			uibHelper.dryToast("The winner was " + card.submittedBy.name);
 			cah.nextStage();
 			
