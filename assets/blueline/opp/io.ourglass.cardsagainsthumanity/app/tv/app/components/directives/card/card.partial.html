@@ -1,0 +1,11 @@
+<div class="card" ng-class="{'white': white, 'black': !white}">
+	<div class="title">
+		{{text}}
+	</div>
+	<div class="id" ng-if="debugMode">
+		ID: {{cid}}
+	</div>
+	<div class="id" ng-if="!debugMode">
+		Ourglass
+	</div>
+</div>

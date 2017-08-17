@@ -1,0 +1,57 @@
+@font-face {
+    font-family: "EXOBLACK";
+    src: url('../../../../../../common/fonts/Exo_2/Exo2-Bold.ttf');
+}
+
+@font-face {
+    font-family: "EXOREG";
+    src: url('../../../../../../common/fonts/Exo_2/Exo2-Regular.ttf');
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'EXOBLACK', monospace;
+    height: 100vh;
+    width: 100vw;
+    color: #ffffff;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.applet {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.55);
+    position: relative;
+    /*border: 1px solid dodgerblue;*/
+}
+
+.apphdr {
+    font-size: 12vw;
+    height: 10vh;
+    line-height: 8vh;
+    padding-top: 1vh;
+    text-align: center;
+    margin: 0;
+}
+
+.overflow-frame {
+
+    height: 60vh;
+    overflow: hidden;
+
+}
+
+.overflow-container {
+
+    height: 50vh;
+    overflow: hidden;
+    /*border: 1px dashed red;*/
+    margin-right: 5vw;
+    margin-left: 5vw;
+
+}
+

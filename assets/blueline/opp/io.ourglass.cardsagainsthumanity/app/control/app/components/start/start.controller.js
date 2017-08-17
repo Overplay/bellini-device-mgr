@@ -38,6 +38,7 @@ app.controller('startController', function ($scope, cah, $state, uibHelper, $log
 		$state.go('picking');
 	});
 
+	$scope.clearGame = cah.clearGame;
 
 
 });
