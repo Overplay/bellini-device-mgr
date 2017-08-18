@@ -6,7 +6,11 @@
 		"discard": [],
 		"players": [],
 		"roundPlayingCards": [],
-		"availableCards": []
+		"roundJudgingCard": {},
+		"availableCards": [],
+		"stage": "start",
+		"judgeIndex": 0,
+		"previousWinningCard": {}
 	},
 	"appType": "widget",
 	"appWidth": 10,
