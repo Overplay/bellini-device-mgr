@@ -205,7 +205,7 @@ app.factory( 'mainframe', function ( bellini, toastr, $log, $rootScope, $q, $int
         } );
 
     function doDM(message){
-        io.socket.post( '/ogdevice/dm?deviceUDID=' + DEVICE_UDID, message );
+        io.socket.post( '/ogdevice/message?destination=client&deviceUDID=' + DEVICE_UDID, message );
     }
 
     // Main channel from server

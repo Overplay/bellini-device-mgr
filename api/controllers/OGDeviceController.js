@@ -186,7 +186,7 @@ module.exports = {
             return res.badRequest( { error: "Sockets only, sonny" } );
         }
 
-        if ( req.method != 'POST' )
+        if ( req.method !== 'POST' )
             return res.badRequest( { error: "That's not how to subscribe, sparky!" } );
 
         //OK, we need a deviceUDID
@@ -210,15 +210,15 @@ module.exports = {
 
     message: function ( req, res ) {
 
-        if ( !req.isSocket ) {
-            return res.badRequest( { error: "Sockets only, sonny" } );
-        }
+        // if ( !req.isSocket ) {
+        //     return res.badRequest( { error: "Sockets only, sonny" } );
+        // }
 
-        if ( req.method != 'POST' )
+        if ( req.method !== 'POST' )
             return res.badRequest( { error: "That's not how to message, sparky!" } );
 
         //OK, we need a deviceUDID
-        var params = req.allParams();
+        const params = req.allParams();
 
         if ( !params.deviceUDID )
             return res.badRequest( { error: "Missing UDID" } );
@@ -229,7 +229,7 @@ module.exports = {
         if ( !params.destination )
             return res.badRequest( { error: "No destination"});
 
-        var room;
+        let room;
 
         switch (params.destination){
             case 'clients':
@@ -255,7 +255,7 @@ module.exports = {
     launch: function ( req, res ) {
 
 
-        if ( req.method != 'POST' )
+        if ( req.method !== 'POST' )
             return res.badRequest( { error: "That's not how to message, sparky!" } );
 
         //OK, we need a deviceUDID
