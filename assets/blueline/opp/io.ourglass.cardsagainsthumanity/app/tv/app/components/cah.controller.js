@@ -16,33 +16,34 @@ app.controller('cahController', ['$scope', 'ogAPI', '$log', '$timeout', function
 
 	$scope.title = "Cards Against Humanity";
 
-
+	$scope.previousWinningCard = { text: '', id: 0 };
 
 	function handleModelCallback(data) {
 
 		$scope.players = data.players.length ? data.players : [];
 		$scope.roundPlayingCards = data.roundPlayingCards.length ? data.roundPlayingCards : [];
 
-		if ($scope.roundJudgingCard.id != data.roundJudgingCard.id) $scope.roundJudgingCard = data.roundJudgingCard;		
+		// if ($scope.roundJudgingCard.id != data.roundJudgingCard.id) $scope.roundJudgingCard = data.roundJudgingCard;		
 		
 		$scope.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
-		$scope.previousWinningCard = data.previousWinningCard ? data.previousWinningCard : { text: '', id: 0 };
 
 
 		if ($scope.stage == 'judging' && data.stage == 'picking') {
 			$scope.showWinner = true;
 			$scope.players = [];
 			$scope.roundPlayingCards = [];
+			// $scope.roundJudgingCard = data.roundJudgingCard.id ? data.roundJudgingCard : $scope.roundJudgingCard;	
+			$scope.previousWinningCard = data.previousWinningCard ? data.previousWinningCard : $scope.previousWinningCard;			
 			$timeout(function () {
 				$scope.showWinner = false;
-				if ($scope.stage != 'end') {
-					$scope.roundJudgingCard = data.roundJudgingCard ? data.roundJudgingCard : { text: '', id: 0 };
+				if ($scope.stage != 'end') { //This is in case we reached ending stage before the timeout returned
+					$scope.roundJudgingCard = data.roundJudgingCard.id ? data.roundJudgingCard : $scope.roundJudgingCard;							
 					$scope.stage = data.stage ? data.stage : 'start';
 				}
 
 			}, 20 * 1000);
 		} else {
-			$scope.roundJudgingCard = data.roundJudgingCard ? data.roundJudgingCard : { text: '', id: 0 };			
+			// $scope.roundJudgingCard = data.roundJudgingCard ? data.roundJudgingCard : { text: '', id: 0 };			
 			$scope.stage = data.stage ? data.stage : 'start';			
 		}
 

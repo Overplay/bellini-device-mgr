@@ -42,9 +42,9 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 					break;
 				}
 				service.judgeIndex++;
-				service.discardCards();
 				service.roundJudgingCard = service.getBlackCard();
 				service.giveMissingWhiteCards();
+				service.discardCards();				
 				service.stage = 'picking';
 				break;
 			case 'end':
@@ -268,34 +268,34 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 		modelChangedBroadcast();
 	};
 
-	function modelChanged(newValue) {
+	function modelChanged(data) {
 
 		$log.info('Device model changed, yay!');
 
-		service.discard = newValue.discard ? newValue.discard : [];
-		service.players = newValue.players ? newValue.players : [];
-		service.player = newValue.players ? service.getPlayerById(service.player.id) : service.player;
-		service.roundPlayingCards = newValue.roundPlayingCards ? newValue.roundPlayingCards : [];
-		service.roundJudgingCard = newValue.roundJudgingCard ? newValue.roundJudgingCard : { text: '', id: 0 };
-		service.availableCards = newValue.availableCards ? newValue.availableCards : _.cloneDeep(service.allCards);
-		service.judgeIndex = newValue.judgeIndex ? newValue.judgeIndex : 0;
+		service.discard = data.discard;
+		service.players = data.players;
+		service.player = data.players.length ? service.getPlayerById(service.player.id) : service.player;
+		service.roundPlayingCards = data.roundPlayingCards;
+		service.roundJudgingCard = data.roundJudgingCard.text ? data.roundJudgingCard : service.roundJudgingCard;
+		service.availableCards = data.availableCards != service.availableCards ? data.availableCards : service.availableCards;
+		service.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
 
 		// $log.debug('GAME STARTING DEBUG');
 		// $log.debug(service.stage);
-		// $log.debug(newValue.stage);
+		// $log.debug(data.stage);
 		// $log.debug(service.stage == 'start');
-		// $log.debug(newValue.stage == 'picking');
+		// $log.debug(data.stage == 'picking');
 
-		if (service.stage == 'start' && newValue.stage == 'picking') {
+		if (service.stage == 'start' && data.stage == 'picking') {
 			$rootScope.$broadcast('PICKING_PHASE'); //Game wasn't in progress but now is so broadcast start
 		}
 
-		if (service.stage == 'picking' && newValue.stage == 'judging') {
+		if (service.stage == 'picking' && data.stage == 'judging') {
 			$rootScope.$broadcast('JUDGING_PHASE');
 		}
 
 		if (service.stage == 'judging') {
-			switch (newValue.stage) {
+			switch (data.stage) {
 				case 'end':
 					$rootScope.$broadcast('END_PHASE');
 					break;
@@ -305,14 +305,14 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 			}
 		}
 
-		if (service.stage == 'end' && newValue.stage == 'start') {
+		if (service.stage == 'end' && data.stage == 'start') {
 			$rootScope.$broadcast('START_PHASE');
 		}
 
 
 
 
-		service.stage = newValue.stage ? newValue.stage : 'start';
+		service.stage = data.stage ? data.stage : 'start';
 
 		modelChangedBroadcast();
 	}
@@ -335,11 +335,11 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 
 				data = data.device;
 
-				service.discard = data.discard ? data.discard : [];
-				service.players = data.players ? data.players : [];
-				service.roundPlayingCards = data.roundPlayingCards ? data.roundPlayingCards : [];
-				service.roundJudgingCard = data.roundJudgingCard ? data.roundJudgingCard : { text: '', id: 0 };
-				service.availableCards = data.availableCards ? data.availableCards : _.cloneDeep(service.allCards);
+				service.discard = data.discard.length ? data.discard : [];
+				service.players = data.players.length ? data.players : [];
+				service.roundPlayingCards = data.roundPlayingCards.length ? data.roundPlayingCards : [];
+				service.roundJudgingCard = data.roundJudgingCard.text ? data.roundJudgingCard : { text: '', id: 0 };
+				service.availableCards = data.availableCards != service.availableCards ? data.availableCards : _.cloneDeep(service.allCards);
 				service.availableCards.white = _.shuffle(service.availableCards.white);
 				service.availableCards.black = _.shuffle(service.availableCards.black);
 				service.stage = data.stage ? data.stage : 'start';
