@@ -9,8 +9,8 @@
  **********************************/
 
 
-var app = angular.module('optvDSConApp', [
-    'ourglassAPI', 'ui.bootstrap', 'ui.ogMobile'
+var app = angular.module('crawlerApp', [
+    'ourglassAPI', 'ui.bootstrap', 'ui.ogMobile', 'ui.router'
 ]);
 
 

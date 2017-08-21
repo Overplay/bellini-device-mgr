@@ -1,0 +1,17 @@
+<!-- MESSAGES -->
+<div ng-show="ui.tab=='MESSAGES'" style="margin-top: 10px;">
+    <button class="btn btn-success btn-full" style="width: 100%;" ng-click="newMessage()">NEW</button>
+    <p ng-if="!messages.length" style="text-align: center; margin-top: 5px;">There are no user messages. Click NEW above to add your own messages.</p>
+
+    <form name="messageForm">
+        <div ng-repeat="msg in messages track by $index">
+            <div class="input-group" style="margin-top: 5px;">
+                <span class="input-group-addon">{{ $index+1 }}</span>
+                <input type="text" class="form-control" placeholder="New Message..." ng-model="messages[$index]" name="msg_{{ $index }}">
+                <span class="input-group-addon" ng-click="delMessage($index)">
+                <span style="color: red;">X</span></span>
+            </div>
+        </div>
+    </form>
+
+</div>

@@ -38,7 +38,7 @@ app.component( 'mainFrame', {
     },
     template:   `
         <div class="tvframe">
-            <video class="simvid" autoplay loop>
+            <video class="simvid" autoplay loop muted>
                 <source src="{{ $ctrl.vid }}" type="video/mp4">
             </video>
             <iframe class="crawler" ng-style="{'height': $ctrl.crawler.height  + '%'}" ng-class="$ctrl.crawlerPos()" src="{{ $ctrl.crawler.src }}" scrolling="no"></iframe>
