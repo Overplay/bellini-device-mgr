@@ -73,7 +73,7 @@ app.controller( "crawlerController",
 
         function venueModelUpdate(data) {
             $log.debug("crawler: got a venue model update!");
-            crawlerMode.user = data.messages;
+            crawlerModel.user = data.messages;
             updateDisplay();
         }
 
