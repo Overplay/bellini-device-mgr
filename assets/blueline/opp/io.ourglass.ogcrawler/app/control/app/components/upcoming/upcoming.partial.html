@@ -1,0 +1,14 @@
+<!-- UPCOMING -->
+<div ng-show="ui.tab=='UPCOMING'" style="margin-top: 10px;">
+    <button class="btn btn-success btn-full" style="width: 100%;" ng-click="newComingUpMessage()">NEW
+    </button>
+    <div ng-repeat="comingUp in comingUpMessages track by $index">
+        <div class="input-group" style="margin-top: 5px;">
+            <span class="input-group-addon">{{ $index+1 }}</span>
+            <input type="text" class="form-control" placeholder="New Message..."
+                ng-model="comingUpMessages[$index]">
+            <span class="input-group-addon" ng-click="delComingUpMessage($index)">
+                <span style="color: red;">X</span></span>
+        </div>
+    </div>
+</div>
