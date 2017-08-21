@@ -42,33 +42,32 @@
 
 <body ng-controller="crawlerController">
 
-<og-app-header name="OG Crawler"></og-app-header>
-<div class="container">
-    <!-- TAB CONTROL -->
-    <div class="row">
-        <div class="og-tab-bar">
-            <a class="btn btn-default" ui-sref="messages" ng-click="ui.tab = 'MESSAGES'" ng-class="{ 'tabon': ui.tab == 'MESSAGES' }"
-               style="flex-grow: 1;">MESSAGES</a>
-            <!--<a class="btn btn-default" ng-click="ui.tab = 'UPCOMING'" ng-class="{ 'tabon': ui.tab == 'UPCOMING' }"-->
-               <!--style="flex-grow: 1;">UPCOMING</a>-->
-            <a class="btn btn-default" ui-sref="twitter" ng-click="ui.tab = 'TWITTER'" ng-class="{ 'tabon': ui.tab == 'TWITTER' }"
-               style="flex-grow: 1;">TWITTER</a>
+    <og-app-header name="OG Crawler"></og-app-header>
+    <div class="container">
+        <!-- TAB CONTROL -->
+        <div class="row">
+            <div class="og-tab-bar">
+                <a class="btn btn-default" ui-sref="messages" ng-click="ui.tab = 'MESSAGES'" ng-class="{ 'tabon': ui.tab == 'MESSAGES' }"
+                style="flex-grow: 1;">MESSAGES</a>
+                <!--<a class="btn btn-default" ng-click="ui.tab = 'UPCOMING'" ng-class="{ 'tabon': ui.tab == 'UPCOMING' }"-->
+                <!--style="flex-grow: 1;">UPCOMING</a>-->
+                <a class="btn btn-default" ui-sref="twitter" ng-click="ui.tab = 'TWITTER'" ng-class="{ 'tabon': ui.tab == 'TWITTER' }"
+                style="flex-grow: 1;">TWITTER</a>
+            </div>
         </div>
-    </div>
 
 
-    <div class="row">
-        <div class="col-md-10 col-md-offset-1">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
 
-            <ui-view></ui-view>
+                <ui-view></ui-view>
 
+            </div>
         </div>
+
     </div>
-
-
-</div>
-<button class="btn btn-primary input-block-level" style="position: absolute; bottom: 0; width: 50%" ng-click="update()">UPDATE</button>
-<button ng-if="useVenueData" class="btn btn-warning input-block-level" style="position: absolute; bottom: 0; width: 50%; right: 0" ng-click="swapDataLocation()">USE DEVICE DATA</button>
-<button ng-if="!useVenueData" class="btn btn-warning input-block-level" style="position: absolute; bottom: 0; width: 50%; right: 0" ng-click="swapDataLocation()">USE VENUE DATA</button>
+    <button class="btn btn-primary input-block-level" style="position: absolute; bottom: 0; width: 50%" ng-click="update()">UPDATE</button>
+    <button ng-if="useVenueData" class="btn btn-warning input-block-level" style="position: absolute; bottom: 0; width: 50%; right: 0" ng-click="swapDataLocation()">USE DEVICE DATA</button>
+    <button ng-if="!useVenueData" class="btn btn-warning input-block-level" style="position: absolute; bottom: 0; width: 50%; right: 0" ng-click="swapDataLocation()">USE VENUE DATA</button>
 </body>
 </html>
