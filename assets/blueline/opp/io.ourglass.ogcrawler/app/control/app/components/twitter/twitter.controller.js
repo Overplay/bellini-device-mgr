@@ -7,9 +7,9 @@ app.controller('twitterController', ['$scope', "ogCrawler", function($scope, ogC
 	$scope.toggleTVTweets = ogCrawler.toggleTVTweets;
 	$scope.newTwitterQuery = ogCrawler.newTwitterQuery;
 
-	$scope.$on('UPDATE', function () { 
+	$scope.$on('UPDATE', function () {
 		$scope.hideTVTweets = ogCrawler.hideTVTweets;
 		$scope.twitterQueries = ogCrawler.twitterQueries;
-	})
+	});
 
 }]);

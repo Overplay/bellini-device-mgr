@@ -78,14 +78,15 @@ app.factory("ogCrawler",
 				venueModelCallback: venueModelUpdate,
 				messageCallback: inboundMessage
 			})
-				.then(function (data) {
-					$log.debug("crawler control: init complete");
-					// deviceModelUpdate(data);
-					data.useVenueData ? venueModelUpdate(data) : deviceModelUpdate(data);
-				})
-				.catch(function (err) {
-					$log.error("crawler controller: something bad happened: " + err);
-				});
+			.then(function (data) {
+				$log.debug("crawler control: init complete");
+				// deviceModelUpdate(data);
+				data.useVenueData ? venueModelUpdate(data) : deviceModelUpdate(data);
+				$rootScope.$broadcast('UPDATE');
+			})
+			.catch(function (err) {
+				$log.error("crawler controller: something bad happened: " + err);
+			});
 		}
 
 		service.newMessage = function () {
@@ -161,6 +162,7 @@ app.factory("ogCrawler",
 		service.toggleTVTweets = function () {
 			$log.debug("Toggling tweets");
 			service.hideTVTweets = !service.hideTVTweets;
+			$rootScope.$broadcast('UPDATE');
 		};
 
 		initialize();

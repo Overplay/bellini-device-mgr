@@ -4,8 +4,8 @@ app.controller("messagesController", ["$scope", "ogCrawler", function($scope, og
 	$scope.newMessage = ogCrawler.newMessage;
 	$scope.delMessage = ogCrawler.delMessage;
 
-	$scope.$on('UPDATE', function () { 
+	$scope.$on('UPDATE', function () {
 		$scope.messages = ogCrawler.messages;
-	})
+	});
 
 }]);
