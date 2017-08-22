@@ -1,6 +1,6 @@
 
 
-app.controller('cahController', function ($scope, cah, $log) {
+app.controller('cahController', function ($scope, cah, $log, $timeout) {
 
 	$scope.state = cah.stage;
 
@@ -18,5 +18,6 @@ app.controller('cahController', function ($scope, cah, $log) {
 	});
 
 	$scope.clearGame = cah.clearGame;
+
 
 });
