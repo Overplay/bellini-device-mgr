@@ -170,3 +170,15 @@ The master client is the one to have started the lobby.
 
 * Advertisiments could probably be run in the corners of the screen or when there is an abundance of free space.
 * We could also include advertized taglines. For example: The budwiser winner of this round is _name_ and that person gets a cheap budwiser or something along the lines of promotion
+
+
+---
+
+# Demo Notes
+
+* Make it more obvious what you have to do for each phase
+* Make it more obvious which card is the winning
+* Bold font on the cards
+* Reduce the height of the Title
+* Make the buttons look full width like other apps
+* Add timers for each round.
