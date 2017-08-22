@@ -23,12 +23,13 @@ app.factory("ogCrawler",
 			return tab.toLowerCase().replace(' ', '');
 		};
 		function deviceModelUpdate(data) {
-
-			if (data.useVenueDataModel && service.messages.length == 0) { //We want to wait for venue information at this point
+			service.useVenueData = data.useVenueData;
+			if (data.useVenueData && service.messages.length == 0) { //We want to wait for venue information at this point
 				service.messages = [];
 				service.comingUpMessages = [];
 				service.twitterQueries = [];
 				service.hideTVTweets = true;
+				$rootScope.$broadcast('UPDATE');
 				return;
 			}
 
@@ -58,9 +59,15 @@ app.factory("ogCrawler",
 				service.twitterQueries = data.twitterQueries || [];
 			}
 
+			service.useVenueData = true;
 			service.hideTVTweets = data.hideTVTweets;
 
-			$rootScope.$broadcast('UPDATE');
+			$rootScope.$broadcast('UPDATE');			
+			// $rootScope.$broadcast('UPDATE', {
+			// 		messages: 	service.messages,
+			// 		hideTVTweets: service.hideTVTweets,
+			// 		twitterQueries: service.twitterQueries
+			// 	});
 		}
 
 		function inboundMessage(msg) {
@@ -81,8 +88,7 @@ app.factory("ogCrawler",
 			.then(function (data) {
 				$log.debug("crawler control: init complete");
 				// deviceModelUpdate(data);
-				data.useVenueData ? venueModelUpdate(data) : deviceModelUpdate(data);
-				$rootScope.$broadcast('UPDATE');
+				data.useVenueData ? venueModelUpdate(data.venue) : deviceModelUpdate(data.device);
 			})
 			.catch(function (err) {
 				$log.error("crawler controller: something bad happened: " + err);
@@ -109,7 +115,7 @@ app.factory("ogCrawler",
 			service.update();
 		};
 
-		service.swapDataLocation = function (index) {
+		service.swapDataLocation = function () {
 			service.useVenueData = !service.useVenueData;
 			service.update();
 		};
@@ -125,22 +131,20 @@ app.factory("ogCrawler",
 		};
 
 		service.update = function () {
-			ogAPI.model.messages = service.messages;
-			ogAPI.model.comingUpMessages = service.comingUpMessages;
 
-			ogAPI.model.twitterQueries = service.twitterQueries;
-			ogAPI.model.hideTVTweets = service.hideTVTweets;
+			var whatData = service.useVenueData ? 'venueModel' : 'model';
+			ogAPI.model.useVenueData = service.useVenueData; //These need to always be synced
+			ogAPI.venueModel.useVenueData = service.useVenueData; //These need to always be synced			
 
-			if (service.useVenueData === true && ogAPI.model.useVenueData) { //If we use venue data
+			ogAPI[whatData].messages = service.messages;
+			ogAPI[whatData].comingUpMessages = service.comingUpMessages;
 
-				ogAPI.saveDeviceModel(); //Save that we are using venueData to the deviceModel
+			ogAPI[whatData].twitterQueries = service.twitterQueries;
+			ogAPI[whatData].hideTVTweets = service.hideTVTweets;
 
-				delete ogAPI.model.useVenueData; //Delete it before we save to venueModel
-
-			} else { //If we don't use venue data
-				ogAPI.model.useVenueData = false;
-			}
-
+			if (service.useVenueData === true && ogAPI[whatData].useVenueData) { //If we use venue data
+				afterOGAPISave(ogAPI.saveDeviceModel()); //Save that we are using venueData to the deviceModel
+			} 
 			uibHelper.curtainModal('Saving...');
 
 			if (service.useVenueData) {
@@ -151,8 +155,9 @@ app.factory("ogCrawler",
 		};
 
 		function afterOGAPISave(savePromise) {
+			var whatData = service.useVenueData ? 'venueModel' : 'model';			
 			savePromise.then(function () {
-				return ogAPI.updateTwitterQuery(ogAPI.model.twitterQueries);
+				return ogAPI.updateTwitterQuery(ogAPI[whatData].twitterQueries);
 			}).finally(function () { 
 				uibHelper.dismissCurtain();
 				$rootScope.$broadcast('UPDATE');
