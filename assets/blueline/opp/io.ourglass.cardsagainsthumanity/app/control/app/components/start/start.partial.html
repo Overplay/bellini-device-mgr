@@ -1,0 +1,13 @@
+<div>
+	Players {{players.length}}
+</div>
+<button class="btn btn-primary" ng-click="addPlayer()" ng-disabled="inLobby">
+	Join Game
+</button>
+<button class="btn btn-success" ng-click="startGame()" ng-disabled="players.length < 3">
+	Start Game
+</button>
+<button class="btn btn-danger" ng-click="clearGame()">
+	Clear Current or Previous Game
+</button>
+

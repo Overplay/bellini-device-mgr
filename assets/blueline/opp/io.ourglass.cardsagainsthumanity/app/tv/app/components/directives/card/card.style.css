@@ -1,0 +1,46 @@
+
+
+.white {
+	background: white;
+	color: black;
+}
+
+.black {
+	background: black;
+	color: white;
+}
+
+.card-dimensions {
+	width: 100px;	
+	height: 140px;
+}
+.card {
+	border-radius: 3px;
+	font-size: 10px;
+
+	margin: 2px 2px 2px 2px;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+}
+
+.title {
+	padding: 10px;
+	flex-grow: 2;
+	height: 100px;
+	/* order: 0; */
+	align-self: center;
+	overflow: hidden;
+
+}
+
+.id {
+	padding: 10px;
+	flex-grow: 1;
+	height: 15px;
+	/* order: 1; */
+	align-self: center;
+
+}

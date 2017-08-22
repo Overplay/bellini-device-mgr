@@ -65,9 +65,15 @@ app.controller( "crawlerController",
 
         }
 
-        function modelUpdate( data ) {
-            $log.debug( "crawler: got a model update!" );
+        function deviceModelUpdate( data ) {
+            $log.debug( "crawler: got a venue model update!" );
             crawlerModel.user = data.messages;
+            updateDisplay();
+        }
+
+        function venueModelUpdate(data) {
+            $log.debug("crawler: got a venue model update!");
+            crawlerMode.user = data.messages;
             updateDisplay();
         }
 
@@ -178,7 +184,8 @@ app.controller( "crawlerController",
             ogAPI.init( {
                 appName:         "io.ourglass.ogcrawler",
                 appType:         "tv",
-                modelCallback:   modelUpdate,
+                deviceModelCallback: deviceModelUpdate,
+                venueModelCallback: venueModelUpdate,
                 messageCallback: inboundMessage
             } )
                 .then( function ( data ) {

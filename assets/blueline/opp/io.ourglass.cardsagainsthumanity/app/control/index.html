@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html ng-app="cardsAgainstHumanityApp">
+
+<head>
+	<meta charset="UTF-8">
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<script src="../../../../common/bower_components/angular/angular.min.js"></script>
+	<script src="../../../../common/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+	<script src="../../../../common/js/uiOGMobile/uiOGMobile.js"></script>
+	<script src="../../../../common/bower_components/lodash/dist/lodash.min.js"></script>
+
+	<script src="../../../../common/bower_components/angular-timeago/dist/angular-timeago.min.js"></script>
+
+	<script src="../../../../common/bower_components/angular-animate/angular-animate.min.js"></script>
+	<script src="../../../../common/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+
+	<!-- App Main and AngularJS Routes -->
+
+	<script src="app/cah.module.js"></script>
+	<script src="app/cah.routes.js"></script>
+	<script src="app/services/cah.service.js"></script>
+	<script src="app/cah.controller.js"></script>
+
+	<script src="../../../../common/js/uiOGMobile/uiOGMobile.js"></script>
+	<!--<script src="../../../../common/js/ogAPI2.js"></script>-->
+
+	<script src="/js/dependencies/sails.io.js"></script>
+	<script src="../../../../common/js/ogAPIBL2.js"></script>
+
+
+	<!-- Controllers -->
+	<script src="app/components/start/start.controller.js"></script>
+	<script src="app/components/picking/picking.controller.js"></script>
+	<script src="app/components/judging/judging.controller.js"></script>
+	<script src="app/components/end/end.controller.js"></script>
+	<script src="app/components/allcards/allcards.controller.js"></script>
+	
+
+	<!-- Directives  -->
+	<script src="app/components/card/card.directive.js"></script>
+
+
+	<!-- App Specific and Overridden CSS -->
+	<link rel="stylesheet" href="assets/css/ogstyles.css">
+	<link rel="stylesheet" href="app/assets/css/style.css">
+	<link rel="stylesheet" href="app/components/card/card.style.css" >
+	<link rel="stylesheet" href="../../../../common/css/og.css" >
+	<link rel="stylesheet" href="assets/css/ogstyles.css" >
+
+	<title>OGTV Cards Against Humanity Control</title>
+</head>
+
+<body>
+
+	<og-app-header name="Cards Against Humanity"></og-app-header>
+
+
+	<div ng-controller="cahController">
+
+		<!-- <button class="btn btn-danger" ng-click="clearGame()">CLEAR</button> -->
+		<!-- <br> -->
+		<!-- <div>Player Debug</div> -->
+
+		<!-- ID: {{player.id}}
+		<br> White Cards:
+		<div ng-repeat="card in player.cards.white">{{card.text}}</div>
+		<br>
+		Black Cards:
+		<div ng-repeat="card in player.cards.black">{{card.text}}</div>
+
+		<br>
+		<div>
+			Game Debug
+		</div>
+		<br>
+		Judging Card: <div>{{roundJudgingCard.text}}</div>
+		<br>
+		State: <div>{{stage}}</div>
+		<br> -->
+		<!-- Black Cards: -->
+		<div class="card-container">
+			<card ng-repeat="card in player.cards.black" text='card.text' id='card.id' white='false'></card>
+		</div>
+	</div>
+
+
+	<ui-view></ui-view>
+<!-- 
+	<div ng-controller='cahController'>
+		Black Cards:
+		<div class="card-container">
+			<card ng-repeat="card in player.cards.black" text='card.text' id='card.id' white='false'></card>
+		</div>
+	</div> -->
+
+	<!-- <card text="'A super de duper cool default card &larr;'" id="3"></card>
+	<card text="'A super de duper cool black card'" id="3" white='false'></card>
+	<card text="'A super de duper cool white card'" id="3" white='true'></card> -->
+
+
+
+</body>
+
+</html>

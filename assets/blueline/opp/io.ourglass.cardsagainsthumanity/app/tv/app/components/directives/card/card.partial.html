@@ -1,0 +1,14 @@
+<div ng-if="text" class="card" ng-class="{'white': white, 'black': !white}" ng-style="{'height': cardHeight, 'width': cardWidth}">
+	<div class="title">
+		{{text}}
+	</div>
+	<div class="id" ng-if="debugMode">
+		ID: {{cid}}
+	</div>
+	<div class="id" ng-if="!debugMode && !submitted">
+		Ourglass
+	</div>
+	<div class="id" ng-if="!debugMode && submitted">
+		By: {{submitted}}
+	</div>
+</div>

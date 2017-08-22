@@ -1,0 +1,22 @@
+{
+	"appId": "io.ourglass.cardsagainsthumanity",
+	"displayName": "Cards Against Humanity",
+	"icon": "testapp.png",
+	"defaultModel": {
+		"discard": [],
+		"players": [],
+		"roundPlayingCards": [],
+		"roundJudgingCard": {},
+		"availableCards": [],
+		"stage": "start",
+		"judgeIndex": 0,
+		"previousWinningCard": {}
+	},
+	"appType": "widget",
+	"appWidth": 10,
+	"appHeight": 50,
+	"patronControllable": true,
+	"releaseLevel": "dev",
+	"isVirtual": false,
+	"iconPath": "/blueline/opp/io.ourglass.cardsagainsthumanity/assets/icons/testapp.png"
+}

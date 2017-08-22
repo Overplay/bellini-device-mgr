@@ -1,0 +1,15 @@
+<div ng-if="amJudge()">
+	<div class="card-container">
+		<card text='roundJudgingCard.text' id='roundJudgingCard.id' white='false'></card>
+		<card ng-repeat="card in roundPlayingCards" text='card.text' id='card.id' ng-click='confirmChoice(card)' white='true'></card>
+	</div>
+</div>
+
+<div ng-if="!amJudge()">
+	<div>Your Judge: {{findJudge()}}  -  Current Round:</div>
+	<div class="card-container">
+		<card text='roundJudgingCard.text' id='roundJudgingCard.id' white='false'></card>
+		<card text="findCard().text" id="findCard().id" white='true'></card>
+	</div>
+
+</div>
