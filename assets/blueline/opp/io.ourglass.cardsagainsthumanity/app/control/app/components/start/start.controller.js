@@ -1,11 +1,23 @@
 app.controller('startController', function ($scope, cah, $state, uibHelper, $log) {
 
+	uibHelper.headsupModal(
+		"Welcome to Cards Against Humanity!",
+		"This game requires 3 players. The start button will be clickable when at least 3 people have joined. Rounds will progress automatically. Keep an eye on the timing bar at the bottom of your window to see how long until a round progresses. Make sure to pay attention when you're about to judge."
+	);
+
+
+
 	$scope.inLobby = false;
 	$scope.players = cah.players;	
 
 	$scope.$on('MODEL_CHANGED', function () {
 		$scope.players = cah.players;
 		$scope.player = cah.player;
+
+		if (cah.stage != 'start') {
+			$stage.go(cah.stage);
+		}
+
 	});
 
 	$scope.addPlayer = function () {
@@ -31,12 +43,7 @@ app.controller('startController', function ($scope, cah, $state, uibHelper, $log
 
 	$scope.startGame = function startGame() {
 		cah.nextStage();
-		$state.go('picking');
 	};
-
-	$scope.$on('PICKING_PHASE', function () { 
-		$state.go('picking');
-	});
 
 	$scope.clearGame = cah.clearGame;
 

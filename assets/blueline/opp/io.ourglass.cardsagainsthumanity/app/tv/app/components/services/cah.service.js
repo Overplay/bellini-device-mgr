@@ -1,4 +1,4 @@
-app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
+app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval) {
 	var service = {};
 
 	var NUM_CARDS = 6;
@@ -26,19 +26,24 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 		});
 
 	service.nextStage = function nextStage() {
+
+
 		$log.debug('Service Switch:', service.stage);
 		switch (service.stage) {
 			case 'start':
 				service.assignCards();
 				service.roundJudgingCard = service.getBlackCard();
 				service.stage = 'picking';
+				service.roundTime = 10 * service.players[0].cards.white.length; //Ten seconds for each card
 				break;
 			case 'picking':
 				service.stage = 'judging';
+				service.roundTime = 15 * service.roundPlayingCards.length; //Fifteen seconds for each card
 				break;
 			case 'judging':
 				if (service.getWinner()) {
 					service.stage = 'end';
+					service.roundTime = 5 * 60; //5 minutes until the game auto-clears
 					break;
 				}
 				service.judgeIndex++;
@@ -46,15 +51,21 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 				service.giveMissingWhiteCards();
 				service.discardCards();
 				service.stage = 'picking';
+				service.roundTime = 10 * service.players[0].cards.white.length; //Ten seconds for each card
 				break;
 			case 'end':
 			default:
 				service.player = {};
 				service.stage = 'start';
+				service.roundTime = -1;
 		}
 
+		service.timeLeft = service.roundTime;
+
+		doTimer();
+
+
 		saveModel();
-		modelChangedBroadcast();
 	};
 
 	/**
@@ -110,7 +121,6 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 		});
 
 		saveModel();
-		modelChangedBroadcast();
 
 	};
 
@@ -122,7 +132,6 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 		service.roundPlayingCards = [];
 
 		saveModel();
-		modelChangedBroadcast();
 
 	};
 
@@ -137,7 +146,6 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 		}
 
 		saveModel();
-		modelChangedBroadcast();
 
 	};
 
@@ -154,7 +162,6 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 		}
 
 		saveModel();
-		modelChangedBroadcast();
 	};
 
 	service.getWhiteCard = function getWhiteCard() {
@@ -217,7 +224,6 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 
 		service.player = player;
 		saveModel();
-		modelChangedBroadcast();
 	};
 
 	function modelChangedBroadcast() {
@@ -257,7 +263,6 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 		player.cards.black.push(blackCard);
 
 		saveModel();
-		modelChangedBroadcast();
 
 	};
 
@@ -265,7 +270,6 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 		service.previousWinningCard = card;
 
 		saveModel();
-		modelChangedBroadcast();
 	};
 
 	function modelChanged(data) {
@@ -279,39 +283,8 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 		service.roundJudgingCard = data.roundJudgingCard.text ? data.roundJudgingCard : service.roundJudgingCard;
 		service.availableCards = data.availableCards != service.availableCards ? data.availableCards : service.availableCards;
 		service.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
-
-		// $log.debug('GAME STARTING DEBUG');
-		// $log.debug(service.stage);
-		// $log.debug(data.stage);
-		// $log.debug(service.stage == 'start');
-		// $log.debug(data.stage == 'picking');
-
-		if (service.stage == 'start' && data.stage == 'picking') {
-			$rootScope.$broadcast('PICKING_PHASE'); //Game wasn't in progress but now is so broadcast start
-		}
-
-		if (service.stage == 'picking' && data.stage == 'judging') {
-			$rootScope.$broadcast('JUDGING_PHASE');
-		}
-
-		if (service.stage == 'judging') {
-			switch (data.stage) {
-				case 'end':
-					$rootScope.$broadcast('END_PHASE');
-					break;
-				case 'picking':
-					$rootScope.$broadcast('PICKING_PHASE'); //Pretty sure a bug is introduced in a race condition here.
-					break;
-			}
-		}
-
-		if (service.stage == 'end' && data.stage == 'start') {
-			$rootScope.$broadcast('START_PHASE');
-		}
-
-
-
-
+		service.timeLeft = data.timeLeft ? data.timeLeft : -1;
+		service.roundTime = data.roundTime ? data.roundTime : -1;
 		service.stage = data.stage ? data.stage : 'start';
 
 		modelChangedBroadcast();
@@ -344,8 +317,11 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 				service.availableCards.black = _.shuffle(service.availableCards.black);
 				service.stage = data.stage ? data.stage : 'start';
 				service.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
+				service.timeLeft = data.timeLeft ? data.timeLeft : -1;
+				service.roundTime = data.roundTime ? data.roundTime : -1;
 
 				modelChangedBroadcast();
+
 
 			})
 			.catch(function (err) {
@@ -404,6 +380,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 		ogAPI.save()
 			.then(function (response) {
 				$log.debug('Save was cool');
+				modelChangedBroadcast();
 			})
 			.catch(function (err) {
 				// $log.error(err);
@@ -429,11 +406,17 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout) {
 		service.stage = 'start';
 		$rootScope.$broadcast('START_PHASE');
 		saveModel();
-		modelChangedBroadcast();
 
 	};
-
-
+	function doTimer() {
+		var stageBefore = service.stage;
+		$timeout(function () {
+			service.timeLeft--;
+			if (service.timeLeft == 0) service.nextStage();
+			if (stageBefore != service.stage) break;
+			doTimer();
+		}, 1000)
+	}
 
 
 	return service;

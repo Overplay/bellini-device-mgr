@@ -1,16 +1,14 @@
-<div>
-	Players {{players.length}} / 3 (required)
+<button class="btn btn-danger" ng-click="clearGame()">DEBUG CLEAR GAME BUTTON</button>
+
+
+<div class="start-info">
+	PLAYERS: {{players.length}}
 </div>
 
-<div class="container">
-	<div class="row">
-		<button class="btn btn-primary" ng-click="addPlayer()" ng-disabled="inLobby">
-			Join Game
-		</button>
-	</div>
-	<div class="row">
-		<button class="btn btn-success" ng-click="startGame()" ng-disabled="players.length < 3">
-			Start Game
-		</button>
-	</div>
-</div>
+<button class="btn btn-primary start-button" ng-click="addPlayer()" ng-disabled="inLobby">
+	JOIN GAME
+</button>
+
+<button class="btn btn-success start-button" ng-click="startGame()" ng-disabled="players.length < 3" style="width: 100%;">
+	{{players.length < 3 ? "3 PLAYERS ARE REQUIRED" : "START GAME"}}
+</button>

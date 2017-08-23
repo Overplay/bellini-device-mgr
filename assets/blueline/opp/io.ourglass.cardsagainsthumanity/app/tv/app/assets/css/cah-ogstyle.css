@@ -30,10 +30,10 @@ html, body {
 }
 
 .apphdr {
-    font-size: 12vw;
-    height: 10vh;
-    line-height: 8vh;
-    padding-top: 1vh;
+    font-size: 10vw;
+    height: 6vh;
+    line-height: 6vh;
+    padding-top: .5vh;
     text-align: center;
     margin: 0;
 }

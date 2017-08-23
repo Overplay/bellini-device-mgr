@@ -6,6 +6,22 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 		$state.go('start');
 	}
 
+	$scope.amJudge = function amJudge() {
+		return $scope.player.id == cah.judgeIndex % cah.players.length;
+	};
+
+	if ($scope.amJudge()) {
+		uibHelper.headsupModal(
+			"You are the Judge!",
+			"You are the Judge, wait for players to submit their cards. When you see white cards, pick your favorite."
+		);
+	} else {
+		uibHelper.headsupModal(
+			"You are picking!",
+			"Pick your favorite white card from your hand that matches the black card on the left."
+		);
+	}
+
 	$scope.player = cah.player;
 	$scope.players = cah.players;
 	$scope.player.cards = cah.getPlayerById($scope.player.id).cards;
@@ -44,9 +60,7 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 		});
 	};
 
-	$scope.amJudge = function amJudge() {
-		return $scope.player.id == cah.judgeIndex % cah.players.length;
-	};
+
 
 	$scope.nextStage = function nextStage() {
 		//We could check to see if everyone has submitted, but if someone is AFK let's not

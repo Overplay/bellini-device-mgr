@@ -52,12 +52,20 @@ app.controller('judgingController', function ($scope, cah, $state, uibHelper, $l
 		});
 	};
 
-	$scope.$on('PICKING_PHASE', function () {
-		$state.go('picking');
-	});
+	$scope.$on('MODEL_CHANGED', function () {
 
-	$scope.$on('END_PHASE', function () {
-		$state.go('end');
+		if (cah.stage != 'picking') {
+
+			if (cah.getWinner()) {
+				$state.go('end');
+			} else {
+				$state.go('picking');
+			}
+
+		}
+
+
+
 	});
 
 });

@@ -85,7 +85,10 @@
 		<div class="card-container">
 			<card ng-repeat="card in player.cards.black" text='card.text' id='card.id' white='false'></card>
 		</div>
+
+		<uib-progressbar ng-hide="timeLeft == -1" class="progress-striped active" value="timeLeft" type="{{timeLeft > 50 ? 'success' : timeLeft < 50 && timeLeft > 25 ? 'warning' : 'danger'}}">{{dynamic}}</uib-progressbar>
 	</div>
+
 
 
 	<ui-view></ui-view>
