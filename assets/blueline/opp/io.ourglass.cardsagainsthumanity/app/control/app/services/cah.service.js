@@ -282,7 +282,15 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 		service.availableCards = data.availableCards != service.availableCards ? data.availableCards : service.availableCards;
 		service.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
 		service.timeLeft = data.timeLeft ? data.timeLeft : -1;
+		if (service.roundTime != data.roundTime) {
+			
+			service.timeLeft = data.roundTime;
+			
+			doTimer();
+		}
 		service.roundTime = data.roundTime ? data.roundTime : service.timeLeft;
+
+				
 
 		service.stage = data.stage ? data.stage : 'start';
 
@@ -373,7 +381,9 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 			availableCards: service.availableCards, //Needed so somebody doesn't pull a card someone else has
 			stage: service.stage,
 			judgeIndex: service.judgeIndex,
-			previousWinningCard: service.previousWinningCard
+			previousWinningCard: service.previousWinningCard,
+			roundTime: service.roundTime,
+			timeLeft: service.timeLeft
 		};
 
 		ogAPI.save()
@@ -412,6 +422,9 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 		var stageBefore = service.stage;
 		$timeout(function () {
 			service.timeLeft--;
+
+			service.timeLeftPercent = Math.round(service.timeLeft / service.roundTime) * 100;
+			modelChangedBroadcast();
 
 			if (service.timeLeft == 0) {
 				service.nextStage();
