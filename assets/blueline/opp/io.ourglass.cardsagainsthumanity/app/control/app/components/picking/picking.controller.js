@@ -6,6 +6,8 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 		$state.go('start');
 	}
 
+	$scope.player = cah.player;
+
 	$scope.amJudge = function amJudge() {
 		return $scope.player.id == cah.judgeIndex % cah.players.length;
 	};
@@ -22,7 +24,6 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 		);
 	}
 
-	$scope.player = cah.player;
 	$scope.players = cah.players;
 	$scope.player.cards = cah.getPlayerById($scope.player.id).cards;
 	$scope.roundPlayingCards = cah.roundPlayingCards;
