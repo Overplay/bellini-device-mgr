@@ -31,10 +31,9 @@ function lineupForDevice(deviceUDID, searchQuery){
         })
         .then( function(lineupId){
             // Fetching from AJPGS, for now
-            return request.get( "http://104.131.145.36:1338/tvmediaproxy/fetch/" + lineupId )
-                .then( function ( d ) {
-                    var lup = d.body;
-                    var rval = _.map(lup, function(chanLup){
+            return PGService.getCachedLineup(lineupId)
+                .then( function ( lineup ) {
+                    const rval = _.map(lineup, function(chanLup){
 
                         chanLup.channel["logoUrl"] = "http://cdn.tvpassport.com/image/station/100x100/" + chanLup.channel.logoFilename;
 
@@ -101,6 +100,34 @@ module.exports = {
                 res.ok(rval);
             })
             .catch(res.serverError);
+
+    },
+
+    bestposition: function (req, res){
+
+        const params = req.allParams();
+
+        if ( !params.channel ) {
+            return res.badRequest( { error: 'no channel' } );
+        }
+
+        if ( !params.deviceUDID ) {
+            return res.badRequest( { error: 'no device' } );
+        }
+
+        OGDevice.findOne({ deviceUDID: params.deviceUDID})
+            .then( (device) => {
+
+                if (!device){
+                    return res.badRequest({ error: 'no such device'});
+                }
+
+                PGService.bestposition( device, params.channel )
+                    .then(res.ok)
+                    .catch(res.proxyError);
+
+            })
+
 
     }
 

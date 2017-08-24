@@ -26,6 +26,10 @@ module.exports = {
         bcSyncSettings: {
             cronDelay: 5 * 60 * 50 * 1000, // 5 min
             bcport:    2000
+        },
+
+        belliniPGS: {
+            url: 'http://localhost:2020'
         }
 
     },

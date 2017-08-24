@@ -479,7 +479,7 @@ module.exports = {
 
     changechannel: function ( req, res ) {
 
-        if ( req.method != 'POST' )
+        if ( req.method !== 'POST' )
             return res.badRequest( { error: "Bad verb" } );
 
         //OK, we need a deviceUDID
@@ -510,6 +510,20 @@ module.exports = {
                     interaction: 'CHANNEL_CHANGE',
                     venueId: dev.atVenueUUID,
                     meta: { toChannel: parseInt( params.channel ) }});
+
+                PGService.bestPosition(dev, params.channel)
+                    .then( (bp)=> {
+                        sails.sockets.broadcast( "device_" + params.deviceUDID,
+                            'DEVICE-DM',
+                            {
+                                action:  'position',
+                                map: bp,
+                                ts:      new Date().getTime() // hack for multiples
+                            } );
+                    })
+                    .catch( (err)=>{
+                        sails.log.silly("Error getting best position. Oh well.");
+                    });
 
                 return res.ok( { message: "thank you for your patronage" } );
             } )
