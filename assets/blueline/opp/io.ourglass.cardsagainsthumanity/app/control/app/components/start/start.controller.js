@@ -14,8 +14,8 @@ app.controller('startController', function ($scope, cah, $state, uibHelper, $log
 		$scope.players = cah.players;
 		$scope.player = cah.player;
 
-		if (cah.stage != 'start') {
-			$stage.go(cah.stage);
+		if (cah.stage != 'start' && $scope.inLobby) {
+			$state.go(cah.stage);
 		}
 
 	});
