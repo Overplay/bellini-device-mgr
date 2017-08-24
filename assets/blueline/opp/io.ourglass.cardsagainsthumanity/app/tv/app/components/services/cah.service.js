@@ -1,110 +1,199 @@
-app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval) {
-	var service = {};
+app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interval', function ($rootScope, $log, ogAPI, $http, $timeout, $interval) {
 
+
+	var service = {};
 	var NUM_CARDS = 6;
 
-	service.allCards = {
-		white: [
-			{ text: 'Cards have not loaded yet.', id: 0 }
-		],
-		black: [
-			{ text: 'Cards have not loaded yet.', id: 0, pick: 0 }
-		]
-	};
 
-	$http.get('app/assets/cards.json')
-		.then(function (response) {
-			$log.debug('Cards Loaded!');
-			service.allCards = response.data;
-			console.log(service.allCards);
-			service.availableCards = _.cloneDeep(service.allCards);
-			service.availableCards.white = _.shuffle(service.availableCards.white);
-			service.availableCards.black = _.shuffle(service.availableCards.black);
-		}).catch(function (err) {
-			$log.debug('Cards Load Failed!');
-			$log.error(err);
-		});
-
-	service.nextStage = function nextStage() {
+	//vars
+	{
+		//DEFAULT SERVICE STATE
+		service.stage = 'start';
+		service.roundPlayingCards = [];
+		service.roundJudgingCard = { text: '', id: 0 };
+		service.discard = [];
+		service.players = [];
+		service.player = {};
+	}
 
 
-		$log.debug('Service Switch:', service.stage);
+	//I'll be adding blocks so that my editor can fold the code down. Will remove at the end of writing
+	{
+		service.allCards = {
+			white: [
+				{ text: 'Cards have not loaded yet.', id: 0 }
+			],
+			black: [
+				{ text: 'Cards have not loaded yet.', id: 0, pick: 0 }
+			]
+		};
+
+		$http.get('app/assets/cards.json')
+			.then(function (response) {
+				$log.debug('Cards Loaded!');
+				service.allCards = response.data;
+				service.availableCards = _.cloneDeep(service.allCards);
+				service.availableCards.white = _.shuffle(service.availableCards.white);
+				service.availableCards.black = _.shuffle(service.availableCards.black);
+			}).catch(function (err) {
+				$log.debug('Cards Load Failed!');
+				$log.error(err);
+			});
+	}
+
+	service.nextStage = function nextStage(fromModalUpdate) {
+
 		switch (service.stage) {
-			case 'start':
-				service.assignCards();
+
+			case 'start': //We will only go from start to picking once a game
+			
+				service.assignCards(); //Give everyone white cards
 				service.roundJudgingCard = service.getBlackCard();
 				service.stage = 'picking';
-				service.roundTime = 10 * service.players[0].cards.white.length; //Ten seconds for each card
+				servuce.roundTime = 10 * service.players[0].cards.white.length;
 				break;
-			case 'picking':
+
+			case 'picking': //Part of the main game loop, will happen often
+			
+				service.roundTime = 15 * service.roundPlayingCards.length;
 				service.stage = 'judging';
-				service.roundTime = 15 * service.roundPlayingCards.length; //Fifteen seconds for each card
 				break;
-			case 'judging':
+
+			case 'judging': //Part of the main game loop
+				
 				if (service.getWinner()) {
 					service.stage = 'end';
-					service.roundTime = 5 * 60; //5 minutes until the game auto-clears
+					service.roundTime = 5 * 60; // 5 minutes until the game auto-clears
 					break;
 				}
+
 				service.judgeIndex++;
 				service.roundJudgingCard = service.getBlackCard();
 				service.giveMissingWhiteCards();
 				service.discardCards();
 				service.stage = 'picking';
-				service.roundTime = 10 * service.players[0].cards.white.length; //Ten seconds for each card
+				service.roundTime = 10 * service.players[0].cards.white.length; //10 seconds per card
 				break;
+
 			case 'end':
 			default:
-				service.player = {};
+				
+				service.clearGame();
 				service.stage = 'start';
 				service.roundTime = -1;
-		}
 
-		service.timeLeft = service.roundTime;
+		}
 
 		doTimer();
 
+		if (!fromModalUpdate) {
+			saveModel();
+		}
 
-		saveModel();
-	};
-
-	/**
-	 * Returns winner object if exists, undefined if not
-	 * 
-	 */
+	}
+	
 	service.getWinner = function getWinner() {
 		return _.find(service.players, function (player) {
 			return player.cards.black.length >= 3;
 		});
 	};
 
-	service.stage = 'start';
-	service.roundPlayingCards = []; //One of these will look like {id: 0, text: "123", submittedBy: {name: 'Logan', id: 0}}
-	service.roundJudgingCard = { text: '', id: 0 };
-	service.discard = []; //This will just be {id: 0, text: 'someText'}
-	service.players = []; //A player will look like        { id: 0, cards: {white: [], black: []}, name: "Logan" }
-	service.player = {};
-	service.getPlayerScoreForId = function getPlayerScoreForId(id) {
-
-		if (service.players.length == 0) throw new Error('no players!');
-
-		for (var i = 0; i < service.players.length; i++) {
-			if (id == service.players[i].id) return service.players[i].cards.black.length;
-		}
-
-		throw new Error('noUserId:  ' + id); //Do this if service.players.length == 0 or id not found
-
+	service.getPlayerById = function getPlayerById(id) {
+		return _.find(service.players, function (player) { return player.id == id; });
 	};
 
+	service.getPlayerByName = function getPlayerByName(name) {
+		return _.find(service.players, function (player) { return player.name == name; });
+	}
+
+	function modelChanged(data) {
+
+		$log.info('Device model changed, yay!');
+
+		service.discard = data.discard;
+		service.players = data.players;
+		service.player = data.players.length ? service.getPlayerById(service.player.id) : service.player;
+		service.roundPlayingCards = data.roundPlayingCards;
+		service.roundJudgingCard = data.roundJudgingCard.text ? data.roundJudgingCard : service.roundJudgingCard;
+		service.availableCards = data.availableCards != service.availableCards ? data.availableCards : service.availableCards;
+		service.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
+
+		service.roundTime = data.roundTime ? data.roundTime : -1;
+
+		service.stage = data.stage ? data.stage : 'start';
+
+		modelChangedBroadcast();
+	}
+
+	function modelChangedBroadcast() {
+		$rootScope.$broadcast('MODEL_CHANGED', {
+			discard: service.discard, //Needed to prevent reshuffle inconsistencies
+			players: service.players, //Needed to sync scores and taken out cards
+			roundPlayingCards: service.roundPlayingCards, //Needed for the judge to judge
+			roundJudgingCard: service.roundJudgingCard,
+			availableCards: service.availableCards, //Needed so somebody doesn't pull a card someone else has
+			stage: service.stage,
+			judgeIndex: service.judgeIndex,
+			roundTime: service.roundTime,
+		});
+	}
+
+	function doTimer() {
+		var stageBefore = service.stage;
+		$timeout(function () {
+			service.timeLeft--;
+			if (service.timeLeft == 0) service.nextStage();
+			if (stageBefore != service.stage) break;
+			doTimer();
+		}, 1000)
+	}
+
+	function initialize() {
+
+		$log.debug('initializing app and data');
+
+		ogAPI.init({
+			appName: 'io.ourglass.cardsagainsthumanity',
+			deviceModelCallback: modelChanged,
+			messageCallback: inboundMessage,
+			appType: 'tv',
+			deviceUDID: 'apple-sim-1'
+		})
+			.then(function (data) {
+
+				data = data.device;
+
+				service.discard = data.discard.length ? data.discard : [];
+				service.players = data.players.length ? data.players : [];
+				service.roundPlayingCards = data.roundPlayingCards.length ? data.roundPlayingCards : [];
+				service.roundJudgingCard = data.roundJudgingCard.text ? data.roundJudgingCard : { text: '', id: 0 };
+				service.availableCards = data.availableCards != service.availableCards ? data.availableCards : _.cloneDeep(service.allCards);
+				service.availableCards.white = _.shuffle(service.availableCards.white);
+				service.availableCards.black = _.shuffle(service.availableCards.black);
+				service.stage = data.stage ? data.stage : 'start';
+				service.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
+				service.timeLeft = data.timeLeft ? data.timeLeft : -1;
+				service.roundTime = data.roundTime ? data.roundTime : -1;
+
+				modelChangedBroadcast();
+
+
+			})
+			.catch(function (err) {
+				$log.error('Something failed: ' + err);
+			});
+
+	}
 
 	service.submitCard = function submitCard(card, player) {
 
-		if (_.findIndex(service.roundPlayingCards, function (cardListItem) { return cardListItem.id == card.id; }) >= 0) return; //If it exists don't add it again
+		if (_.findIndex(service.roundPlayingCards, function (cardListItem) { return cardListItem.id == card.id; }) >= 0) {
+			return; //If it exists don't add it again
+		}
 
-
-		for (var i = 0; i < player.cards.white.length; i++) delete player.cards.white[i].$$hashKey; //Angular adds this somewhere but idk where
-
-
+		for (var i = 0; i < player.cards.white.length; i++) {
+			delete player.cards.white[i].$$hashKey; //Angular adds this somewhere but idk where 
+		}
 
 		service.roundPlayingCards.push({
 			id: card.id,
@@ -121,6 +210,23 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 		});
 
 		saveModel();
+
+	};
+
+	service.getPlayerScoreForId = function getPlayerScoreForId(id) {
+
+		if (service.players.length == 0) {
+			throw new Error('no players!');
+		}
+
+
+		for (var i = 0; i < service.players.length; i++) {
+			if (id == service.players[i].id) {
+				return service.players[i].cards.black.length;
+			}
+		}
+
+		throw new Error('noUserId:  ' + id); //Do this if service.players.length == 0 or id not found
 
 	};
 
@@ -150,6 +256,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 	};
 
 	service.giveMissingWhiteCards = function giveMissingWhiteCards() {
+
 		if (service.players.length <= 0) {
 			throw new Error('No players to assign cards to');
 		}
@@ -165,7 +272,9 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 	};
 
 	service.getWhiteCard = function getWhiteCard() {
-		if (service.availableCards.white.length <= 0) { service.reshuffle(); }
+		if (service.availableCards.white.length <= 0) {
+			service.reshuffle();
+		}
 		return service.availableCards.white.shift();
 	};
 
@@ -195,12 +304,6 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 
 	};
 
-	service.getPlayerById = function getPlayerById(id) {
-
-		return _.find(service.players, function (player) { return player.id == id; });
-
-	};
-
 	service.addPlayer = function addPlayer(name) {
 
 		if (service.stage != 'start') throw new Error('The game you tried to join is in progress'); //Game is running
@@ -226,18 +329,6 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 		saveModel();
 	};
 
-	function modelChangedBroadcast() {
-		$rootScope.$broadcast('MODEL_CHANGED', {
-			discard: service.discard, //Needed to prevent reshuffle inconsistencies
-			players: service.players, //Needed to sync scores and taken out cards
-			roundPlayingCards: service.roundPlayingCards, //Needed for the judge to judge
-			roundJudgingCard: service.roundJudgingCard,
-			availableCards: service.availableCards, //Needed so somebody doesn't pull a card someone else has
-			stage: service.stage,
-			judgeIndex: service.judgeIndex
-		});
-	}
-
 	service.addBlackCardToPlayerById = function addBlackCardToPlayerById(id, blackCard, whiteCard) {
 
 		if (!blackCard.pick) {
@@ -252,10 +343,13 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 		}
 
 		var blackCardText;
-		if (blackCard.text.indexOf('_') != -1) {
-			blackCardText = blackCard.text.replace('_', whiteCard.text);
-		} else {
-			blackCardText = blackCard.text + " " + whiteCard.text;
+
+		if (whiteCard) {
+			if (blackCard.text.indexOf('_') != -1) {
+				blackCardText = blackCard.text.replace('_', whiteCard.text);
+			} else {
+				blackCardText = blackCard.text + " " + whiteCard.text;
+			}
 		}
 
 
@@ -272,63 +366,22 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 		saveModel();
 	};
 
-	function modelChanged(data) {
+	service.clearGame = function clearGame() {
 
-		$log.info('Device model changed, yay!');
+		service.discard = [];
+		service.player = {};
+		service.players = [];
+		service.roundPlayingCards = [];
+		service.roundJudgingCard = { text: '', id: 0 };
+		service.judgeIndex = 0;
+		service.availableCards = _.cloneDeep(service.allCards);
+		service.availableCards.white = _.shuffle(service.availableCards.white);
+		service.availableCards.black = _.shuffle(service.availableCards.black);
+		service.stage = 'start';
+		$rootScope.$broadcast('START_PHASE');
+		saveModel();
 
-		service.discard = data.discard;
-		service.players = data.players;
-		service.player = data.players.length ? service.getPlayerById(service.player.id) : service.player;
-		service.roundPlayingCards = data.roundPlayingCards;
-		service.roundJudgingCard = data.roundJudgingCard.text ? data.roundJudgingCard : service.roundJudgingCard;
-		service.availableCards = data.availableCards != service.availableCards ? data.availableCards : service.availableCards;
-		service.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
-		service.timeLeft = data.timeLeft ? data.timeLeft : -1;
-		service.roundTime = data.roundTime ? data.roundTime : -1;
-		service.stage = data.stage ? data.stage : 'start';
-
-		modelChangedBroadcast();
-	}
-
-
-	function inboundMessage(msg) { }
-
-	function initialize() {
-
-		$log.debug('initializing app and data');
-
-		ogAPI.init({
-			appName: 'io.ourglass.cardsagainsthumanity',
-			deviceModelCallback: modelChanged,
-			messageCallback: inboundMessage,
-			appType: 'mobile',
-			deviceUDID: 'apple-sim-1'
-		})
-			.then(function (data) {
-
-				data = data.device;
-
-				service.discard = data.discard.length ? data.discard : [];
-				service.players = data.players.length ? data.players : [];
-				service.roundPlayingCards = data.roundPlayingCards.length ? data.roundPlayingCards : [];
-				service.roundJudgingCard = data.roundJudgingCard.text ? data.roundJudgingCard : { text: '', id: 0 };
-				service.availableCards = data.availableCards != service.availableCards ? data.availableCards : _.cloneDeep(service.allCards);
-				service.availableCards.white = _.shuffle(service.availableCards.white);
-				service.availableCards.black = _.shuffle(service.availableCards.black);
-				service.stage = data.stage ? data.stage : 'start';
-				service.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
-				service.timeLeft = data.timeLeft ? data.timeLeft : -1;
-				service.roundTime = data.roundTime ? data.roundTime : -1;
-
-				modelChangedBroadcast();
-
-
-			})
-			.catch(function (err) {
-				$log.error('Something failed: ' + err);
-			});
-
-	}
+	};
 
 	function stripBullshit() {
 
@@ -361,7 +414,6 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 			//If it's undefined I want it to still work
 		}
 	}
-
 	function saveModel() {
 
 		stripBullshit();
@@ -389,25 +441,8 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 
 	}
 
+	function inboundMessage(msg) { }
 
-	initialize();
-
-	service.clearGame = function clearGame() {
-
-		service.discard = [];
-		service.player = {};
-		service.players = [];
-		service.roundPlayingCards = [];
-		service.roundJudgingCard = { text: '', id: 0 };
-		service.judgeIndex = 0;
-		service.availableCards = _.cloneDeep(service.allCards);
-		service.availableCards.white = _.shuffle(service.availableCards.white);
-		service.availableCards.black = _.shuffle(service.availableCards.black);
-		service.stage = 'start';
-		$rootScope.$broadcast('START_PHASE');
-		saveModel();
-
-	};
 	function doTimer() {
 		var stageBefore = service.stage;
 		$timeout(function () {
@@ -418,6 +453,14 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 		}, 1000)
 	}
 
+	function messageReceived(msg) { 
+	
+	}
+
+
+
+	initialize();
 
 	return service;
-});
+
+}]);
