@@ -13,11 +13,6 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             template: '<div ui-view="toptab"></div><div ui-view="appbody"></div>',
             controller: 'switchController',
             resolve: {
-                permissions: function(ogAPI, ogNet){
-                    return ogNet.init().then( function(){
-                        return ogAPI.getPermissionsPromise();
-                    });
-                },
                 ogDevice: function ( ogNet ) {
                     return ogNet.init().then( function () { return ogNet.getDeviceInfo() } );
                 }
