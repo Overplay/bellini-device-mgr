@@ -20,9 +20,13 @@ app.controller( "ogBLTestController", function ( $scope, $log, ogAPI, uibHelper 
     }
 
     function inboundMessage( msg ) {
-        $log.info( "New message: " + msg );
+        $log.info( "New app message: " + msg );
         $scope.inboundMessage = msg;
+    }
 
+    function inboundSysMessage(msg) {
+        $log.info( "New sys message: " + msg );
+        $scope.inboundSysMessage = msg;
     }
 
     $scope.getDeviceModel = function () {
@@ -37,7 +41,8 @@ app.controller( "ogBLTestController", function ( $scope, $log, ogAPI, uibHelper 
         appName:             "io.ourglass.bltest",
         deviceModelCallback: modelChanged,
         venueModelCallback:  venueModelChanged,
-        messageCallback:     inboundMessage,
+        appMsgCallback:      inboundMessage,
+        sysMsgCallback:      inboundSysMessage,
         appType:             'tv'
     } )
         .then( function ( d ) {
@@ -51,17 +56,17 @@ app.controller( "ogBLTestController", function ( $scope, $log, ogAPI, uibHelper 
             $log.error( "That's not right!" );
         } );
 
-    $scope.sendMessage = function(){
+    $scope.sendMessage = function () {
 
-        uibHelper.stringEditModal('Sned Message','Enter message below.', $scope.obMessage.fromPhone)
-            .then( function(msg){
+        uibHelper.stringEditModal( 'Sned Message', 'Enter message below.', $scope.obMessage.fromPhone )
+            .then( function ( msg ) {
                 $scope.obMessage.fromPhone = msg;
-                ogAPI.sendMessageToAppRoom($scope.obMessage);
-            })
+                ogAPI.sendMessageToAppRoom( $scope.obMessage );
+            } )
         //ogAPI.sendMessageToAppRoom( $scope.obMessage );
     };
 
-    $scope.changeDevModel = function(){
+    $scope.changeDevModel = function () {
         ogAPI.model.deviceData.red++;
         ogAPI.model.deviceData.blue++;
         ogAPI.save();
@@ -70,7 +75,7 @@ app.controller( "ogBLTestController", function ( $scope, $log, ogAPI, uibHelper 
     $scope.changeVenueModel = function () {
         ogAPI.venueModel.venueData.green--;
         ogAPI.venueModel.venueData.yellow--;
-        ogAPI.save('venue');
+        ogAPI.save( 'venue' );
     }
 
 

@@ -208,6 +208,34 @@ module.exports = {
 
     },
 
+    subSystemMessages: function ( req, res ) {
+
+        if ( !req.isSocket ) {
+            return res.badRequest( { error: "Sockets only, sonny" } );
+        }
+
+        if ( req.method !== 'POST' )
+            return res.badRequest( { error: "That's not how to subscribe, sparky!" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing params" } );
+
+        var room = "sysmsg:" + params.deviceUDID;
+
+        sails.sockets.join( req, room );
+        // Broadcast a notification to all the sockets who have joined
+        sails.sockets.broadcast( room,
+            room,
+            { message: 'Welcome to the OGDevice system message room for ' + params.deviceUDID },
+            params.echo ? null : req );
+
+        return res.ok( { message: 'joined sysmsg' } );
+
+    },
+
     message: function ( req, res ) {
 
         // if ( !req.isSocket ) {
@@ -541,12 +569,14 @@ module.exports = {
                 dev.currentProgram = params.tvShow;
                 dev.save();
                 // This lets the webapps know, albeit indirectly
-                sails.sockets.broadcast( "device_" + params.deviceUDID,
-                    'DEVICE-DM',
+                sails.sockets.broadcast( "sysmsg:" + params.deviceUDID,
+                    "sysmsg:" + params.deviceUDID,
                     {
                         action: 'new-program',
+                        program: params.tvShow,
                         ts:     new Date().getTime() // hack for multiples
                     } );
+
                 res.ok( { message: "thank you for your patronage" } );
             } )
             .catch( res.serverError );

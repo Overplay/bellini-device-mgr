@@ -25,7 +25,13 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI, $interva
 
     }
 
-    $scope.getDeviceModel = function(){
+    function inboundSysMessage( msg ) {
+        $log.info( "New sys message: " + msg );
+        $scope.inboundSysMessage = msg;
+
+    }
+
+    $scope.getDeviceModel = function () {
         return ogAPI.model;
     }
 
@@ -37,7 +43,8 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI, $interva
         appName:             "io.ourglass.bltest",
         deviceModelCallback: modelChanged,
         venueModelCallback:  venueModelChanged,
-        messageCallback:     inboundMessage,
+        appMsgCallback:      inboundMessage,
+        sysMsgCallback:      inboundSysMessage,
         appType:             'tv'
     } )
         .then( function ( d ) {
@@ -58,12 +65,12 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI, $interva
             $log.error( "That's not right!" );
         } )
 
-    function startSendingMessages(){
+    function startSendingMessages() {
 
-        $interval( function(){
+        $interval( function () {
 
             $scope.obMessage.numberFromTV++;
-            ogAPI.sendMessageToAppRoom($scope.obMessage);
+            ogAPI.sendMessageToAppRoom( $scope.obMessage );
 
         }, 5000 );
     }

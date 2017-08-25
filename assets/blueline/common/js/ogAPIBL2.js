@@ -286,7 +286,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             var _venueDataCb;
 
             // Message callback when a DM is sent from BL
-            var _msgCb;
+            var _appMsgCb, _sysMsgCb;
 
             var _deviceModelDBId, _venueModelDBId;
             var service = { model: {}, venueModel: {} };
@@ -302,12 +302,12 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             // Received direct message from cloud
             io.socket.on( 'DEVICE-DM', function ( data ) {
-                if ( _msgCb ) {
+                if ( _syMsgCb ) {
                     $rootScope.$apply( function () {
-                        _msgCb( { systemMsg: data } );
+                        _syMsgCb( data  );
                     } );
                 } else {
-                    console.log( 'Dropping sio message rx (no cb):' + JSON.stringify( data ) );
+                    console.log( 'Dropping sio DEVICE_DM message rx (no cb)' );
                 }
             } );
 
@@ -476,12 +476,12 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 io.socket.on( roomId, function (data) {
 
-                    if ( _msgCb ) {
+                    if ( _appMsgCb ) {
                         $rootScope.$apply( function () {
-                            _msgCb( { appMsg: data } );
+                            _appMsgCb( data );
                         } );
                     } else {
-                        console.log( 'Dropping app message rx (no cb):' + JSON.stringify( data ) );
+                        console.log( 'Dropping app message rx (no cb)' );
                     }
 
                 } );
@@ -496,6 +496,26 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                             reject( jwres );
                         } else {
                             $log.debug( "Successfully joined room for this device" );
+                            resolve();
+                        }
+                    } );
+                } );
+
+            };
+
+
+            function joinSystemMsgRoom() {
+
+                return $q( function ( resolve, reject ) {
+
+                    io.socket.post( '/ogdevice/subSystemMessages', {
+                        deviceUDID: _deviceUDID
+                    }, function ( resData, jwres ) {
+                        console.log( resData );
+                        if ( jwres.statusCode != 200 ) {
+                            reject( jwres );
+                        } else {
+                            $log.debug( "Successfully joined sysmsg room for this device" );
                             resolve();
                         }
                     } );
@@ -590,10 +610,17 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     $log.warn( "You didn't specify a venueModelCallback, so you won't get one!" );
 
 
-                _msgCb = params.messageCallback;
-                if ( !_deviceDataCb )
-                    $log.warn( "You didn't specify a messageCallback, so you won't get one!" );
+                if ( params.hasOwnProperty( "messageCallback" ) ) {
+                    $log.warn( "messageCallback is deprecated. Use appMsgCallback." );
+                }
 
+                _appMsgCb = params.appMsgCallback || params.messageCallback;
+                if ( !_appMsgCb )
+                    $log.warn( "You didn't specify an appMsgCallback, so you won't get one!" );
+
+                _sysMsgCb = params.sysMsgCallback;
+                if ( !_sysMsgCb )
+                    $log.warn( "You didn't specify a sysMsgCallback, so you won't get one!" );
 
                 return $http.post( '/appmodel/initialize', { appid: _appId, deviceUDID: _deviceUDID } )
                     .then( stripData )
@@ -606,7 +633,13 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                         service.model = initialData.device;
                         service.venueModel = initialData.venue;
                         $log.debug( "ogAPI: Subscribing to messages" );
-                        return joinDeviceAppRoom();
+
+                        var p = [];
+
+                        if (_appMsgCb) p.push(joinDeviceAppRoom());
+                        if (_sysMsgCb) p.push(joinSystemMsgRoom());
+
+                        return $q.all(p);
                     } )
                     .then( function () {
                         $log.debug( "Checking user level for this device" );

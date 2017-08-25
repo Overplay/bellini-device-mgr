@@ -25,7 +25,7 @@
     <title>OBL Test</title>
 </head>
 <body ng-controller="mainScreenController">
-    <div class="title">BL TEST</div>
+    <!--<div class="title">BL TEST</div>-->
     <div class="container-fluid">
 
         <p class="udid">{{ udid || 'No UDID' }}</p>
@@ -48,6 +48,11 @@
         <div class="jsonwrap">
             <h3>Outbound Message</h3>
             <pre>{{( obMessage | json ) }}</pre>
+        </div>
+
+        <div class="jsonwrap">
+            <h3>Inbound Sys Msg</h3>
+            <pre>{{( inboundSysMessage | json ) || 'waiting...' }}</pre>
         </div>
 
     </div>
