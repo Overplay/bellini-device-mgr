@@ -569,8 +569,13 @@ module.exports = {
                 dev.currentProgram = params.tvShow;
                 dev.save();
                 // This lets the webapps know, albeit indirectly
-                sails.sockets.broadcast( "sysmsg:" + params.deviceUDID,
-                    "sysmsg:" + params.deviceUDID,
+
+                var room = "sysmsg:" + params.deviceUDID;
+
+                sails.log.debug("Announcing channel change on: "+room);
+
+                sails.sockets.broadcast( room,
+                    room,
                     {
                         action: 'new-program',
                         program: params.tvShow,
