@@ -2,7 +2,7 @@
 <!-- Manager Mode -->
 <div class="og-tab-bar" ng-if="showManagerTabs()">
     <a class="btn btn-default" style="background-color: #52B85E;" ui-sref="top.mdash" ui-sref-active="tabon">APPS</a>
-    <a class="btn btn-default" ui-sref="top.mguide" ui-sref-active="tabon">TVx</a>
+    <a class="btn btn-default" ui-sref="top.mguide" ui-sref-active="tabon">TV</a>
     <a class="btn btn-default" ui-sref="top.settings" ui-sref-active="tabon">SETTINGS</a>
 </div>
 
@@ -13,12 +13,12 @@
 </div>
 
 <!-- Manager footer -->
-<div class="og-bottom-banner bkg-og-medium-gray" ng-if="permissions.anyManager && !permissions.isMaqueradingAsPatron">MANAGER MODE
+<div class="og-bottom-banner bkg-og-medium-gray" ng-if="permissions.anymanager && !permissions.isMaqueradingAsPatron">MANAGER MODE
     <span class="glyphicon glyphicon-user pull-right text-og-blue" style="padding-right: 5px;" ng-click="toggleMasqMode()"></span>
 </div>
 
 <!-- Manager masquerading as patron footer -->
-<div class="og-bottom-banner bkg-og-medium-gray" ng-if="permissions.anyManager && permissions.isMaqueradingAsPatron">
+<div class="og-bottom-banner bkg-og-medium-gray" ng-if="permissions.anymanager && permissions.isMaqueradingAsPatron">
     PATRON MODE
     <span class="glyphicon glyphicon-glass pull-right text-og-blue" style="padding-right: 5px;"
           ng-click="toggleMasqMode()"></span>

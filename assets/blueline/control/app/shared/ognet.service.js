@@ -55,7 +55,6 @@ app.factory('ogNet', function($log, $http, $q, ogAPI, $rootScope){
 
     var initter = ogAPI.init( {
             appName:         "io.ourglass.ogcontrol",
-            sockets:         true,
             modelCallback:   modelUpdate,
             messageCallback: inboundMessage,
             appType:         'mobile'

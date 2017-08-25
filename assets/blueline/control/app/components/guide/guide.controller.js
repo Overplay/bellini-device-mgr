@@ -34,9 +34,9 @@ app.controller( "guideController",
          * 
          */
         function loadListings(){ 
-            ogAPI.getGrid() //Make a call to the ogAPI getGrid function
-                .then( function ( g ) { //Callback success
-                    fullGrid = g; //set internal full grid to grid return
+            ogAPI.getGrid()
+                .then( function ( g ) {
+                    fullGrid = g;
 
                     var currentChannelNumber = parseInt(ogDevice.currentProgram.channelNumber); //Set current channel to our current channel number
                     $rootScope.currentChannel = _.find( fullGrid, { channel: { channelNumber: currentChannelNumber } } ); //Set scope current channel to loadash channelNumber
