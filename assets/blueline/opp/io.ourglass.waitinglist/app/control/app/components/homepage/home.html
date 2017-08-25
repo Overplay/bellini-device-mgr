@@ -8,13 +8,16 @@
         </div>
 
     </div>
+
+    <h4>{{ ui.isVenueData ? "VENUE WAITLIST" : "LOCAL WAITLIST" }}</h4>
     <div class="row">
         <div class="col-md-12" style="margin-top: 10px;">
             <party-cell ng-repeat="party in parties track by $index" party="party"></party-cell>
-            <p ng-if="(!parties || !parties.length) && !ui.firstLoad" style="text-align: center;">There is currently no waiting list.</p>
-            <p ng-if="ui.firstLoad" style="text-align: center;">Checking for updates to list.</p>
-
+            <!-- <p ng-if="((venueData ? !venueParties : !deviceParties) || (venueData ? !venueParties.length : !deviceParties.length))"  style="text-align: center;">There is currently no waiting list.</p> -->
+            <p ng-if="!parties.length"  style="text-align: center;">There is currently no waiting list.</p>
         </div>
     </div>
 
+
 </div>
+<a class="btn btn-sm btn-default" style="position: fixed; bottom: 0; width: 100vw;" ui-sref="settings"><i class="glyphicon glyphicon-lamp"></i>&nbsp;SETTINGS</a>

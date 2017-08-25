@@ -157,13 +157,13 @@ module.exports = require('waterlock').actions.user({
                 }
 
                 if (user.auth.ring === 1){
-                    return res.ok({ owner: true, manager: true });
+                    return res.ok({ owner: true, manager: true, anymanager: true });
                 }
 
                 var mgdIdx = _.findIndex(user.managedVenues, { 'uuid': device.atVenueUUID });
                 var ownedIdx = _.findIndex( user.ownedVenues, { 'uuid': device.atVenueUUID } );
 
-                return res.ok({ manager: mgdIdx>=0, owner: ownedIdx>=0 });
+                return res.ok({ manager: mgdIdx>=0, owner: ownedIdx>=0, anymanager: ((mgdIdx >= 0) ||  (ownedIdx >= 0))});
 
             })
             .catch(res.serverError);

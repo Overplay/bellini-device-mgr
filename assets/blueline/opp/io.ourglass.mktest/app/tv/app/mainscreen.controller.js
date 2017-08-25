@@ -15,6 +15,11 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI, uibHelpe
         $scope.model = newValue;
     }
 
+    function venueModelChanged( newValue ) {
+        $log.info( "Model changed, yay!" );
+        $scope.venueModel = newValue;
+    }
+
     function inboundMessage( msg ) {
         $log.info( "New message: " + msg );
         $scope.inboundMsg = msg;
@@ -35,16 +40,20 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI, uibHelpe
         ogAPI.save();
     }
 
+
     ogAPI.init( {
         appName:         "io.ourglass.mktest",
-        modelCallback:   modelChanged,
+        deviceModelCallback:   modelChanged,
+        venueModelCallback: venueModelChanged,
         messageCallback: inboundMessage,
         appType:         'tv'
     } )
         .then( function ( d ) {
             $log.debug( "ogAPI init complete!" )
             uibHelper.dryToast( "Model Init OK", 2000 );
-            testDirectModelLoad();
+            $scope.model = d.device;
+            $scope.venueModel = d.venue;
+            //testDirectModelLoad();
             $interval(subtract, 5000);
 
         } )

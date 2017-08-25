@@ -4,8 +4,7 @@
 
 
 app.controller("dashController", function ($scope, $log) {
-    $log.log("starting dashController")
-
+    $log.log("starting dashController");
 
 
 });

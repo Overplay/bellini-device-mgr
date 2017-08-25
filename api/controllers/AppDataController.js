@@ -7,6 +7,12 @@
 
 var Promise = require( 'bluebird' );
 
+function responseChainError(message, responseFunc){
+    var error = new Error( message );
+    error.responseFunc = responseFunc;
+    return error;
+}
+
 function hasUDIDandAppId( req ) {
 
     var params = req.allParams();
@@ -38,17 +44,14 @@ function retrieveAppDataAndDevice( dataScope, appid, deviceid ) {
                 return Promise.props( {
                     data:   AppData.findOne( {
                         forAppId:      appid,
-                        forVenueId:    device.atVenueUUID,
+                        forVenueUUID:    device.atVenueUUID,
                         forDeviceUDID: 'venue'
                     } ),
                     device: devicePromise
                 } );
 
             } )
-
     }
-
-
 }
 
 module.exports = {
@@ -300,7 +303,7 @@ module.exports = {
 
     // Returns appdata for app for device, or creates and entry from the prototype in the App entry
     // TODO: Add precondition to make sure Device is in DB
-    initialize: function ( req, res ) {
+    initializeOld: function ( req, res ) {
 
         if ( req.method != 'POST' )
             return res.badRequest( { error: "bad verb" } );
@@ -331,6 +334,100 @@ module.exports = {
             .catch( res.serverError );
 
     },
+
+    tidy: function( req, res) {
+
+        if ( req.method != 'DELETE' )
+            return res.badRequest( { error: "bad verb" } );
+
+        var params = req.allParams();
+        if (!params.appid){
+            return res.badRequest({ error: 'no app id'});
+        }
+
+        AppData.destroy({ forAppId: params.appid })
+            .then(res.ok)
+            .catch(res.serverError)
+
+    },
+
+    initialize: function ( req, res ) {
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "bad verb" } );
+
+        var params = hasUDIDandAppId( req );
+        if ( !params )
+            return res.badRequest( { error: "missing udid or appid" } );
+
+        App.findOne( { appId: params.appid } )
+            .then( function ( app ) {
+
+                if ( !app ) {
+                    throw responseChainError("No such app", res.badRequest);
+                }
+
+                var dataPromises = {
+                    device: retrieveAppDataAndDevice( 'device', params.appid, params.deviceUDID ),
+                    venue:  retrieveAppDataAndDevice( 'venue', params.appid, params.deviceUDID ),
+                    app:    app
+                }
+
+                return Promise.props( dataPromises );
+
+            } )
+            .then( function ( maybeDataModels ) {
+
+                var dataPromises = {};
+                var defaultModel = maybeDataModels.app.defaultModel;
+
+                if ( maybeDataModels.device && maybeDataModels.device.data ) {
+                    dataPromises.device = maybeDataModels.device.data;
+                } else {
+
+                    sails.log.silly( "Creating A+D data for this device." );
+
+                    var deviceModel = {
+                        forAppId:      params.appid,
+                        forDeviceUDID: params.deviceUDID,
+                        data: defaultModel.hasOwnProperty( '_device_' ) ? defaultModel._device_ : defaultModel._venue_ || defaultModel
+                    };
+
+                    dataPromises.device = AppData.create( deviceModel );
+
+                }
+
+                if ( maybeDataModels.venue && maybeDataModels.venue.data ) {
+                    dataPromises.venue = maybeDataModels.venue.data;
+                } else {
+
+                    sails.log.silly( "Creating A+V data for " + params.appid + " on venue " + maybeDataModels.venue.device.atVenueUUID );
+                    var venueData = {
+                        forAppId:      params.appid,
+                        forDeviceUDID: 'venue',
+                        data:          defaultModel.hasOwnProperty( '_venue_' ) ? defaultModel._venue_ : defaultModel._device_ || defaultModel,
+                        forVenueUUID:  maybeDataModels.venue.device.atVenueUUID
+                    };
+
+                    dataPromises.venue = AppData.create( venueData );
+
+                }
+
+                return Promise.props(dataPromises);
+
+            } )
+            .then( res.ok )
+            .catch( function ( error ) {
+                if (!error.responseFunc){
+                    return res.serverError(error);
+                } else {
+                    return error.responseFunc( { error: error.message } )
+                }
+            } )
+
+
+    },
+
 
     // Returns appdata for app for device, or creates and entry from the prototype in the App entry
     // TODO: This is a lot of code duplication
@@ -388,29 +485,30 @@ module.exports = {
         if ( !params.appid || !params.deviceUDID )
             return res.badRequest( { error: "Missing params" } );
 
-        OGDevice.findOne( { deviceUDID: params.deviceUDID })
-            .then( function(device){
+        OGDevice.findOne( { deviceUDID: params.deviceUDID } )
+            .then( function ( device ) {
 
-                if (!device){
-                    return res.badRequest({ error: "no such device" });
+                if ( !device ) {
+                    return res.badRequest( { error: "no such device" } );
                 }
 
                 // ok, at this point we need to grab the ids for the A+D and A+V entries
                 var promises = [
                     // A+D
                     AppData.findOne( {
-                        forDeviceUDID: params.deviceUDID,
-                        forAppId: params.appid } ),
+                        forAppId:      params.appid,
+                        forDeviceUDID: params.deviceUDID
+                    } ),
                     // A+V
                     AppData.findOne( {
                         forAppId:      params.appid,
-                        forVenueId:    device.atVenueUUID,
+                        forVenueUUID:    device.atVenueUUID,
                         forDeviceUDID: 'venue'
-                    } )];
+                    } ) ];
 
-                return Promise.all(promises);
+                return Promise.all( promises );
 
-            })
+            } )
             .then( function ( models ) {
                 AppData.subscribe( req, models );
                 return res.ok( models )

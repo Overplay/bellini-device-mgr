@@ -14,10 +14,12 @@ app.controller('waitingListController', ['$scope', 'ogAPI', '$log', '$timeout', 
 
 	var TESTING = false;
 
+	$scope.usingVenueData = false;
+
 	$scope.parties = function() {
 		if (TESTING)
 			return parties;
-		return ogAPI.model.parties;
+		return $scope.usingVenueData ? ogAPI.venueModel.parties : ogAPI.model.parties;
 	};
 
 
@@ -88,9 +90,14 @@ app.controller('waitingListController', ['$scope', 'ogAPI', '$log', '$timeout', 
 	}
 
 	function handleModelCallback(data) {
-		if (data.length != ogAPI.model.parties.length) {
-			ogAPI.model.parties = data.parties;
-		}
+
+		$log.debug("Got a device data update...");
+		$scope.usingVenueData = data.useVenueData;
+
+	}
+
+	function handleVenueModelCallback(data) {
+        $log.debug("Got a venue data callback");
 	}
 
 	function initialize() {
@@ -98,15 +105,16 @@ app.controller('waitingListController', ['$scope', 'ogAPI', '$log', '$timeout', 
 		ogAPI.init({
 			appName: "io.ourglass.waitinglist",
 			modelCallback: handleModelCallback,
+			venueModelCallback: handleVenueModelCallback,
 			messageCallback: inboundMessage,
 			appType: 'tv'
 		})
-			.then ( function ( data ) {
-				$log.debug("tv init finished");
-			})
-			.catch ( function ( err ) {
-				$log.error("Something failed: " + err);
-			});
+		.then ( function ( data ) {
+			$log.debug("tv init finished");
+		})
+		.catch ( function ( err ) {
+			$log.error("Something failed: " + err);
+		});
 	}
 
 	initialize();
@@ -274,7 +282,8 @@ app.directive('topScrollerJankFree', [
 			restrict: 'E',
 			scope: {
 				parties: '=',
-				title: '='
+				title: '=',
+				usingvenue: '='
 			},
 			templateUrl: 'app/components/directives/topscroller.template.html',
 			link: function (scope, elem, attrs) {

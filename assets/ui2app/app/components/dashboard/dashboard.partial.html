@@ -1,11 +1,30 @@
 <div class="container">
     <div class="row">
-        <div class="col-md-8 col-lg-8  material-panel">
-            <h1>Dashboard</h1>
-            <p>Add here:</p>
-            <ul>
-                <li>"Devices" square that shows how many in DB and how many are alive</li>
-            </ul>
+        <div class="col-md-10 col-lg-10  material-panel">
+            <h1><i class="fa fa-star-o" aria-hidden="true" style="color: #999999"></i> Bellini-DM Dashboard</h1>
+
+            <div class="col-md-5 col-lg-5  material-panel">
+                <h3>Devices in the System</h3><br>
+
+                <h4 ng-hide="ogdevices.length" class="text-danger">There are no devices registered</h4>
+
+                <div ng-hide="!ogdevices.length">
+                    <h4>Total Number of Devices: {{ogdevices.length}} </h4>
+                </div>
+            </div>
+
+            <div class="col-md-5 col-lg-5  material-panel" >
+                <h3>Active Devices</h3><br>
+
+                <h4 ng-hide="activeDevices.length" class="text-danger">There are no devices being used</h4>
+
+                <div ng-hide="!activeDevices.length">
+                    <h4>Active Devices: {{activeDevices.length}} </h4>
+                </div>
+            </div>
+
+            </div>
         </div>
+
     </div>
 </div>

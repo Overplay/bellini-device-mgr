@@ -466,10 +466,9 @@ module.exports = {
 
         return res.ok( { message: 'joined' } );
 
-    }
-    ,
+    },
 
-    dm: function ( req, res ) {
+    message: function ( req, res ) {
 
         if ( !req.isSocket ) {
             return res.badRequest( { error: "Sockets only, sonny" } );

@@ -46,9 +46,6 @@ module.exports = {
      */
     register: function ( req, res ) {
 
-        if ( req.method != 'POST' )
-            return res.badRequest( { error: 'bad verb' } );
-
         var params = req.allParams();
 
         if ( !params.deviceUDID )
@@ -189,7 +186,7 @@ module.exports = {
             return res.badRequest( { error: "Sockets only, sonny" } );
         }
 
-        if ( req.method != 'POST' )
+        if ( req.method !== 'POST' )
             return res.badRequest( { error: "That's not how to subscribe, sparky!" } );
 
         //OK, we need a deviceUDID
@@ -213,15 +210,15 @@ module.exports = {
 
     message: function ( req, res ) {
 
-        if ( !req.isSocket ) {
-            return res.badRequest( { error: "Sockets only, sonny" } );
-        }
+        // if ( !req.isSocket ) {
+        //     return res.badRequest( { error: "Sockets only, sonny" } );
+        // }
 
-        if ( req.method != 'POST' )
+        if ( req.method !== 'POST' )
             return res.badRequest( { error: "That's not how to message, sparky!" } );
 
         //OK, we need a deviceUDID
-        var params = req.allParams();
+        const params = req.allParams();
 
         if ( !params.deviceUDID )
             return res.badRequest( { error: "Missing UDID" } );
@@ -232,7 +229,7 @@ module.exports = {
         if ( !params.destination )
             return res.badRequest( { error: "No destination"});
 
-        var room;
+        let room;
 
         switch (params.destination){
             case 'clients':
@@ -258,7 +255,7 @@ module.exports = {
     launch: function ( req, res ) {
 
 
-        if ( req.method != 'POST' )
+        if ( req.method !== 'POST' )
             return res.badRequest( { error: "That's not how to message, sparky!" } );
 
         //OK, we need a deviceUDID
@@ -482,7 +479,7 @@ module.exports = {
 
     changechannel: function ( req, res ) {
 
-        if ( req.method != 'POST' )
+        if ( req.method !== 'POST' )
             return res.badRequest( { error: "Bad verb" } );
 
         //OK, we need a deviceUDID
@@ -508,7 +505,14 @@ module.exports = {
                         channel: parseInt( params.channel ),
                         ts:      new Date().getTime() // hack for multiples
                     } );
-                res.ok( { message: "thank you for your patronage" } );
+
+                BCService.UserInteraction.log( req, {
+                    interaction: 'CHANNEL_CHANGE',
+                    venueId: dev.atVenueUUID,
+                    meta: { toChannel: parseInt( params.channel ) }});
+
+
+                return res.ok( { message: "thank you for your patronage" } );
             } )
             .catch( res.serverError );
 
@@ -516,7 +520,7 @@ module.exports = {
 
     programchange: function ( req, res ) {
 
-        if ( req.method != 'POST' )
+        if ( req.method !== 'POST' )
             return res.badRequest( { error: "Bad verb" } );
 
         //OK, we need a deviceUDID
@@ -576,6 +580,13 @@ module.exports = {
                 _.remove( results.apps, function ( app ) {
                     return runningAppIds.indexOf( app.appId ) > -1;
                 } );
+
+                BCService.UserInteraction.log( req, {
+                    interaction: 'REQ_APP_STATUS',
+                    venueId:     results.device.atVenueUUID,
+                    meta:        {}
+                } );
+
                 return res.ok( { available: results.apps, running: runningApps } );
 
             } )

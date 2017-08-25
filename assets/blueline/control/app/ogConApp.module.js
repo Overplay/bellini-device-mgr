@@ -1,7 +1,7 @@
 /*********************************
 
  File:       ogConApp.module
- Function:   Base Control App
+ Function:   Base Control App V2
  Copyright:  Ourglass
  Date:       4/10/15
  Author:     mkahn
@@ -9,32 +9,38 @@
  **********************************/
 
 
-var app = angular.module('ogConApp', [ 'ui.router', 'ui.bootstrap', 'ui.ogMobile', 'ngAnimate', 'toastr', 'ourglassAPI', 'ngCookies']);
+var app = angular.module('ogConApp', [ 'ui.router', 'ui.bootstrap', 'ui.ogMobile', 'ngAnimate', 'toastr', 'ourglassAPI']);
 
+// This adds a current user permissions resolve to every single state
+app.config( function ( $stateProvider ) {
 
-app.config( [ '$cookiesProvider', function ( $cookiesProvider ) {
-    // Set $cookies defaults
+    // Parent is the ORIGINAL UNDECORATED builder that returns the `data` property on a state object
+    $stateProvider.decorator( 'data', function ( state, parent ) {
+        // We don't actually modify the data, just return it down below.
+        // This is hack just to tack on the user resolve
+        var stateData = parent( state );
+        // Add a resolve to the state
+        state.resolve = state.resolve || {};
+        state.resolve.permissions = [ 'ogAPI', function ( ogAPI ) {
+            return ogAPI.getPermissionsPromise();
+        } ];
+        return stateData;
 
-    // This ensures cookie will be sent with all accesses to the OG
-    $cookiesProvider.defaults.path = '/';
-    // $cookiesProvider.defaults.secure = true;
-    // $cookiesProvider.defaults.expires = exp_date;
-    // $cookiesProvider.defaults.domain = my_domain;
-
-    
-    
-} ] );
-
-
-
-app.run( function ( $rootScope, $log,  ogNet ) {
-
-    $rootScope.$on( '$stateChangeError', function ( event, toState, toParams, fromState, fromParams, error ) {
-        event.preventDefault();
-        $log.error( error );
     } );
 
-    
+} );
+
+app.run( function ( $transitions, $log, ogNet ) {
+
+    // Kick off init early to get promise running
+    ogNet.init().then(function(){
+        $log.debug("Init done in run method.");
+    });
+
+    $transitions.onError( {}, function ( transError ) {
+        $log.debug( transError );
+    } );
+
 
 
 } );

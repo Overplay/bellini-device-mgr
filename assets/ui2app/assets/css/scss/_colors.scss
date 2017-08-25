@@ -1,6 +1,5 @@
 
 $primary-color: #007fa0;
-$nav-header-color: #0f161c;
 //$nav-header-color: hotpink;
 $light-grey: #f0f0f0;
 $faint-blue: #C1E9FF;
@@ -19,6 +18,7 @@ $brand-blue: #20B8EB !default;
 $brand-orange: #f6921e !default;
 $brand-red: #ee4839 !default;
 
+$nav-header-color: #333333;
 $material-border-grey: #f0f0f0;
 
 @mixin material-card-shadow {

@@ -2,15 +2,15 @@
  * Created by mkahn on 12/19/16.
  */
 
-app.controller( "dashboardController",
-    function ( $scope, ogDevice, $log, uibHelper, ogNet, $state, $timeout, ogAPI ) {
+app.controller( "managerDashboardController",
+    function ( $scope, ogDevice, $log, uibHelper, ogNet, $state, $timeout, ogAPI, permissions ) {
 
         $log.info( "Loading dashboardController" );
         $scope.availableApps = [];
 
-        $scope.permissions = ogAPI.getPermissions();
+        $scope.permissions = permissions; //ogAPI.getPermissions();
         var _isAdmin = !$scope.permissions || ( $scope.permissions.manager || $scope.permissions.owner );
-        $scope.ui = { isPaired: ogDevice.isPairedToSTB, isAdmin: _isAdmin};
+        $scope.ui = { isPaired: ogDevice.isPairedToSTB, isAdmin: _isAdmin };
 
         function reloadAppList() {
             ogNet.getApps()
@@ -29,11 +29,11 @@ app.controller( "dashboardController",
             "$app_state_change",
             function ( event ) {
                 $log.debug( "App State Change, reloading" );
-                uibHelper.curtainModal('');
-                $timeout(function(){
+                uibHelper.curtainModal( '' );
+                $timeout( function () {
                     reloadAppList();
                     uibHelper.dismissCurtain();
-                    }, 1000 );
+                }, 1000 );
             }
         );
 
@@ -49,3 +49,22 @@ app.controller( "dashboardController",
         }
 
     } );
+
+
+app.controller( "patronDashboardController", function ( $scope, ogDevice, $log, uibHelper, ogNet ) {
+
+    $log.info( "Loading patronDashboardController" );
+
+    ogNet.getApps()
+        .then( function ( apps ) {
+            $scope.controllableApps = apps.running;
+            _.remove( $scope.controllableApps, function(app){
+                return !app.patronControllable;
+            });
+        } )
+        .catch( function ( err ) {
+            uibHelper.headsupModal( "We Have a Problem!", "We seem to have lost communication with your Ourglass system. Please check your WiFi connection and make sure the Ourglass is turned on." );
+        } )
+
+
+} );

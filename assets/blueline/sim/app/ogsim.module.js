@@ -54,7 +54,8 @@ app.controller('mfController', function($scope, $log, $interval, bellini, mainfr
             $scope.crawler.height = data.appHeight ? data.appHeight : data.height;
         } else {
             $scope.widget.src = '/blueline/opp/' + data.appId + '/app/tv/index.html?deviceUDID=' + DEVICE_UDID;
-            $scope.widget.height = data.appHeight ? data.appHeight : data.height;            
+            $scope.widget.height = data.appHeight || data.height;
+            $scope.widget.width = data.appWidth || data.width;
         }
     }
 

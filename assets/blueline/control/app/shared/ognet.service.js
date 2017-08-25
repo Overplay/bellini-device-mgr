@@ -1,4 +1,4 @@
-app.factory('ogNet', function($log, $http, $q, ogAPI){
+app.factory('ogNet', function($log, $http, $q, ogAPI, $rootScope){
 
     var service = {};
 
@@ -55,7 +55,6 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
 
     var initter = ogAPI.init( {
             appName:         "io.ourglass.ogcontrol",
-            sockets:         true,
             modelCallback:   modelUpdate,
             messageCallback: inboundMessage,
             appType:         'mobile'
@@ -65,10 +64,21 @@ app.factory('ogNet', function($log, $http, $q, ogAPI){
             return resp
         });
 
+    initter.then( function(models){
+        $log.debug('Init really complete');
+    });
 
     service.init = function(){
         return initter
     };
+
+    service.isMasqueradingAsPatron = false;
+
+    service.toggleMasquerade = function(){
+        service.isMasqueradingAsPatron = !service.isMasqueradingAsPatron;
+        $rootScope.$broadcast('MASQUERADE_MODE_CHANGE', { isMasquerading: service.isMasqueradingAsPatron });
+        return service.isMasqueradingAsPatron;
+    }
 
     return service;
 

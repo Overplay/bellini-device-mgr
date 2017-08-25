@@ -57,8 +57,7 @@ module.exports = {
         },
 
         lastContact: {
-            type: 'date',
-            defaultsTo: new Date()
+            type: 'date'
         },
 
         guideInfo: {
@@ -114,6 +113,12 @@ module.exports = {
             }, 5 * 60 * 1000);
         }
 
+        cb();
+    },
+
+    beforeCreate: function(values, cb){
+
+        values.lastContact= new Date();
         cb();
     }
 };

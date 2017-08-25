@@ -35,9 +35,8 @@ module.exports = {
         // Broadcast a notification to all the sockets who have joined
         // the "funSockets" room, excluding our newly added socket:
         sails.sockets.broadcast( params.room,
-            'JOIN',
-            { message: 'Welcome to the room for ' + params.room },
-            req );
+            params.room,
+            { message: 'Welcome to the room for ' + params.room });
 
         return res.ok( { message: 'joined' } );
 
@@ -53,9 +52,9 @@ module.exports = {
 
 
         sails.sockets.broadcast( params.room,
-            'MESSAGE-'+params.room,
+            params.room,
             params.message,
-            req );
+            params.echo ? null : req );
 
         return res.ok();
     }

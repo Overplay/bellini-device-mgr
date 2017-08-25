@@ -62,6 +62,17 @@
                 text-align: center;
             }
 
+            .venue-data {
+               color: orange;
+            }
+
+            .unselectable {
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+
         </style>
     </head>
 
@@ -70,7 +81,7 @@
 
             <div class="container-fluid">
                 <div class="row">
-                    <div class="ticket-number">{{ ticketNumber }}</div>
+                    <div class="ticket-number" ng-class="{'venue-data': usingVenueData}">{{ usingVenueData ? venueTicketNumber : deviceTicketNumber }}</div>
                 </div>
 
                 <div class="row">
@@ -83,6 +94,11 @@
                 
                 <div class="row">
                     <button class="btn btn-warning btn-lg ticket-button" ng-click="setTicket()">INPUT TICKET #</button>
+                </div>
+
+                <div class="row">
+                    <button ng-if="!usingVenueData" class="btn btn-success btn-lg ticket-button" ng-click="swapDataLocation()">USE VENUE DATA</button>
+                    <button ng-if="usingVenueData" class="btn btn-success btn-lg ticket-button" ng-click="swapDataLocation()">USE DEVICE DATA</button>
                 </div>
 
                 <!-- <div class="row">

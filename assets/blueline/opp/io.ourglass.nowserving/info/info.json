@@ -3,7 +3,11 @@
 	"displayName": "Now Serving",
 	"icon": "nowserve.png",
 	"defaultModel": {
-		"ticketNumber": 0
+		"$venue": { "ticketNumber": 0 },
+		"$device": {
+			"ticketNumber": 0,
+			"useVenueData": true
+		}
 	},
 	"appType": "widget",
 	"appWidth": 10,

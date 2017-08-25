@@ -10,77 +10,88 @@ app.config( function ( toastrConfig ) {
     } );
 } );
 
-// app.config( function ( uiGmapGoogleMapApiProvider) {
-//     uiGmapGoogleMapApiProvider.configure({
+// app.config( function ( uiGmapGoogleMapApiProvider ) {
+//     uiGmapGoogleMapApiProvider.configure( {
 //         key: 'AIzaSyCrbE5uwJxaBdT7bXTGpes3F3VmQ5K9nXE'
-//     })
-// })
-//
-// app.config(['ChartJsProvider', function (ChartJsProvider) {
-//     // Configure all charts
-//     ChartJsProvider.setOptions({
-//         chartColors: ['#3FAD49', '#39A8FF'],
-//     });
-// }])
+//     } )
+// } );
 
+// This adds a current user resolve to every single state
+app.config( function ( $stateProvider ) {
 
-app.run( function ( $log, $rootScope, toastr, $state, $stateParams, $location, userAuthService  ) {
-
-    $log.info( "Bellini is pouring!" );
-
-    userAuthService.getCurrentUserRing()
-        .then( function ( r ) {
-            $rootScope.authring = r;
-            $log.debug( 'beep ' + r );
-        } );
-
-    $rootScope.$on( "$stateChangeStart", function ( event, next ) {
-        if ( 'ring' in next ) {
-            $log.debug( "Next state has ring restriction." );
-            if ( next.ring < $rootScope.authring ) {
-                $log.error( "User is not authorized for this page" );
-                event.preventDefault();
-                $rootScope.$broadcast( 'AUTH_FAIL' );
-            }
-        }
-
-    } )
-
-    $rootScope.$on( "$stateChangeSuccess", function ( event, toState, toParams, from, fromParams ) {
-        // always reset scroll to 0. This is a clusterfuck in ui-router
-        document.body.scrollTop = document.documentElement.scrollTop = 0;
-        // save for recovery from bad state changes, cancel outs etc.
-        $rootScope.lastUiState = { state: from, params: fromParams };
-
+    // Parent is the ORIGINAL UNDECORATED builder that returns the `data` property on a state object
+    $stateProvider.decorator( 'data', function ( state, parent ) {
+        // We don't actually modify the data, just return it down below.
+        // This is hack just to tack on the user resolve
+        var stateData = parent( state );
+        // Add a resolve to the state
+        state.resolve = state.resolve || {};
+        state.resolve.user = [ 'userAuthService', function ( userAuthService ) {
+            return userAuthService.getCurrentUser();
+        } ];
+        return stateData;
 
     } );
 
-    $rootScope.$on( '$stateChangeError',
-        function ( event, toState, toParams, fromState, fromParams, error ) {
-            $log.error( "State change fail!" );
+} );
 
-            if ( !fromState.name ) {
-                $log.debug( 'FromState is nil, prolly a reload, bailing out to root' );
-                window.location = '/';
-            } else if ( error && error.status ) {
+app.run( function ( $log, $rootScope, toastr, $state, $transitions, $trace, sideMenuService, userAuthService  ) {
 
-                switch ( error.status ) {
-                    case 401:
-                        $log.debug( 'not logged in' );
-                        window.location = '/';
-                        break;
+    $log.info( "Bellini DM is pouring!" );
 
-                    case 403:
-                        $log.debug( 'forbidden fruit' );
-                        toastr.error( "Yeah, we're gonna need you not to do that.", "Not Authorized" );
-                        event.preventDefault();
-                        $state.go( 'welcome' );
-                        break;
-                }
+    const SHOW_STATE_ERRORS = false;
 
-            }
+    $trace.enable( 'TRANSITION' );
 
-        } );
+    function authMsg( isAuthorized ) {
+        if ( isAuthorized ) {
+            return true;
+        } else {
+            toastr.error( "We're gonna need you to stop doing that.", "Not Authorized" );
+            return false;
+        }
+    }
+
+    $transitions.onStart( {}, function ( trans ) {
+        // var SpinnerService = trans.injector().get( 'SpinnerService' );
+        // SpinnerService.transitionStart();
+        // trans.promise.finally( SpinnerService.transitionEnd );
+        $log.debug( trans );
+    } );
+
+
+    // Menu hook
+
+    $transitions.onSuccess( {}, function ( trans ) {
+        $log.debug( "Successfully transitioned to state: " + trans.to().name );
+        sideMenuService.setMenu( trans.to().sideMenu );
+    } );
+
+
+    // Security hooks
+
+    $transitions.onBefore( { to: 'admin.**' }, function () {
+        $log.debug( 'Running hook for transition to admin state' );
+        return userAuthService.getCurrentUserRing()
+            .then( function ( ring ) {
+                return authMsg( ring === 1 );
+            } )
+    } );
+
+    $transitions.onBefore( { to: 'user.**' }, function () {
+        $log.debug( 'Running hook for transition to manager state' );
+        return userAuthService.getCurrentUser()
+            .then( function ( user ) {
+                return authMsg( user.ring === 3 );
+            } )
+    } );
+
+
+    $transitions.onError( {}, function ( transError ) {
+        $log.debug( transError );
+        if ( SHOW_STATE_ERRORS )
+            toastr.warning( "State Change Fail" );
+    } );
 
 
 } );

@@ -7,8 +7,8 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI ) {
     $log.debug( "mainScreenController has loaded" );
 
     $scope.ticketNumber = 0;
-
-    function modelChanged( newValue ) {
+    
+    function modelChanged(newValue) {
         $scope.sourceVenue = false;
         $log.info( "Model changed, yay!" );
         $scope.ticketNumber = newValue.ticketNumber;

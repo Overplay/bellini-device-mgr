@@ -12,7 +12,7 @@
 
     <!-- App Main and API JS  -->
     <script src="app/ogMAKBLTestApp.module.js"></script>
-    <script src="../../../../common/js/ogAPIBL.js"></script>
+    <script src="../../../../common/js/ogAPIBL2.js"></script>
 
     <!-- uiMobile (for toast) -->
     <script src="../../../../common/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
@@ -40,10 +40,13 @@
         <pre>{{ outboundMsg | json }}</pre>
     </div>
     <div>
-        <h1>Current Model</h1>
+        <h1>Current Dev Model</h1>
         <pre>{{ model | json }}</pre>
     </div>
-
+    <div>
+        <h1>Current Venue Model</h1>
+        <pre>{{ venueModel | json }}</pre>
+    </div>
 
     <div class="sponsor-holder" ng-if="!hideAds">
         <og-advert type="widget" interval="10000"></og-advert>

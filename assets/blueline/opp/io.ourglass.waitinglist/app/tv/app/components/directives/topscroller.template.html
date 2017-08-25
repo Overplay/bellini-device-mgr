@@ -1,5 +1,10 @@
+<style>
+    .venue-data {
+        color: orange;
+    }
+</style>
 <div class="applet">
-    <h1 class="apphdr">
+    <h1 class="apphdr" ng-class="{'venue-data': usingvenue}">
         {{title}}
     </h1>
     <div class="overflow-frame" id="outer-frame">
