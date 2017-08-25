@@ -256,7 +256,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
          * Common (mobile and TV) app service
          *
          ***************************/
-        .factory( 'ogAPI', function ( $http, $log, $interval, $q, $rootScope, $window ) {
+        .factory( 'ogAPI', function ( $http, $log, $interval, $q, $rootScope, $timeout ) {
 
             //local variables
             var _usingSockets;
@@ -293,11 +293,18 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             // Socket message catchers
 
+            io.socket.on( "connect", function () {
+                $log.debug( "(Re)Connecting to websockets rooms" );
+                // joinDeviceAppRoom();
+                // subscribeToAppData();
+            } );
+
+
             // Received direct message from cloud
             io.socket.on( 'DEVICE-DM', function ( data ) {
                 if ( _msgCb ) {
                     $rootScope.$apply( function () {
-                        _msgCb( data );
+                        _msgCb( { systemMsg: data } );
                     } );
                 } else {
                     console.log( 'Dropping sio message rx (no cb):' + JSON.stringify( data ) );
@@ -464,10 +471,25 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              * @returns {Promise} promise if a socket posting room: appID+deviceID
              */
             function joinDeviceAppRoom() {
+
+                var roomId = _appId + ':' + _deviceUDID;
+
+                io.socket.on( roomId, function (data) {
+
+                    if ( _msgCb ) {
+                        $rootScope.$apply( function () {
+                            _msgCb( { appMsg: data } );
+                        } );
+                    } else {
+                        console.log( 'Dropping app message rx (no cb):' + JSON.stringify( data ) );
+                    }
+
+                } );
+
                 return $q( function ( resolve, reject ) {
 
                     io.socket.post( '/socket/join', {
-                        room: _appId + ':' + _deviceUDID
+                        room: roomId
                     }, function ( resData, jwres ) {
                         console.log( resData );
                         if ( jwres.statusCode != 200 ) {
@@ -480,37 +502,6 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 } );
 
             }
-
-
-            // MAK: I don't think this did fuck all before...7/2017
-
-            // /**
-            //  * Join OGClientRoom
-            //  *
-            //  * @returns {Promise} socket resolve or reject joining a device room
-            //  */
-            // function joinOGClientRoom() {
-            //     return $q( function ( resolve, reject ) {
-            //
-            //         io.socket.post( '/ogdevice/joinclientroom', {
-            //             deviceUDID: _deviceUDID
-            //         }, function ( resData, jwres ) {
-            //             console.log( resData );
-            //             if ( jwres.statusCode != 200 ) {
-            //                 reject( jwres );
-            //             } else {
-            //                 $log.debug( "Successfully joined device client room for this device" );
-            //                 io.socket.on( 'DEVICE-DM', function ( data ) {
-            //                     console.log( 'Got OGDevice client message: ' + JSON.stringify( data ) );
-            //
-            //                 } );
-            //
-            //                 resolve();
-            //             }
-            //         } );
-            //     } );
-
-            //}
 
 
             /**
@@ -603,11 +594,6 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 if ( !_deviceDataCb )
                     $log.warn( "You didn't specify a messageCallback, so you won't get one!" );
 
-                io.socket.on( "connect", function () {
-                    $log.debug( "(Re)Connecting to websockets rooms" );
-                    // joinDeviceAppRoom();
-                    // subscribeToAppData();
-                } );
 
                 return $http.post( '/appmodel/initialize', { appid: _appId, deviceUDID: _deviceUDID } )
                     .then( stripData )
@@ -702,6 +688,13 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             service.sendMessageToVenueRoom = function ( message ) {
                 // NOTE must have leading slash!
                 return sendSIOMessage( '/venue/message', message );
+            };
+
+
+            service.sendMessageToAppRoom = function( message, includeMe ){
+                var room = _appId + ':' + _deviceUDID;
+                return sioPut('/socket/send', { room: room, message: message, echo: includeMe });
+
             };
 
             /**
