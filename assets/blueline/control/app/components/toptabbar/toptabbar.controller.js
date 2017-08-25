@@ -14,7 +14,7 @@ app.controller("topTabBarController", function($scope, permissions, $log, ogNet,
     }
 
     $scope.showManagerTabs = function(){
-        return !ogNet.isMasqueradingAsPatron && $scope.permissions.anyManager;
+        return !ogNet.isMasqueradingAsPatron && $scope.permissions.anymanager;
     }
 
     $scope.$on('MASQUERADE_MODE_CHANGE', function(ev, data){
