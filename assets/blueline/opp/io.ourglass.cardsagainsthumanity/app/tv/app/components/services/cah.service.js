@@ -1,47 +1,48 @@
-app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interval', function ($rootScope, $log, ogAPI, $http, $timeout, $interval) {
+app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interval',
+	function ($rootScope, $log, ogAPI, $http, $timeout, $interval) {
 
 
 	var service = {};
-	var NUM_CARDS = 6;
+	var NUM_CARDS = 6; //const
+	var NUM_TO_WIN = 3; //const
+
+	//DEFAULT SERVICE STATE
+	service.discard = [];
+	service.players = [];
+	service.roundPlayingCards = [];
+	service.roundJudgingCard = { text: '', id: 0 };
+	service.judgeIndex = 0;
+	service.stage = 'start';
+	service.allCards = {
+		white: [
+			{ text: 'Cards have not loaded yet.', id: 0 }
+		],
+		black: [
+			{ text: 'Cards have not loaded yet.', id: 0, pick: 0 }
+		]
+	};
 
 
-	//vars
-	{
-		//DEFAULT SERVICE STATE
-		service.stage = 'start';
-		service.roundPlayingCards = [];
-		service.roundJudgingCard = { text: '', id: 0 };
-		service.discard = [];
-		service.players = [];
-		service.player = {};
-	}
 
+	$http.get('app/assets/cards.json')
+		.then(function (response) {
+			$log.debug('Cards Loaded!');
+			service.allCards = response.data;
+			service.availableCards = _.cloneDeep(service.allCards);
+			service.availableCards.white = _.shuffle(service.availableCards.white);
+			service.availableCards.black = _.shuffle(service.availableCards.black);
+		}).catch(function (err) {
+			$log.debug('Cards Load Failed!');
+			$log.error(err);
+		});
+	
 
-	//I'll be adding blocks so that my editor can fold the code down. Will remove at the end of writing
-	{
-		service.allCards = {
-			white: [
-				{ text: 'Cards have not loaded yet.', id: 0 }
-			],
-			black: [
-				{ text: 'Cards have not loaded yet.', id: 0, pick: 0 }
-			]
-		};
-
-		$http.get('app/assets/cards.json')
-			.then(function (response) {
-				$log.debug('Cards Loaded!');
-				service.allCards = response.data;
-				service.availableCards = _.cloneDeep(service.allCards);
-				service.availableCards.white = _.shuffle(service.availableCards.white);
-				service.availableCards.black = _.shuffle(service.availableCards.black);
-			}).catch(function (err) {
-				$log.debug('Cards Load Failed!');
-				$log.error(err);
-			});
-	}
-
-	service.nextStage = function nextStage(fromModalUpdate) {
+	
+	/**
+	 * Swap service to next stage.
+	 * 
+	 */
+	service.nextStage = function nextStage() {
 
 		switch (service.stage) {
 
@@ -50,7 +51,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 				service.assignCards(); //Give everyone white cards
 				service.roundJudgingCard = service.getBlackCard();
 				service.stage = 'picking';
-				servuce.roundTime = 10 * service.players[0].cards.white.length;
+				service.roundTime = 10 * service.players[0].cards.white.length;
 				break;
 
 			case 'picking': //Part of the main game loop, will happen often
@@ -84,70 +85,118 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 
 		}
 
+		service.timeLeft = service.roundTime;
 		doTimer();
 
-		if (!fromModalUpdate) {
-			saveModel();
-		}
+		saveModel();
 
 	}
 	
+	/**
+	 * Goes through the players to check for a winner.
+	 * 
+	 * @returns {player | undefined} player
+	 */
 	service.getWinner = function getWinner() {
 		return _.find(service.players, function (player) {
-			return player.cards.black.length >= 3;
+			return player.cards.black.length >= NUM_TO_WIN;
 		});
 	};
 
+	/**
+	 * Returns player with mathcmatching ID, undefined otherwise
+	 * 
+	 * @param {number} id
+	 * @returns {player | undefined}
+	 */
 	service.getPlayerById = function getPlayerById(id) {
 		return _.find(service.players, function (player) { return player.id == id; });
 	};
 
+	/**
+	 * Returns player with matching name, undefined otherwise
+	 * 
+	 * @param {any} name 
+	 * @returns {player | undefined}
+	 */
 	service.getPlayerByName = function getPlayerByName(name) {
 		return _.find(service.players, function (player) { return player.name == name; });
 	}
 
+	/**
+	 * Sets service variables on model change. 
+	 * 
+	 * @param {any} data 
+	 */
 	function modelChanged(data) {
 
 		$log.info('Device model changed, yay!');
 
 		service.discard = data.discard;
 		service.players = data.players;
-		service.player = data.players.length ? service.getPlayerById(service.player.id) : service.player;
 		service.roundPlayingCards = data.roundPlayingCards;
 		service.roundJudgingCard = data.roundJudgingCard.text ? data.roundJudgingCard : service.roundJudgingCard;
 		service.availableCards = data.availableCards != service.availableCards ? data.availableCards : service.availableCards;
 		service.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
+		service.timeLeft = data.timeLeft ? data.timeLeft : -1;
+		if (service.roundTime != data.roundTime) {
 
-		service.roundTime = data.roundTime ? data.roundTime : -1;
+			service.timeLeft = data.roundTime;
+
+			doTimer();
+		}
+		service.roundTime = data.roundTime ? data.roundTime : service.timeLeft;
+
+		for (var key in data.messages) {
+			processMessage(key, data.messages[key]); //Passes username and message contents
+		}
 
 		service.stage = data.stage ? data.stage : 'start';
 
 		modelChangedBroadcast();
 	}
 
+	/**
+	 * Broadcasts model changed and service variables
+	 * 
+	 */
 	function modelChangedBroadcast() {
-		$rootScope.$broadcast('MODEL_CHANGED', {
-			discard: service.discard, //Needed to prevent reshuffle inconsistencies
-			players: service.players, //Needed to sync scores and taken out cards
-			roundPlayingCards: service.roundPlayingCards, //Needed for the judge to judge
-			roundJudgingCard: service.roundJudgingCard,
-			availableCards: service.availableCards, //Needed so somebody doesn't pull a card someone else has
-			stage: service.stage,
-			judgeIndex: service.judgeIndex,
-			roundTime: service.roundTime,
-		});
+		$rootScope.$broadcast('MODEL_CHANGED');
 	}
 
+	/**
+	 * Runs the timer once a second and sets timeLeftPercent to progress
+	 * Changes stage if the timer runs out of time.
+	 * 
+	 */
 	function doTimer() {
+		
+		if (service.timeLeft == -1) return;
+
 		var stageBefore = service.stage;
 		$timeout(function () {
 			service.timeLeft--;
-			if (service.timeLeft == 0) service.nextStage();
-			if (stageBefore != service.stage) break;
+
+			service.timeLeftPercent = Math.round(service.timeLeft / service.roundTime) * 100;
+			modelChangedBroadcast();
+
+			if (service.timeLeft == 0) {
+				service.nextStage();
+			}
+
+			if (stageBefore != service.stage) {
+				return;
+			}
+
+			modelChangedBroadcast();
 			doTimer();
-		}, 1000)
+		}, 1000);
 	}
 
+	/**
+	 * Initialization step, connects to ogAPI
+	 * 
+	 */
 	function initialize() {
 
 		$log.debug('initializing app and data');
@@ -185,6 +234,12 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 
 	}
 
+	/**
+	 * Adds a card to roundPlayingCards and who sent it
+	 * 
+	 * @param {any} card 
+	 * @param {any} player 
+	 */
 	service.submitCard = function submitCard(card, player) {
 
 		if (_.findIndex(service.roundPlayingCards, function (cardListItem) { return cardListItem.id == card.id; }) >= 0) {
@@ -325,8 +380,8 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 
 		service.players.push(player);
 
-		service.player = player;
 		saveModel();
+		return player;
 	};
 
 	service.addBlackCardToPlayerById = function addBlackCardToPlayerById(id, blackCard, whiteCard) {
@@ -360,16 +415,10 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 
 	};
 
-	service.setWinningCard = function setWinningCard(card) {
-		service.previousWinningCard = card;
-
-		saveModel();
-	};
 
 	service.clearGame = function clearGame() {
 
 		service.discard = [];
-		service.player = {};
 		service.players = [];
 		service.roundPlayingCards = [];
 		service.roundJudgingCard = { text: '', id: 0 };
@@ -378,7 +427,6 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 		service.availableCards.white = _.shuffle(service.availableCards.white);
 		service.availableCards.black = _.shuffle(service.availableCards.black);
 		service.stage = 'start';
-		$rootScope.$broadcast('START_PHASE');
 		saveModel();
 
 	};
@@ -426,7 +474,8 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 			availableCards: service.availableCards, //Needed so somebody doesn't pull a card someone else has
 			stage: service.stage,
 			judgeIndex: service.judgeIndex,
-			previousWinningCard: service.previousWinningCard
+			previousWinningCard: service.previousWinningCard,
+			roundTime: service.roundTime
 		};
 
 		ogAPI.save()
@@ -447,16 +496,69 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 		var stageBefore = service.stage;
 		$timeout(function () {
 			service.timeLeft--;
-			if (service.timeLeft == 0) service.nextStage();
-			if (stageBefore != service.stage) break;
+
+			service.timeLeftPercent = Math.round((service.timeLeft / service.roundTime) * 100);
+			modelChangedBroadcast();
+
+			if (service.timeLeft == 0) {
+				service.nextStage();
+				return;
+			}
+
+			
+			if (stageBefore != service.stage) {
+				return;
+			}
+
 			doTimer();
-		}, 1000)
+		}, 1000);
 	}
 
-	function messageReceived(msg) { 
+	function processMessage(player, message) { 
+
+		if (message.read) {
+			return; //If we already looked at the message, throw it out
+		}
+
+		message.read = true; //We've read it now.
 	
+		player = service.getPlayerByName(player) ? service.getPlayerByName(player) : player; //Either gets player object or leaves it as name
+
+		switch (message.action) {
+			
+			case 'addPlayer':
+				service.addPlayer(player); //This will be just the name here
+				break;
+
+			case 'submitCard':
+				service.submitCard(message.data, player)
+				break;
+
+			case 'nextStage':
+				service.nextStage();
+				break;
+
+			case 'clearGame':
+				service.clearGame();
+				break;
+
+			case 'debugInfo':
+				service.debugInfo();
+				break;
+
+			default:
+				$log.debug(message.action);
+		}
+
+		delete service.messages[player] //Delete the message after we processed it
+
+		saveModel();
+
 	}
 
+	service.debugInfo = function debugInfo() { 
+		$log.debug(service)
+	}
 
 
 	initialize();

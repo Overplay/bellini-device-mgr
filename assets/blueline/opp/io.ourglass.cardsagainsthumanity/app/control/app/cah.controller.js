@@ -2,6 +2,7 @@
 
 app.controller('cahController', function ($scope, cah, $log, $timeout) {
 
+	
 	$scope.state = cah.stage;
 	$scope.timeLeftPercent = -1;
 
@@ -16,7 +17,9 @@ app.controller('cahController', function ($scope, cah, $log, $timeout) {
 
 	});
 
+	$scope.nextStage = cah.nextStage;
 	$scope.clearGame = cah.clearGame;
+	$scope.debugInfo = cah.debugInfo;
 
 
 });

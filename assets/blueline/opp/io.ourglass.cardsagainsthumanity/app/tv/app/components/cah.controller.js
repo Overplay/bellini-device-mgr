@@ -10,78 +10,24 @@
 // 		'dateCreated': new Date()
 // }
 
-app.controller('cahController', ['$scope', 'ogAPI', '$log', '$timeout', function ($scope, ogAPI, $log, $timeout) {
+app.controller('cahController', ['$scope', 'ogAPI', '$log', '$timeout', 'cah',
+	function ($scope, ogAPI, $log, $timeout, cah) {
 
 
 
 	$scope.title = "Cards Against Humanity";
 
 	$scope.previousWinningCard = { text: '', id: 0 };
+	$scope.getWinner = cah.getWinner;
 
-	function handleModelCallback(data) {
-
-		$scope.players = data.players.length ? data.players : [];
-		$scope.roundPlayingCards = data.roundPlayingCards.length ? data.roundPlayingCards : [];
-
-		// if ($scope.roundJudgingCard.id != data.roundJudgingCard.id) $scope.roundJudgingCard = data.roundJudgingCard;		
-		
-		$scope.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
-
-
-		if ($scope.stage == 'judging' && data.stage == 'picking') {
-			$scope.showWinner = true;
-			$scope.players = [];
-			$scope.roundPlayingCards = [];
-			// $scope.roundJudgingCard = data.roundJudgingCard.id ? data.roundJudgingCard : $scope.roundJudgingCard;	
-			$scope.previousWinningCard = data.previousWinningCard ? data.previousWinningCard : $scope.previousWinningCard;			
-			$timeout(function () {
-				$scope.showWinner = false;
-				if ($scope.stage != 'end') { //This is in case we reached ending stage before the timeout returned
-					$scope.roundJudgingCard = data.roundJudgingCard.id ? data.roundJudgingCard : $scope.roundJudgingCard;							
-					$scope.stage = data.stage ? data.stage : 'start';
-				}
-
-			}, 20 * 1000);
-		} else {
-			// $scope.roundJudgingCard = data.roundJudgingCard ? data.roundJudgingCard : { text: '', id: 0 };			
-			$scope.stage = data.stage ? data.stage : 'start';			
-		}
-
-	}
-
-	$scope.getWinner = function getWinner() {
-		return _.find($scope.players, function (player) {
-			return player.cards.black.length >= 3;
-		});
-	};
-
-	function inboundMessage(data) { } //This doesn't do anything currently. ogAPIBL2 machine broke
-
-	function initialize() {
-
-		ogAPI.init({
-			appName: "io.ourglass.cardsagainsthumanity",
-			deviceModelCallback: handleModelCallback,
-			messageCallback: inboundMessage,
-			deviceUDID: 'apple-sim-1',
-			appType: 'tv'
-		})
-		.then(function (data) {
-			data = data.device;
-			$scope.discard = data.discard ? data.discard : [];
-			$scope.players = data.players ? data.players : [];
-			$scope.roundPlayingCards = data.roundPlayingCards ? data.roundPlayingCards : [];
-			$scope.roundJudgingCard = data.roundJudgingCard ? data.roundJudgingCard : { text: '', id: 0 };
-			$scope.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
-			$scope.stage = data.stage ? data.stage : 'start';
-			$log.debug("tv init finished");
-		})
-		.catch ( function ( err ) {
-			$log.error("Something failed: " + err);
-		});
-	}
-
-	initialize();
+	$scope.$on('MODEL_CHANGED', function () { 
+		$scope.discard = cah.discard ? cah.discard : [];
+		$scope.players = cah.players ? cah.players : [];
+		$scope.roundPlayingCards = cah.roundPlayingCards ? cah.roundPlayingCards : [];
+		$scope.roundJudgingCard = cah.roundJudgingCard ? cah.roundJudgingCard : { text: '', id: 0 };
+		$scope.judgeIndex = cah.judgeIndex ? cah.judgeIndex : 0;
+		$scope.stage = cah.stage ? cah.stage : 'start';
+	})
 
 
 	$scope.rotation = 0;

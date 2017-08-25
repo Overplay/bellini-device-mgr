@@ -2,14 +2,15 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 
 	$log.debug("pickingController Started");
 
+	if (!cah.stage) $state.go('start');
+
 	if (cah.stage != 'picking') {
-		$state.go('start');
+		$state.go(cah.stage);
 	}
 
 	$scope.player = cah.player;
-
 	$scope.amJudge = function amJudge() {
-		return $scope.player.id == cah.judgeIndex % cah.players.length;
+		return cah.amJudge();
 	};
 
 	if ($scope.amJudge()) {
@@ -25,7 +26,7 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 	}
 
 	$scope.players = cah.players;
-	$scope.player.cards = cah.getPlayerById($scope.player.id).cards;
+	$scope.player.cards = cah.getPlayerByName($scope.player.name).cards;
 	$scope.roundPlayingCards = cah.roundPlayingCards;
 	$scope.submittedCard = { text: '', id: -1 };
 	$scope.roundJudgingCard = cah.roundJudgingCard;
@@ -60,8 +61,6 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 
 		});
 	};
-
-
 
 	$scope.nextStage = function nextStage() {
 		//We could check to see if everyone has submitted, but if someone is AFK let's not

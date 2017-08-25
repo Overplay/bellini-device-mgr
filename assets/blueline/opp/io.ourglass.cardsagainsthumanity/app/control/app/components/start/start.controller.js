@@ -40,12 +40,9 @@ app.controller('startController', function ($scope, cah, $state, uibHelper, $log
 		// $scope.inLobby
 	};
 
-
-	$scope.startGame = function startGame() {
-		cah.nextStage();
-	};
-
-	$scope.clearGame = cah.clearGame;
+	
+	$scope.nextStage = cah.nextStage;
+	
 
 
 });
