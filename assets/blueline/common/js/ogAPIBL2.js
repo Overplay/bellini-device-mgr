@@ -300,17 +300,6 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             } );
 
 
-            // Received direct message from cloud
-            io.socket.on( 'DEVICE-DM', function ( data ) {
-                if ( _syMsgCb ) {
-                    $rootScope.$apply( function () {
-                        _syMsgCb( data  );
-                    } );
-                } else {
-                    console.log( 'Dropping sio DEVICE_DM message rx (no cb)' );
-                }
-            } );
-
             // Received appdata change from cloud (either APP+DEVICE or APP+VENUE)
             io.socket.on( 'appdata', function ( data ) {
 
@@ -505,6 +494,17 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
 
             function joinSystemMsgRoom() {
+
+                // Received direct message from cloud
+                io.socket.on( 'sysmsg:'+_deviceUDID, function ( data ) {
+                    if ( _sysMsgCb ) {
+                        $rootScope.$apply( function () {
+                            _sysMsgCb( data );
+                        } );
+                    } else {
+                        console.log( 'Dropping sio DEVICE_DM message rx (no cb)' );
+                    }
+                } );
 
                 return $q( function ( resolve, reject ) {
 
