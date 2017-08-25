@@ -17,14 +17,27 @@ html, body {
     width: 100%;
     height: 100%;
 }
-.ticket-number {
-    font-size: 50vw;
+
+.udid {
+    font-size: 0.8rem;
     text-align: center;
-    margin-top: 15px;
+    padding: 3px;
 }
 
-.ticket-button {
-    margin-top: 15px;
-    width: 100%;
-    text-align: center;
+.jsonwrap {
+    border: 1px solid white;
+    border-radius: 8px;
+
+}
+
+.jsonwrap > h3 {
+    font-size: 10px;
+    margin: 5px;
+}
+
+.jsonwrap > pre {
+    background-color: black;
+    color: yellow;
+    font-size: 0.8rem;
+    margin: 5px;
 }

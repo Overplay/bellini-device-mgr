@@ -2,56 +2,76 @@
  * Created by mkahn on 11/18/16.
  */
 
-app.controller( "ogNowServingController", function ( $scope, $log, ogControllerModel ) {
+app.controller( "ogBLTestController", function ( $scope, $log, ogAPI, uibHelper ) {
 
-    $log.debug( "loaded ogNowServingController" );
+    $log.debug( "loaded ogBLTestController" );
 
-    $scope.ticketNumber = 12456;
+    $scope.obMessage = { fromPhone: '' };
 
-    function saveModel() {
-        ogControllerModel.save()
-            .then( function ( response ) {
-                $log.debug( "Save was cool" );
-            } )
-            .catch( function ( err ) {
-                $log.error( "WTF?!?!?" );
-                $scope.ticketNumber = "Error Talking to AB";
-            } );
+
+    function modelChanged( newValue ) {
+        $log.info( "Device model changed, yay!" );
     }
 
-    $scope.clear = function () {
-    
-        $log.debug( "Clear pressed" );
-        $scope.ticketNumber = 0;
-        ogControllerModel.model = {ticketNumber: 0};
-        saveModel();
+    function venueModelChanged( newValue ) {
 
-    };
-
-    $scope.incrementTicket = function () {
-    
-        $log.debug( "Increment pressed" );
-        $scope.ticketNumber += 1;
-        ogControllerModel.model.ticketNumber = $scope.ticketNumber;
-        saveModel();
-
-    };
-
-    function initialize() {
-
-        $log.debug( "initializing app and data" );
-        ogControllerModel.init( { appName: "io.ourglass.nowserving" } );
-        ogControllerModel.loadModel()
-            .then( function ( latestData ) {
-                $scope.ticketNumber = latestData.ticketNumber;
-            } )
-            .catch( function ( err ) {
-                $log.error( "WTF?!?!?" );
-                $scope.ticketNumber = "Error Talking to AB";
-            } )
+        $log.info( "Venue Model changed, yay!" );
 
     }
 
-    initialize();
+    function inboundMessage( msg ) {
+        $log.info( "New message: " + msg );
+        $scope.inboundMessage = msg;
+
+    }
+
+    $scope.getDeviceModel = function () {
+        return ogAPI.model;
+    }
+
+    $scope.getVenueModel = function () {
+        return ogAPI.venueModel;
+    }
+
+    ogAPI.init( {
+        appName:             "io.ourglass.bltest",
+        deviceModelCallback: modelChanged,
+        venueModelCallback:  venueModelChanged,
+        messageCallback:     inboundMessage,
+        appType:             'tv'
+    } )
+        .then( function ( d ) {
+            $log.debug( "ogAPI init complete!" )
+            $scope.ogsystem = ogAPI.getOGSystem();
+            $scope.udid = ogAPI.getDeviceUDID();
+
+
+        } )
+        .catch( function ( err ) {
+            $log.error( "That's not right!" );
+        } );
+
+    $scope.sendMessage = function(){
+
+        uibHelper.stringEditModal('Sned Message','Enter message below.', $scope.obMessage.fromPhone)
+            .then( function(msg){
+                $scope.obMessage.fromPhone = msg;
+                ogAPI.sendMessageToAppRoom($scope.obMessage);
+            })
+        //ogAPI.sendMessageToAppRoom( $scope.obMessage );
+    };
+
+    $scope.changeDevModel = function(){
+        ogAPI.model.deviceData.red++;
+        ogAPI.model.deviceData.blue++;
+        ogAPI.save();
+    };
+
+    $scope.changeVenueModel = function () {
+        ogAPI.venueModel.venueData.green--;
+        ogAPI.venueModel.venueData.yellow--;
+        ogAPI.save('venue');
+    }
+
 
 } );

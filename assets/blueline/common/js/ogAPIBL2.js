@@ -785,18 +785,18 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     } );
             };
 
-            /**
-             * Calls sioPut to save appmodel, appId, and deviceUDID
-             *
-             * @returns {Promise}
-             */
-            service.save = function () {
-                return sioPut( '/appmodel/' + _appId + '/' + _deviceUDID, { data: service.model } )
-                    .then( function ( data ) {
-                        $log.debug( "ogAPI: Model data saved via si PUT" );
-                        return data.resData;
-                    } );
-            };
+            // /**
+            //  * Calls sioPut to save appmodel, appId, and deviceUDID
+            //  *
+            //  * @returns {Promise}
+            //  */
+            // service.save = function () {
+            //     return sioPut( '/appmodel/' + _appId + '/' + _deviceUDID, { data: service.model } )
+            //         .then( function ( data ) {
+            //             $log.debug( "ogAPI: Model data saved via si PUT" );
+            //             return data.resData;
+            //         } );
+            // };
 
             // Helper
             service.saveDeviceModel = function () {

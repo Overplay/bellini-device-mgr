@@ -12,25 +12,49 @@
 
     <!-- App Main and AngularJS Routes -->
     <script src="app/ogNowServingApp.module.js"></script>
-    <script src="../../../../common/js/ogAPIBL.js"></script>
+    <script src="../../../../common/js/ogAPIBL2.js"></script>
 
     <!-- Controllers -->
-    <script src="app/components/mainscreen/mainscreen.controller.js"></script>
+    <script src="app/mainscreen.controller.js"></script>
 
     <!-- App Specific and Overridden CSS -->
     <!--<link href="assets/css/style.css" rel="stylesheet">-->
     <link href="../../../../common/css/og.css" rel="stylesheet">
-    <link href="assets/css/nowserving-og-style.css" rel="stylesheet">
+    <link href="assets/css/ogtvstyle.css" rel="stylesheet">
 
     <title>OBL Test</title>
 </head>
 <body ng-controller="mainScreenController">
     <div class="title">BL TEST</div>
-    <pre>I am a test</pre>
-    <pre>{{ ogsystem }}</pre>
+    <div class="container-fluid">
 
-    <div class="logo-holder">
-        <og-advert type="widget" interval="30000"></og-advert>
+        <p class="udid">{{ udid || 'No UDID' }}</p>
+
+        <div class="jsonwrap">
+            <h3>Device Model</h3>
+            <pre>{{ getDeviceModel() | json }}</pre>
+        </div>
+
+        <div class="jsonwrap">
+            <h3>Venue Model</h3>
+            <pre>{{ getVenueModel() | json }}</pre>
+        </div>
+
+        <div class="jsonwrap">
+            <h3>Inbound Message</h3>
+            <pre>{{( inboundMessage | json ) || 'waiting...' }}</pre>
+        </div>
+
+        <div class="jsonwrap">
+            <h3>Outbound Message</h3>
+            <pre>{{( obMessage | json ) }}</pre>
+        </div>
+
     </div>
+
+
+    <!--<div class="logo-holder">-->
+        <!--<og-advert type="widget" interval="30000"></og-advert>-->
+    <!--</div>-->
 </body>
 </html>

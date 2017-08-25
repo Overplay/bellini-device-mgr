@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="ogNowServingControlApp">
+<html lang="en" ng-app="ogBLTestControlApp">
 <head>
     <meta charset="UTF-8">
 
@@ -8,38 +8,55 @@
 
     <script src="../../../../common/bower_components/angular/angular.min.js"></script>
     <script src="../../../../common/bower_components/lodash/dist/lodash.min.js"></script>
-    <script src="../../../../common/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+    <script src="../../../../common/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script src="/js/dependencies/sails.io.js"></script>
 
 
     <!-- App Main and AngularJS Routes -->
-    <script src="app/ogNowServingControlApp.module.js"></script>
-    <script src="../../../../common/js/ogAPI.js"></script>
+    <script src="app/ogBLTestControlApp.module.js"></script>
+    <script src="../../../../common/js/ogAPIBL2.js"></script>
+    <script src="../../../../common/js/uiOGMobile/uiOGMobile.js"></script>
 
     <!-- Controllers -->
     <script src="app/components/controlscreen/controlscreen.controller.js"></script>
 
     <!-- App Specific and Overridden CSS -->
     <link href="../../../../common/css/og.css" rel="stylesheet">
-    <link href="assets/css/nowserving-og-style.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
 
 
 
 
-    <title>Now Serving Control</title>
+    <title>BL Text Control</title>
 </head>
-<body ng-controller="ogNowServingController">
-<og-app-header name="Now Serving"></og-app-header>
+<body ng-controller="ogBLTestController">
+<og-app-header name="BL Test"></og-app-header>
 <div class="container-fluid">
-    <div class="row">
-        <div class="ticket-number">{{ ticketNumber }}</div>
-    </div>
-    <div class="row">
-        <button class="btn btn-primary btn-lg ticket-button" ng-click="incrementTicket()">NEXT TICKET</button>
-    </div>
-    <div class="row">
-        <button class="btn btn-danger btn-lg ticket-button" ng-click="clear()">RESET TO ZERO</button>
+    <p class="udid">{{ udid || 'No UDID' }}</p>
+
+    <div class="jsonwrap">
+        <h3>Device Model</h3>
+        <pre>{{ getDeviceModel() | json }}</pre>
     </div>
 
+    <div class="jsonwrap">
+        <h3>Venue Model</h3>
+        <pre>{{ getVenueModel() | json }}</pre>
+    </div>
+
+    <div class="jsonwrap">
+        <h3>Inbound Message</h3>
+        <pre>{{( inboundMessage | json ) || 'waiting...' }}</pre>
+    </div>
+
+    <div class="jsonwrap">
+        <h3>Outbound Message</h3>
+        <pre>{{( obMessage | json ) }}</pre>
+    </div>
+
+    <button class="btn btn-sm btn-primary" ng-click="changeDevModel()">Device</button>
+    <button class="btn btn-sm btn-warning" ng-click="changeVenueModel()">Venue</button>
+    <button class="btn btn-sm btn-danger" ng-click="sendMessage()">Device</button>
 
 </div>
 
