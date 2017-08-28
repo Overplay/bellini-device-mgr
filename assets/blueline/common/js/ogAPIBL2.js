@@ -1014,20 +1014,22 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             // New methods for BlueLine Architecture
 
+
+            function getOGDeviceModel(){
+                return $http.get('/ogdevice/findByUDID?deviceUDID='+_deviceUDID)
+                    .then(stripData);
+            }
+
             service.getOGSystem = getOGSystem;
 
             /**
-             * calls getOGSystem to check onHardware
-             *
-             * @returns {undefined}
-             * @returns {sys.nowShowing}
+             * Gets the current program per Bellini
              */
             service.getCurrentProgram = function () {
-                var sys = getOGSystem();
-                if ( !sys.onHardware )
-                    return undefined; // we're not on OG Box or Emu
-
-                return sys.nowShowing;
+                return getOGDeviceModel()
+                    .then( function(device){
+                        return device.currentProgram;
+                    })
             };
 
             /**
