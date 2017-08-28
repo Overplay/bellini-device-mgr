@@ -68,12 +68,8 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 			uibHelper.dryToast("No white cards have been submitted. Wait for some players to submit cards.");
 			return;
 		}
-		$state.go('judging');
-		cah.nextStage(); //This just does a model broadcast to go to judging for the other players
+		cah.nextStage(); 
+		// $state.go('judging');
 	};
-
-	$scope.$on('JUDGING_PHASE', function () {
-		$state.go('judging');
-	});
 
 });

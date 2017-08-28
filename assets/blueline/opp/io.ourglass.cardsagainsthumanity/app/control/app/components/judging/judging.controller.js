@@ -1,20 +1,24 @@
 app.controller('judgingController', function ($scope, cah, $state, uibHelper, $log) {
 
-	if (cah.stage != 'judging') {
-		$state.go('start');
-	}
+	// if (!cah.stage) {
+	// 	$state.go('start');
+	// }
+
+	// if (cah.stage != 'judging') {
+	// 	$state.go(cah.stage);
+	// }
 
 	$scope.roundPlayingCards = cah.roundPlayingCards;
 	$scope.roundJudgingCard = cah.roundJudgingCard;
 	$scope.player = cah.player;
 	$scope.players = cah.players;
-	$scope.findCard = function findCard() {
+	$scope.findPlayedCard = function findPlayedCard() {
 		return _.find($scope.roundPlayingCards, function (card) {
 			return $scope.player.id == card.submittedBy.id;
 		});
 	};
 
-	$scope.playedCard = $scope.findCard();	
+	$scope.playedCard = $scope.findPlayedCard();	
 
 	$scope.amJudge = function amJudge() {
 		return $scope.player.id == cah.judgeIndex % cah.players.length;
@@ -30,10 +34,9 @@ app.controller('judgingController', function ($scope, cah, $state, uibHelper, $l
 			card.id
 		).then(function () {
 
-			cah.addBlackCardToPlayerById(card.submittedBy.id, $scope.roundJudgingCard, card);
+			cah.pickWinningRoundCard(card);
 			uibHelper.dryToast("The winner was " + card.submittedBy.name);
 			cah.nextStage();
-			cah.setWinningCard(card);			
 			
 			if (cah.getWinner()) {
 				$state.go('end');
@@ -52,20 +55,18 @@ app.controller('judgingController', function ($scope, cah, $state, uibHelper, $l
 		});
 	};
 
-	$scope.$on('MODEL_CHANGED', function () {
+	// $scope.$on('MODEL_CHANGED', function () {
 
-		if (cah.stage != 'picking') {
+	// 	if (cah.stage != 'picking') {
 
-			if (cah.getWinner()) {
-				$state.go('end');
-			} else {
-				$state.go('picking');
-			}
+	// 		if (cah.getWinner()) {
+	// 			$state.go('end');
+	// 		} else {
+	// 			$state.go('picking');
+	// 		}
 
-		}
+	// 	}
 
-
-
-	});
+	// });
 
 });

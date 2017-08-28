@@ -40,14 +40,14 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 	
 	/**
 	 * Swap service to next stage.
-	 * 
+	 * roundTime always refers to the next stage length. For example, time set in start will apply in picking
 	 */
-	service.nextStage = function nextStage() {
+	service.nextStage = function nextStage(timedOut) { 
 
 		switch (service.stage) {
 
 			case 'start': //We will only go from start to picking once a game
-			
+				
 				service.assignCards(); //Give everyone white cards
 				service.roundJudgingCard = service.getBlackCard();
 				service.stage = 'picking';
@@ -55,13 +55,20 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 				break;
 
 			case 'picking': //Part of the main game loop, will happen often
-			
+
 				service.roundTime = 15 * service.roundPlayingCards.length;
-				service.stage = 'judging';
+				if (!timedOut) {
+					service.stage = 'judging';
+				} else {
+					service.discardCards();
+					service.giveMissingWhiteCards();
+					service.roundJudgingCard = service.getBlackCard();
+					service.judgeIndex++;
+				}
 				break;
 
 			case 'judging': //Part of the main game loop
-				
+
 				if (service.getWinner()) {
 					service.stage = 'end';
 					service.roundTime = 5 * 60; // 5 minutes until the game auto-clears
@@ -86,7 +93,6 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 		}
 
 		service.timeLeft = service.roundTime;
-		doTimer();
 
 		saveModel();
 
@@ -143,7 +149,6 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 
 			service.timeLeft = data.roundTime;
 
-			doTimer();
 		}
 		service.roundTime = data.roundTime ? data.roundTime : service.timeLeft;
 
@@ -164,34 +169,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 		$rootScope.$broadcast('MODEL_CHANGED');
 	}
 
-	/**
-	 * Runs the timer once a second and sets timeLeftPercent to progress
-	 * Changes stage if the timer runs out of time.
-	 * 
-	 */
-	function doTimer() {
-		
-		if (service.timeLeft == -1) return;
 
-		var stageBefore = service.stage;
-		$timeout(function () {
-			service.timeLeft--;
-
-			service.timeLeftPercent = Math.round(service.timeLeft / service.roundTime) * 100;
-			modelChangedBroadcast();
-
-			if (service.timeLeft == 0) {
-				service.nextStage();
-			}
-
-			if (stageBefore != service.stage) {
-				return;
-			}
-
-			modelChangedBroadcast();
-			doTimer();
-		}, 1000);
-	}
 
 	/**
 	 * Initialization step, connects to ogAPI
@@ -427,6 +405,8 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 		service.availableCards.white = _.shuffle(service.availableCards.white);
 		service.availableCards.black = _.shuffle(service.availableCards.black);
 		service.stage = 'start';
+		service.roundTime = -1;
+		service.timeLeft = -1;
 		saveModel();
 
 	};
@@ -475,7 +455,8 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 			stage: service.stage,
 			judgeIndex: service.judgeIndex,
 			previousWinningCard: service.previousWinningCard,
-			roundTime: service.roundTime
+			roundTime: service.roundTime,
+			timeLeft: service.timeLeft,
 		};
 
 		ogAPI.save()
@@ -490,7 +471,16 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 
 	}
 
-	function inboundMessage(msg) { }
+	function inboundMessage(msg) {
+		if (!msg.hasOwnProperty('appMsg')) { 
+			return;
+		}
+
+		msg = msg.appMsg;
+
+		processMessage(msg.playerName, msg.message)
+
+	}
 
 	function doTimer() {
 		var stageBefore = service.stage;
@@ -505,10 +495,6 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 				return;
 			}
 
-			
-			if (stageBefore != service.stage) {
-				return;
-			}
 
 			doTimer();
 		}, 1000);
@@ -545,15 +531,22 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 			case 'debugInfo':
 				service.debugInfo();
 				break;
+			
+			case 'judgeWinningCard':
+				service.judgeWinningCard(message.data);
+				break;
 
 			default:
 				$log.debug(message.action);
 		}
 
-		delete service.messages[player] //Delete the message after we processed it
-
 		saveModel();
 
+	}
+	
+	service.judgeWinningCard = function(card) {
+		var player = card.submittedBy;
+		service.addBlackCardToPlayerById(player.id, service.roundJudgingCard, card);
 	}
 
 	service.debugInfo = function debugInfo() { 
@@ -562,6 +555,8 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 
 
 	initialize();
+	doTimer();
+		
 
 	return service;
 

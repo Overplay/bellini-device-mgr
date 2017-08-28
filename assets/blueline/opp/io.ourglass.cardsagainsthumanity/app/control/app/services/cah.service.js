@@ -31,13 +31,12 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 		if (service.roundTime != data.roundTime) {
 			
 			service.timeLeft = data.roundTime;
-			
-			doTimer();
+
 		}
 		service.roundTime = data.roundTime ? data.roundTime : -1;
 
+		stateSwitch(data.stage);
 		service.stage = data.stage ? data.stage : 'start';
-		stateSwitch(service.stage);
 
 		modelChangedBroadcast();
 	}
@@ -127,30 +126,18 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 	}
 
 
-
-	initialize();
-
 	service.clearGame = function clearGame() {
 
 		sendMessage(name, { action: 'clearGame' });
 	
 	};
-	function doTimer() {
+	function doTimer() { //I took out stage switching in this one because it's for display purposes only.
 		var stageBefore = service.stage;
 		$timeout(function () {
 			service.timeLeft--;
 
 			service.timeLeftPercent = Math.round((service.timeLeft / service.roundTime) * 100);
 			modelChangedBroadcast();
-
-			if (service.timeLeft == 0) {
-				service.nextStage();
-				return;
-			}
-			
-			if (stageBefore != service.stage) {
-				return;
-			}
 			
 			doTimer();
 		}, 1000);
@@ -183,27 +170,89 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 		sendMessage(service.playerName, { action: 'submitCard', data: card });
 	}
 
+	service.pickWinningRoundCard = function (card) {
+		delete card.$$hashKey;
+		sendMessage(service.playerName, { action: 'judgeWinningCard', data: card}) //This card is loaded with the submittedBy property so we don't need more data
+	}
+
 	function sendMessage(playerName, message) {
-		if (!playerName) playerName = 'noName';
+		playerName = playerName || 'noName';
 		if (!message.read) message.read = false; //If we haven't read it, send read status to false
 		
 		if (!ogAPI.model.messages) ogAPI.model.messages = {};
 		
+
+		// ogAPI.sendMessageToAppRoom({ playerName: playerName, message: message })
+		// 	.then(function (response) { 
+		// 		$log.debug("Message sent to app room!");
+		// 	})
+		// 	.catch(function (err) { 
+		// 		$log.debug("An error occurred when sending a message: ", err)
+		// 	})
+
+		
 		ogAPI.model.messages[playerName] = message;
+		
+		stripBullshit()
 		
 		ogAPI.save()
 			.then(function (response) {
 				$log.debug('Save was cool');
 			})
 			.catch(function (err) {
-				// $log.error(err);
+				$log.error(err);
 				$log.error('WTF?!?!?');
 			});
+		
+		
 	}
+
+	service.getWinner = function getWinner() {
+		return _.find(service.players, function (player) {
+			return player.cards.black.length >= NUM_TO_WIN;
+		});
+	};
 
 	service.amJudge = function amJudge() {
 		return service.player.id == service.judgeIndex % service.players.length;
 	}
+
+	function stripBullshit() {
+
+		try {
+			for (var i = 0; i < service.roundPlayingCards.length; i++) {
+				delete service.roundPlayingCards[i].$$hashKey; //Angular adds this somewhere but idk where
+			}
+		} catch (e) { //If it's undefined I don't want to throw an error
+
+		}
+
+
+		try {
+			for (var z = 0; z < service.players.length; z++) {
+				for (var x = 0; x < service.players[z].cards.white.length; x++) {
+					delete service.players[z].cards.white[x].$$hashKey; //Angular adds this somewhere but idk where
+				}
+			}
+		} catch (e) {
+			//If it's undefined I want it to still work
+		}
+
+		try {
+			for (var j = 0; j < service.players.length; j++) {
+				for (var n = 0; n < service.players[j].cards.black.length; n++) {
+					delete service.players[j].cards.black[n].$$hashKey; //Angular adds this somewhere but idk where
+				}
+			}
+		} catch (e) {
+			//If it's undefined I want it to still work
+		}
+	}
+
+
+
+	doTimer();
+	initialize();
 
 	return service;
 });
