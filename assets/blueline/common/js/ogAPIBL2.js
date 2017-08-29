@@ -1033,6 +1033,13 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             };
 
             /**
+             * Gets the current program per Bellini
+             */
+            service.getOGDevice = function () {
+                return getOGDeviceModel();
+            };
+
+            /**
              * Returns _deviceUDID
              *
              * @returns {_deviceUDID}

@@ -168,7 +168,7 @@ app.directive('scrollWindow', function($log) {
             var kickback = attrs.kickback || myElement.offsetHeight/4;
 
             var edge;
-            var developmentMode = true;
+            var developmentMode = false;
 
             $log.debug( 'inside scroller windower' );
 
