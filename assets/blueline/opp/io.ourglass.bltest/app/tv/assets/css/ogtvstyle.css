@@ -23,3 +23,27 @@
     font-weight: bold;
     animation: blinker 1s linear infinite alternate;
 }
+
+.udid {
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 4px;
+}
+
+.jsonwrap {
+    border: 1px solid white;
+    border-radius: 8px;
+
+}
+
+.jsonwrap > h3 {
+    font-size: 10px;
+    margin: 5px;
+}
+
+.jsonwrap > pre {
+    background-color: black;
+    color: yellow;
+    font-size: 0.8rem;
+    margin: 5px;
+}

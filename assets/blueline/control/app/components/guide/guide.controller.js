@@ -37,12 +37,13 @@ app.controller( "guideController",
             ogAPI.getGrid()
                 .then( function ( g ) {
                     fullGrid = g;
-
-                    var currentChannelNumber = parseInt(ogDevice.currentProgram.channelNumber); //Set current channel to our current channel number
-                    $rootScope.currentChannel = _.find( fullGrid, { channel: { channelNumber: currentChannelNumber } } ); //Set scope current channel to loadash channelNumber
-
                     filterGrid(); //Filter the grid
+                    return ogAPI.getCurrentProgram();
                 } )
+                .then( function (program){
+                    var currentChannelNumber = parseInt( program.channelNumber ); //Set current channel to our current channel number
+                    $rootScope.currentChannel = _.find( fullGrid, { channel: { channelNumber: currentChannelNumber } } ); //Set scope current channel to loadash channelNumber
+                })
                 .catch(function(err){
                     $scope.ui.loadError = true; //On error, show ui load error
                 })
@@ -142,6 +143,11 @@ app.controller( "guideController",
             $scope.stationSearch = imageSearch; //Sets search to image text
         };
 
+        $scope.$on('NEW_PROGRAM', function(ev, data){
+            $log.debug("Caught a whiff of a channel change");
+            uibHelper.dismissCurtain();
+        })
+
 
     } );
 
@@ -162,7 +168,7 @@ app.directive('scrollWindow', function($log) {
             var kickback = attrs.kickback || myElement.offsetHeight/4;
 
             var edge;
-            var developmentMode = true;
+            var developmentMode = false;
 
             $log.debug( 'inside scroller windower' );
 

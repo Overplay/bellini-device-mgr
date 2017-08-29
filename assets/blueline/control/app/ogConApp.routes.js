@@ -61,6 +61,11 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
                     templateUrl: 'app/components/settings/settings.template.html',
                     controller:  'settingsController'
                 }
+            },
+            resolve: {
+                ogDevice: function(ogAPI){
+                    return ogAPI.getOGDevice();
+                }
             }
 
         } )

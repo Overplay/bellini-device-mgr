@@ -1,16 +1,16 @@
 /**
- * Created by mkahn on 11/18/16.
+ * Created by mkahn on 11/17/16.
  */
 
-app.controller( "ogBLTestController", function ( $scope, $log, ogAPI, uibHelper ) {
+app.controller( "mainScreenController", function ( $scope, $log, ogAPI, $interval ) {
 
-    $log.debug( "loaded ogBLTestController" );
+    $log.debug( "mainScreenController has loaded" );
 
-    $scope.obMessage = { fromPhone: '' };
+    $scope.obMessage = { numberFromTV: 0 };
 
 
     function modelChanged( newValue ) {
-        $log.info( "Device model changed, yay!" );
+        $log.info( "Model changed, yay!" );
     }
 
     function venueModelChanged( newValue ) {
@@ -20,13 +20,15 @@ app.controller( "ogBLTestController", function ( $scope, $log, ogAPI, uibHelper 
     }
 
     function inboundMessage( msg ) {
-        $log.info( "New app message: " + msg );
+        $log.info( "New message: " + msg );
         $scope.inboundMessage = msg;
+
     }
 
-    function inboundSysMessage(msg) {
+    function inboundSysMessage( msg ) {
         $log.info( "New sys message: " + msg );
         $scope.inboundSysMessage = msg;
+
     }
 
     $scope.getDeviceModel = function () {
@@ -50,33 +52,29 @@ app.controller( "ogBLTestController", function ( $scope, $log, ogAPI, uibHelper 
             $scope.ogsystem = ogAPI.getOGSystem();
             $scope.udid = ogAPI.getDeviceUDID();
 
+            ogAPI.model = { deviceData: { red: 0, blue: 10 } };
+            ogAPI.save();
+
+            ogAPI.venueModel = { venueData: { green: 99, yellow: 66 } };
+            ogAPI.save( 'venue' );
+
+            startSendingMessages();
 
         } )
         .catch( function ( err ) {
             $log.error( "That's not right!" );
-        } );
+        } )
 
-    $scope.sendMessage = function () {
+    function startSendingMessages() {
 
-        uibHelper.stringEditModal( 'Sned Message', 'Enter message below.', $scope.obMessage.fromPhone )
-            .then( function ( msg ) {
-                $scope.obMessage.fromPhone = msg;
-                ogAPI.sendMessageToAppRoom( $scope.obMessage );
-            } )
-        //ogAPI.sendMessageToAppRoom( $scope.obMessage );
-    };
+        $interval( function () {
 
-    $scope.changeDevModel = function () {
-        ogAPI.model.deviceData.red++;
-        ogAPI.model.deviceData.blue++;
-        ogAPI.save();
-    };
+            $scope.obMessage.numberFromTV++;
+            ogAPI.sendMessageToAppRoom( $scope.obMessage );
 
-    $scope.changeVenueModel = function () {
-        ogAPI.venueModel.venueData.green--;
-        ogAPI.venueModel.venueData.yellow--;
-        ogAPI.save( 'venue' );
+        }, 5000 );
     }
 
+} )
+;
 
-} );

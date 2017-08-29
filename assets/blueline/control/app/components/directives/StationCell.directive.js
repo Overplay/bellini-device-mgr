@@ -29,7 +29,7 @@ app.directive( 'stationCell',
                     $log.debug( "Changing channel to: " + scope.grid.channel.channelNumber );
                     ogAPI.changeChannel( scope.grid.channel.channelNumber );
                     $rootScope.currentChannel = scope.grid;
-                    $timeout(function(){ hud.dismiss() }, 5000);
+                    //$timeout(function(){ hud.dismiss() }, 5000);
 
                 }
 
