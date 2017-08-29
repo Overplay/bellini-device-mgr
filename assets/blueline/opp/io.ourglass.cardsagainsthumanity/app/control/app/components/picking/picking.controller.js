@@ -38,8 +38,14 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 		$scope.roundPlayingCards = cah.roundPlayingCards;
 		$scope.roundJudgingCard = cah.roundJudgingCard;
 	});
+
+	$scope.$on('STAGE_CHANGE', function () {
+		if (cah.stage != 'picking') {
+			$state.go(cah.stage);
+		}
+	});
 	$scope.findJudge = function findJudge() {
-		return cah.getPlayerById(cah.judgeIndex % cah.players.length).name;
+		return cah.getPlayerById(cah.judgeIndex % cah.players.length);
 	};
 
 	$scope.confirmCardChoice = function confirmCardChoice(card) {

@@ -84,7 +84,7 @@
 		<!-- Black Cards: -->
 		<uib-progressbar ng-hide="stage == 'start' || !timeLeftPercent || timeLeftPercent < 0" class="progress-striped active" value="timeLeftPercent" type="{{timeLeftPercent > 50 ? 'success' : timeLeftPercent < 50 && timeLeftPercent > 25 ? 'warning' : 'danger'}}">{{dynamic}}</uib-progressbar>
 
-		<div class="card-container">
+		<div class="card-container" ng-hide="stage == 'end' || stage == 'start'">
 			<card ng-repeat="card in player.cards.black" text='card.text' id='card.id' white='false'></card>
 		</div>
 	

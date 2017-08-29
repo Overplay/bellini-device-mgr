@@ -1,12 +1,12 @@
 app.controller('judgingController', function ($scope, cah, $state, uibHelper, $log) {
 
-	// if (!cah.stage) {
-	// 	$state.go('start');
-	// }
+	if (!cah.stage) {
+		$state.go('start');
+	}
 
-	// if (cah.stage != 'judging') {
-	// 	$state.go(cah.stage);
-	// }
+	if (cah.stage != 'judging') {
+		$state.go(cah.stage);
+	}
 
 	$scope.roundPlayingCards = cah.roundPlayingCards;
 	$scope.roundJudgingCard = cah.roundJudgingCard;
@@ -24,7 +24,7 @@ app.controller('judgingController', function ($scope, cah, $state, uibHelper, $l
 		return $scope.player.id == cah.judgeIndex % cah.players.length;
 	};
 	$scope.findJudge = function findJudge() {
-		return cah.getPlayerById(cah.judgeIndex % cah.players.length).name;
+		return cah.getPlayerById(cah.judgeIndex % cah.players.length);
 	};
 
 	$scope.confirmChoice = function confirmChoice(card) {
@@ -38,15 +38,16 @@ app.controller('judgingController', function ($scope, cah, $state, uibHelper, $l
 			uibHelper.dryToast("The winner was " + card.submittedBy.name);
 			cah.nextStage();
 			
-			if (cah.getWinner()) {
-				$state.go('end');
-			} else {
-				$state.go('picking');
-			}
+			// if (cah.getWinner()) {
+			// 	$state.go('end');
+			// } else {
+			// 	$state.go('picking');
+			// }
 			//Give all players who weren't the judge a new white card.
 			//Go back to picking phase (make sure to assign new black card)
 
-		}).catch(function (err) {
+			})
+			.catch(function (err) {
 			if (err.message != "cancled") {
 				uibHelper.dryToast("Card not chosen.");
 				$log.error("Card Confirm Error:", err);
@@ -54,6 +55,12 @@ app.controller('judgingController', function ($scope, cah, $state, uibHelper, $l
 
 		});
 	};
+
+	$scope.$on('STAGE_CHANGE', function () {
+		if (cah.stage != 'judging') {
+			$state.go(cah.stage);
+		}
+	});
 
 	// $scope.$on('MODEL_CHANGED', function () {
 

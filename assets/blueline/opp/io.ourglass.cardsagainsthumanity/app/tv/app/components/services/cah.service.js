@@ -1,5 +1,5 @@
-app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interval',
-	function ($rootScope, $log, ogAPI, $http, $timeout, $interval) {
+app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
+	function ($rootScope, $log, ogAPI, $http, $timeout) {
 
 
 	var service = {};
@@ -21,30 +21,27 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 		service.roundPlayingCards = [];
 		service.roundJudgingCard = { text: '', id: 0 };
 		service.judgeIndex = 0;
-		service.availableCards = _.cloneDeep(service.allCards);
-		service.availableCards.white = _.shuffle(service.availableCards.white);
-		service.availableCards.black = _.shuffle(service.availableCards.black);
 		service.stage = 'start';
 		service.roundTime = -1;
 		service.timeLeft = -1;
+
+		$http.get('app/assets/cards.json')
+			.then(function (response) {
+				$log.debug('Cards Loaded!');
+				service.allCards = response.data;
+				service.availableCards = _.cloneDeep(service.allCards);
+				service.availableCards.white = _.shuffle(service.availableCards.white);
+				service.availableCards.black = _.shuffle(service.availableCards.black);
+			}).catch(function (err) {
+				$log.debug('Cards Load Failed!');
+				$log.error(err);
+			});
+
 		saveModel();
 
 	};
 	
 	service.clearGame();
-
-	$http.get('app/assets/cards.json')
-		.then(function (response) {
-			$log.debug('Cards Loaded!');
-			service.allCards = response.data;
-			service.availableCards = _.cloneDeep(service.allCards);
-			service.availableCards.white = _.shuffle(service.availableCards.white);
-			service.availableCards.black = _.shuffle(service.availableCards.black);
-		}).catch(function (err) {
-			$log.debug('Cards Load Failed!');
-			$log.error(err);
-		});
-	
 
 	
 	/**
@@ -103,19 +100,25 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 
 		service.timeLeft = service.roundTime;
 
-		saveModel();
+		saveModel(service.stage);
 
-	}
+	};
 	
 	/**
 	 * Goes through the players to check for a winner.
 	 * 
 	 * @returns {player | undefined} player
 	 */
-	service.getWinner = function getWinner() {
-		return _.find(service.players, function (player) {
+	service.getWinner = function getWinner(shouldBroadcast) {
+		var winner = _.find(service.players, function (player) {
 			return player.cards.black.length >= service.NUM_TO_WIN;
 		});
+
+		if (shouldBroadcast) {
+			ogAPI.sendMessageToAppRoom({ action: 'winner', data: winner });
+		}
+
+		return winner;
 	};
 
 	/**
@@ -435,7 +438,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 			//If it's undefined I want it to still work
 		}
 	}
-	function saveModel() {
+	function saveModel(stage) {
 
 		stripBullshit();
 
@@ -450,13 +453,14 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 			previousWinningCard: service.previousWinningCard,
 			roundTime: service.roundTime,
 			timeLeft: service.timeLeft,
-			NUM_TO_WIN: service.NUM_TO_WIN,
+			NUM_TO_WIN: service.NUM_TO_WIN
 		};
 
 		ogAPI.save()
 			.then(function (response) {
 				$log.debug('Save was cool');
 				modelChangedBroadcast();
+				if (stage) { ogAPI.sendMessageToAppRoom({ action: 'newStage', data: stage }); }
 			})
 			.catch(function (err) {
 				// $log.error(err);
@@ -466,13 +470,14 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 	}
 
 	function inboundMessage(msg) {
-		if (!msg.hasOwnProperty('appMsg')) { 
+
+		$log.debug(msg);
+
+		if (!msg.playerName) {
 			return;
 		}
 
-		msg = msg.appMsg;
-
-		processMessage(msg.playerName, msg.message)
+		processMessage(msg.playerName, msg.message);
 
 	}
 
@@ -528,6 +533,10 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 
 			case 'debugInfo':
 				service.debugInfo();
+				break;
+
+			case 'getWinner':
+				service.getWinner(true);
 				break;
 			
 

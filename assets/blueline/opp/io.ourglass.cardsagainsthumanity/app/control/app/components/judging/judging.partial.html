@@ -6,7 +6,7 @@
 </div>
 
 <div ng-if="!amJudge()">
-	<div>Your Judge: {{findJudge()}}  -  Current Round:</div>
+	<div>Your Judge: {{findJudge().name}}  -  Current Round:</div>
 	<div class="card-container">
 		<card text='roundJudgingCard.text' id='roundJudgingCard.id' white='false'></card>
 		<card text="findPlayedCard().text" id="findPlayedCard().id" white='true'></card>
