@@ -3,16 +3,9 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 
 
 	var service = {};
-	var NUM_CARDS = 6; //const
-	var NUM_TO_WIN = 3; //const
-
-	//DEFAULT SERVICE STATE
-	service.discard = [];
-	service.players = [];
-	service.roundPlayingCards = [];
-	service.roundJudgingCard = { text: '', id: 0 };
-	service.judgeIndex = 0;
-	service.stage = 'start';
+	service.NUM_CARDS = 6; //const
+	service.NUM_TO_WIN = 3; //const
+		
 	service.allCards = {
 		white: [
 			{ text: 'Cards have not loaded yet.', id: 0 }
@@ -21,8 +14,24 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 			{ text: 'Cards have not loaded yet.', id: 0, pick: 0 }
 		]
 	};
+	service.clearGame = function clearGame() {
 
+		service.discard = [];
+		service.players = [];
+		service.roundPlayingCards = [];
+		service.roundJudgingCard = { text: '', id: 0 };
+		service.judgeIndex = 0;
+		service.availableCards = _.cloneDeep(service.allCards);
+		service.availableCards.white = _.shuffle(service.availableCards.white);
+		service.availableCards.black = _.shuffle(service.availableCards.black);
+		service.stage = 'start';
+		service.roundTime = -1;
+		service.timeLeft = -1;
+		saveModel();
 
+	};
+	
+	service.clearGame();
 
 	$http.get('app/assets/cards.json')
 		.then(function (response) {
@@ -42,7 +51,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 	 * Swap service to next stage.
 	 * roundTime always refers to the next stage length. For example, time set in start will apply in picking
 	 */
-	service.nextStage = function nextStage(timedOut) { 
+	service.nextStage = function nextStage(timedOut) {
 
 		switch (service.stage) {
 
@@ -105,7 +114,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 	 */
 	service.getWinner = function getWinner() {
 		return _.find(service.players, function (player) {
-			return player.cards.black.length >= NUM_TO_WIN;
+			return player.cards.black.length >= service.NUM_TO_WIN;
 		});
 	};
 
@@ -280,7 +289,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 			throw new Error('No players to assign cards to');
 		}
 
-		for (var i = 0; i < service.players.length * NUM_CARDS; i++) {
+		for (var i = 0; i < service.players.length * service.NUM_CARDS; i++) {
 			service.players[i % service.players.length].cards.white.push(service.getWhiteCard());
 		}
 
@@ -296,7 +305,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 
 		for (var i = 0; i < service.players.length; i++) {
 
-			if (service.players[i].cards.white.length < NUM_CARDS) {
+			if (service.players[i].cards.white.length < service.NUM_CARDS) {
 				service.players[i].cards.white.push(service.getWhiteCard());
 			}
 		}
@@ -394,22 +403,6 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 	};
 
 
-	service.clearGame = function clearGame() {
-
-		service.discard = [];
-		service.players = [];
-		service.roundPlayingCards = [];
-		service.roundJudgingCard = { text: '', id: 0 };
-		service.judgeIndex = 0;
-		service.availableCards = _.cloneDeep(service.allCards);
-		service.availableCards.white = _.shuffle(service.availableCards.white);
-		service.availableCards.black = _.shuffle(service.availableCards.black);
-		service.stage = 'start';
-		service.roundTime = -1;
-		service.timeLeft = -1;
-		saveModel();
-
-	};
 
 	function stripBullshit() {
 
@@ -457,6 +450,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 			previousWinningCard: service.previousWinningCard,
 			roundTime: service.roundTime,
 			timeLeft: service.timeLeft,
+			NUM_TO_WIN: service.NUM_TO_WIN,
 		};
 
 		ogAPI.save()
@@ -491,7 +485,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 			modelChangedBroadcast();
 
 			if (service.timeLeft == 0) {
-				service.nextStage();
+				service.nextStage(true);
 				return;
 			}
 
@@ -527,14 +521,15 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 			case 'clearGame':
 				service.clearGame();
 				break;
+			
+			case 'judgeWinningCard':
+				service.judgeWinningCard(message.data);
+				break;
 
 			case 'debugInfo':
 				service.debugInfo();
 				break;
 			
-			case 'judgeWinningCard':
-				service.judgeWinningCard(message.data);
-				break;
 
 			default:
 				$log.debug(message.action);

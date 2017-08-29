@@ -49,7 +49,7 @@ app.controller('judgingController', function ($scope, cah, $state, uibHelper, $l
 		}).catch(function (err) {
 			if (err.message != "cancled") {
 				uibHelper.dryToast("Card not chosen.");
-				$log.error(err);
+				$log.error("Card Confirm Error:", err);
 			}
 
 		});

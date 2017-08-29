@@ -58,7 +58,6 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 				uibHelper.dryToast("Card not submitted.");
 				$log.error(err);
 			}
-
 		});
 	};
 
@@ -71,5 +70,4 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 		cah.nextStage(); 
 		// $state.go('judging');
 	};
-
 });

@@ -209,7 +209,7 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 
 	service.getWinner = function getWinner() {
 		return _.find(service.players, function (player) {
-			return player.cards.black.length >= NUM_TO_WIN;
+			return player.cards.black.length >= service.NUM_TO_WIN;
 		});
 	};
 
