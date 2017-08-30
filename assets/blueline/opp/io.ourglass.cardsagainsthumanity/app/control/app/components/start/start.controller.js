@@ -28,9 +28,9 @@ app.controller('startController', function ($scope, cah, $state, uibHelper, $log
 
 		uibHelper.stringEditModal(
 			'Join Game',
-			'Enter unique name below.',
+			'Enter unique username below.',
 			'',
-			'unique name'
+			'unique username'
 		).then(function (result) {
 			cah.addPlayer(result);	
 			$scope.inLobby = true;

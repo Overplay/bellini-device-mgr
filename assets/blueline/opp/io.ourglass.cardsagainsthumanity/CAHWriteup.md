@@ -182,3 +182,4 @@ The master client is the one to have started the lobby.
 * Reduce the height of the Title
 * Make the buttons look full width like other apps
 * Add timers for each round.
+* Clicking start at the same time as someone else leads to blank cards
