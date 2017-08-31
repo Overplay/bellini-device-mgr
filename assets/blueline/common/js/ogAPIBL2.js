@@ -1154,15 +1154,18 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 restrict: 'A',
                 link:     function ( scope, elem, attrs ) {
 
-                    elem.bind( 'error', function () {
+                    elem.bind( 'error', function (event) {
                         $log.debug( "Failed to load image!" );
-                        attrs.$set( 'src', '/blueline/common/img/whoops.jpg' );
+                        // This is some serious hackage!
+                        var isWidget = event.path[ 1 ].outerHTML.indexOf( 'widget' ) > 0;
+                        var errImgUrl = isWidget ? '/blueline/common/img/oglogo_widget_oops.jpg' :
+                            '/blueline/common/img/oglogo_crawler_oops.jpg';
+                        attrs.$set( 'src', errImgUrl );
                     } );
 
                 }
 
             }
-
 
         } )
 
