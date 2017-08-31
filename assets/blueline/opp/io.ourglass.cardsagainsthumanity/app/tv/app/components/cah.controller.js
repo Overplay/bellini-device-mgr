@@ -17,16 +17,27 @@ app.controller('cahController', ['$scope', 'ogAPI', '$log', '$timeout', 'cah',
 
 	$scope.title = "Cards Against Humanity";
 
-	$scope.previousWinningCard = { text: '', id: 0 };
+	// $scope.previousWinningCard = { text: '', id: 0 };
 	$scope.getWinner = cah.getWinner;
 
 	$scope.$on('MODEL_CHANGED', function () { 
+		if ($scope.stage != 'picking' && cah.stage == 'picking') { //From a non-picking stage to a picking stage
+			if (cah.previousWinningCard) {
+				$scope.previousWinningCard = cah.previousWinningCard ? cah.previousWinningCard : { text: '', id: 0 }
+				$scope.previousJudgingCard = cah.previousJudgingCard ? cah.previousJudgingCard : { text: '', id: 0, pick: 1 }
+				$scope.showPreviousRound = true;
+				$timeout(function () { 
+					$scope.showPreviousRound = false;
+				}, 20 * 1000)
+			}
+		}
 		$scope.discard = cah.discard ? cah.discard : [];
 		$scope.players = cah.players ? cah.players : [];
 		$scope.roundPlayingCards = cah.roundPlayingCards ? cah.roundPlayingCards : [];
 		$scope.roundJudgingCard = cah.roundJudgingCard ? cah.roundJudgingCard : { text: '', id: 0 };
 		$scope.judgeIndex = cah.judgeIndex ? cah.judgeIndex : 0;
 		$scope.stage = cah.stage ? cah.stage : 'start';
+
 	})
 
 

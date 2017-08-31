@@ -70,6 +70,9 @@ app.factory('cah', function ($rootScope, $log, ogAPI, $http, $timeout, $interval
 				modelChangedBroadcast();
 				break;
 
+			case 'clear':
+				$rootScope.$broadcast('RESTART');
+
 		}
 
 	}

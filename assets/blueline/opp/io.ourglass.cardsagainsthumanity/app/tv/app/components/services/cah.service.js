@@ -1,5 +1,5 @@
-app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
-	function ($rootScope, $log, ogAPI, $http, $timeout) {
+app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interval',
+	function ($rootScope, $log, ogAPI, $http, $timeout, $interval) {
 
 
 		var service = {};
@@ -30,6 +30,15 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 			service.stage = 'start';
 			service.roundTime = -1;
 			service.timeLeft = -1;
+			service.previousWinningCard = {
+				text: '',
+				id: 0
+			}
+			service.previousJudgingCard = {
+				text: '',
+				id: 0,
+				pick: 1
+			}
 
 			$http.get('app/assets/cards.json')
 				.then(function (response) {
@@ -43,11 +52,20 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 					$log.error(err);
 				});
 
+			gameInProgress = false;
+
 			saveModel();
+			ogAPI.sendMessageToAppRoom({
+				action: 'clear'
+			});
 
 		};
 
 		service.clearGame();
+
+
+
+		var gameInProgress = false;
 
 
 		/**
@@ -59,23 +77,24 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 			switch (service.stage) {
 
 				case 'start': //We will only go from start to picking once a game
-
+					if (gameInProgress) return false; //If two people hit start at the same time it won't destroy us
 					service.assignCards(); //Give everyone white cards
 					service.roundJudgingCard = service.getBlackCard();
 					service.stage = 'picking';
-					service.roundTime = 10 * service.players[0].cards.white.length;
+					service.roundTime = (10 * service.players[0].cards.white.length) + 20;
+					gameInProgress = true;
 					break;
 
 				case 'picking': //Part of the main game loop, will happen often
-
-					service.roundTime = 15 * service.roundPlayingCards.length;
 					if (!timedOut) {
+						service.roundTime = (15 * service.roundPlayingCards.length);
 						service.stage = 'judging';
 					} else {
-						service.discardCards();
-						service.giveMissingWhiteCards();
-						service.roundJudgingCard = service.getBlackCard();
+						service.roundTime = 10 * service.players[0].cards.white.length;
 						service.judgeIndex++;
+						service.roundJudgingCard = service.getBlackCard();
+						service.giveMissingWhiteCards();
+						service.discardCards();
 					}
 					break;
 
@@ -83,22 +102,35 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 
 					if (service.getWinner()) {
 						service.stage = 'end';
-						service.roundTime = 5 * 60; // 5 minutes until the game auto-clears
+						service.roundTime = 3 * 60; // 3 minutes until the game auto-clears
 						break;
 					}
 
-					service.judgeIndex++;
+
+					service.stage = 'picking';
 					service.roundJudgingCard = service.getBlackCard();
 					service.giveMissingWhiteCards();
 					service.discardCards();
-					service.stage = 'picking';
-					service.roundTime = 10 * service.players[0].cards.white.length; //10 seconds per card
+					service.roundTime = (10 * service.players[0].cards.white.length) + 20; //10 seconds per card, 20 seconds to show previous round win
+					if (timedOut) {
+						var judgeName = service.getPlayerById(service.players.length % service.judgeIndex).name;
+						service.previousJudgingCard = {
+							text: 'Better go wake up ' + judgeName + '!',
+							id: 0,
+							pick: 1
+						};
+						service.previousWinningCard = {
+							text: judgeName + ': *ding-a-ling* SHAME     SHAME *ding-a-link*'
+						};
+					}
+					service.judgeIndex++;
 					break;
 
 				case 'end':
 				default:
-
+					if (!gameInProgress) return false; //If someone hits play again the same time as someone else it will only fire once.
 					service.clearGame();
+					gameInProgress = false;
 					service.stage = 'start';
 					service.roundTime = -1;
 
@@ -107,6 +139,8 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 			service.timeLeft = service.roundTime;
 
 			saveModel(service.stage);
+			return true;
+
 
 		};
 
@@ -183,6 +217,17 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 
 			service.stage = data.stage ? data.stage : 'start';
 
+			service.previousWinningCard = data.previousWinningCard ? data.previousWinningCard : {
+				text: '',
+				id: 0
+			}
+			service.previousJudgingCard = data.previousJudgingCard ? data.previousJudgingCard : {
+				text: '',
+				id: 0,
+				pick: 1
+			}
+			service.lastUpdated = data.lastUpdated ? new Date(data.lastUpdated).getTime() : new Date().getTime();
+
 			modelChangedBroadcast();
 		}
 
@@ -230,10 +275,12 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 				availableCards: service.availableCards, //Needed so somebody doesn't pull a card someone else has
 				stage: service.stage,
 				judgeIndex: service.judgeIndex,
-				previousWinningCard: service.previousWinningCard,
 				roundTime: service.roundTime,
 				timeLeft: service.timeLeft,
-				NUM_TO_WIN: service.NUM_TO_WIN
+				NUM_TO_WIN: service.NUM_TO_WIN,
+				previousWinningCard: service.previousWinningCard,
+				previousJudgingCard: service.previousJudgingCard,
+				lastUpdated: new Date().getTime()
 			};
 
 			ogAPI.save()
@@ -248,7 +295,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 					}
 				})
 				.catch(function (err) {
-					// $log.error(err);
+					$log.error('ogApi.Save() Error:', err);
 					$log.error('WTF?!?!?');
 				});
 
@@ -276,7 +323,6 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 
 				if (service.timeLeft == 0) {
 					service.nextStage(true);
-					return;
 				}
 
 
@@ -314,22 +360,35 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 
 					data = data.device;
 
-					service.discard = data.discard.length ? data.discard : [];
-					service.players = data.players.length ? data.players : [];
-					service.roundPlayingCards = data.roundPlayingCards.length ? data.roundPlayingCards : [];
-					service.roundJudgingCard = data.roundJudgingCard.text ? data.roundJudgingCard : {
-						text: '',
-						id: 0
-					};
-					service.availableCards = data.availableCards != service.availableCards ? data.availableCards : _.cloneDeep(service.allCards);
-					service.availableCards.white = _.shuffle(service.availableCards.white);
-					service.availableCards.black = _.shuffle(service.availableCards.black);
-					service.stage = data.stage ? data.stage : 'start';
-					service.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
-					service.timeLeft = data.timeLeft ? data.timeLeft : -1;
-					service.roundTime = data.roundTime ? data.roundTime : -1;
+					// service.discard = data.discard.length ? data.discard : [];
+					// service.players = data.players.length ? data.players : [];
+					// service.roundPlayingCards = data.roundPlayingCards.length ? data.roundPlayingCards : [];
+					// service.roundJudgingCard = data.roundJudgingCard.text ? data.roundJudgingCard : {
+					// 	text: '',
+					// 	id: 0
+					// };
+					// service.availableCards = data.availableCards != service.availableCards ? data.availableCards : _.cloneDeep(service.allCards);
+					// service.availableCards.white = _.shuffle(service.availableCards.white);
+					// service.availableCards.black = _.shuffle(service.availableCards.black);
+					// service.stage = data.stage ? data.stage : 'start';
+					// service.judgeIndex = data.judgeIndex ? data.judgeIndex : 0;
+					// service.timeLeft = data.timeLeft ? data.timeLeft : -1;
+					// service.roundTime = data.roundTime ? data.roundTime : -1;
+					// service.previousWinningCard = data.previousWinningCard ? data.previousWinningCard : { text: "", id: 0 }
+					// service.previousJudgingCard = data.previousJudgingCard ? data.previousJudgingCard : { text: "", id: 0, pick: 0 }
 
-					modelChangedBroadcast();
+					// modelChangedBroadcast();
+
+					service.lastUpdated = data.lastUpdated;
+
+					service.clearGame();
+
+					$interval(function () {
+						if ((new Date().getTime() - service.lastUpdated) / 1000 > 3 * 60) {
+							service.clearGame();
+							service.lastUpdated = new Date();
+						}
+					}, 30 * 1000);
 
 
 				})
@@ -370,6 +429,10 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 			_.remove(servicePlayer.cards.white, function (cardListItem) {
 				return card.id == cardListItem.id;
 			});
+
+			if (service.roundPlayingCards.length == service.players.length - 1) {
+				service.nextStage();
+			}
 
 			saveModel();
 
@@ -501,6 +564,9 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 				return;
 			}
 
+			service.previousJudgingCard = _.cloneDeep(blackCard);
+			service.previousWinningCard = whiteCard;
+
 			var player = service.getPlayerById(id);
 
 			if (!player) {
@@ -520,6 +586,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 
 			blackCard.text = blackCardText;
 			player.cards.black.push(blackCard);
+
 
 			saveModel();
 
@@ -546,7 +613,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout',
 					break;
 
 				case 'nextStage':
-					service.nextStage();
+					if (!service.nextStage()) return; //If it has double-start or double-restart messages don't save the model.
 					break;
 
 				case 'clearGame':

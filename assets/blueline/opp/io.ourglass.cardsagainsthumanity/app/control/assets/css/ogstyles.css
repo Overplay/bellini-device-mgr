@@ -99,3 +99,15 @@ og-advert {
 	width: 100%;
 	text-align: center;
 }
+
+.info-msg {
+	font-size: 8vw;
+	text-align: center;
+	margin-top: 15px;
+}
+
+.start-button {
+	margin-top: 15px;
+	width: 100%;
+	text-align: center;
+}

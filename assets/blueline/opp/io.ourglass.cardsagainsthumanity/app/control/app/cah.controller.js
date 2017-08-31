@@ -1,6 +1,6 @@
 
 
-app.controller('cahController', function ($scope, cah, $log, $timeout) {
+app.controller('cahController', function ($scope, cah, $log, $timeout, $state) {
 
 	
 	$scope.state = cah.stage;
@@ -10,12 +10,17 @@ app.controller('cahController', function ($scope, cah, $log, $timeout) {
 		$scope.stage = cah.stage;
 		$scope.roundJudgingCard = cah.roundJudgingCard;
 		$scope.timeLeftPercent = cah.timeLeftPercent;
+		$scope.timeLeft = cah.timeLeft;
 
 		if (cah.player) {
 			$scope.player = cah.player;
 		}
 
 	});
+
+	$scope.$on('RESTART', function () { 
+		$state.go('start');
+	})
 
 	$scope.nextStage = cah.nextStage;
 	$scope.clearGame = cah.clearGame;

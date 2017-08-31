@@ -12,7 +12,6 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 	$scope.amJudge = function amJudge() {
 		return cah.amJudge();
 	};
-
 	if ($scope.amJudge()) {
 		uibHelper.headsupModal(
 			"You are the Judge!",
@@ -37,6 +36,9 @@ app.controller('pickingController', function ($scope, cah, $state, uibHelper, $l
 		$scope.player = cah.player;
 		$scope.roundPlayingCards = cah.roundPlayingCards;
 		$scope.roundJudgingCard = cah.roundJudgingCard;
+
+
+
 	});
 
 	$scope.$on('STAGE_CHANGE', function () {

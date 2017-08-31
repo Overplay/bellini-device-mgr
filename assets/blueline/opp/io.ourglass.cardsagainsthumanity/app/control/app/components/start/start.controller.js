@@ -36,7 +36,7 @@ app.controller('startController', function ($scope, cah, $state, uibHelper, $log
 			$scope.inLobby = true;
 			uibHelper.dryToast("Joined Game!", 3000); //This wont show if the other function throws an error.
 		}).catch(function (err) {
-			uibHelper.dryToast(err.message, 3000);
+			// uibHelper.dryToast(err.message, 3000);
 		});
 
 		// $scope.inLobby

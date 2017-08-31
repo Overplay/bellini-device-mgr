@@ -173,13 +173,3 @@ The master client is the one to have started the lobby.
 
 
 ---
-
-# Demo Notes
-
-* Make it more obvious what you have to do for each phase
-* Make it more obvious which card is the winning
-* Bold font on the cards
-* Reduce the height of the Title
-* Make the buttons look full width like other apps
-* Add timers for each round.
-* Clicking start at the same time as someone else leads to blank cards

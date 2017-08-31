@@ -7,10 +7,25 @@ app.controller('judgingController', function ($scope, cah, $state, uibHelper, $l
 	if (cah.stage != 'judging') {
 		$state.go(cah.stage);
 	}
+	$scope.player = cah.player;
+	$scope.amJudge = function amJudge() {
+		return $scope.player.id == cah.judgeIndex % cah.players.length;
+	};
+
+	if ($scope.amJudge()) {
+		uibHelper.headsupModal(
+			"You are the Judge!",
+			"Pick your favorite card below."
+		);
+	} else {
+		uibHelper.headsupModal(
+			"Your card is being judged!",
+			"Watch the TVs to see if your card will win the round!"
+		);
+	}
 
 	$scope.roundPlayingCards = cah.roundPlayingCards;
 	$scope.roundJudgingCard = cah.roundJudgingCard;
-	$scope.player = cah.player;
 	$scope.players = cah.players;
 	$scope.findPlayedCard = function findPlayedCard() {
 		return _.find($scope.roundPlayingCards, function (card) {
@@ -20,9 +35,6 @@ app.controller('judgingController', function ($scope, cah, $state, uibHelper, $l
 
 	$scope.playedCard = $scope.findPlayedCard();	
 
-	$scope.amJudge = function amJudge() {
-		return $scope.player.id == cah.judgeIndex % cah.players.length;
-	};
 	$scope.findJudge = function findJudge() {
 		return cah.getPlayerById(cah.judgeIndex % cah.players.length);
 	};

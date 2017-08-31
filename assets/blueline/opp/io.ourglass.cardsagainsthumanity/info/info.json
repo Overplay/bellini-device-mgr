@@ -7,10 +7,24 @@
 		"players": [],
 		"roundPlayingCards": [],
 		"roundJudgingCard": {},
-		"availableCards": [],
-		"stage": "start",
+		"availableCards": {
+			"white": {
+				"text": "Cards not loaded.",
+				"id": 0
+			},
+			"black": {
+				"text": "Cards not loaded.",
+				"id": 0,
+				"pick": 0
+			}
+		},
+		"stage": "",
 		"judgeIndex": 0,
-		"previousWinningCard": {}
+		"roundTime": 0,
+		"timeLeft": 0,
+		"NUM_TO_WIN": 3,
+		"previousWinningCard": {},
+		"previousJudgingCard": {}
 	},
 	"appType": "widget",
 	"appWidth": 10,
@@ -20,3 +34,4 @@
 	"isVirtual": false,
 	"iconPath": "/blueline/opp/io.ourglass.cardsagainsthumanity/assets/icons/testapp.png"
 }
+

@@ -82,19 +82,24 @@
 		State: <div>{{stage}}</div>
 		<br> -->
 		<!-- Black Cards: -->
-		<uib-progressbar ng-hide="stage == 'start' || !timeLeftPercent || timeLeftPercent < 0" class="progress-striped active" value="timeLeftPercent" type="{{timeLeftPercent > 50 ? 'success' : timeLeftPercent < 50 && timeLeftPercent > 25 ? 'warning' : 'danger'}}">{{dynamic}}</uib-progressbar>
+		<uib-progressbar ng-hide="stage == 'start' || !timeLeftPercent || timeLeftPercent < 0" class="progress-striped active" value="timeLeftPercent" type="{{timeLeftPercent > 50 ? 'success' : (timeLeftPercent <= 50 && timeLeftPercent > 25) ? 'warning' : 'danger'}}">{{timeLeft}} {{timeLeft != 1 ? 'seconds' : 'second'}}</uib-progressbar>
 
-		<div class="card-container" ng-hide="stage == 'end' || stage == 'start'">
-			<card ng-repeat="card in player.cards.black" text='card.text' id='card.id' white='false'></card>
+		<ui-view></ui-view>
+
+		<br>
+		<div class="info-msg" ng-hide="stage == 'end' || stage == 'start' || player.cards.black.length < 1">Your Round Wins:</div>
+
+		<div class="card-container" ng-hide="stage == 'end' || stage == 'start' || player.cards.black.length < 1">
+			<card ng-repeat="card in player.cards.black" text='card.text' id='card.id' color="'gold'"></card>
 		</div>
 	
-		<button class="btn btn-danger" ng-click="clearGame()">DEBUG CLEAR GAME</button>
-		<button class="btn btn-info" ng-click="debugInfo()">DEBUG CALL INFO</button>
+		<!-- <button class="btn btn-danger" ng-click="clearGame()">DEBUG CLEAR GAME</button>
+		<button class="btn btn-info" ng-click="debugInfo()">DEBUG CALL INFO</button> -->
 	</div>
 
 
 
-	<ui-view></ui-view>
+	<!-- <ui-view></ui-view> -->
 <!-- 
 	<div ng-controller='cahController'>
 		Black Cards:
