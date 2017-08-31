@@ -94,10 +94,8 @@
 
             </uib-tab>
             <uib-tab heading="Logs">
-                <div style="margin-left: 20px;" ng-repeat="l in logs | filter: { logType: 'logcat' }">
-                    <h4>{{ l.message.timestamp | date:'MM/dd/yyyy @ h:mma' }}</h4>
-                    <div>Length: {{ l.message.logcat.length }}</div>
-                    <div ng-repeat="entry in l.message.logcat track by $index">{{ entry }}</div>
+                <div style="margin-top: 10px; padding: 10px; background-color: #ECE9E9">
+                    <og-device-logs device="ogdevice"></og-device-logs>
                 </div>
             </uib-tab>
 

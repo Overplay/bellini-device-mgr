@@ -7,7 +7,7 @@ app.factory( "sailsOGLogs", function ( sailsApi, sailsCoreModel ) {
 
 
     var getAll = function ( queryString ) {
-        return sailsApi.apiGet( '/oglog', queryString )
+        return sailsApi.getModels( 'oglog', queryString )
             .then( function ( users ) {
                 return users.map( newOGLog );
             } )

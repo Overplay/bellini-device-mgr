@@ -89,6 +89,13 @@ body {
   animation-delay: -1.0s;
 }
 
+.info-bubble {
+  padding: 5px;
+  border-radius: 5px;
+  background-color: $brand-blue;
+  color: white;
+}
+
 @-webkit-keyframes sk-rotate {
   100% {
     -webkit-transform: rotate(360deg)
