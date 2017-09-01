@@ -15,6 +15,7 @@
     <script src="../../../../common/js/ogAPIBL2.js"></script>
 
     <script src="app/cah.module.js"></script>
+    <script src="app/components/services/cah.service.js"></script>
     <script src="app/components/cah.controller.js"></script>
     <script src="app/components/directives/card/card.directive.js"></script>
 
@@ -32,13 +33,17 @@
         </h1>
         <br>
 
+        <!-- The below line is a debug card for testing scrolling. -->
+        <!-- <card cardHeight="'140px'" text="'Come to Dubai, where you awd awd awd awd awd awd awd awd awd awd awd awd awd awd awd awd awd awd awd relax in our world famous spas, experience the nightlife, or simply enjoy _'" cid="0" color="'gold'"> -->
+
+
         <!-- <div class="debug">
             Players: {{players.length}} Stage: {{stage}} RPC: {{roundPlayingCards}}
         </div> -->
 
         <!-- START -->
         <div ng-if="stage == 'start'">
-            <h1 class="apphdr">
+            <h1 class="center-item">
                 Players: {{players.length}}
             </h1>
         </div>
@@ -46,27 +51,35 @@
         <!-- PICKING -->
         <div ng-if="stage == 'picking'">
             <div class="move-right">
-                <card text="roundJudgingCard.text" cid='roundJudgingCard.id' white='false'></card>
+                <card ng-if="!previousWinningCard || !showPreviousRound" text="roundJudgingCard.text" cid='roundJudgingCard.id' color="'black'"></card>
+                
+                <div ng-if="previousWinningCard && showPreviousRound">
+                    <card cardHeight="'140px'" text='previousJudgingCard.text' cid='previousJudgingCard.id' color="'black'"></card>
+                    <card cardHeight="'140px'" submitted='previousWinningCard.submittedBy.name' text='previousWinningCard.text' cid='previousWinningCard.id' color="'gold'"></card>
+                </div>
+                
             </div>
-            <h1 class="apphdr">
-                Players: {{players.length}}
-            </h1>
-            <h1 class='apphdr'>
-                Submitted Cards: {{roundPlayingCards.length}}
-            </h1>
+            <div ng-hide="previousWinningCard && showPreviousRound">
+                <h1 class="center-item">
+                    Players: {{players.length}}
+                </h1>
+                <h1 class='center-item'>
+                    Cards In Play: {{roundPlayingCards.length}}
+                </h1>
+            </div>
+
         </div>
 
         <!-- JUDGING -->
         <div ng-if="stage == 'judging'">
             <div class="move-right">
-                <card cardHeight="'140px'" text="roundJudgingCard.text" cid='roundJudgingCard.id' white='false'></card>
-                <!-- <card cardHeight="'140px'" ng-if="showWinner" text="previousRoundJudgingCard.text" cid='previousRoundJudgingCard.id' white='false'></card> -->
+                <card cardHeight="'140px'" text="roundJudgingCard.text" cid='roundJudgingCard.id' color="'black'"></card>
+                <!-- <card cardHeight="'140px'" ng-if="showWinner" text="previousRoundJudgingCard.text" cid='previousRoundJudgingCard.id' color="'black'"></card> -->
             </div>
             <div class="overflow-frame" id="outer-frame">
                 <div class="overflow-container" id="scroll-window">
                     <div id="card-container" style="position: relative; margin-left: 6px;" ng-style="topPos">
-                        <card cardHeight="'140px'" ng-if="!showWinner" text='roundPlayingCards[rotation % roundPlayingCards.length].text' cid='roundPlayingCards[rotation % roundPlayingCards.length].id' id="{{'scroll'+$index}}" white="true"></card>
-                        <card cardHeight="'140px'" ng-if="showWinner" submitted='previousWinningCard.submittedBy.text' text='previousWinningCard.text' cid='previousWinningCard.id' id="{{'scroll'+$index}}" white="true"></card>
+                        <card cardHeight="'140px'" ng-if="showWinner" text='roundPlayingCards[rotation % roundPlayingCards.length].text' cid='roundPlayingCards[rotation % roundPlayingCards.length].id' id="{{'scroll'+$index}}" color="'gold'"></card>
                     </div>
                 </div>
             </div>
@@ -74,20 +87,21 @@
 
         <!-- END -->
         <div ng-if="stage == 'end'">
-            <h1 class="apphdr">
+            <h1 class="center-item">
                 Winner: {{getWinner().name}} with
             </h1>
             <br>
             <div class="overflow-frame" id="outer-frame">
                 <div class="overflow-container" id="scroll-window">
                     <div id="card-container" style="position: relative; margin-left: 6px;" ng-style="topPos">
-                        <card cardHeight="'230px'" submitted="getWinner().name" text='getWinner().cards.black[rotation % getWinner().cards.black.length].text' cid='getWinner().cards.black[rotation % getWinner().cards.black.length].id' id="{{'scroll'+$index}}" white="false"></card>
+                        <card cardHeight="'230px'" submitted="getWinner().name" text='getWinner().cards.black[rotation % getWinner().cards.black.length].text' cid='getWinner().cards.black[rotation % getWinner().cards.black.length].id' id="{{'scroll'+$index}}" color="'gold'"></card>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <uib-progressbar ng-hide="timeLeft == -1" class="progress-striped active" value="timeLeft" type="{{timeLeft > 50 ? 'success' : timeLeft < 50 && timeLeft > 25 ? 'warning' : 'danger'}}">{{dynamic}}</uib-progressbar>
 
 
 

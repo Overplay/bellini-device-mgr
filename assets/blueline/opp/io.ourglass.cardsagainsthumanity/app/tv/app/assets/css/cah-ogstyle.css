@@ -29,11 +29,20 @@ html, body {
     /*border: 1px solid dodgerblue;*/
 }
 
+.center-item {
+    font-size: 10vw;
+    height: 6vh;
+    line-height: 6vh;
+    padding-top: .5vh;
+    text-align: center;
+    margin: 0;
+}
+
 .apphdr {
-    font-size: 12vw;
-    height: 10vh;
-    line-height: 8vh;
-    padding-top: 1vh;
+    font-size: 9vw;
+    height: 5vh;
+    line-height: 5vh;
+    padding-top: .5vh;
     text-align: center;
     margin: 0;
 }

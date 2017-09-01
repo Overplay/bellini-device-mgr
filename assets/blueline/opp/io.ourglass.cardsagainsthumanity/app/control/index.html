@@ -46,6 +46,7 @@
 	<!-- App Specific and Overridden CSS -->
 	<link rel="stylesheet" href="assets/css/ogstyles.css">
 	<link rel="stylesheet" href="app/assets/css/style.css">
+	<link rel="stylesheet" href="app/components/start/start.style.css">
 	<link rel="stylesheet" href="app/components/card/card.style.css" >
 	<link rel="stylesheet" href="../../../../common/css/og.css" >
 	<link rel="stylesheet" href="assets/css/ogstyles.css" >
@@ -81,13 +82,24 @@
 		State: <div>{{stage}}</div>
 		<br> -->
 		<!-- Black Cards: -->
-		<div class="card-container">
-			<card ng-repeat="card in player.cards.black" text='card.text' id='card.id' white='false'></card>
+		<uib-progressbar ng-hide="stage == 'start' || !timeLeftPercent || timeLeftPercent < 0" class="progress-striped active" value="timeLeftPercent" type="{{timeLeftPercent > 50 ? 'success' : (timeLeftPercent <= 50 && timeLeftPercent > 25) ? 'warning' : 'danger'}}">{{timeLeft}} {{timeLeft != 1 ? 'seconds' : 'second'}}</uib-progressbar>
+
+		<ui-view></ui-view>
+
+		<br>
+		<div class="info-msg" ng-hide="stage == 'end' || stage == 'start' || player.cards.black.length < 1">Your Round Wins:</div>
+
+		<div class="card-container" ng-hide="stage == 'end' || stage == 'start' || player.cards.black.length < 1">
+			<card ng-repeat="card in player.cards.black" text='card.text' id='card.id' color="'gold'"></card>
 		</div>
+	
+		<!-- <button class="btn btn-danger" ng-click="clearGame()">DEBUG CLEAR GAME</button>
+		<button class="btn btn-info" ng-click="debugInfo()">DEBUG CALL INFO</button> -->
 	</div>
 
 
-	<ui-view></ui-view>
+
+	<!-- <ui-view></ui-view> -->
 <!-- 
 	<div ng-controller='cahController'>
 		Black Cards:

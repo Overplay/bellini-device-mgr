@@ -1,7 +1,7 @@
-<div ng-if="text" class="card" ng-class="{'white': white, 'black': !white}" ng-style="{'height': cardHeight, 'width': cardWidth}">
-	<div class="title">
+<div ng-if="text" class="card" ng-class="{'white': color == 'white', 'black': color == 'black', 'gold': color == 'gold'}" ng-style="{'height': cardHeight, 'width': cardWidth}">
+	<strong class="title">
 		{{text}}
-	</div>
+	</strong>
 	<div class="id" ng-if="debugMode">
 		ID: {{cid}}
 	</div>

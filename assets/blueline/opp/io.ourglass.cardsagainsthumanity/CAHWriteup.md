@@ -170,3 +170,6 @@ The master client is the one to have started the lobby.
 
 * Advertisiments could probably be run in the corners of the screen or when there is an abundance of free space.
 * We could also include advertized taglines. For example: The budwiser winner of this round is _name_ and that person gets a cheap budwiser or something along the lines of promotion
+
+
+---

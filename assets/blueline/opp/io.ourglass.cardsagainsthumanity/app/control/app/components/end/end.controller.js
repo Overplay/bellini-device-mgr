@@ -6,16 +6,19 @@ app.controller('endController', function (cah, $scope, $log, $timeout, $state) {
 		$state.go('start');
 	}
 	
-	$scope.getWinner = cah.getWinner;
-	
+	cah.getWinner();
+
 	$scope.playAgain = function () {
+		// cah.clearController();
 		cah.nextStage();
-		$state.go('start');
-		cah.clearGame();
 	};
 
-	$scope.$on('START_PHASE', function () {
-		cah.player = {};
-		$state.go('start');
+	$scope.$on('MODEL_CHANGED', function () {
+		$scope.winner = cah.winner;
 	});
+
+	$scope.$on('STAGE_CHANGE', function () {
+		$state.go(cah.stage);
+	});
+
 });

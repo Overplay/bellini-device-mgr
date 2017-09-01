@@ -1,26 +1,42 @@
 app.controller('judgingController', function ($scope, cah, $state, uibHelper, $log) {
 
-	if (cah.stage != 'judging') {
+	if (!cah.stage) {
 		$state.go('start');
+	}
+
+	if (cah.stage != 'judging') {
+		$state.go(cah.stage);
+	}
+	$scope.player = cah.player;
+	$scope.amJudge = function amJudge() {
+		return $scope.player.id == cah.judgeIndex % cah.players.length;
+	};
+
+	if ($scope.amJudge()) {
+		uibHelper.headsupModal(
+			"You are the Judge!",
+			"Pick your favorite card below."
+		);
+	} else {
+		uibHelper.headsupModal(
+			"Your card is being judged!",
+			"Watch the TVs to see if your card will win the round!"
+		);
 	}
 
 	$scope.roundPlayingCards = cah.roundPlayingCards;
 	$scope.roundJudgingCard = cah.roundJudgingCard;
-	$scope.player = cah.player;
 	$scope.players = cah.players;
-	$scope.findCard = function findCard() {
+	$scope.findPlayedCard = function findPlayedCard() {
 		return _.find($scope.roundPlayingCards, function (card) {
 			return $scope.player.id == card.submittedBy.id;
 		});
 	};
 
-	$scope.playedCard = $scope.findCard();	
+	$scope.playedCard = $scope.findPlayedCard();	
 
-	$scope.amJudge = function amJudge() {
-		return $scope.player.id == cah.judgeIndex % cah.players.length;
-	};
 	$scope.findJudge = function findJudge() {
-		return cah.getPlayerById(cah.judgeIndex % cah.players.length).name;
+		return cah.getPlayerById(cah.judgeIndex % cah.players.length);
 	};
 
 	$scope.confirmChoice = function confirmChoice(card) {
@@ -30,34 +46,46 @@ app.controller('judgingController', function ($scope, cah, $state, uibHelper, $l
 			card.id
 		).then(function () {
 
-			cah.addBlackCardToPlayerById(card.submittedBy.id, $scope.roundJudgingCard, card);
+			cah.pickWinningRoundCard(card);
 			uibHelper.dryToast("The winner was " + card.submittedBy.name);
 			cah.nextStage();
-			cah.setWinningCard(card);			
 			
-			if (cah.getWinner()) {
-				$state.go('end');
-			} else {
-				$state.go('picking');
-			}
+			// if (cah.getWinner()) {
+			// 	$state.go('end');
+			// } else {
+			// 	$state.go('picking');
+			// }
 			//Give all players who weren't the judge a new white card.
 			//Go back to picking phase (make sure to assign new black card)
 
-		}).catch(function (err) {
+			})
+			.catch(function (err) {
 			if (err.message != "cancled") {
 				uibHelper.dryToast("Card not chosen.");
-				$log.error(err);
+				$log.error("Card Confirm Error:", err);
 			}
 
 		});
 	};
 
-	$scope.$on('PICKING_PHASE', function () {
-		$state.go('picking');
+	$scope.$on('STAGE_CHANGE', function () {
+		if (cah.stage != 'judging') {
+			$state.go(cah.stage);
+		}
 	});
 
-	$scope.$on('END_PHASE', function () {
-		$state.go('end');
-	});
+	// $scope.$on('MODEL_CHANGED', function () {
+
+	// 	if (cah.stage != 'picking') {
+
+	// 		if (cah.getWinner()) {
+	// 			$state.go('end');
+	// 		} else {
+	// 			$state.go('picking');
+	// 		}
+
+	// 	}
+
+	// });
 
 });

@@ -10,8 +10,13 @@
 	color: white;
 }
 
+.gold {
+	background: #CAAC06;
+	color: #000000;
+}
+
 .card-dimensions {
-	width: 100px;	
+	width: 100px;
 	height: 140px;
 }
 .card {
