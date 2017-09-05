@@ -20,7 +20,7 @@ app.factory( "sailsApps", function ( sailsApi, sailsCoreModel ) {
 
         CoreModel.call( this );
 
-        this.modelType = 'app'
+        this.modelType = 'app';
 
         this.parseInbound = function ( json ) {
             this.appId = json && json.appId;

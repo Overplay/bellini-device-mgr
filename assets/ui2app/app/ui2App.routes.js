@@ -159,6 +159,34 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             }
         } )
 
+        .state( 'releases', {
+            abstract: true,
+            url:      '/releases',
+            views:    buildCompleteView( { template: '<ui-view></ui-view>', } )
+        } )
+
+        .state( 'releases.list', {
+            url:         '/list',
+            templateUrl: '/ui2app/app/components/ogdevices/ogdevicereleaseslist.partial.html',
+            controller:  'listOGReleasesController',
+            resolve:     {
+                releases: function ( sailsOGAndroidRelease ) {
+                    return sailsOGAndroidRelease.getAll();
+                }
+            }
+        } )
+
+        .state( 'releases.edit', {
+            url:         '/edit/:id',
+            templateUrl: '/ui2app/app/components/ogdevices/ogdevicereleaseedit.partial.html',
+            controller:  'editOGReleasesController',
+            resolve:     {
+                release: function ( sailsOGAndroidRelease, $stateParams ) {
+                    return sailsOGAndroidRelease.get($stateParams.id);
+                }
+            }
+        } )
+
         .state( 'venues', {
             abstract: true,
             url:      '/venues',
