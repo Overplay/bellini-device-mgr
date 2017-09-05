@@ -49,6 +49,7 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             controller: 'ogDeviceNumberTileController',
             sideMenu: [
                 { label: "Apps", sref: "apps.list", icon: "gears" },
+                { label: "Android Releases", sref: "releases.list", icon: "android"},
                 { label: "Devices", sref: "devices.allactive", icon: "television" },
                 { label: "Network", sref: "network.dashboard", icon: "arrows-alt" },
                 { label: "Venues", sref: "venues.list", icon: "globe" },
@@ -169,6 +170,10 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             url:         '/list',
             templateUrl: '/ui2app/app/components/ogdevices/ogdevicereleaseslist.partial.html',
             controller:  'listOGReleasesController',
+            sideMenu: [
+                { label: 'Home', sref: "welcome", icon: "home" },
+                { label: "New Release", sref: "releases.edit({id: 'new'})", icon: "joomla" }
+            ],
             resolve:     {
                 releases: function ( sailsOGAndroidRelease ) {
                     return sailsOGAndroidRelease.getAll();

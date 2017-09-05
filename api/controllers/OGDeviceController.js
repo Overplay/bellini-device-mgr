@@ -743,7 +743,7 @@ module.exports = {
                 var code;
 
                 do {
-                    code = _.sample( letters ) + _.random( 0, 9 ) + _.sample( letters ) + _.sample( letters );
+                    code = _.sample( letters ) + _.random( 2, 9 ) + _.sample( letters ) + _.sample( letters );
                 } while ( codesInUse.indexOf( code ) != -1 );
 
                 return OGDevice.update( { deviceUDID: params.deviceUDID }, { tempRegCode: code } );
