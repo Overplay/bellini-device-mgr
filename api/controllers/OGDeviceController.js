@@ -27,7 +27,7 @@ function findVenueByUUID( uuid ) {
 
 }
 
-function broadcastToClient( deviceUDID, message, req ){
+function broadcastToClient( deviceUDID, message, req ) {
     var room = "device_client_" + deviceUDID;
     sails.sockets.broadcast( room,
         'DEVICE-DM',
@@ -255,20 +255,20 @@ module.exports = {
             return res.badRequest( { error: "Missing message" } );
 
         if ( !params.destination )
-            return res.badRequest( { error: "No destination"});
+            return res.badRequest( { error: "No destination" } );
 
         let room;
 
-        switch (params.destination){
+        switch ( params.destination ) {
             case 'clients':
             case 'client':
-                room = "device_client_"+params.deviceUDID;
+                room = "device_client_" + params.deviceUDID;
                 break;
             case 'device':
-                room = "device_"+params.deviceUDID;
+                room = "device_" + params.deviceUDID;
                 break;
             default:
-                return res.badRequest({ error: "Bad destination"});
+                return res.badRequest( { error: "Bad destination" } );
         }
 
         // timestamp for deduplicaiton
@@ -380,15 +380,15 @@ module.exports = {
     },
 
     // Policy: isDevice, isSOCKETPOST, hasDeviceUDID
-    checkconnection: function (req, res ){
+    checkconnection: function ( req, res ) {
 
-        sails.log.silly("Inbound connection check from device: "+ req.allParams().deviceUDID);
+        sails.log.silly( "Inbound connection check from device: " + req.allParams().deviceUDID );
         sails.sockets.broadcast( "device_" + req.allParams().deviceUDID,
             'CHECK-GOOD', { timestamp: (new Date().getTime()) } );
 
         OGDevice.update( { deviceUDID: req.allParams().deviceUDID }, { lastContact: new Date() } )
-            .then(res.ok)
-            .catch(res.serverError);
+            .then( res.ok )
+            .catch( res.serverError );
 
     },
 
@@ -536,8 +536,9 @@ module.exports = {
 
                 BCService.UserInteraction.log( req, {
                     interaction: 'CHANNEL_CHANGE',
-                    venueId: dev.atVenueUUID,
-                    meta: { toChannel: parseInt( params.channel ) }});
+                    venueId:     dev.atVenueUUID,
+                    meta:        { toChannel: parseInt( params.channel ) }
+                } );
 
 
                 return res.ok( { message: "thank you for your patronage" } );
@@ -572,14 +573,14 @@ module.exports = {
 
                 var room = "sysmsg:" + params.deviceUDID;
 
-                sails.log.debug("Announcing channel change on: "+room);
+                sails.log.debug( "Announcing channel change on: " + room );
 
                 sails.sockets.broadcast( room,
                     room,
                     {
-                        action: 'new-program',
-                        program: JSON.parse(params.tvShow),
-                        ts:     new Date().getTime() // hack for multiples
+                        action:  'new-program',
+                        program: JSON.parse( params.tvShow ),
+                        ts:      new Date().getTime() // hack for multiples
                     } );
 
                 res.ok( { message: "thank you for your patronage" } );
@@ -627,8 +628,7 @@ module.exports = {
             } )
             .catch( res.serverError );
 
-    }
-    ,
+    },
 
     //TODO needs a refactor. A lot of the actions have replicated code!
     commandack: function ( req, res ) {
@@ -676,30 +676,37 @@ module.exports = {
                         switch ( params.command ) {
 
                             case 'launch':
-                                // Get the just launched app type
-                                var launchedAppType = results.app.appType;
-                                // Now we need to remove any such app from currently running
 
-                                _.remove( results.device.runningApps, function ( a ) {
-                                    return a.appType == launchedAppType;
-                                } );
-                                results.device.runningApps.push( results.app );
-                                broadcastToClient(params.deviceUDID, { ack: "launch", appid: params.appId });
+                                results.device.launchApp(results.app, params.slot || params.layoutSlot ); // legacy->layoutSlot
+                                // // Get the just launched app type
+                                // var launchedAppType = results.app.appType;
+                                // // Now we need to remove any such app from currently running
+                                //
+                                // _.remove( results.device.runningApps, function ( a ) {
+                                //     return a.appType === launchedAppType;
+                                // } );
+                                // results.device.runningApps.push( results.app );
+
+                                broadcastToClient( params.deviceUDID, { ack: "launch", appid: params.appId } );
+
                                 results.device.save();
                                 return res.ok( results.device );
                                 break;
 
                             case 'kill':
 
-                                _.remove( results.device.runningApps, function ( a ) {
-                                    return a.appId === results.app.appId;
-                                } )
+                                // _.remove( results.device.runningApps, function ( a ) {
+                                //     return a.appId === results.app.appId;
+                                // } )
+                                results.device.killApp(results.app);
                                 broadcastToClient( params.deviceUDID, { ack: "kill", appid: params.appId } );
                                 results.device.save();
                                 return res.ok( results.device );
                                 break;
 
                             case 'move':
+
+                                results.device.moveApp(results.app, params.slot);
                                 broadcastToClient( params.deviceUDID, { ack: "move", appid: params.appId } );
                                 const room = "sysmsg:" + params.deviceUDID;
 
@@ -710,7 +717,7 @@ module.exports = {
                                     {
                                         action: 'move',
                                         appId:  params.appId,
-                                        slot: params.slot,
+                                        slot:   params.slot,
                                         ts:     new Date().getTime() // hack for multiples
                                     } );
                                 return res.ok( { copythat: 'but i did nothing, like Trump' } )
@@ -801,46 +808,46 @@ module.exports = {
 
     },
 
-    sms: function (req, res ){
-        sails.log.silly("Inbound SMS request");
+    sms: function ( req, res ) {
+        sails.log.silly( "Inbound SMS request" );
 
         var params = req.allParams();
 
-        if (!params.phoneNumber || !params.message){
-            res.badRequest({ error: "missing params"} );
+        if ( !params.phoneNumber || !params.message ) {
+            res.badRequest( { error: "missing params" } );
         }
 
         var message = params.message;
 
-        OGDevice.findOne({ deviceUDID: params.deviceUDID })
-            .then( function(device){
+        OGDevice.findOne( { deviceUDID: params.deviceUDID } )
+            .then( function ( device ) {
 
-                if (!device){
-                    return res.badRequest({ error: "No such device "});
+                if ( !device ) {
+                    return res.badRequest( { error: "No such device " } );
                 }
 
-                return BCService.Venue.findByUUID(device.atVenueUUID);
-            })
-            .then( function(venue){
+                return BCService.Venue.findByUUID( device.atVenueUUID );
+            } )
+            .then( function ( venue ) {
 
                 var venueName = "";
-                if (venue){
+                if ( venue ) {
                     venueName = venue.name;
                 }
 
-                var message = params.message.replace("$$venue$$", venueName);
+                var message = params.message.replace( "$$venue$$", venueName );
 
-                return TwilioService.sendText(params.phoneNumber, message);
-            })
-            .then(res.ok)
-            .catch(res.serverError);
+                return TwilioService.sendText( params.phoneNumber, message );
+            } )
+            .then( res.ok )
+            .catch( res.serverError );
 
     },
 
-    isloggedin: function ( req, res ){
+    isloggedin: function ( req, res ) {
 
         var loggedin = !!req.session.authenticated && !!req.session.device;
-        return res.json( { loggedIn:  loggedin });
+        return res.json( { loggedIn: loggedin } );
 
     }
 

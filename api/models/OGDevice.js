@@ -5,7 +5,7 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
-// Alex Westlake training, yay!
+const _ = require('lodash');
 
 module.exports = {
 
@@ -34,6 +34,11 @@ module.exports = {
         runningApps: {
             type:       'array',
             defaultsTo: []
+        },
+
+        systemAppState: {
+            type: 'json',
+            defaultsTo: { crawler: {}, widget: {} }
         },
 
         accessToken: {
@@ -97,6 +102,42 @@ module.exports = {
         tempRegCode: {
             type: 'string',
             defaultsTo: ''
+        },
+
+        /**
+         * Make the OGDevice entry consistent with new app launch
+         * @param appObj Application Object, NOT appId
+         * @param slot
+         */
+        launchApp: function(appObj, slot){
+
+            // first do the legacy runningApps entry
+            const launchedAppType = appObj.appType;
+            // Now we need to remove any such app from currently running
+            _.remove( this.runningApps, function ( a ) {
+                return a.appType === launchedAppType;
+            } );
+            this.runningApps.push( appObj );
+
+            // OK, lets do the systemAppState thang
+            this.systemAppState[appObj.appType] = { app: appObj, slot: slot || 0 };
+
+        },
+
+        killApp: function(appObj){
+
+            // first do the legacy runningApps entry
+            _.remove( this.runningApps, function ( a ) {
+                return a.appId === appObj.appId;
+            } );
+
+            // Now system state
+            this.systemAppState[appObj.appType] = {};
+
+        },
+
+        moveApp: function(appObj, slot){
+            this.systemAppState[appObj.appType].slot = slot;
         }
 
     },
