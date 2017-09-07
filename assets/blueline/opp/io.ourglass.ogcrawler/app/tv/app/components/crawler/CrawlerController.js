@@ -20,6 +20,7 @@ app.controller( "crawlerController",
         //     { header: "Coming Up", messages: [ "Basketball", "Curling", "Soccer " ] }
         // ]
 
+        $scope.mode = 'sm-top';
         $scope.vertMessages = [];
         $scope.crawlerMessages = [];
 
@@ -29,9 +30,16 @@ app.controller( "crawlerController",
             ads:     []
         };
 
+        var _venueData;
+        var _deviceData;
+        var _useVenueData;
+
         //function to set the display messages to the randomized concatenation of user and twitter messages
         //and coming up
         function updateDisplay() {
+
+            crawlerModel.user = _useVenueData ? _venueData.messages : _deviceData.messages;
+            $scope.mode = ( _useVenueData ? _venueData.mode : _deviceData.mode ) || 'full-size';
 
             getTVGrid();
 
@@ -66,14 +74,17 @@ app.controller( "crawlerController",
         }
 
         function deviceModelUpdate( data ) {
-            $log.debug( "crawler: got a venue model update!" );
-            crawlerModel.user = data.messages;
+            $log.debug( "crawler: got a device model update!" );
+            _deviceData = data;
+            if ( data.useVenueData !== _useVenueData )
+                $log.debug("Data source changed.");
+            _useVenueData = data.useVenueData;
             updateDisplay();
         }
 
-        function venueModelUpdate(data) {
-            $log.debug("crawler: got a venue model update!");
-            crawlerMode.user = data.messages;
+        function venueModelUpdate( data ) {
+            $log.debug( "crawler: got a venue model update!" );
+            _venueData = data;
             updateDisplay();
         }
 
@@ -106,8 +117,8 @@ app.controller( "crawlerController",
                             crawlerModel.twitter = _.shuffle( tempArr );
 
                         $log.debug( "Processed tweets are this long: " + tempArr.length );
-                        if (crawlerModel.twitter.length>2){
-                            crawlerModel.twitter = crawlerModel.twitter.slice(0,3);
+                        if ( crawlerModel.twitter.length > 2 ) {
+                            crawlerModel.twitter = crawlerModel.twitter.slice( 0, 3 );
                         }
                     }
 
@@ -176,27 +187,37 @@ app.controller( "crawlerController",
             getTVGrid();
         } );
 
-        function inboundMessage( msg ) {
-            $log.info( "New message: " + msg );
+        function inboundAppMessage( msg ) {
+            $log.info( "New app message: " + msg );
+        }
+
+        function inboundSysMessage( msg ) {
+            $log.info( "New sys message: " + msg );
         }
 
         function initialize() {
             ogAPI.init( {
-                appName:         "io.ourglass.ogcrawler",
-                appType:         "tv",
+                appName:             "io.ourglass.ogcrawler",
+                appType:             "tv",
                 deviceModelCallback: deviceModelUpdate,
-                venueModelCallback: venueModelUpdate,
-                messageCallback: inboundMessage
+                venueModelCallback:  venueModelUpdate,
+                appMsgCallback:      inboundAppMessage,
+                sysMsgCallback:      inboundSysMessage
             } )
                 .then( function ( data ) {
                     $log.debug( "crawler: init complete" );
-                    crawlerModel.user = data.messages;
+
+                    _useVenueData = data.device && data.device.useVenueData;
+                    _venueData = data.venue;
+                    _deviceData = data.device;
+
                     updateDisplay();
+
                     if ( data.twitterQueries ) {
                         // TODO This is gross because it runs a tweet grab immediately
-                        ogAPI.updateTwitterQuery( data.twitterQueries )
+                        ogAPI.updateTwitterQuery( _sourceData.twitterQueries )
                             .then( function ( d ) {
-                                $log.debug( "Successfully update twitter queries" );
+                                $log.debug( "Successfully updated twitter queries" );
                             } )
                             .catch( function ( e ) {
                                 $log.error( e.message );

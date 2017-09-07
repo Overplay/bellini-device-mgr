@@ -42,24 +42,17 @@ body {
 
 .left-scroller-holder {
     font-family: POPREG, sans-serif;
-    width: 80%;
+    width: 100%;
     position: relative;
-    margin-left: auto;
-    margin-right: auto;
-    height: 50px;
+    margin-left: 0;
+    margin-right: 0;
+    /*height: 60px;*/
+    height: 100vh;
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.50);
-
+    background: rgba(0, 0, 0, 0.20);
+    /*border: 1px solid #ff0074;*/
 }
 
-.scroll-window {
-    position: absolute;
-    left: 19%;
-    width: 62%;
-    /*border-right: 1px solid rgba(255, 255, 255, 0.15);*/
-    overflow: hidden;
-
-}
 
 .overlay {
     position: absolute;
@@ -80,10 +73,10 @@ body {
 
 .right-logo {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 5px;
+    right: 0px;
     z-index: 101;
-    max-height: 90%;
+    max-height: 50px;
 }
 
 .advert-holder {
@@ -95,6 +88,7 @@ body {
     display: table-cell;
     vertical-align: middle;
     text-align: center;
+    z-index: 100;
 
 }
 
@@ -103,30 +97,30 @@ body {
     /*display: inline-block;*/
     /*margin: auto;*/
     width: 80%;
-    height: 100%;
+    max-height: 90%;
     margin-top: 2%;
 }
 
 
 
-ul {
-    display: inline-block;
-    white-space: nowrap;
-    padding: 4px 0;
-    position: relative;
-    z-index: 10;
-    top: -12px;
-    text-shadow: 1px 1px 10px rgba(0, 0, 0, 1);
-}
+/*ul {*/
+    /*display: inline-block;*/
+    /*white-space: nowrap;*/
+    /*padding: 4px 0;*/
+    /*position: relative;*/
+    /*z-index: 10;*/
+    /*top: -12px;*/
+    /*text-shadow: 1px 1px 10px rgba(0, 0, 0, 1);*/
+/*}*/
 
-li {
-    height: 100%;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    display: inline-block;
-    margin: 0 20px;
-    font-size: 28px;
-    color: white;
-}
+/*li {*/
+    /*height: 100%;*/
+    /*box-sizing: border-box;*/
+    /*-moz-box-sizing: border-box;*/
+    /*-webkit-box-sizing: border-box;*/
+    /*display: inline-block;*/
+    /*margin: 0 20px;*/
+    /*font-size: 28px;*/
+    /*color: white;*/
+/*}*/
 

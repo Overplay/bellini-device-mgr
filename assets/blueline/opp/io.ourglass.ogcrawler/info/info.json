@@ -3,7 +3,7 @@
 	"displayName": "Crawler",
 	"icon": "space.png",
 	"defaultModel": {
-		"messages": ["Ourglass TV", "Check Ourglass out at www.ourglass.tv"],
+		"messages": ["Ourglass TV", "Check out Ourglass at www.ourglass.tv"],
 		"twitterQueries": ["@Warriors"],
 		"hideTVTweets": false,
 		"useVenueData": true

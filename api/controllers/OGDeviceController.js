@@ -692,7 +692,7 @@ module.exports = {
                             case 'kill':
 
                                 _.remove( results.device.runningApps, function ( a ) {
-                                    return a.appId == results.app.appId;
+                                    return a.appId === results.app.appId;
                                 } )
                                 broadcastToClient( params.deviceUDID, { ack: "kill", appid: params.appId } );
                                 results.device.save();
@@ -701,7 +701,19 @@ module.exports = {
 
                             case 'move':
                                 broadcastToClient( params.deviceUDID, { ack: "move", appid: params.appId } );
-                                return res.ok( { iheardthat: 'but i did nothing' } )
+                                const room = "sysmsg:" + params.deviceUDID;
+
+                                sails.log.debug( "Announcing move command on: " + room );
+
+                                sails.sockets.broadcast( room,
+                                    room,
+                                    {
+                                        action: 'move',
+                                        appId:  params.appId,
+                                        slot: params.slot,
+                                        ts:     new Date().getTime() // hack for multiples
+                                    } );
+                                return res.ok( { copythat: 'but i did nothing, like Trump' } )
 
                         }
 

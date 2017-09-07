@@ -12,6 +12,10 @@ module.exports = function ( req, res, next ) {
     if ( sails.config.policies.wideOpen )
         return next();
 
+    if ( req.session.device ){
+        return next();
+    }
+
     if ( req.headers.authorization ) {
         var authHeader = req.headers.authorization;
         if ( authHeader.indexOf( 'Bearer' ) < 0 ) {

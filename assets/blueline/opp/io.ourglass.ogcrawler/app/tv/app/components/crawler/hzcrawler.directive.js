@@ -22,9 +22,10 @@ app.directive( 'hzCrawler',
         return {
             restrict:    'E',
             scope:       {
-                messages: '='
+                messages: '=',
+                mode: '<?'
                 },
-            templateUrl: 'app/components/crawler/hzcrawler.template.html',
+            templateUrl: 'app/components/crawler/hzcrawler.template-sm.html',
             link:        function ( scope, elem, attrs ) {
 
 
@@ -43,6 +44,7 @@ app.directive( 'hzCrawler',
                 var scrollerUl = document.getElementById( 'scroller-ul' );
                 var isResetTransition = true;
                 var useTransitionListener = attrs.xlisten;
+
 
                 var transitions = {
                     "transition":       "transitionend",
@@ -115,6 +117,36 @@ app.directive( 'hzCrawler',
                         return scrollerUl.offsetWidth;
                     } )
                 }
+
+                scope.getScrollWindowClass = function(){
+                    switch (scope.mode){
+
+                        case 'sm-top':
+                            return 'scroll-window-top-sm';
+
+                        case 'sm-bot':
+                            return 'scroll-window-bot-sm';
+
+                        case 'full-size':
+                        default:
+                            return 'scroll-window-lg'
+                    }
+                };
+
+                scope.getScrollUlClass = function () {
+                    switch ( scope.mode ) {
+
+                        case 'sm-top':
+                            return 'ul-top-sm';
+
+                        case 'sm-bot':
+                            return 'ul-bot-sm';
+
+                        case 'full-size':
+                        default:
+                            return 'ul-lg'
+                    }
+                };
 
                 scope.$watch('messages', function(newval, oldval){
                     if ( (newval && newval.length ) && ( !oldval || !oldval.length ))

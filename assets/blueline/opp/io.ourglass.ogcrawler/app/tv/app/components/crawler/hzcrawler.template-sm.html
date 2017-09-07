@@ -10,14 +10,26 @@
         position: absolute;
         left: 17%;
         width: 66%;
-        top: -30%;
         /*border-right: 1px solid rgba(255, 255, 255, 0.15);*/
         overflow: hidden;
         background-color: #0b6380;
         border: 1px solid teal;
+
         /*height: 40px;*/
     }
 
+    .scroll-window-top-sm {
+        top: -60%;
+    }
+
+    .scroll-window-bot-sm {
+        bottom: 0%;
+        height: 50%;
+    }
+
+    .scroll-window-lg {
+        top: -30%;
+    }
 
 
     ul {
@@ -26,10 +38,28 @@
         padding: 4px 0;
         position: relative;
         z-index: 10;
-        top: 10px;
         text-shadow: 1px 1px 10px rgba(0, 0, 0, 1);
+
         /*border: 2px solid red;*/
     }
+
+    .ul-top-sm {
+        top: 20px;
+        font-size: 100%;
+
+    }
+
+    .ul-bot-sm {
+        top: -60%;
+        font-size: 100%;
+
+    }
+
+    .ul-lg {
+        top: 0;
+        font-size: 150%;
+    }
+
 
     li {
         height: 100%;
@@ -38,7 +68,6 @@
         -webkit-box-sizing: border-box;
         display: inline-block;
         margin: 0 20px;
-        font-size: 150%;
         color: white;
         font-weight: 900;
     }
@@ -48,8 +77,8 @@
     }
 </style>
 
-<div class="scroll-window">
-    <ul id="scroller-ul" ng-style="leftPos" class="hwlayer">
+<div class="scroll-window" ng-class="getScrollWindowClass()">
+    <ul id="scroller-ul" ng-style="leftPos" class="hwlayer" ng-class="getScrollUlClass()">
         <li ng-repeat="msg in displayMessages track by $index" ng-style="msg.style">{{ msg.text }}&nbsp;&nbsp;&nbsp;&nbsp;</li>
     </ul>
 </div>

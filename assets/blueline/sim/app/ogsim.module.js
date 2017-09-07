@@ -83,11 +83,17 @@ app.controller('mfController', function($scope, $log, $interval, bellini, mainfr
 
                 case 'move':
 
+                    var slot;
                     if ($scope.crawler.src.indexOf(data.appId)>0){
                         $scope.crawler.pos = ($scope.crawler.pos + 1 ) % 2;
+                        slot = $scope.crawler.pos;
                     } else if ( $scope.widget.src.indexOf( data.appId ) > 0 ) {
                         $scope.widget.pos = ($scope.widget.pos + 1 ) % 4;
+                        slot = $scope.widget.pos;
                     }
+
+                    bellini.appMoveAck(data.appId, slot);
+
                     break;
 
                 case 'kill':

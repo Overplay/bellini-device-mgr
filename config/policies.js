@@ -113,7 +113,7 @@ module.exports.policies = {
         // 'changeName': true,
         // 'register': true,
         // 'tickle': true,
-        'appstatus': [ 'coreSessionAuth' ]
+        //'appstatus': [ 'coreSessionAuth' ]
     },
 
     UserInteraction: {
