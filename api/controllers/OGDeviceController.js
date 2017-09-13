@@ -54,6 +54,10 @@ module.exports = {
 
         OGDevice.findOrCreate( { deviceUDID: params.deviceUDID }, { deviceUDID: params.deviceUDID } )
             .then( function ( device ) {
+                const deltaT = new Date().getTime() - new Date(device.createdAt).getTime();
+                if (deltaT<2000){
+                    device.isNew = true;
+                }
                 return res.ok( device );
             } )
             .catch( function ( err ) {
@@ -740,8 +744,7 @@ module.exports = {
         }
 
 
-    }
-    ,
+    },
 
     regcode: function ( req, res ) {
 
