@@ -226,7 +226,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 				id: 0,
 				pick: 1
 			}
-			service.lastUpdated = data.lastUpdated ? new Date(data.lastUpdated).getTime() : new Date().getTime();
+			service.lastUpdated = new Date().getTime();
 
 			modelChangedBroadcast();
 		}
@@ -293,6 +293,7 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 							data: stage
 						});
 					}
+					service.lastUpdated = new Date().getTime();
 				})
 				.catch(function (err) {
 					$log.error('ogApi.Save() Error:', err);
@@ -384,12 +385,11 @@ app.factory('cah', ['$rootScope', '$log', 'ogAPI', '$http', '$timeout', '$interv
 					service.clearGame();
 
 					$interval(function () {
-						if ((new Date().getTime() - service.lastUpdated) / 1000 > 3 * 60) {
+						if ((new Date().getTime() - service.lastUpdated) / 1000 > (3 * 60)) { //If the difference between right now in seconds is over 3 minutes worth
 							service.clearGame();
-							service.lastUpdated = new Date();
+							service.lastUpdated = new Date().getTime();
 						}
-					}, 30 * 1000);
-
+					}, 30 * 1000); //Make sure to check this every 30 seconds
 
 				})
 				.catch(function (err) {
