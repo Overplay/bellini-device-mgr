@@ -16,6 +16,7 @@ app.component( 'maintComponent', {
             sailsOGDevice.getStale( ctrl.daysStale )
                 .then( function ( devices ) {
                     ctrl.stale = devices;
+                    ctrl.stale.forEach((d)=>d.populateVenue());
                 } )
                 .catch( function ( err ) {
                     toastr.error( "Bad Mojo Getting Stale Boxes!" );
