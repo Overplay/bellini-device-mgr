@@ -70,7 +70,39 @@ app.component( 'maintComponent', {
             </div>
             
             <p ng-if="$ctrl.stale.length" class="text-muted">These are devices that have not been heard from in a long time and are probably stale (i.e. the UDID is no longer valid), or are disabled/turned off.</p>
-            <ul><li ng-repeat="d in $ctrl.stale">{{d.deviceUDID}}</li> </ul>
+            <!--<ul><li ng-repeat="d in $ctrl.stale">{{d.deviceUDID}}</li> </ul>-->
+            <table class="table table-bordered" ng-if="$ctrl.stale.length">
+            <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>UDID</th>
+                        <!--<th>Venue UUID</th>-->
+                        <th>Venue Name</th>
+                        <th>Last Contact</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="device in $ctrl.stale | filter:$ctrl.searchTerm">
+                        <td>
+                            <a ui-sref="devices.detail({ id: device.id} )"
+                               class="btn btn-sm btn-warning">MORE INFO</a>
+                        </td>
+                        <td>{{ device.name }}</td>
+                        <td>{{ device.deviceUDID}}</td>
+                        <!--<td><span ng-class="{ 'text-danger': !device.atVenueUUID }">-->
+                        <!--{{ device.atVenueUUID ? device.atVenueUUID : "Unassigned" }}-->
+                        <!--</span>-->
+                        <!--</td>-->
+                        <td>{{ device.atVenue.id ? device.atVenue.name : '[missing or service down]' }}<br>
+                            <span class="text-muted" {{ device.atVenue.address.city }}{{ device.atVenue.address.state ? ',':'' }}{{
+                            device.atVenue.address.state }}
+                        </td>
+                        <td>{{ device.lastContactAgo() }}</td>
+
+                    </tr>
+                    </tbody>
+            </table>
             <button ng-if="$ctrl.stale.length" ng-click="$ctrl.nukeStale()" class="btn btn-danger">NUKE ALL</button>
             <p class="text-muted" ng-if="!$ctrl.stale.length">There are no ghost devices. Yay!</p>
         </div>
