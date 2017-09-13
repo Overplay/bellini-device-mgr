@@ -48,6 +48,11 @@ module.exports = {
         OGDevice.update(req.allParams().id, req.allParams())
             .then( function(models){
                 if (models.length===1){
+                    sendDeviceDM( models[0].deviceUDID, {
+                        action: 'cloud_record_update',
+                        change: req.allParams(),
+                        ts:     new Date().getTime() // hack for multiples
+                    }, req );
                     return res.ok( models[0] );
                 }
                 if (models.length>1){
