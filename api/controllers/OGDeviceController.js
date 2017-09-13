@@ -8,6 +8,7 @@
 
 var Promise = require( 'bluebird' );
 var util = require( 'util' );
+var moment = require('moment');
 
 var USE_BC_VENUES = true;
 
@@ -707,6 +708,7 @@ module.exports = {
                             case 'move':
 
                                 results.device.moveApp(results.app, params.slot);
+                                results.device.save();
                                 broadcastToClient( params.deviceUDID, { ack: "move", appid: params.appId } );
                                 const room = "sysmsg:" + params.deviceUDID;
 
@@ -788,8 +790,26 @@ module.exports = {
             .catch( res.serverError );
 
 
-    }
-    ,
+    },
+
+    stale: function (req, res ){
+
+        if ( req.method != 'GET' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        const daysBack = parseInt(req.allParams().days) || 7;
+
+        const dbDate = moment().subtract(daysBack, 'days').toDate();
+        const now = new Date();
+
+        const query = { lastContact: { '<': dbDate } };
+
+        OGDevice.find(query)
+            .then( res.ok )
+            .catch( res.serverError );
+
+
+    },
 
     // TODO this needs some better protection :p
     purge: function ( req, res ) {

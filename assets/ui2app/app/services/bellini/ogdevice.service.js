@@ -9,13 +9,22 @@ app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel, $q ) {
     var getAll = function ( queryString ) {
         // using non blueprint getter for security
 
-        var ep = '/ogdevice/all' + ( queryString ? "?"+queryString : '');
+        var ep = '/ogdevice/all' + ( queryString ? "?" + queryString : '');
 
         return sailsApi.apiGet( ep )
             .then( function ( ogdevices ) {
                 return ogdevices.map( newOGDevice );
             } )
     }
+
+    const getStale = function ( daysStale ) {
+        const d = daysStale || 7;
+        const ep = '/ogdevice/stale?days=' + d;
+        return sailsApi.apiGet( ep )
+            .then( function ( ogdevices ) {
+                return ogdevices.map( newOGDevice );
+            } )
+    };
 
     var CoreModel = sailsCoreModel.CoreModel;
 
@@ -30,6 +39,7 @@ app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel, $q ) {
             this.atVenueUUID = json && json.atVenueUUID;
             this.name = json && json.name;
             this.runningApps = json && json.runningApps;
+            this.systemAppState = json && json.systemAppState;
             this.logs = json && json.logs;
             this.hardware = json && json.hardware;
             this.software = json && json.software || true;
@@ -56,28 +66,28 @@ app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel, $q ) {
 
         }
 
-        this.populateVenue = function(){
+        this.populateVenue = function () {
 
-            if (!this.atVenueUUID)
-                return $q.when({ name: "#unassigned#", id: "" });
+            if ( !this.atVenueUUID )
+                return $q.when( { name: "#unassigned#", id: "" } );
 
             var _this = this;
             return sailsApi.apiGet( '/venue/findByUUID?uuid=' + this.atVenueUUID )
-                .then( function(v){
+                .then( function ( v ) {
                     _this.atVenue = v;
                     return _this;
-                })
-                .catch( function(err){
+                } )
+                .catch( function ( err ) {
                     _this.atVenue = { name: "*** error ***", id: "" };
                     throw err;
-                })
+                } )
         }
 
-        this.lastContactAgo = function(){
-            if (!this.lastContact)
+        this.lastContactAgo = function () {
+            if ( !this.lastContact )
                 return 'never';
 
-            return moment(this.lastContact).fromNow();
+            return moment( this.lastContact ).fromNow();
         }
 
     }
@@ -90,11 +100,11 @@ app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel, $q ) {
     }
 
     var getOGDeviceByUDID = function ( udid ) {
-        return sailsApi.apiGet( '/ogdevice/findByUDID?deviceUDID='+udid )
+        return sailsApi.apiGet( '/ogdevice/findByUDID?deviceUDID=' + udid )
             .then( newOGDevice );
     }
 
-    var get = function(id) {
+    var get = function ( id ) {
         return sailsApi.getModel( 'ogdevice', id )
             .then( newOGDevice );
     }
@@ -103,8 +113,9 @@ app.factory( "sailsOGDevice", function ( sailsApi, sailsCoreModel, $q ) {
     return {
         getAll:    getAll,
         new:       newOGDevice,
-        getByUDID:       getOGDeviceByUDID,
-        get:    get
+        getByUDID: getOGDeviceByUDID,
+        get:       get,
+        getStale:  getStale
     }
 
 } );

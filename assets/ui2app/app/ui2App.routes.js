@@ -86,6 +86,11 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
 
         } )
 
+        .state( 'admin.maint', {
+            url:         '/maint',
+            component:  'maintComponent'
+        } )
+
 
         // ACCOUNT
 
