@@ -40,6 +40,26 @@ function broadcastToClient( deviceUDID, message, req ) {
 module.exports = {
 
     /**
+     * BLUEPRINT OVERRIDES
+     */
+
+     update: function ( req, res ){
+
+        OGDevice.update(req.allParams().id, req.allParams())
+            .then( function(models){
+                if (models.length===1){
+                    return res.ok( models[0] );
+                }
+                if (models.length>1){
+                    return res.ok(models);
+                }
+                return res.notFound();
+            })
+            .catch( res.serverError );
+
+     },
+
+    /**
      * Register a new device for the first time
      * @param req
      * @param res
