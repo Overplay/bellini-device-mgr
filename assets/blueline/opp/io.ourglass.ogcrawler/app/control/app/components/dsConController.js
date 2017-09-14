@@ -3,14 +3,27 @@
  */
 
 app.controller("dsConController",
-    function ($scope, ogAPI, uibHelper, $log) {
+    function ($scope, ogAPI, uibHelper, $log, dataModel ) {
+
+        dataModel.init();
 
         $scope.messages = [];
         $scope.comingUpMessages = [];
         $scope.twitterQueries = [];
         $scope.ui = { tab: "MESSAGES" };
 
-        $scope.tabs = ['Messages', 'Coming Up', 'Twitter'];
+        $scope.tabs = [ 'Messages', 'Coming Up', 'Twitter' ];
+
+        $scope.$on('DATA_SOURCE_CHANGED', function(){
+            $log.debug("Received inbound source change message");
+            var d = dataModel.getData();
+            $scope.messages = d.messages;
+            $scope.twitterQueries = d.twitterQueries;
+            $scope.hideTVTweets = d.hideTVTweets;
+
+        });
+
+
 
         $scope.getSelectedTabTitle = function () {
             return $scope.tabs[$ionicTabsDelegate.selectedIndex()];
@@ -19,67 +32,6 @@ app.controller("dsConController",
         $scope.getTabURI = function (tab) {
             return tab.toLowerCase().replace(' ', '');
         };
-        function deviceModelUpdate( data ) {
-            
-            if (data.useVenueDataModel && $scope.messages.length == 0) { //We want to wait for venue information at this point
-                $scope.messages = [];
-                $scope.comingUpMessages = [];
-                $scope.twitterQueries = [];
-                $scope.hideTVTweets = true;
-                return;
-            }
-
-            if (data.messages && data.messages.length != $scope.messages.length) {
-                $scope.messages = data.messages || [];
-            }
-            if (data.comingUpMessages && data.comingUpMessages.length != $scope.comingUpMessages.length) {
-                $scope.comingUpMessages = data.comingUpMessages || [];
-            }
-            if (data.twitterQueries && data.twitterQueries.length != $scope.twitterQueries.length) {
-                $scope.twitterQueries = data.twitterQueries || [];
-            }
-
-            $scope.hideTVTweets = data.hideTVTweets;
-        }
-
-        function venueModelUpdate(data) {
-            if (data.messages && data.messages.length != $scope.messages.length) {
-                $scope.messages = data.messages || [];
-            }
-            if (data.comingUpMessages && data.comingUpMessages.length != $scope.comingUpMessages.length) {
-                $scope.comingUpMessages = data.comingUpMessages || [];
-            }
-            if (data.twitterQueries && data.twitterQueries.length != $scope.twitterQueries.length) {
-                $scope.twitterQueries = data.twitterQueries || [];
-            }
-
-            $scope.hideTVTweets = data.hideTVTweets;
-        }
-
-        function inboundMessage( msg ) {
-            $log.info( "New message: " + msg );
-        }
-
-        function initialize() {
-
-            ogAPI.init({
-                appType: 'mobile',
-                appName: "io.ourglass.ogcrawler",
-                endpoint: "control",
-                deviceUDID: "test",
-                deviceModelCallback: deviceModelUpdate,
-                venueModelCallback: venueModelUpdate,
-                messageCallback: inboundMessage
-            })
-            .then(function (data) {
-                $log.debug("crawler control: init complete");
-                // deviceModelUpdate(data);
-                data.useVenueData ? venueModelUpdate( data ) : deviceModelUpdate( data );
-            })
-            .catch(function (err) {
-                $log.error("crawler controller: something bad happened: " + err);
-            });
-        }
 
         $scope.newMessage = function () {
             $scope.messages.push("");
@@ -101,9 +53,9 @@ app.controller("dsConController",
             $scope.update();
         };
 
-        $scope.swapDataLocation = function (index) {
+        $scope.swapDataLocation = function () {
             $scope.useVenueData = !$scope.useVenueData;
-            $scope.update();
+            dataModel.setUseVenue($scope.useVenueData);
         };
 
         $scope.delComingUpMessage = function (index) {
@@ -117,42 +69,29 @@ app.controller("dsConController",
         };
 
         $scope.update = function () {
-            ogAPI.model.messages = $scope.messages;
-            ogAPI.model.comingUpMessages = $scope.comingUpMessages;
-
-            ogAPI.model.twitterQueries = $scope.twitterQueries;
-            ogAPI.model.hideTVTweets = $scope.hideTVTweets;
-
-            if ($scope.useVenueData === true && ogAPI.model.useVenueData) { //If we use venue data
-                
-                ogAPI.saveDeviceModel(); //Save that we are using venueData to the deviceModel
-                
-                delete ogAPI.model.useVenueData; //Delete it before we save to venueModel
-                
-            } else { //If we don't use venue data
-                ogAPI.model.useVenueData = false;
-            }
+            dataModel.setHzMessages( $scope.messages );
+            dataModel.setTwitterQueries( $scope.twitterQueries );
+            dataModel.setHideTVTweets($scope.hideTVTweets)
             
             uibHelper.curtainModal('Saving...');
 
-            if ($scope.useVenueData) {
-                afterOGAPISave(ogAPI.saveVenueModel());
-            } else {
-                afterOGAPISave(ogAPI.saveDeviceModel());
-            }
+            dataModel.save()
+                .then( function(){
+                    uibHelper.dryToast('Saved');
+                })
+                .catch( function(){
+                    uibHelper.dryToast('Error');
+                })
+                .finally( uibHelper.dismissCurtain );
+
         };
 
-        function afterOGAPISave(savePromise) {
-            savePromise.then(function () {
-                return ogAPI.updateTwitterQuery(ogAPI.model.twitterQueries);
-            }).finally(uibHelper.dismissCurtain);
-        }
 
         $scope.toggleTVTweets = function(){
             $log.debug("Toggling tweets");
             $scope.hideTVTweets =! $scope.hideTVTweets;
+            dataModel.setHideTVTweets($scope.hideTVTweets);
         };
 
-        initialize();
 
     });

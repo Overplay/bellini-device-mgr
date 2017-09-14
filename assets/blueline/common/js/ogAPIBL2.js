@@ -841,6 +841,10 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return service.save( 'venue' );
             };
 
+            service.saveAll = function() {
+                return $q.all([ service.saveDeviceModel(), service.saveVenueModel() ]);
+            };
+
             /**
              * Calls sioPut to save appmodel, appId, and deviceUDID
              *
