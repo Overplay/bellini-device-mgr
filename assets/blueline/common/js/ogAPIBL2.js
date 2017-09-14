@@ -463,7 +463,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 var roomId = _appId + ':' + _deviceUDID;
 
-                io.socket.on( roomId, function (data) {
+                io.socket.on( roomId, function ( data ) {
 
                     if ( _appMsgCb ) {
                         $rootScope.$apply( function () {
@@ -496,7 +496,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             function joinSystemMsgRoom() {
 
                 // Received direct message from cloud
-                io.socket.on( 'sysmsg:'+_deviceUDID, function ( data ) {
+                io.socket.on( 'sysmsg:' + _deviceUDID, function ( data ) {
                     if ( _sysMsgCb ) {
                         $rootScope.$apply( function () {
                             _sysMsgCb( data );
@@ -636,10 +636,10 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                         var p = [];
 
-                        if (_appMsgCb) p.push(joinDeviceAppRoom());
-                        if (_sysMsgCb) p.push(joinSystemMsgRoom());
+                        if ( _appMsgCb ) p.push( joinDeviceAppRoom() );
+                        if ( _sysMsgCb ) p.push( joinSystemMsgRoom() );
 
-                        return $q.all(p);
+                        return $q.all( p );
                     } )
                     .then( function () {
                         $log.debug( "Checking user level for this device" );
@@ -724,9 +724,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             };
 
 
-            service.sendMessageToAppRoom = function( message, includeMe ){
+            service.sendMessageToAppRoom = function ( message, includeMe ) {
                 var room = _appId + ':' + _deviceUDID;
-                return sioPut('/socket/send', { room: room, message: message, echo: includeMe });
+                return sioPut( '/socket/send', { room: room, message: message, echo: includeMe } );
 
             };
 
@@ -841,8 +841,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return service.save( 'venue' );
             };
 
-            service.saveAll = function() {
-                return $q.all([ service.saveDeviceModel(), service.saveVenueModel() ]);
+            service.saveAll = function () {
+                return $q.all( [ service.saveDeviceModel(), service.saveVenueModel() ] );
             };
 
             /**
@@ -1019,21 +1019,29 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             // New methods for BlueLine Architecture
 
 
-            function getOGDeviceModel(){
-                return $http.get('/ogdevice/findByUDID?deviceUDID='+_deviceUDID)
-                    .then(stripData);
+            function getOGDeviceModel() {
+                return $http.get( '/ogdevice/findByUDID?deviceUDID=' + _deviceUDID )
+                    .then( stripData );
             }
 
             service.getOGSystem = getOGSystem;
 
             /**
              * Gets the current program per Bellini
+             * Returns something like:
+             * "currentProgram": {
+             *  "channelNumber": "269",
+             *  "episodeTitle": "Titanic Pawn",
+             *  "networkName": "HISTHD",
+             *  "programId": "25980234",
+             *  "title": "Pawn Stars"
+             *  }
              */
             service.getCurrentProgram = function () {
                 return getOGDeviceModel()
-                    .then( function(device){
+                    .then( function ( device ) {
                         return device.currentProgram;
-                    })
+                    } )
             };
 
             /**
@@ -1076,14 +1084,18 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             /**
              * Figures out what channel is currently running and calls getGridForChannel
              *
-             * @returns {Object} channel listings
+             * @returns promise for {Object} channel listings
              */
             service.getGridForCurrentChannel = function () {
 
-                var prog = this.getCurrentProgram();
-                if ( !prog ) return $q.when( undefined );
+                return this.getCurrentProgram()
+                    .then( function(program){
+                        var channel = program.channelNumber; // could be undefined
+                        if (!channel) return $q.when(); // dump out a bag of undef
+                        return this.getGridForChannel( channel );
+                    });
 
-                return this.getGridForChannel( prog.channelNumber );
+
 
             };
 
@@ -1158,7 +1170,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 restrict: 'A',
                 link:     function ( scope, elem, attrs ) {
 
-                    elem.bind( 'error', function (event) {
+                    elem.bind( 'error', function ( event ) {
                         $log.debug( "Failed to load image!" );
                         // This is some serious hackage!
                         var isWidget = event.path[ 1 ].outerHTML.indexOf( 'widget' ) > 0;
