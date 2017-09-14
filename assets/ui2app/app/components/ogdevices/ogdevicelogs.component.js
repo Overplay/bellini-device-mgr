@@ -19,6 +19,10 @@ app.component( 'ogDeviceLogs', {
                 .catch( ( err ) => toastr.error( err.message ) );
         }
 
+        ctrl.showLog = function(log){
+
+            ctrl.viewLog = log;
+        }
         // Logs are NOT posted thru the blueline methods, so ws updates will be a little more involved!
 
         // io.socket.on( 'oglog', function ( event ) {
@@ -45,11 +49,11 @@ app.component( 'ogDeviceLogs', {
     </tr>
     <tr ng-repeat="l in $ctrl.logs | filter:searchTerm">
         <td>{{ l.loggedAt }}</td>
-        <td><a ng-click="$ctrl.viewlog = l" href="#">{{ l.logType }}</a></td>
+        <td><button class="btn btn-sm btn-success" ng-click="$ctrl.showLog(l)">{{ l.logType }}</button></td>
     </tr>
     </table>
     <div ng-if="$ctrl.viewLog">
-        <button ng-click="$ctrl.viewLog = null">CLOSE</button>
+        <button ng-click="$ctrl.showLog()">CLOSE</button>
         <pre>{{ $crtl.viewLog | json  }}</pre>
     </div>
      
