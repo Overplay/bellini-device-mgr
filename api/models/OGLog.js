@@ -28,9 +28,8 @@ module.exports = {
             type: 'datetime'
         },
 
-        // Any attached media (like a LogCat file)
-        mediaId: {
-            type: 'string'
+        file: {
+            type: 'json'
         }
 
     },
