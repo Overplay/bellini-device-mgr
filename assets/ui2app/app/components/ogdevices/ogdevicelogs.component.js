@@ -54,7 +54,7 @@ app.component( 'ogDeviceLogs', {
     </table>
     <div ng-if="$ctrl.viewLog">
         <button ng-click="$ctrl.showLog()">CLOSE</button>
-        <pre>{{ $crtl.viewLog | json  }}</pre>
+        <pre>{{ $ctrl.viewLog | json  }}</pre>
     </div>
      
 </div>
