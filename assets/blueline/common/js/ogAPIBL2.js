@@ -1092,7 +1092,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( function(program){
                         var channel = program.channelNumber; // could be undefined
                         if (!channel) return $q.when(); // dump out a bag of undef
-                        return this.getGridForChannel( channel );
+                        return service.getGridForChannel( channel );
                     });
 
 
