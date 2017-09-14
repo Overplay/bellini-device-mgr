@@ -21,7 +21,11 @@ app.component( 'ogDeviceLogs', {
 
         ctrl.showLog = function(log){
 
-            ctrl.viewLog = log;
+            if (log.logType==='logcat'){
+                ctrl.viewLog = log.message.logcat;
+            } else {
+                ctrl.viewLog = log;
+            }
         }
         // Logs are NOT posted thru the blueline methods, so ws updates will be a little more involved!
 
@@ -54,7 +58,7 @@ app.component( 'ogDeviceLogs', {
     </table>
     <div ng-if="$ctrl.viewLog">
         <button ng-click="$ctrl.showLog()">CLOSE</button>
-        <pre>{{ $ctrl.viewLog | json  }}</pre>
+        <pre>{{ $ctrl.viewLog }}</pre>
     </div>
      
 </div>
