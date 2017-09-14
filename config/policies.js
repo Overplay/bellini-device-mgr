@@ -76,6 +76,7 @@ module.exports.policies = {
         '*':       'isRingAdmin',
         'create':  false,
         'postlog': true, // TODO: Bad policy?? [ 'isDevice', 'hasValidatedDeviceUDID' ],
+        'postFile': true,
         'wipeem' : [ 'isRingAdmin', 'isDELETE']
     },
 
