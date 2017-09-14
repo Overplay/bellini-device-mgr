@@ -69,28 +69,9 @@
                     <p><a class="btn btn-default"
                           href="/blueline/control/index.html?deviceUDID={{ ogdevice.deviceUDID }}"
                           target="_blank">START CONTROL APP</a>
-                        &nbsp;<i>App will open in another tab.</i></p>
+                        &nbsp;<i>App will open in another tab. You will need to manually insert a jwt from CORE in the url.</i></p>
                 </div>
 
-                <!------- PING ------------>
-                <div style="margin-top: 10px; display: flex; padding: 10px; background-color: #ECE9E9">
-                    <div style="flex:1; margin-right: 10px;">
-                        <button class="btn btn-success" style="width: 100%;" ng-click="ping()">PING</button>
-                    </div>
-                    <div style="flex: 4;">
-                        <pre>{{ pingResponse.response }}</pre>
-                    </div>
-
-                </div>
-                <!-------- IDENT ---------->
-                <div style="margin-top: 10px; display: flex; padding: 10px; background-color: #ECE9E9">
-                    <div style="flex:1; margin-right: 10px;">
-                        <button class="btn btn-success" style="width: 100%;" ng-click="identify()">IDENTIFY</button>
-                    </div>
-                    <div style="flex: 4;">
-                        <pre>{{ identResponse | json }}</pre>
-                    </div>
-                </div>
 
             </uib-tab>
             <uib-tab heading="Logs">

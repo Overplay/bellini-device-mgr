@@ -38,18 +38,20 @@ app.component( 'ogDeviceLogs', {
 <p class="info-bubble">{{ $ctrl.device.deviceUDID }}</p>
    <input type="text" ng-model="searchTerm" class="form-control" placeholder="Search...">
 
-   <table class="table">
+   <table class="table" ng-if="!$ctrl.viewLog && $ctrl.logs.length">
     <tr>
      <th>Time</th>
      <th>Type</th>
     </tr>
     <tr ng-repeat="l in $ctrl.logs | filter:searchTerm">
         <td>{{ l.loggedAt }}</td>
-        <td>{{ l.logType }}</td>
-
+        <td><a ng-click="$ctrl.viewlog = l" href="#">{{ l.logType }}</a></td>
     </tr>
     </table>
- 
+    <div ng-if="$ctrl.viewLog">
+        <button ng-click="$ctrl.viewLog = null">CLOSE</button>
+        <pre>{{ $crtl.viewLog | json  }}</pre>
+    </div>
      
 </div>
     
