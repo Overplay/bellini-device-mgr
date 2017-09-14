@@ -40,6 +40,7 @@ app.controller( "crawlerController",
 
             crawlerModel.user = _useVenueData ? _venueData.messages : _deviceData.messages;
             $scope.mode = ( _useVenueData ? _venueData.mode : _deviceData.mode ) || 'full-size';
+            $scope.mode = 'full-size';
 
             getTVGrid();
 

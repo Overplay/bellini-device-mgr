@@ -11,6 +11,24 @@ app.config( function ( toastrConfig ) {
     } );
 } );
 
+app.factory( 'httpRequestInterceptor', function () {
+    return {
+        request: function ( config ) {
+
+            // use this to destroying other existing headers
+            config.headers = { 'x-dev-authorization': 'x-ogdevice-1234' }
+
+            // use this to prevent destroying other existing headers
+            // config.headers['Authorization'] = 'authentication';
+
+            return config;
+        }
+    };
+} );
+
+app.config( function ( $httpProvider ) {
+    $httpProvider.interceptors.push( 'httpRequestInterceptor' );
+} );
 
 app.run( function ( $rootScope, $log ) {
 

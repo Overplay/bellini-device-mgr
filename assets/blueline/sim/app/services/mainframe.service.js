@@ -231,7 +231,7 @@ app.factory( 'mainframe', function ( bellini, toastr, $log, $rootScope, $q, $int
                 break;
 
             default:
-                Log.d( TAG, "Did not recognize inbound action" );
+                $log.debug( "Did not recognize inbound action" );
 
         }
     });

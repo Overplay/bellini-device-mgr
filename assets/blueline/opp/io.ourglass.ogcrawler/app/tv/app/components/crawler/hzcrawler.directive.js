@@ -15,6 +15,12 @@
  * [ { text: 'Hi There', style: { color: '#FF00A0' }}, ...]
  *
  */
+
+ function ogHzTemplate(){
+    //return 'app/components/crawler/hzcrawler.template-sm.html';
+    return 'app/components/crawler/hzcrawler.template.html';
+
+}
  
 app.directive( 'hzCrawler', 
     function ( $log, $timeout, $window, $interval, $rootScope ) {
@@ -25,7 +31,7 @@ app.directive( 'hzCrawler',
                 messages: '=',
                 mode: '<?'
                 },
-            templateUrl: 'app/components/crawler/hzcrawler.template-sm.html',
+            templateUrl: ogHzTemplate(),
             link:        function ( scope, elem, attrs ) {
 
 
