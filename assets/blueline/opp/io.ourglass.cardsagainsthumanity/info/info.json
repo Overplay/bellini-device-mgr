@@ -1,7 +1,7 @@
 {
 	"appId": "io.ourglass.cardsagainsthumanity",
 	"displayName": "Cards Against Humanity",
-	"icon": "testapp.png",
+	"icon": "cahicon.png",
 	"defaultModel": {
 		"discard": [],
 		"players": [],

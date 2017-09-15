@@ -633,7 +633,7 @@ module.exports = {
         var preconditions = {
             device: OGDevice.findOne( { deviceUDID: params.deviceUDID } ),
             // Only return apps we can actually control via mobile app
-            apps:   App.find( { 'appType': [ 'widget', 'crawler' ] } )
+            apps:   App.find( { 'appType': [ 'widget', 'crawler' ], isVirtual: false } )
         }
 
         Promise.props( preconditions )

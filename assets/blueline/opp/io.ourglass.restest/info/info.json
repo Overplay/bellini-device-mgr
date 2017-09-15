@@ -3,7 +3,7 @@
   "appType": "widget",
   "appName": "Resolution",
 
-  "icon": "settings@3x.png",
+  "icon": "rtesticon.png",
   "iconLabel": "Resolution",
 
   "primaryColorHex": "#8080ff",
