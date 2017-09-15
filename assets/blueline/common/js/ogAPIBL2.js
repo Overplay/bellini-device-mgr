@@ -1199,7 +1199,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                     scope.adstyle = { opacity: 0.0 };
 
-                    if ( adType != 'widget' && adType != 'crawler' ) {
+                    if ( adType !== 'widget' && adType !== 'crawler' ) {
                         throw Error( "Unsupported ad type. Must be widget or crawler" );
                     }
 
