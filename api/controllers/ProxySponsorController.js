@@ -42,12 +42,12 @@ module.exports = {
             return res.serverError( { error: 'Bad sponsor proxy setup. This is not recoverable' } );
 
         var params = req.allParams();
-
-        if (!params.venueId)
-            return res.badRequest({ error: "need venueId, sparky! "});
+        const uuid = params.id || params.venueUUID || params.uuid;
+        if (!uuid )
+            return res.badRequest({ error: "need venueUUID, sparky! "});
 
         var proxypath = sails.config.uservice.sponsorProxy.endpoint +
-            sails.config.uservice.sponsorProxy.allAds + '/'+ params.venueId;
+            sails.config.uservice.sponsorProxy.adsForVenue + uuid;
 
         request.get( proxypath )
             .then( function ( d ) {

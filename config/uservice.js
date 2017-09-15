@@ -16,7 +16,7 @@ module.exports = {
         sponsorProxy: {
             endpoint:    'http://localhost:2000',
             allAds:      '/ad/getAccepted',
-            adsForVenue: '/ad/forVenue/'
+            adsForVenue: '/ad/forvenue/'
         },
 
         belliniCore: {

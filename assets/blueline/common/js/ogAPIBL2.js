@@ -100,7 +100,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             outputRes:      { height: 1080, width: 1920 },
             udid:           dudid,
             jwt:            jwt,
-            venue:          'testvenue',
+            venue:          'sim-001',
             osApiLevel:     99,
             mock:           true
         };
@@ -139,7 +139,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
      */
         .factory( 'ogAds', function ( $http, $q, $log ) {
 
-            var _forceAllAds = true;
+            var _forceAllAds = false;
 
             var _currentAd;
             var _adRotation = [];
@@ -187,6 +187,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     return null;
 
                 _adIndex = (_adIndex + 1) % _adRotation.length;
+                if (!_adIndex) service.refreshAds(); // grab new ones on loop
                 return _adRotation[ _adIndex ];
 
             };
