@@ -11,12 +11,23 @@ app.component( 'ogDeviceLogs', {
 
         var ctrl = this;
 
-        ctrl.$onInit = function(){
-            sailsOGLogs.getAll( 'limit=50&sort=createdAt DESC&deviceUDID=' + this.device.deviceUDID )
+        ctrl.getAll = false;
+
+        function getQuery() {
+            return ctrl.getAll ? 'sort=createdAt DESC&deviceUDID=' + ctrl.device.deviceUDID :
+                'limit=50&sort=createdAt DESC&deviceUDID=' + ctrl.device.deviceUDID;
+        }
+
+        function loadLogs(){
+            sailsOGLogs.getAll( getQuery() )
                 .then( ( logs ) => {
                     ctrl.logs = logs;
                 } )
                 .catch( ( err ) => toastr.error( err.message ) );
+        }
+
+        ctrl.$onInit = function(){
+            loadLogs()
         }
 
         ctrl.showLog = function(log){
@@ -26,6 +37,11 @@ app.component( 'ogDeviceLogs', {
             } else {
                 ctrl.viewLog = log;
             }
+        }
+
+        ctrl.loadToggle = function(){
+            ctrl.getAll = !ctrl.getAll;
+            loadLogs();
         }
         // Logs are NOT posted thru the blueline methods, so ws updates will be a little more involved!
 
@@ -42,8 +58,8 @@ app.component( 'ogDeviceLogs', {
     template: `
 
 <div>
-<h3>Device Logs</h3>        
-<p class="info-bubble">{{ $ctrl.device.deviceUDID }}</p>
+<h3>Device Logs<button class="btn btn-success pull-right" ng-click="loadToggle()">{{ $ctrl.getAll ? "Load last 50" : "Load all" }}</button> </h3>        
+<p class="info-bubble top15">{{ $ctrl.device.deviceUDID }}</p>
    <input type="text" ng-model="searchTerm" class="form-control" placeholder="Search...">
 
    <table class="table" ng-if="!$ctrl.viewLog && $ctrl.logs.length">

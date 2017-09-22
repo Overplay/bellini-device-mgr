@@ -10,7 +10,7 @@ app.controller( 'appListController', [ '$scope', 'apps', '$log', 'uibHelper', 't
     $scope.apps = apps;
 
     $scope.delete = function(app){
-        uibHelper.confirmModal("Confirm", "Do you really want to delete: "+ app.name+"?")
+        uibHelper.confirmModal("Confirm", "Do you really want to delete: "+ app.displayName+"?")
             .then(function(){
                 app.delete()
                     .then( function(){
