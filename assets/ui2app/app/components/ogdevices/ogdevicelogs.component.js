@@ -34,8 +34,16 @@ app.component( 'ogDeviceLogs', {
 
             if (log.logType==='logcat'){
                 ctrl.viewLog = log;
+                log.getFile()
+                    .then(function(file){
+                        ctrl.logcat = file
+                    } )
+                    .catch(function(err){
+                        toastr.error( err.message );
+                    });
             } else {
                 ctrl.viewLog = log;
+                ctrl.logcat = null;
             }
         }
 
@@ -75,6 +83,9 @@ app.component( 'ogDeviceLogs', {
     <div ng-if="$ctrl.viewLog">
         <button ng-click="$ctrl.viewLog = false" class="btn btn-success top15">CLOSE</button>
         <pre>{{ $ctrl.viewLog }}</pre>
+        <div ng-if="$ctrl.viewLog.logtype == 'logcat'">
+           <pre>{{ $ctrl.logcat }}</pre> 
+        </div>
     </div>
      
 </div>

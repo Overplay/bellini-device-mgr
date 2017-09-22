@@ -27,7 +27,7 @@ app.factory( "sailsOGLogs", function ( sailsApi, sailsCoreModel ) {
             this.message = json && json.message;
             this.deviceUDID = json && json.deviceUDID;
             this.loggedAt = json && json.loggedAt;
-
+            this.file = json && json.file;
 
             this.parseCore( json );
         };
@@ -39,6 +39,9 @@ app.factory( "sailsOGLogs", function ( sailsApi, sailsCoreModel ) {
 
         this.parseInbound( json );
 
+        this.getFile = function(){
+            return sailsApi.apiGet('/oglog/getLogFile/' + this.id);
+        }
 
     }
 
