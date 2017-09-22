@@ -2,156 +2,117 @@
  * Created by mkahn on 11/18/16.
  */
 
-app.controller("ogNowServingController", function ($scope, $log, ogAPI, uibHelper, $timeout) {
+app.controller( "ogNowServingController", function ( $scope, $log, ogAPI, uibHelper, $timeout ) {
 
-    $log.debug("loaded ogNowServingController");
+    $log.debug( "loaded ogNowServingController" );
 
-    $scope.deviceTicketNumber = '---';
-    $scope.venueTicketNumber = '---';
-    $scope.usingVenueData = false;
+    $scope.deviceTicketNumber = '-';
+    $scope.venueTicketNumber = '-';
+    $scope.useVenueData = false;
 
-    function saveModel() {
-
-        ogAPI.model = { ticketNumber: $scope.deviceTicketNumber };
-        ogAPI.venueModel = { ticketNumber: $scope.venueTicketNumber };
-        
-        if ($scope.usingVenueData) {
-            savePromiseThen(ogAPI.saveVenueModel());
-        } else {
-            savePromiseThen(ogAPI.saveDeviceModel());
-        }
-
+    function processData() {
+        $scope.useVenueData = ogAPI.model.useVenueData;
+        $scope.ticketNumber = $scope.useVenueData ? ogAPI.venueModel.ticketNumber :
+            ogAPI.model.ticketNumber;
     }
 
-    function savePromiseThen(savePromise) {
-        savePromise.then(function (response) {
-            $log.debug("Save was cool");
-        })
-            .catch(function (err) {
-                $log.error("WTF?!?!?");
-                $scope.deviceTicketNumber = "&*$!";
-                $scope.venueTicketNumber = "&*$!";
-            });
+    function saveError() {
+        uibHelper.dryToast( "Error Resetting Number" );
+    }
+
+    function save() {
+        ogAPI.saveAll()
+            .then( processData )
+            .catch( saveError )
     }
 
     $scope.clear = function () {
-    
-        $log.debug("Clear pressed");
-        if ($scope.usingVenueData) {
-            $scope.venueTicketNumber = 0;
-        } else {
-            $scope.deviceTicketNumber = 0;
-        }
-        // ogControllerModel.model = {ticketNumber: 0};
 
-        saveModel();
+        $log.debug( "Clear pressed" );
+        if ( $scope.useVenueData ) {
+            ogAPI.venueModel.ticketNumber = 0;
+        } else {
+            ogAPI.model.ticketNumber = 0;
+        }
+
+        save();
 
     };
 
     $scope.incrementTicket = function () {
-    
-        $log.debug("Increment pressed");
 
-        var toCheck = $scope.usingVenueData ? $scope.venueTicketNumber : $scope.deviceTicketNumber;
-
-        if (toCheck === '---') {
-
-            if ($scope.usingVenueData) {
-                $scope.venueTicketNumber = 1;
-            } else {
-                $scope.deviceTicketNumber = 1; 
-            }
+        $log.debug( "Increment pressed" );
+        if ( $scope.useVenueData ) {
+            ogAPI.venueModel.ticketNumber++;
+        } else {
+            ogAPI.model.ticketNumber++;
         }
-        else {
-            if ($scope.usingVenueData) {
-                $scope.venueTicketNumber += 1;
-            } else {
-                $scope.deviceTicketNumber += 1; 
-            }
-        }
-        // ogControllerModel.model.ticketNumber = $scope.deviceTicketNumber;
 
-        saveModel();
+        save();
+
 
     };
 
     $scope.setTicket = function () {
 
-        $log.debug("Change Ticket Pressed ");
+        $log.debug( "Change Ticket Pressed " );
         uibHelper.stringEditModal(
             'Change Order Number',
             'Enter the new order number below.',
-            $scope.usingVenueData ? $scope.venueTicketNumber : $scope.deviceTicketNumber,
+            $scope.useVenueData ? $scope.venueTicketNumber : $scope.deviceTicketNumber,
             'order number'
-        ).then(function (result) {
+        ).then( function ( result ) {
 
-            if (isFinite(result) && _.parseInt(result) >= 0) {
-                
-                var numberResult = _.parseInt(result);
-                if ($scope.usingVenueData) {
-                    $scope.venueTicketNumber = numberResult;
+            if ( isFinite( result ) && _.parseInt( result ) >= 0 ) {
+
+                var numberResult = _.parseInt( result );
+                if ( $scope.useVenueData ) {
+                    ogAPI.venueModel.ticketNumber = numberResult;
                 } else {
-                    $scope.deviceTicketNumber = numberResult;
-                }   
-                saveModel();
+                    ogAPI.model.ticketNumber = numberResult;
+                }
+
+                save();
+
+
             } else {
-                uibHelper.dryToast("You must enter a positive number.");
+                uibHelper.dryToast( "You must enter a positive number." );
             }
-        }).catch(function (err) {
-            $log.error(err);
-        });
+        } ).catch( function ( err ) {
+            $log.error( err );
+        } );
 
     };
 
     $scope.swapDataLocation = function () {
-        $log.debug("Using venue data:", $scope.usingVenueData);
-        $scope.usingVenueData = !$scope.usingVenueData;
-        saveModel();
+        $scope.useVenueData = !$scope.useVenueData;
+        ogAPI.model.useVenueData = $scope.useVenueData;
+        save();
+
     };
-
-    // $scope.curtainDebug = function () {
-    //     var curtain = uibHelper.curtainModal('Curtain');
-    //     $timeout(function () { uibHelper.dismissCurtain(); }, 5000);
-    // };
-
-    function modelChanged( newValue ) {
-        $log.info( "Device model changed, yay!" );
-        $scope.deviceTicketNumber = newValue.ticketNumber;
-    }
-
-    function venueModelChanged( newValue ) {
-        $log.info( "Venue model changed, yay!" );
-        $scope.venueTicketNumber = newValue.ticketNumber;
-    }
 
     function inboundMessage( msg ) {
         $log.info( "New message: " + msg );
-        $scope.ogsystem = msg;
     }
 
     function initialize() {
 
         $log.debug( "initializing app and data" );
 
-        ogAPI.init({
-            appName: "io.ourglass.nowserving",
-            deviceModelCallback: modelChanged,
-            venueModelCallback:  venueModelChanged,
+        ogAPI.init( {
+            appName:             "io.ourglass.nowserving",
+            deviceModelCallback: processData,
+            venueModelCallback:  processData,
             messageCallback:     inboundMessage,
-            appType: 'mobile',
-            deviceUDID: 'apple-sim-1'
-        })
-        .then(function (data) {
-            $log.debug( "ogAPI init complete!" );
-            if ( data.venue && data.device.useVenueData ) {
-                $scope.deviceTicketNumber = data.venue.ticketNumber || '??';
-            } else {
-                $scope.deviceTicketNumber = data.device.ticketNumber;
-            }
-        })
-        .catch(function (err) {
-            $log.error("Something failed: " + err);
-        });
+            appType:             'mobile'
+        } )
+            .then( function ( data ) {
+                $log.debug( "ogAPI init complete!" );
+                processData();
+            } )
+            .catch( function ( err ) {
+                $log.error( "Something failed: " + err );
+            } );
 
     }
 
