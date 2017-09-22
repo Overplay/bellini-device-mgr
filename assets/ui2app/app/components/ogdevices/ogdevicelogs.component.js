@@ -83,7 +83,7 @@ app.component( 'ogDeviceLogs', {
     <div ng-if="$ctrl.viewLog">
         <button ng-click="$ctrl.viewLog = false" class="btn btn-success top15">CLOSE</button>
         <pre>{{ $ctrl.viewLog }}</pre>
-        <div ng-if="$ctrl.viewLog.logtype == 'logcat'">
+        <div class="top15" style="background-color: wheat">
            <pre>{{ $ctrl.logcat }}</pre> 
         </div>
     </div>
