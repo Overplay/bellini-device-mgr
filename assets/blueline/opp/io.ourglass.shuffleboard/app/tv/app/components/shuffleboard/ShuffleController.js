@@ -3,21 +3,21 @@
  */
 
 app.controller( "shuffleController",
-    function ($scope, ogAPI, $log, $timeout ) {
+    function ( $scope, ogAPI, $log, $timeout ) {
 
         console.log( "Loading shuffleController(TV Blueline)" );
 
         $scope.score = { red: 0, blue: 0, redHighlight: false, blueHighlight: false };
 
         var _remoteScore = {};
-        
+
         function updateLocalScore() {
 
-            var animRed = $scope.score.red != _remoteScore.red;
-            var animBlue = $scope.score.blue != _remoteScore.blue;
+            var animRed = $scope.score.red !== ogAPI.model.red;
+            var animBlue = $scope.score.blue !== ogAPI.model.blue;
 
-            $scope.score.red = _remoteScore.red || 0;
-            $scope.score.blue = _remoteScore.blue || 0;
+            $scope.score.red = ogAPI.model.red || 0;
+            $scope.score.blue = ogAPI.model.blue || 0;
 
 
             if ( animRed ) {
@@ -31,11 +31,6 @@ app.controller( "shuffleController",
             }
         }
 
-        function modelChanged( data ) {
-            $log.debug("Received a model update")
-            _remoteScore = data;
-            updateLocalScore();
-        }
 
         function inboundMessage( msg ) {
             $log.info( "New message: " + msg );
@@ -43,17 +38,15 @@ app.controller( "shuffleController",
 
         function initialize() {
 
-            ogAPI.init({
-                appName: "io.ourglass.shuffleboard",
-                sockets: true,
-                modelCallback: modelChanged,
-                messageCallback: inboundMessage, //don't need
-                appType: 'tv'
+            ogAPI.init( {
+                appName:             "io.ourglass.shuffleboard",
+                deviceModelCallback: updateLocalScore,
+                messageCallback:     inboundMessage, //don't need
+                appType:             'tv'
             } )
-                .then( function ( data ) {
+                .then( function () {
                     $log.debug( "ogAPI init complete!" );
-                    _remoteScore = data;
-
+                    _remoteScore = ogAPI.model;
                 } )
                 .catch( function ( err ) {
                     $log.error( "That's not right!" );

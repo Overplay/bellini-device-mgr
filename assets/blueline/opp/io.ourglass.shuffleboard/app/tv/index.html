@@ -14,7 +14,7 @@
 
   <!-- App Main and AngularJS Routes -->
   <script src="app/optvShuffleApp.module.js"></script>
-  <script src="../../../../common/js/ogAPIBL.js"></script>
+  <script src="../../../../common/js/ogAPIBL2.js"></script>
 
   <!-- Controllers -->
   <script src="app/components/shuffleboard/ShuffleController.js"></script>
@@ -29,18 +29,6 @@
 
 <body>
 
-<!-- semis skeuomorph look -->
-<!--<div class="applet" ng-controller="shuffleController">-->
-  <!--<div class="logo-holder"><img src="assets/img/rein.png"/></div>-->
-  <!--<div class="score-box red-sk" ng-class="{ 'grow' : score.redHighlight }">-->
-    <!--<div>{{score.red}}</div>-->
-  <!--</div>-->
-  <!--<div class="score-box blue-sk" ng-class="{ 'grow' : score.blueHighlight }">-->
-    <!--<div>{{score.blue}}</div>-->
-  <!--</div>-->
-<!--</div>-->
-
-<!-- New Look -->
 <div class="applet" ng-controller="shuffleController">
   <div class="title">Shuffleboard</div>
   <div class="score-box red" ng-class="{ 'grow' : score.redHighlight }">

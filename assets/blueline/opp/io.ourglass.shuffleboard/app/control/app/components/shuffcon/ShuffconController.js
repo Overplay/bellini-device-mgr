@@ -9,20 +9,29 @@ app.controller( "shuffconController",
 
         $scope.ui = { localRed: 0, localBlue: 0 };
 
+        function updateScores(){
+            $scope.ui.localBlue = ogAPI.model.blue;
+            $scope.ui.localRed = ogAPI.model.red;
+        }
+
+        function save(){
+            ogAPI.saveDeviceModel()
+                .then( updateScores )
+                .catch( function ( err ) {
+                    uibHelper.dryToast( 'Error Saving Data' )
+                } );
+        }
+
         function initialize() {
 
             ogAPI.init( {
                 appName: "io.ourglass.shuffleboard",
-                sockets: true,
-                modelCallback: undefined,
                 messageCallback: inboundMessage,
                 appType: 'mobile',
-                deviceUDID: "test"
             })
-                .then( function ( data ) {
+                .then( function () {
                     $log.debug("shuffcon: init complete");
-                    $scope.ui.localBlue = data.blue;
-                    $scope.ui.localred = data.red;
+                    updateScores();
                 })
                 .catch( function ( err ) {
                     $log.error("shuffcon: something bad happened: " + err);
@@ -35,21 +44,15 @@ app.controller( "shuffconController",
         }
 
         $scope.changeBlue = function ( by ) {
-
-            $scope.ui.localBlue += by;
-            if ( $scope.ui.localBlue < 0 ) $scope.ui.localBlue = 0;
-            ogAPI.model.blue = $scope.ui.localBlue;
-            ogAPI.save();
-
+            ogAPI.model.blue += by;
+            if ( ogAPI.model.blue < 0 ) ogAPI.model.blue = 0;
+            save();
         };
 
         $scope.changeRed = function ( by ) {
-
-            $scope.ui.localRed += by;
-            if ( $scope.ui.localRed < 0 ) $scope.ui.localRed = 0;
-            ogAPI.model.red = $scope.ui.localRed;
-            ogAPI.save();
-
+            ogAPI.model.red += by;
+            if ( ogAPI.model.red < 0 ) ogAPI.model.red = 0;
+            save();
         };
 
         $scope.resetScores = function () {
@@ -58,8 +61,7 @@ app.controller( "shuffconController",
                 .then(function(){
                     ogAPI.model.red = 0;
                     ogAPI.model.blue = 0;
-                    ogAPI.save();
-                    $scope.ui = { localRed: 0, localBlue: 0 };
+                    save();
                 })
 
         };
