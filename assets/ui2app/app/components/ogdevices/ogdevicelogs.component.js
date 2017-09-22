@@ -73,7 +73,7 @@ app.component( 'ogDeviceLogs', {
     </tr>
     </table>
     <div ng-if="$ctrl.viewLog">
-        <button ng-click="$ctrl.showLog()">CLOSE</button>
+        <button ng-click="$ctrl.viewLog = false" class="btn btn-success top15">CLOSE</button>
         <pre>{{ $ctrl.viewLog }}</pre>
     </div>
      
