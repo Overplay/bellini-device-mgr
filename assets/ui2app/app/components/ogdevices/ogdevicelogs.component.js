@@ -33,7 +33,7 @@ app.component( 'ogDeviceLogs', {
         ctrl.showLog = function(log){
 
             if (log.logType==='logcat'){
-                ctrl.viewLog = log.message.logcat;
+                ctrl.viewLog = log;
             } else {
                 ctrl.viewLog = log;
             }
