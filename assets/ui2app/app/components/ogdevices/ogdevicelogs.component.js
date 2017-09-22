@@ -58,7 +58,7 @@ app.component( 'ogDeviceLogs', {
     template: `
 
 <div>
-<h3>Device Logs<button class="btn btn-success pull-right" ng-click="loadToggle()">{{ $ctrl.getAll ? "Load last 50" : "Load all" }}</button> </h3>        
+<h3>Device Logs<button class="btn btn-success pull-right" ng-click="$ctrl.loadToggle()">{{ $ctrl.getAll ? "Load last 50" : "Load all" }}</button> </h3>        
 <p class="info-bubble top15">{{ $ctrl.device.deviceUDID }}</p>
    <input type="text" ng-model="searchTerm" class="form-control" placeholder="Search...">
 
