@@ -81,7 +81,7 @@
 
             <div class="container-fluid">
                 <div class="row">
-                    <div class="ticket-number" ng-class="{'venue-data': usingVenueData}">{{ usingVenueData ? venueTicketNumber : deviceTicketNumber }}</div>
+                    <div class="ticket-number" ng-class="{'venue-data': useVenueData}">{{ ticketNumber }}</div>
                 </div>
 
                 <div class="row">
@@ -97,8 +97,8 @@
                 </div>
 
                 <div class="row">
-                    <button ng-if="!usingVenueData" class="btn btn-success btn-lg ticket-button" ng-click="swapDataLocation()">USE VENUE DATA</button>
-                    <button ng-if="usingVenueData" class="btn btn-success btn-lg ticket-button" ng-click="swapDataLocation()">USE DEVICE DATA</button>
+                    <button class="btn btn-success btn-lg ticket-button" ng-click="swapDataLocation()">{{ useVenueData ?
+                        "USE DEVICE DATA" : "USE VENUE DATA" }}</button>
                 </div>
 
                 <!-- <div class="row">

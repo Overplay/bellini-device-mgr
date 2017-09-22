@@ -59,7 +59,7 @@ app.controller( "ogNowServingController", function ( $scope, $log, ogAPI, uibHel
         uibHelper.stringEditModal(
             'Change Order Number',
             'Enter the new order number below.',
-            $scope.useVenueData ? $scope.venueTicketNumber : $scope.deviceTicketNumber,
+            $scope.ticketNumber,
             'order number'
         ).then( function ( result ) {
 
