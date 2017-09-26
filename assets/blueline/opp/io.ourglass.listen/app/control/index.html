@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html ng-app="listenApp">
+<head>
+    <meta charset="UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="../../../../common/bower_components/angular/angular.min.js"></script>
+    <script src="../../../../common/bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="../../../../common/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="../../../../common/js/uiOGMobile/uiOGMobile.js"></script>
+
+    <!-- App Main and AngularJS Routes -->
+    <script src="app/listen.module.js"></script>
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="../../../../common/js/ogAPIBL2.js"></script>
+    <script src="app/jsmpeg.js"></script>
+    <!--<script src="app/remote.js"></script>-->
+    <!-- Controllers -->
+
+
+    <!-- App Specific and Overridden CSS -->
+    <link href="../../../../common/css/og.css" rel="stylesheet">
+    <link href="assets/css/ogstyles.css" rel="stylesheet">
+
+
+    <title>OGTV Listener</title>
+</head>
+
+<body ng-controller="listenController">
+
+<!--Shuffleboard Remote Control -->
+<div class="ogview">
+
+    <og-app-header name="Listen"></og-app-header>
+
+    <div class="ogcontainer">
+
+        <div class="ogaudio"
+             data-autoplay="false"
+             data-audio="true"
+             data-video="true"
+             data-max-audio-lag="0.95"
+             data-volume="1"
+             data-url="ws://192.241.217.88:4000/as/"
+             data-protocol="c18597f5-e942-47f7-840c-2ce3a4a8aacc">
+        </div>
+
+        <og-advert type="crawler"></og-advert>
+
+    </div>
+
+</div>
+
+</body>
+</html>

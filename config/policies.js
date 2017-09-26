@@ -36,7 +36,7 @@ module.exports.policies = {
     },
 
     TestController: {
-        session: ['coreSessionAuth']
+        session: [ 'coreSessionAuth' ]
     },
 
     /**
@@ -68,16 +68,16 @@ module.exports.policies = {
     },
 
     MediaController: {
-        '*': 'isRingAdmin',
+        '*':                'isRingAdmin',
         'downloadFromCore': true
     },
 
     OGLogController: {
-        '*':       'isRingAdmin',
-        'create':  false,
-        'postlog': true, // TODO: Bad policy?? [ 'isDevice', 'hasValidatedDeviceUDID' ],
+        '*':        'isRingAdmin',
+        'create':   false,
+        'postlog':  true, // TODO: Bad policy?? [ 'isDevice', 'hasValidatedDeviceUDID' ],
         'postFile': true,
-        'wipeem' : [ 'isRingAdmin', 'isDELETE']
+        'wipeem':   [ 'isRingAdmin', 'isDELETE' ]
     },
 
     SMSController: {
@@ -86,14 +86,14 @@ module.exports.policies = {
     },
 
     UserController: {
-        '*': 'isRingAdmin',
+        '*':                'isRingAdmin',
         'coreuserfortoken': true,
-        'isusermanager': true
+        'isusermanager':    true
     },
 
     // TODO this needs to check auth on 2000
     VenueController: {
-        '*':          true
+        '*': true
     },
 
     //AuthController: [ 'sessionAuth', 'meOrAdmin' ],
@@ -103,12 +103,12 @@ module.exports.policies = {
     },
 
     OGDevice: {
-        '*': true,
-        'purge': ['isRingAdmin', 'isDELETE'],
-        'regcode': ['isDevice', 'sessionAuth'],
+        '*':               true,
+        'purge':           [ 'isRingAdmin', 'isDELETE' ],
+        'regcode':         [ 'isDevice', 'sessionAuth' ],
         'checkconnection': [ 'isSOCKETPOST', 'hasDeviceUDID' ],
-        'isloggedin': [ 'isDevice', 'isGET' ],
-        'register': ['isDevice', 'isPOST'],
+        'isloggedin':      [ 'isDevice', 'isGET' ],
+        'register':        [ 'isDevice', 'isPOST' ],
         // 'findByRegCode': true,
         // 'findByUDID': true,
         // 'changeName': true,

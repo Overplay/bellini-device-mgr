@@ -1,0 +1,14 @@
+{
+	"appId": "io.ourglass.listen",
+	"displayName": "Listen",
+	"icon": "listen@3x.png",
+	"defaultModel": {
+	},
+	"appType": "widget",
+	"appWidth": 10,
+	"appHeight": 50,
+	"patronControllable": true,
+	"releaseLevel": "dev",
+	"isVirtual": false,
+	"iconPath": "/blueline/opp/io.ourglass.listen/assets/icons/listen@3x.png"
+}
