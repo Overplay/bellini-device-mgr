@@ -38,7 +38,7 @@ app.controller( "managerDashboardController",
         );
 
         $scope.meplay = function () {
-            window.location.href = "http://138.68.230.239:8080/nghack/player/#!/play/" + ogAPI.getDeviceUDID();
+            window.location.href = "http://192.241.217.88:4000/ogcontrol/?aid=" + ogAPI.getDeviceUDID();
         }
 
         if ( !ogDevice.atVenueUUID ) {
