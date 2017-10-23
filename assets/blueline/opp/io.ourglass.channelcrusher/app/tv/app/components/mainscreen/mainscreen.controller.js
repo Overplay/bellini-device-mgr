@@ -47,7 +47,7 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI, $timeout
 
     function changeChannel(){
 
-        $scope.channelNumber = _.shuffle(safeChannels);
+        $scope.channelNumber = _.sample(safeChannels);
         ogAPI.changeChannel($scope.channelNumber);
         $timeout(changeChannel, DELAY );
 
