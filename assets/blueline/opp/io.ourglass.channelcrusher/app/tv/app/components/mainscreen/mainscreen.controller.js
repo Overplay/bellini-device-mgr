@@ -6,6 +6,8 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI, $timeout
 
     $log.debug( "mainScreenController has loaded" );
 
+    var DELAY = 15000;
+
     $scope.channelNumber = 2;
 
     function setChannelNumber() {
@@ -46,7 +48,7 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI, $timeout
 
         $scope.channelNumber = _.random(2, 700);
         ogAPI.changeChannel($scope.channelNumber);
-        $timeout(changeChannel, 7500);
+        $timeout(changeChannel, DELAY );
 
     }
 
