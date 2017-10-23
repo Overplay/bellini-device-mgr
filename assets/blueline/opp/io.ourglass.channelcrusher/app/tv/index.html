@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html ng-app="ogNowServingApp">
+<head>
+    <meta charset="UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width">
+
+    <script src="../../../../common/bower_components/angular/angular.min.js"></script>
+    <script src="../../../../common/bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="/js/dependencies/sails.io.js"></script>
+
+    <!-- App Main and AngularJS Routes -->
+    <script src="app/ogNowServingApp.module.js"></script>
+    <script src="../../../../common/js/ogAPIBL2.js"></script>
+
+    <!-- Controllers -->
+    <script src="app/components/mainscreen/mainscreen.controller.js"></script>
+
+    <!-- App Specific and Overridden CSS -->
+    <!--<link href="assets/css/style.css" rel="stylesheet">-->
+    <link href="../../../../common/css/og.css" rel="stylesheet">
+
+    <title>Ourglass Now Serving</title>
+
+    <style>
+
+        .title {
+            text-align: center;
+            padding-top: 3vh;
+            color: white;
+        }
+
+        .logo-holder {
+            width: 100vw;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        @keyframes blinker {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        .ticket-number {
+            font-size: 50vw;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            margin-top: 2%;
+            /*animation: blinker 1s linear infinite alternate;*/
+        }
+
+        .venue-data {
+            color: orange;
+        }
+
+    </style>
+</head>
+
+<body ng-controller="mainScreenController">
+    <div class="title">Channel Crusher</div>
+    <div class="ticket-number" ng-class="{'venue-data': sourceVenue}">{{ ticketNumber }}</div>
+
+    <div class="logo-holder">
+        <og-advert type="widget" interval="30000"></og-advert>
+    </div>
+</body>
+</html>

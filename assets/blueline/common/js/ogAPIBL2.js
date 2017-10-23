@@ -1073,7 +1073,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             /**
              * Changes the channel by making a post to /ogdevice/changechannel
              *
-             * @param {any} channelNum
+             * @param {number} channelNum
              * @returns
              */
             service.changeChannel = function ( channelNum ) {

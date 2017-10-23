@@ -1,0 +1,19 @@
+{
+	"appId": "io.ourglass.channelcrusher",
+	"displayName": "Channel Crusher",
+	"icon": "nowserve.png",
+	"defaultModel": {
+		"$venue": { "channelNumber": 202 },
+		"$device": {
+			"channelNumber": 202,
+			"useVenueData": true
+		}
+	},
+	"appType": "widget",
+	"appWidth": 10,
+	"appHeight": 35,
+	"patronControllable": true,
+	"releaseLevel": "dev",
+	"isVirtual": false,
+	"iconPath": "/blueline/opp/io.ourglass.channelcrusher/assets/icons/crusher.png"
+}
