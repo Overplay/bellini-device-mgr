@@ -6,7 +6,7 @@ app.controller( "mainScreenController", function ( $scope, $log, ogAPI, $timeout
 
     $log.debug( "mainScreenController has loaded" );
 
-    var DELAY = 10000;
+    var DELAY = 30000;
 
     var safeChannels = [ 202, 206, 620, 2, 207, 44, 4,5,7,9,212,11,14,219,20,22,36, 38, 42, 43, 54, 217, 218 ];
     $scope.channelNumber = 2;
