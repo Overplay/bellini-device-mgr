@@ -66,5 +66,9 @@ app.controller( "patronDashboardController", function ( $scope, ogDevice, $log, 
             uibHelper.headsupModal( "We Have a Problem!", "We seem to have lost communication with your Ourglass system. Please check your WiFi connection and make sure the Ourglass is turned on." );
         } )
 
+    $scope.meplay = function () {
+        window.location.href = "http://192.241.217.88:4000/ogcontrol/?aid=" + ogAPI.getDeviceUDID();
+    }
+
 
 } );
