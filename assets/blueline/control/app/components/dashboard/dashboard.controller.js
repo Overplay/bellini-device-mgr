@@ -51,7 +51,8 @@ app.controller( "managerDashboardController",
     } );
 
 
-app.controller( "patronDashboardController", function ( $scope, ogDevice, $log, uibHelper, ogNet ) {
+app.controller( "patronDashboardController", function ( $scope, ogDevice, $log, uibHelper, ogNet,
+    $state, $timeout, ogAPI, permissions ) {
 
     $log.info( "Loading patronDashboardController" );
 
