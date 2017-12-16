@@ -187,7 +187,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     return null;
 
                 _adIndex = (_adIndex + 1) % _adRotation.length;
-                if (!_adIndex) service.refreshAds(); // grab new ones on loop
+                if ( !_adIndex ) service.refreshAds(); // grab new ones on loop
                 return _adRotation[ _adIndex ];
 
             };
@@ -1090,12 +1090,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
             service.getGridForCurrentChannel = function () {
 
                 return this.getCurrentProgram()
-                    .then( function(program){
+                    .then( function ( program ) {
                         var channel = program.channelNumber; // could be undefined
-                        if (!channel) return $q.when(); // dump out a bag of undef
+                        if ( !channel ) return $q.when(); // dump out a bag of undef
                         return service.getGridForChannel( channel );
-                    });
-
+                    } );
 
 
             };
@@ -1230,6 +1229,85 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
         } )
 
+        // Main directive for inserting an crossfading advert in BL apps
+        .directive( 'ogAdvertXfade', function ( $log, ogAds, $interval, $timeout ) {
+            return {
+                restrict: 'E',
+                template: '<div style="position: relative; width: 100%; height: 100%;">' + '' +
+                          '<img width="100%" height="100%"' +
+                          'style="-webkit-transition: opacity 1.0s; transition: opacity 1.0s; position: absolute; top: 0; left: 0; display: block;"' +
+                          'ng-style="adstyle.bottom" ng-src=\"{{adurl.bottom}}\" failed-image/>'+
+                          '<img width="100%" height="100%"' +
+                          'style="-webkit-transition: opacity 1.0s; transition: opacity 1.0s; position: absolute; top: 0; left: 0; display: block;"' +
+                          'ng-style="adstyle.top" ng-src=\"{{adurl.top}}\" failed-image/>' +
+                          '</div>',
+                link:     function ( scope, elem, attrs ) {
+
+                    var bottomVisible = true;
+
+                    var interval = parseInt( attrs.interval ) || 15000;
+                    var adType = attrs.type || 'widget';
+
+                    if ( adType !== 'widget' && adType !== 'crawler' ) {
+                        throw Error( "Unsupported ad type. Must be widget or crawler" );
+                    }
+
+                    var intervalPromise;
+
+                    scope.adstyle = { bottom: { opacity: 0.0 }, top: { opacity: 0.0 } };
+
+                    // grab the first two ads
+                    scope.adurl = { bottom: ogAds.getImgUrl( adType ) };
+                    ogAds.getNextAd();
+                    scope.adurl.top = ogAds.getImgUrl( adType );
+
+                    $timeout(function(){
+                            setVisible();
+                    }, 2500);  // initial load
+
+                    var preloadedImg = new Image();
+                    preloadedImg.onload = function(){
+                        $log.debug('Preload complete: '+preloadedImg.src);
+                        setVisible(); // flip to and bottom
+                        console.log( scope.adurl );
+                    };
+
+
+                    function setVisible(){
+                        if (bottomVisible){
+                            console.log('showing bottom');
+                            scope.adurl.bottom = preloadedImg.src;
+                            scope.adstyle = { bottom: { opacity: 1.0 }, top: { opacity: 0.0 } };
+                        } else {
+                            console.log( 'showing top' );
+                            scope.adurl.top = preloadedImg.src;
+                            scope.adstyle = { bottom: { opacity: 0.0 }, top: { opacity: 1.0 } };
+                        }
+                        bottomVisible = !bottomVisible; // invert for next pass
+                    }
+
+                    function update() {
+                        console.log('Update called');
+                        ogAds.getNextAd();
+                        var nextUrl = ogAds.getImgUrl(adType);
+                        preloadedImg.src = nextUrl;
+
+                    }
+
+                    update();
+
+                    intervalPromise = $interval( update, interval );
+
+                    scope.$on( '$destroy', function () {
+                        $interval.cancel( intervalPromise );
+                    } );
+
+                }
+            };
+
+        } )
+
+
 
         //directive for placing an advertisiment in a project
         .directive( 'ogAdvertisement', function () {
@@ -1261,6 +1339,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     } else {
                         setCurrentAdUrl();
                     }
+
                     /**
                      * Sets current ad url depending on type
                      *
