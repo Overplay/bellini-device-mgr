@@ -5,9 +5,12 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-var Promise = require( 'bluebird' );
+const Promise = require( 'bluebird' );
+const _ = require('lodash');
 
-function responseChainError(message, responseFunc){
+let _res; //used to make res available to the functions below
+
+function ResponseChainError(message, responseFunc){
     var error = new Error( message );
     error.responseFunc = responseFunc;
     return error;
@@ -39,7 +42,7 @@ function retrieveAppDataAndDevice( dataScope, appid, deviceid ) {
         return devicePromise
             .then( function ( device ) {
                 if ( !device )
-                    throw new Error( "No such device" );
+                    throw new ResponseChainError( "No such device", _res.badRequest );
 
                 return Promise.props( {
                     data:   AppData.findOne( {
@@ -360,11 +363,13 @@ module.exports = {
         if ( !params )
             return res.badRequest( { error: "missing udid or appid" } );
 
+        _res = res; // so we can use chain error
+
         App.findOne( { appId: params.appid } )
             .then( function ( app ) {
 
                 if ( !app ) {
-                    throw responseChainError("No such app", res.badRequest);
+                    throw ResponseChainError("No such app", res.badRequest);
                 }
 
                 var dataPromises = {

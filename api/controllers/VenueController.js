@@ -26,7 +26,7 @@ module.exports = {
 
     devices: function ( req, res ) {
 
-        if ( req.method != 'GET' )
+        if ( req.method !== 'GET' )
             return res.badRequest( { error: "BAD VERB" } );
 
         OGDevice.find({ atVenueUUID: req.allParams().atVenueUUID })
@@ -50,24 +50,24 @@ module.exports = {
             return res.badRequest( { error: "Sockets only, sonny" } );
         }
 
-        if ( req.method != 'POST' )
+        if ( req.method !== 'POST' )
             return res.badRequest( { error: "That's not how to subscribe, sparky!" } );
 
-        //OK, we need a deviceUDID
-        var params = req.allParams();
+        //OK, we need a venueUUID
+        const params = req.allParams();
 
-        if ( !params.venueId )
-            return res.badRequest( { error: "Missing venueId" } );
+        if ( !params.venueUUID )
+            return res.badRequest( { error: "Missing venueUUID" } );
 
-        var room = "venue_" + params.deviceUDID;
+        var room = "venue_" + params.venueUUID;
 
         sails.sockets.join( req, room );
 
         // Broadcast a notification to all the sockets who have joined
         // the "funSockets" room, excluding our newly added socket:
         sails.sockets.broadcast( room,
-            'VENUE-JOIN',
-            { message: 'Welcome to the Venue room for ' + params.venueId },
+            room,
+            { message: 'Welcome to the Venue room for ' + params.venueUUID },
             req );
 
         return res.ok( { message: 'joined' } );
@@ -80,16 +80,17 @@ module.exports = {
             return res.badRequest( { error: "Sockets only, sonny" } );
         }
 
-        if ( req.method != 'POST' )
+        if ( req.method !== 'POST' )
             return res.badRequest( { error: "That's not how to message, sparky!" } );
 
         //OK, we need a venueId
-        var params = req.allParams();
+        const params = req.allParams();
 
-        if ( !params.venueId || !params.message )
+        if ( !params.venueUUID || !params.message )
             return res.badRequest( { error: "Missing params" } );
 
-        sails.sockets.broadcast( "venue_" + params.venueId, 'VENUE-DM', params.message, req );
+        const room = "venue_" + params.venueUUID;
+        sails.sockets.broadcast( room, room, params.message, req );
 
         return res.ok( params );
 
@@ -97,7 +98,7 @@ module.exports = {
 
     findByUUID: function ( req, res ) {
 
-        if ( req.method != 'GET' )
+        if ( req.method !== 'GET' )
             return res.badRequest( { error: "Bad Verb" } );
 
         //OK, we need a venueId

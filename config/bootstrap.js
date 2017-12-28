@@ -70,6 +70,12 @@ module.exports.bootstrap = function ( cb ) {
                 });
 
         } )
+        .then(()=>{
+            return OGDevice.updateOrCreate({
+                deviceUDID: 'testy-mctesterson',
+                name: 'Simulated Test Device'
+            });
+        })
         .then( function () {
 
             sails.log.silly( "Installing stock apps from bootstrap.js module" );
