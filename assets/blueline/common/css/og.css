@@ -6373,6 +6373,38 @@ body.curtain-open {
   color: #555555;
 }
 
+.top1vh {
+  margin-top: 1vh;
+}
+
+.top2vh {
+  margin-top: 2vh;
+}
+
+.top10vh {
+  margin-top: 10vh;
+}
+
+.top20vh {
+  margin-top: 20vh;
+}
+
+.top30vh {
+  margin-top: 30vh;
+}
+
+.bot1vh {
+  margin-bottom: 1vh;
+}
+
+.bot2vh {
+  margin-bottom: 2vh;
+}
+
+.bot3vh {
+  margin-bottom: 3vh;
+}
+
 /*
  <color name="OGGREEN">#52B85E</color>
     <color name="OGDARKGRAY">#333333</color>

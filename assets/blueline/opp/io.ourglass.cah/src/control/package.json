@@ -1,7 +1,7 @@
 {
   "name": "io.ourglass.cah",
   "version": "2.0.0",
-  "description": "Second gen Cards Against Humanity for Ourglass",
+  "description": "Second gen Cards Against Humanity for Ourglass (Control Side)",
   "main": "webpack.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,13 +10,14 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "html-webpack-plugin": "^2.30.1",
-    "ogapi-es6": "^0.1.1",
     "@uirouter/angularjs": "^1.0.11",
     "angular": "^1.6.7",
     "angular-animate": "^1.6.7",
     "angular-sanitize": "^1.6.7",
     "angular-touch": "^1.6.7",
-    "animate.css": "^3.5.2"
+    "animate.css": "^3.5.2",
+    "html-webpack-plugin": "^2.30.1",
+    "ogapi-es6": "^0.1.3",
+    "ui-bootstrap": "^0.1.10"
   }
 }

@@ -8,9 +8,9 @@ const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 
 
 module.exports = {
-    entry:     { app: [ './src/cahtvapp.module.js'] },
+    entry:     { app: [ './src/cahcontrolapp.module.js'] },
     output:    {
-        path:     path.resolve( __dirname, '../../app/tv' ),
+        path:     path.resolve( __dirname, '../../app/control' ),
         filename: 'app.bundle.js'
     },
     devtool:   'inline-source-map',

@@ -10,7 +10,7 @@ module.exports = {
 
     rooms: function(req, res){
 
-        var rooms = sails.sockets.rooms();
+        const rooms = sails.sockets.rooms();
         return res.ok(rooms);
 
     },
