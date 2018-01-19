@@ -1,4 +1,4 @@
-require( './connect.scss' );
+require( './lobby.scss' );
 
 import { name as registrationState } from '../registration/registration.component'
 
@@ -8,55 +8,53 @@ const REG_CLOSED = "A game is already in progress! If you'd like to watch the ga
 
 const MSG2 = "If you'd prefer to just watch the game, click the WATCH button below.";
 
-class ConnectCompController {
-    constructor( $log, cahControl, $rootScope, $timeout, $state, uibHelper ) {
+class LobbyController {
+    constructor( $log, cahControl, $rootScope, $timeout, $state, uibHelper, $stateParams ) {
 
         this.$log = $log;
-        this.$log.debug( 'loaded Connecting Controller.' );
+        this.$log.debug( 'loaded Lobby Controller.' );
         this.cahControl = cahControl;
         this.$timeout = $timeout;
         this.$state = $state;
         this.uibHelper = uibHelper;
+        this.$stateParams = $stateParams;
 
         this.$rootScope = $rootScope;
         this.connected = false;
 
-        this.bcastListeners = [
-            $rootScope.$on( 'GAME_STATE', ( ev, data ) => {
-                this.$log.debug( "Got GAME_STATE notice in ConnectCompController" );
-                this.connected = true;
-                this.header = 'CONNECTED';
-                this.footer = '';
-                // Kill the no connection timer
-                this.$timeout.cancel(this.noConnectionTimeout);
-
-                switch(data.state){
-
-                    case 'registration':
-                        this.message = REG_OPEN;
-                        this.message2 = MSG2;
-                        this.showRegButton = true;
-                        this.showWatchButton = true;
-                        break;
-
-                    default:
-                        this.message = REG_CLOSED;
-                        this.showWatchButton = true;
-
-                }
-            } )
-        ];
+        this.header = 'GAME LOBBY';
 
     }
 
-    goToAppState(appState){
+    goToState(sceneState){
 
+        switch ( sceneState ) {
+
+            case 'registration':
+                this.message = REG_OPEN;
+                this.message2 = MSG2;
+                this.showRegButton = true;
+                this.showWatchButton = true;
+                this.connected = true;
+                break;
+
+            default:
+                this.message = REG_CLOSED;
+                this.showWatchButton = true;
+
+        }
     }
 
 
     $onInit() {
         this.$log.debug( 'In $onInit' );
-        this.try2Connect();
+
+        if (this.$stateParams.state){
+            this.goToState( this.$stateParams.state );
+        } else {
+            this.try2Connect();
+        }
+
     }
 
     try2Connect(){
@@ -65,14 +63,16 @@ class ConnectCompController {
         this.showTryAgainButton = false;
         this.$timeout( () => {
             this.$log.debug( '~~~ Checking game state' );
-            this.cahControl.getGameState(); // triggers the callback above
+            this.connected = true;
+            this.footer = '';
+            this.goToState(this.cahControl.gameState);
         }, 3000 );
 
-        this.noConnectionTimeout = this.$timeout(()=>{
-            this.header = "CAN'T CONNECT!";
-            this.footer = '';
-            this.showTryAgainButton = true;
-        }, 5000);
+        // this.noConnectionTimeout = this.$timeout(()=>{
+        //     this.header = "CAN'T CONNECT!";
+        //     this.footer = '';
+        //     this.showTryAgainButton = true;
+        // }, 5000);
     }
 
     goReg(){
@@ -82,7 +82,6 @@ class ConnectCompController {
 
     $onDestroy() {
         this.$log.debug( 'In $onDestroy' );
-        this.bcastListeners.forEach( ( ureg ) => ureg() );
     }
 
     exit() {
@@ -91,16 +90,16 @@ class ConnectCompController {
 
     // injection here
     static get $inject() {
-        return [ '$log', 'cahControlService', '$rootScope', '$timeout', '$state', 'uibHelper' ];
+        return [ '$log', 'cahControlService', '$rootScope', '$timeout', '$state', 'uibHelper', '$stateParams' ];
     }
 }
 
-export const name = 'connectComponent';
+export const name = 'lobbyComponent';
 
 const Component = {
     $name$:       name,
     bindings:     {},
-    controller: ConnectCompController,
+    controller: LobbyController,
     controllerAs: '$ctrl',
     template:     `
         <div class="anim-holder">
@@ -111,7 +110,7 @@ const Component = {
                 <div class="sk-cube4 sk-cube"></div>
                 <div class="sk-cube3 sk-cube"></div>
             </div>
-            <div class="curse" aa="animated  shake" ng-if="$ctrl.showTryAgainButton">¯\\_(ツ)_/¯</div>
+            <div class="curse" aa="animated  shake" ng-if="$ctrl.showTryAgainButton">¯\(ツ)_/¯</div>
             
             <div class="message">{{$ctrl.message}}</div>
             <div class="message top2vh bot3vh">{{$ctrl.message2}}</div>
@@ -125,7 +124,9 @@ const Component = {
             <button class="btn btn-warning btn-full" ng-if="$ctrl.showTryAgainButton" ng-click="$ctrl.try2Connect()">TRY AGAIN</button>
         </div>
 
-</div>
+        </div>
+        <p class="debug-footer">lobby</p>
+
 
 `
 };

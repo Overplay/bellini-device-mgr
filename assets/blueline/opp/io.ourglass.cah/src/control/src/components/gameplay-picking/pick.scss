@@ -1,0 +1,78 @@
+.blank {
+  margin-left: 5px;
+  margin-right: 5px;
+  font-size: 2em;
+  border-bottom: 2px solid white;
+}
+
+.round-timer {
+  text-align: center;
+  border: 1px solid white;
+  border-radius: 5px;
+  margin: 5%;
+  size: 1.5rem;
+  padding: 3%;
+  background-color: transparent;
+}
+
+.yellow-bg {
+  background-color: #F69320;
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  transition: background-color 1s;
+}
+
+.red-bg {
+  background-color: #EF4839;
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  transition: background-color 1s;
+}
+
+.green-bg {
+  background-color: #52B85E;
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  transition: background-color 1s;
+}
+
+.black-top {
+  border-radius: 5px;
+  background-color: black;
+  padding: 5%;
+  text-align: center;
+  margin: 5%;
+  font-size: 1.5rem;
+
+  h1 {
+    color: yellow;
+    font-size: 2rem;
+    text-align: center;
+    margin: 0;
+  }
+
+  .prompt {
+    margin: 5% 5% 10% 5%;
+  }
+
+  .judge {
+    color: #a0a0a0;
+
+  }
+}
+
+.hand-holder {
+  //border: 1px solid orangered;
+  width: 100%;
+  //padding: 5%;
+  .centered {
+    margin: 0 auto;
+  }
+}
+

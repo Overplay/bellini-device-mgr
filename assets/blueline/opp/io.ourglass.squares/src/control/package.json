@@ -1,0 +1,23 @@
+{
+  "name": "io.ourglass.squares",
+  "version": "2.0.0",
+  "description": "Second gen Squares (Control Side)",
+  "main": "webpack.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@uirouter/angularjs": "^1.0.13",
+    "angular": "^1.6.7",
+    "angular-animate": "^1.6.7",
+    "angular-sanitize": "^1.6.7",
+    "angular-touch": "^1.6.7",
+    "animate.css": "^3.5.2",
+    "html-webpack-plugin": "^2.30.1",
+    "ogapi-es6": "^0.1.7",
+    "ui-bootstrap": "^0.1.10"
+  }
+}

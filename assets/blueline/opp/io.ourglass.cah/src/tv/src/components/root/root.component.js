@@ -1,11 +1,11 @@
-require( '../assets/cahtv.scss' );
+require( '../../assets/cahtv.scss' );
 
 
-class Controller {
+class RootController {
     constructor( $log, ogAPI, $rootScope, cahGameService ) {
 
         this.$log = $log;
-        this.$log.debug( 'loaded Widget Master Controller.' );
+        this.$log.debug( 'loaded Root Controller.' );
         this.ogAPI = ogAPI;
         this.$rootScope = $rootScope;
         this.gameService = cahGameService;
@@ -17,8 +17,6 @@ class Controller {
     $onInit() {
         this.$log.debug( 'In $onInit' );
 
-        this.state = this.gameService.getGameState();
-        this.showApp = true;
     }
 
 
@@ -32,23 +30,22 @@ class Controller {
     }
 }
 
-export const name = 'widgetComponent';
+export const name = 'rootComponent';
 
 const Component = {
     $name$:       name,
     bindings:     {},
-    controller:   Controller,
+    controller:   RootController,
     controllerAs: '$ctrl',
     template:     `
 <div class="applet">
     <div class="apphdr">Cards Against Humanity</div>
     <div class="appsubhdr">SPORTS EDITION</div>
-         <h3>State:{{$ctrl.state}}</h3>   
+         <ui-view></ui-view> 
          <div class="ad-holder">
         <og-advert-xfade type="widget"></og-advert-xfade>
     </div>
 </div>
-
       `
 };
 

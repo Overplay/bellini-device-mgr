@@ -5,36 +5,8 @@ class RegController {
     constructor( $log, cahGameService ) {
 
         this.$log = $log;
-        this.$log.debug( 'loaded Widget Controller.' );
-        this.ogAds = ogAds;
-        this.ogAPI = ogAPI;
-
-        this.game = new CAHGame();
-
-        this.deviceModelUpdate = this.deviceModelUpdate.bind( this );
-        this.venueModelUpdate = this.venueModelUpdate.bind( this );
-        this.appMsgCallback = this.appMsgCallback.bind( this );
-        this.sysMsgCallback = this.sysMsgCallback.bind( this );
-        this.venueMsgCallback = this.venueMsgCallback.bind( this );
-
-        this.ogAPI.init( {
-            appType:             'tv',
-            appId:               'io.ourglass.widgettest',
-            deviceModelCallback: this.deviceModelUpdate,
-            venueModelCallback:  this.venueModelUpdate,
-            appMsgCallback:      this.appMsgCallback,
-            sysMsgCallback:      this.sysMsgCallback,
-            venueMsgCallback:    this.venueMsgCallback
-        } )
-            .then( ( modelData ) => {
-                this.deviceModel = modelData.device;
-                this.venueModel = modelData.venue;
-            } )
-            .catch( ( err ) => {
-                this.$log.error( 'Calling init failed!' );
-                this.$log.error( err.data.error );
-            } );
-
+        this.$log.debug( 'loaded TV Reg Controller.' );
+        this.gameService = cahGameService;
 
     }
 
@@ -48,25 +20,6 @@ class RegController {
         this.$log.debug( 'In $onDestroy' );
     }
 
-    deviceModelUpdate( model ) {
-        this.deviceModel = model;
-    }
-
-    venueModelUpdate( model ) {
-        this.venueModel = model;
-    }
-
-    appMsgCallback( data ) {
-        this.appMsg = data;
-    }
-
-    sysMsgCallback( data ) {
-        this.sysMsg = data;
-    }
-
-    venueMsgCallback( data ) {
-        this.venueMsg = data;
-    }
 
     // injection here
     static get $inject() {
@@ -74,25 +27,18 @@ class RegController {
     }
 }
 
-export const name = 'widgetComponent';
+export const name = 'regComponent';
 
 const Component = {
     $name$:       name,
     bindings:     {},
-    controller:   Controller,
+    controller:   RegController,
     controllerAs: '$ctrl',
     template:     `
-        <div class="widget-holder">
-            <p>DMod: {{$ctrl.deviceModel}}</p>
-            <p>VMod: {{$ctrl.venueModel}}</p>
-            <p>AMsg: {{$ctrl.appMsg}}</p>
-            <p>VMsg: {{$ctrl.venueMsg}}</p>
-            <p>SMsg: {{$ctrl.sysMsg}}</p>
-
-            <div class="ad-holder">
-                <og-advert-xfade type="widget"></og-advert-xfade>
-            </div>
-        </div>`
+        <div>State: {{$ctrl.gameService.gameState}}</div>
+        <div>Players: {{$ctrl.gameService.spotsLeft}}</div>
+        <ul><li ng-repeat="p in $ctrl.gameService.players">{{ p.name }}</li> </ul>
+`
 };
 
 export default Component
