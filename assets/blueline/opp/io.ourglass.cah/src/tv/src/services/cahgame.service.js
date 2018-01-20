@@ -1,6 +1,6 @@
 import CAHGame from '../services/cahgame'
 
-const ENABLE_INACTIVITY_TIMERS = false;
+const ENABLE_INACTIVITY_TIMERS = true;
 
 const REG_TIME_WINDOW = 60; // 1 minute
 const PICK_TIME_LIMIT = 120; // 2 minutes
@@ -185,6 +185,8 @@ export default class CahGameService {
         this.ogAPI.saveVenueModel();
     }
 
+
+
     gameStateChangeCb( newState ) {
         this.$log.debug( 'State change callback. New state: ' + newState );
         this.cancelStateTimer(); // precaution
@@ -219,6 +221,7 @@ export default class CahGameService {
                 break;
 
             case 'pick':
+                this.cancelStateTimer();
                 this.$log.debug('Deal complete! Distributing cards and setting an alarm for 2 min.');
                 this.startStateTimer(120, 'judging');
                 break;
@@ -228,6 +231,13 @@ export default class CahGameService {
                 this.$log.debug( 'OK, time to judge setting an alarm for 2 min.' );
                 this.startStateTimer( 120, 'autojudge' );
                 break;
+
+            case 'gameover':
+                this.cancelStateTimer();
+                this.$log.debug( 'OK, game over, rest in 60 seconds' );
+                this.startStateTimer( 60, 'reset' );
+                break;
+
 
         }
     }
@@ -260,6 +270,14 @@ export default class CahGameService {
             this.$timeout.cancel( _stateTimer );
             _stateTimer = null;
         }
+    }
+
+    get stateTimerValue(){
+        return _stateTimerDelay;
+    }
+
+    get stateTimerRunning(){
+        return !!_stateTimer;
     }
 
     broadcast( type, msg ) {

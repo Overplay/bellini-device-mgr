@@ -28,6 +28,20 @@ class SBController {
         return this.cahControl.upstreamGameState;
     }
 
+    getLeftMsg(){
+        if (this.cahControl.venueModel && this.cahControl.venueModel.players){
+            return 'Hand ' + (this.cahControl.venueModel.handNum+1) + ' of ' + this.cahControl.venueModel.players.length;
+        }
+        return "";
+    }
+
+    getRightMsg() {
+        if ( this.cahControl.myPlayer ) {
+            return 'Wins: ' + this.cahControl.myPlayer.handsWon.length;
+        }
+        return "";
+    }
+
 
     // injection here
     static get $inject() {
@@ -44,7 +58,9 @@ const Component = {
     controllerAs: '$ctrl',
     template:     `
         <div class="state-banner" ng-if="$ctrl.showBanner">
-            {{ $ctrl.getMessage() | uppercase }}
+             <div class="left-ban">{{ $ctrl.getLeftMsg() }}</div>
+                <div class="center-ban">{{ $ctrl.getMessage() }}</div>
+                <div class="right-ban">{{ $ctrl.getRightMsg() }}</div>
         </div>
 `
 };

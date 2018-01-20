@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import Promise from 'bluebird'
 
 import {name as WatchingState} from '../components/gameplay-watching/gp-watch.component'
 import {name as PickingState} from '../components/gameplay-picking/gp-picking.component'
@@ -6,6 +7,7 @@ import {name as JudgingState} from '../components/gameplay-judging/gp-judge.comp
 import {name as LobbyState} from '../components/lobby/lobby.component'
 import {name as RegState} from '../components/registration/registration.component'
 import {name as WFRState} from '../components/gameplay-waiting-for-result/gp-wfr.component'
+import {name as GameOverState} from '../components/gameover/gameover.component'
 
 //let _playerName = 'Chibert'; //testing
 //let _myHand;
@@ -103,6 +105,17 @@ export default class CahControlService {
             this.$log.debug( '===> Venue Model Game State CHANGE to: ' + this.venueModel.state );
             this.upstreamGameState = this.venueModel.state;
             this.gameStateChange();
+        }
+    }
+
+    // TODO DIRTY!
+    getPlayersPromise() {
+        if ( this.venueModel && this.venueModel.players ) {
+            return Promise.resolve( this.venueModel.players );
+        } else {
+            return this.$timeout(2000).then(()=>{
+                return this.getPlayersPromise()
+            });
         }
     }
 
@@ -262,6 +275,12 @@ export default class CahControlService {
                     this.$log.debug( "This handset is not watching or playing, kicking to lobby" );
                     this.$state.go( LobbyState );
                 }
+                break;
+
+            case 'gameover':
+                this.$log.debug( 'State change to gameover' );
+                this.$state.go( GameOverState );
+
         }
     }
 
@@ -371,6 +390,7 @@ export default class CahControlService {
             this.roundTimerTimeout = this.$timeout( this.roundTimerTick.bind( this ), 1000 );
         } else {
             this.$log.debug( 'Round timer expired!' );
+            if (this.roundTimerCB) this.roundTimerCB();
         }
     }
 
@@ -378,9 +398,10 @@ export default class CahControlService {
         if ( this.roundTimerTimeout ) this.$timeout.cancel( this.roundTimerTimeout ); //kill olde
     }
 
-    startRoundTimer(seconds) {
+    startRoundTimer(seconds, cb) {
         this.killRoundTimer();
         this.roundTimerSec = seconds;
+        this.roundTimerCB = cb;
         this.roundTimerTick();
     }
 

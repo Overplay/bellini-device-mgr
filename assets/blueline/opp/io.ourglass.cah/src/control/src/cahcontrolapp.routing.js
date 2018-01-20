@@ -5,6 +5,7 @@ import {name as judgeCompName} from './components/gameplay-judging/gp-judge.comp
 import {name as pickCompName} from './components/gameplay-picking/gp-picking.component'
 import {name as watchCompName} from './components/gameplay-watching/gp-watch.component'
 import {name as wfrCompName} from './components/gameplay-waiting-for-result/gp-wfr.component'
+import {name as gameoverCompName} from './components/gameover/gameover.component'
 
 routing.$inject = [ '$urlRouterProvider', '$locationProvider', '$stateProvider' ];
 
@@ -52,6 +53,16 @@ export default function routing( $urlRouterProvider, $locationProvider, $statePr
         .state( judgeCompName, {
             url:       '/judge',
             component: judgeCompName
+        } )
+
+        .state( gameoverCompName, {
+            url:       '/gameover',
+            component: gameoverCompName,
+            resolve: {
+                players: function(cahControlService){
+                    return cahControlService.getPlayersPromise();
+                }
+            }
         } )
 
 

@@ -1,0 +1,58 @@
+@import "../../assets/ogcolors";
+
+.results-holder {
+  width: 90vw;
+  background-color: black;
+  padding: 3%;
+  margin: 6% auto;
+  border-radius: 3%;
+
+  h1 {
+    font-size: 2rem;
+    margin-top: 0;
+    text-align: center;
+    color: $og-blue;
+  }
+
+
+
+}
+
+.place-badge {
+  //background-color: $og-red;
+  //padding: 3%;
+  //border-radius: 50%;
+  color: $og-orange;
+  font-size: 2rem;
+  margin-right: 5%;
+}
+
+.res-holder {
+  width: 100%;
+  margin: 10%;
+  display: flex;
+
+  .place {
+    flex-grow: 1;
+    text-align: center;
+    background-color: $og-blue;
+    color: white;
+    flex-basis: 5%;
+    border-radius: 10%;
+    min-width: 10%;
+    //background: rgba(39, 183, 236, 1);
+    //background: -moz-linear-gradient(left, rgba(39, 183, 236, 1) 0%, rgba(0, 0, 0, 0) 100%);
+    //background: -webkit-gradient(left top, right top, color-stop(0%, rgba(39, 183, 236, 1)), color-stop(100%, rgba(0, 0, 0, 0)));
+    //background: -webkit-linear-gradient(left, rgba(39, 183, 236, 1) 0%, rgba(0, 0, 0, 0) 100%);
+    //background: -o-linear-gradient(left, rgba(39, 183, 236, 1) 0%, rgba(0, 0, 0, 0) 100%);
+    //background: -ms-linear-gradient(left, rgba(39, 183, 236, 1) 0%, rgba(0, 0, 0, 0) 100%);
+    //background: linear-gradient(to right, rgba(39, 183, 236, 1) 0%, rgba(0, 0, 0, 0) 100%);
+    //filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#27b7ec', endColorstr='#000000', GradientType=1);
+  }
+
+  .name {
+    padding-left: 5%;
+    flex-grow: 8;
+    text-align: left;
+  }
+}

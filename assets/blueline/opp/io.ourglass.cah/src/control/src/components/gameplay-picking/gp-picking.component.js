@@ -1,5 +1,6 @@
 require( './pick.scss' );
 
+import _ from 'lodash';
 import {name as wfrState} from '../gameplay-waiting-for-result/gp-wfr.component'
 
 let _broadcastListeners = [];
@@ -44,8 +45,13 @@ class PickController {
         if ( this.roundTimerSec ) {
             this.roundTimerTimeout = this.$timeout( this.roundTimerTick.bind( this ), 1000 );
         } else {
-            this.$log.debug( 'Round timer expired!' );
-            this.$state.go(wfrState);
+            this.$log.debug( 'Round timer expired! Playing a random card.' );
+            if (!this.hasChosen){
+                this.uibHelper.dryToast( 'You Snoozed, So We Played 4 Ya!', 2000 );
+                this.$timeout( () => {
+                    this.cahControl.playCard( _.sample( this.hand.myHand ) );
+                }, 2000 );
+            }
         }
 
     }
@@ -86,9 +92,11 @@ class PickController {
     }
 
     chose( card ) {
+
+        if (this.roundTimerSec===0) return;
+
         this.$log.debug( "Chose: " + card.prompt );
         this.hasChosen = true;
-        this.chosenCard = card;
         this.cahControl.playCard( card );
     }
 
@@ -138,7 +146,6 @@ const Component = {
             </div>
         </div>
         
-        <div ng-if="$ctrl.cahControl.upstreamGameState==='judging">JUDGESHIT</div>
         <p class="debug-footer">picking for: {{ $ctrl.cahControl.playerName }}</p>
 
 `

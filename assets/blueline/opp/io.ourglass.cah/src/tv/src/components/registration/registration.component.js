@@ -35,8 +35,9 @@ const Component = {
     controller:   RegController,
     controllerAs: '$ctrl',
     template:     `
-        <div>State: {{$ctrl.gameService.gameState}}</div>
-        <div>Players: {{$ctrl.gameService.spotsLeft}}</div>
+        <h1>REGISTRATION OPEN</h1>
+        <p>{{$ctrl.gameService.spotsLeft}} open spots</p>
+        <p ng-if="$ctrl.gameService.stateTimerRunning">{{$ctrl.gameService.stateTimerValue | minsec }}</p>
         <ul><li ng-repeat="p in $ctrl.gameService.players">{{ p.name }}</li> </ul>
 `
 };

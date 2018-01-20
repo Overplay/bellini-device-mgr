@@ -2,9 +2,30 @@
 
 .state-banner {
   width: 100vw;
-  text-align: center;
   background-color: $og-lightgray;
   color: white;
   padding: 2%;
   margin-top: -5px;
+  display: flex;
+
+  .left-ban {
+    flex-grow: 1;
+    text-align: left;
+    //border: 1px solid red;
+
+  }
+
+  .right-ban {
+    flex-grow: 1;
+    text-align: right;
+    //border: 1px solid red;
+
+  }
+
+  .center-ban {
+    flex-grow: 5;
+    text-align: center;
+    //border: 1px solid deepskyblue;
+
+  }
 }

@@ -22,7 +22,7 @@ let _numPlayedWhiteCards = 0;
 let _stateChangeCb;
 
 const NUMBER_OF_ROUNDS = 1;
-const MAX_PLAYERS = 4;
+const MAX_PLAYERS = 6;
 
 /**
  *
@@ -61,7 +61,6 @@ export default class CAHGame{
         _numPlayedWhiteCards = 0;
         _dealt = false;
         CAHGame.changeGameStateTo('reset');
-
     }
 
     static changeGameStateTo( newState ) {
@@ -147,12 +146,13 @@ export default class CAHGame{
     }
 
     static newHand(){
+
         _handNumber++;
         if (_handNumber === _players.length) {
             console.log('CAHGame has hit end of round.');
             _handNumber = 0;
             _roundNumber++;
-            if ( _roundNumber === NUMBER_OF_ROUNDS ){
+            if ( _roundNumber >= NUMBER_OF_ROUNDS ){
                 console.log("CAHGame has hit max rounds");
                 CAHGame.changeGameStateTo( 'gameover' );
                 return; // bail
@@ -161,9 +161,11 @@ export default class CAHGame{
 
         _currentBlackCard = _blackDeck.draw();
         _players.forEach( ( p ) => {
+            p.resetForNextRound();
             if ( p.hand.length < 7 )
                 p.hand.push( _whiteDeck.draw() );
         } );
+
         CAHGame.newJudge();
         CAHGame.changeGameStateTo( 'pick' );
 
@@ -179,7 +181,7 @@ export default class CAHGame{
     // }
 
     static newJudge(){
-        _judge = _players[ _roundNumber - 1 ];
+        _judge = _players[ _handNumber  ];
         _currentBlackCard = _blackDeck.draw();
     }
 

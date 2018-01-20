@@ -25,12 +25,12 @@ export default class Player{
 
 
     resetForNextRound(){
-        this.playWhiteCard = null;
+        this.playedWhiteCard = null;
     }
 
     checkIfWinner(card){
         if (this.playedWhiteCard){
-            if ( this.playWhiteCard.id === card.id ) {
+            if ( this.playedWhiteCard.id === card.id ) {
                 console.log( this.name + ' is the winner of this round!');
                 this.handsWon.push( card );
             }

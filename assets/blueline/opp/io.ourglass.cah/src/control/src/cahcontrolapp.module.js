@@ -26,6 +26,7 @@ import HandComponent from './components/hand-of-cards/hand-of-cards.component'
 import ArrayComponent from './components/array-of-cards/array-of-cards.component'
 import StateBannerComponent from './components/state-banner/state-banner.component'
 import WFRComponent from './components/gameplay-waiting-for-result/gp-wfr.component'
+import GOComponent from './components/gameover/gameover.component'
 
 const ngModule = angular.module( 'ngApp', [ ourglassAPI, ngAnimate, ngTouch, uirouter, uiOGMobile ] );
 
@@ -42,6 +43,7 @@ ngModule.component( HandComponent.$name$, HandComponent );
 ngModule.component( ArrayComponent.$name$, ArrayComponent );
 ngModule.component( StateBannerComponent.$name$, StateBannerComponent );
 ngModule.component( WFRComponent.$name$, WFRComponent );
+ngModule.component( GOComponent.$name$, GOComponent);
 
 // Configure routing
 ngModule.config( routing );
