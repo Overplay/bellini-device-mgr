@@ -6,7 +6,7 @@ import _ from 'lodash'
 
 let _broadcastListeners = [];
 
-let AUTO_REG = true;
+let AUTO_REG = false;
 
 function randomName(){
 

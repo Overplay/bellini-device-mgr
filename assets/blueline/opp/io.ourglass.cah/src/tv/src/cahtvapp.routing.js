@@ -1,5 +1,6 @@
 import {name as regCompName} from './components/registration/registration.component'
-import {name as rootCompName} from './components/root/root.component'
+import {name as gpCompName} from './components/gameplay/gameplay.component'
+import {name as goCompName} from './components/gameover/gameover.component'
 
 routing.$inject = [ '$urlRouterProvider', '$locationProvider', '$stateProvider' ];
 
@@ -13,9 +14,19 @@ export default function routing( $urlRouterProvider, $locationProvider, $statePr
 
     $stateProvider
 
-        .state( 'registration', {
+        .state( regCompName, {
             url:       '/registration',
             component: regCompName
+        } )
+
+        .state( gpCompName, {
+            url:       '/gameplay',
+            component: gpCompName
+        } )
+
+        .state( goCompName, {
+            url:       '/gameover',
+            component: goCompName
         } )
 
 

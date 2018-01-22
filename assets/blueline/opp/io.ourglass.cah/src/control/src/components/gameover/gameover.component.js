@@ -47,7 +47,7 @@ const Component = {
             <div class="place">{{p.handsWon.length }}</div>
             <div class="name">{{p.name}}</div>
         </div>
-        </div>
+      
         <p class="debug-footer">GameOver</p>
 
 `

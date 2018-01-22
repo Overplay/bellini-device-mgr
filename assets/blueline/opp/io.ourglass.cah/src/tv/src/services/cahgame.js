@@ -22,7 +22,7 @@ let _numPlayedWhiteCards = 0;
 let _stateChangeCb;
 
 const NUMBER_OF_ROUNDS = 1;
-const MAX_PLAYERS = 6;
+const MAX_PLAYERS = 3;
 
 /**
  *
@@ -235,6 +235,10 @@ export default class CAHGame{
             if (p.playedWhiteCard) numPlayed++;
         });
         return numPlayed;
+    }
+
+    static get playedWhiteCards() {
+        return _.compact(_.map(_players, 'playedWhiteCard'));
     }
 
     static playWhiteCard( { player, card } ){

@@ -1,5 +1,10 @@
 import CAHGame from '../services/cahgame'
 
+import {name as RegState} from '../components/registration/registration.component'
+import {name as GameState} from '../components/gameplay/gameplay.component'
+import {name as GameOverState} from '../components/gameover/gameover.component'
+
+
 const ENABLE_INACTIVITY_TIMERS = true;
 
 const REG_TIME_WINDOW = 60; // 1 minute
@@ -17,12 +22,13 @@ const TEST_PLAYERS = [];//[ 'Albert' ];//, 'Bert', 'Chibert', 'Dilbert', 'Eggber
 
 export default class CahGameService {
 
-    constructor( $log, ogAPI, $rootScope, $timeout ) {
+    constructor( $log, ogAPI, $rootScope, $timeout, $state ) {
         $log.debug( "Constructing CahGameService" );
         this.$log = $log;
         this.ogAPI = ogAPI;
         this.$rootScope = $rootScope;
         this.$timeout = $timeout;
+        this.$state = $state;
 
         CAHGame.init( this.gameStateChangeCb.bind( this ) );
 
@@ -142,13 +148,15 @@ export default class CahGameService {
                 case 'PLAY_WHITE_CARD':
                     // { action: 'PLAY_WHITE_CARD', player: _myPlayer, card: card }
                     CAHGame.playWhiteCard( data );
+                    this.$rootScope.$broadcast('WHITE_CARD_PLAYED');
                     this.persist();
                     break;
 
                 case 'WINNER_PICKED':
                     CAHGame.pickWinner( data.card );
+                    this.$rootScope.$broadcast( 'WINNER_PICKED', data.card );
                     this.persist();
-                    this.$timeout(()=> CAHGame.newHand(), 10000);
+                    this.$timeout(CAHGame.newHand, 10000);
                     break;
 
             }
@@ -193,6 +201,7 @@ export default class CahGameService {
         _state = newState;
         this.persist();
         this.ogAPI.sendMessageToAppRoom( { action: 'GAME_STATE', state: newState, round: CAHGame.currentRoundNumber } );
+        this.$rootScope.$broadcast('STATE_CHANGE', { state: _state });
 
         switch ( _state ){
 
@@ -203,6 +212,7 @@ export default class CahGameService {
                 break;
 
             case 'registration':
+                this.$state.go(RegState);
                 if (REG_TEST_PLAYERS) this.addTestPlayers();
                 break;
 
@@ -221,6 +231,7 @@ export default class CahGameService {
                 break;
 
             case 'pick':
+                this.$state.go( GameState );
                 this.cancelStateTimer();
                 this.$log.debug('Deal complete! Distributing cards and setting an alarm for 2 min.');
                 this.startStateTimer(120, 'judging');
@@ -234,8 +245,9 @@ export default class CahGameService {
 
             case 'gameover':
                 this.cancelStateTimer();
-                this.$log.debug( 'OK, game over, rest in 60 seconds' );
-                this.startStateTimer( 60, 'reset' );
+                this.$state.go( GameOverState );
+                this.$log.debug( 'OK, game over, reset in 60 seconds' );
+                this.$timeout( CAHGame.resetGame, 60*1000 );
                 break;
 
 
@@ -347,6 +359,6 @@ export default class CahGameService {
 
     // injection here
     static get $inject() {
-        return [ '$log', 'ogAPI', '$rootScope', '$timeout' ];
+        return [ '$log', 'ogAPI', '$rootScope', '$timeout', '$state' ];
     }
 }

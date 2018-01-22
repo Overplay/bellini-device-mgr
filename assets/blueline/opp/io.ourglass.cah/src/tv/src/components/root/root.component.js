@@ -39,12 +39,14 @@ const Component = {
     controllerAs: '$ctrl',
     template:     `
 <div class="applet">
-    <div class="apphdr">Cards Against Humanity</div>
-    <div class="appsubhdr">SPORTS EDITION</div>
-         <ui-view></ui-view> 
-         <div class="ad-holder">
+    <div class="top-wrapper">
+        <div class="apphdr">Cards Against Humanity</div>
+        <div class="appsubhdr">SPORTS EDITION</div>    
+   </div>
+   <ui-view></ui-view> 
+   <div class="ad-holder">
         <og-advert-xfade type="widget"></og-advert-xfade>
-    </div>
+   </div>
 </div>
       `
 };

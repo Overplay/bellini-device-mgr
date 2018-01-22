@@ -13,6 +13,8 @@ import rootComponent from './components/root/root.component'
 import regComponent from './components/registration/registration.component'
 import routing from './cahtvapp.routing';
 import CahGameService from './services/cahgame.service'
+import gpComponent from './components/gameplay/gameplay.component'
+import gameOverComponent from './components/gameover/gameover.component'
 
 const ngModule = angular.module( 'ngApp', [ uirouter, ourglassAPI ] );
 
@@ -20,8 +22,10 @@ const ngModule = angular.module( 'ngApp', [ uirouter, ourglassAPI ] );
 
 ngModule.component( rootComponent.$name$, rootComponent );
 ngModule.component( regComponent.$name$, regComponent );
+ngModule.component( gpComponent.$name$, gpComponent);
 
 ngModule.service( CahGameService.serviceName, CahGameService );
+ngModule.component( gameOverComponent.$name$, gameOverComponent );
 
 // Configure routing
 ngModule.config( routing );

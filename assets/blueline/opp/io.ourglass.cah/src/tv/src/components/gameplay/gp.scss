@@ -1,0 +1,115 @@
+@import "../../assets/ogcolors";
+
+.black-card {
+  margin: 0;
+  background-color: black;
+  padding: 8%;
+  font-size: 0.8rem;
+  line-height: 1.2rem;
+
+  .blank {
+    margin-left: 5px;
+    margin-right: 5px;
+    //font-size: 2em;
+    border-bottom: 2px solid white;
+  }
+
+}
+
+.white-card-holder {
+  position: relative;
+  height: 25vh;
+}
+
+
+.white-card {
+  //margin: 3%;
+  margin-top: 3px;
+  background-color: white;
+  color: black;
+  padding: 8%;
+  font-size: 0.8rem;
+  //border-radius: 5%;
+  position: absolute;
+  top: 0;
+  left: 200vw;
+  width: 90%;
+  height: 25vh;
+  text-align: center;
+
+}
+
+.wc-in {
+  left: 0;
+  -webkit-transition: left 500ms;
+  transition: left 500ms;
+}
+
+.wc-out {
+  left: -200vw;
+  -webkit-transition: left 500ms;
+  transition: left 500ms;
+}
+
+.wc-winner {
+  background-color: lighten($og-green, 30%);
+  -webkit-transition: background-color 2s;
+  transition: background-color 2s;
+}
+
+
+//.black-card {
+//  margin: 1%;
+//  background-color: black;
+//  padding: 8%;
+//  font-size: 0.8rem;
+//  border-radius: 5%;
+//  line-height: 1.2rem;
+//
+//  .blank {
+//    margin-left: 5px;
+//    margin-right: 5px;
+//    //font-size: 2em;
+//    border-bottom: 2px solid white;
+//  }
+//
+//}
+//
+//.white-card-holder {
+//  position: relative;
+//  height: 25vh;
+//}
+//
+//@import "../../assets/ogcolors";
+//
+//.white-card {
+//  margin: 3%;
+//  background-color: white;
+//  color: black;
+//  padding: 8%;
+//  font-size: 0.8rem;
+//  border-radius: 5%;
+//  position: absolute;
+//  top: 0;
+//  left: 200vw;
+//  width: 75vw;
+//  height: 25vh;
+//  text-align: center;
+//
+//}
+//
+//.wc-in {
+//  left: 0;
+//  -webkit-transition: left 500ms;
+//  transition: left 500ms;
+//}
+//
+//.wc-out {
+//  left: -200vw;
+//  -webkit-transition: left 500ms;
+//  transition: left 500ms;
+//}
+//
+//.wc-winner {
+//  border: 5px solid $og-green;
+//}
