@@ -116,7 +116,7 @@ const Component = {
             <div class="message top2vh bot3vh">{{$ctrl.message2}}</div>
 
             <button class="btn btn-warning btn-full top1vh" ng-if="$ctrl.showRegButton" ng-click="$ctrl.goReg()">REGISTER</button>
-            <button class="btn btn-primary btn-full top1vh" ng-if="$ctrl.showWatchButton" ng-click="$ctrl.goWatch()">WATCH</button>
+            <!--<button class="btn btn-primary btn-full top1vh" ng-if="$ctrl.showWatchButton" ng-click="$ctrl.goWatch()">WATCH</button>-->
             
 
         <div class="footer">
