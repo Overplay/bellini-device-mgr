@@ -1,0 +1,90 @@
+@import "../../assets/ogcolors";
+
+.qwinner-holder {
+
+  display: flex;
+  width: 100%;
+
+  .qtr {
+    flex-grow: 1;
+    text-align: right;
+    color: #a0a0a0;
+    width: 15vw;
+    margin-right: 10px;
+  }
+
+  .name {
+    flex-grow: 2;
+    text-align: left;
+  }
+
+}
+
+.yellow-bg {
+  background-color: #F69320;
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  transition: background-color 1s;
+}
+
+.red-bg {
+  background-color: #EF4839;
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  transition: background-color 1s;
+}
+
+.green-bg {
+  background-color: #52B85E;
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  transition: background-color 1s;
+}
+
+.results {
+  border-radius: 5px;
+  background-color: black;
+  padding: 5%;
+  text-align: center;
+  margin: 5%;
+  font-size: 1.5rem;
+
+  h1 {
+    color: yellow;
+    font-size: 2rem;
+    text-align: center;
+    margin: 0;
+  }
+
+
+}
+
+.squares {
+  padding: 3%;
+
+  h1 {
+    color: $og-blue;
+    font-size: 1.5rem;
+    text-align: center;
+    margin: 2vh 0 3% 0;
+  }
+
+  h2 {
+    color: $og-orange;
+    font-size: 1.3rem;
+    margin: 0 0 3% 0;
+    text-align: center;
+  }
+
+}
+
+.winner {
+  text-align: center;
+  color: $og-red;
+}

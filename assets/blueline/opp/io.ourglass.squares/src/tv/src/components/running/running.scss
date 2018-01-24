@@ -1,0 +1,18 @@
+@import "../../assets/ogcolors";
+
+.score-holder {
+  display: flex;
+  padding: 5%;
+
+  .team {
+    flex-grow: 3;
+    //background-color: pink;
+    padding-left: 5%;
+  }
+
+  .score {
+    flex-grow: 3;
+    //background-color: #57ff74;
+  }
+
+}

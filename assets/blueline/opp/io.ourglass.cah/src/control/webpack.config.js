@@ -5,6 +5,7 @@
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
+const UglifyJSPlugin = require( 'uglifyjs-webpack-plugin' );
 
 
 module.exports = {
@@ -13,7 +14,7 @@ module.exports = {
         path:     path.resolve( __dirname, '../../app/control' ),
         filename: 'app.bundle.js'
     },
-    devtool:   'inline-source-map',
+    //devtool:   'inline-source-map',
     module:    {
         rules: [
             // Javascript goes thru babel
@@ -62,6 +63,10 @@ module.exports = {
         new HtmlWebpackPlugin( { title: 'ogadverts Test',
                 template: './src/index.ejs',
                 chunks: [ 'app' ],
+        }),
+        new UglifyJSPlugin( {
+            sourceMap:     true,
+            uglifyOptions: { mangle: false }
         } )
     ],
     resolve: {

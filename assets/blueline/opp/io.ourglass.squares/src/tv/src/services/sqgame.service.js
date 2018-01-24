@@ -1,8 +1,12 @@
 import SQGame from '../services/sqgame'
 import * as TestSupport from './testsupport'
+import GameSim from './gamesim'
+
+
+const SIMULATE_AFTER = 5; // start simulation 15 seconds after inbound reg, set to 0 to disable
 
 const ENABLE_INACTIVITY_TIMERS = false;
-const NUM_TEST_PLAYERS = 98;
+const NUM_TEST_PLAYERS = 30;
 
 const REG_TIME_WINDOW = 60; // 1 minute
 const PICK_TIME_LIMIT = 120; // 2 minutes
@@ -15,17 +19,20 @@ let _stateTimerDelay;
 let _nextState;
 
 const REG_TEST_PLAYERS = true;
+let _testPlayersRegistered = false;
 
 export default class SqGameService {
 
-    constructor( $log, ogAPI, $rootScope, $timeout ) {
+    constructor( $log, ogAPI, $rootScope, $timeout, $state ) {
         $log.debug( "Constructing SqGameService" );
         this.$log = $log;
         this.ogAPI = ogAPI;
         this.$rootScope = $rootScope;
         this.$timeout = $timeout;
+        this.$state = $state;
 
-        SQGame.init( this.gameStateChangeCb.bind( this ) );
+        SQGame.init( { stateChangeCb: this.gameStateChangeCb.bind( this ),
+                        persistCb: this.persist.bind(this) } );
 
         this.deviceModelUpdate = this.deviceModelUpdate.bind( this );
         this.venueModelUpdate = this.venueModelUpdate.bind( this );
@@ -46,11 +53,18 @@ export default class SqGameService {
                 this.deviceModel = modelData.device;
                 this.venueModel = modelData.venue;
                 SQGame.restoreFrom(this.venueModel);
+
+                if ( SIMULATE_AFTER )
+                    this.gameSim = new GameSim( { team1name: 'NE Patriots', team2name: 'PHL Eagles', msBetweenCalcs: 500 } );
+
+                this.pollGameStatus();
+
             } )
             .catch( ( err ) => {
                 this.$log.error( 'Calling init failed!' );
                 this.$log.error( err.data.error );
             } );
+
 
 
     }
@@ -87,6 +101,8 @@ export default class SqGameService {
                     this.$log.debug( 'Responding to REGISTER message' );
                     try {
                         this.addPlayer( data.name, data.uuid );
+                        if (SIMULATE_AFTER)  this.$timeout( this.gameSim.start, SIMULATE_AFTER*1000 );
+
                     } catch ( e ) {
                         this.ogAPI.sendMessageToAppRoom( {
                             action: 'REGISTRATION_FAILURE', name: data.name, msg: e.message,
@@ -130,22 +146,35 @@ export default class SqGameService {
         this.venueMsg = data;
     }
 
-    changeGameState( newState ) {
+    pollGameStatus(){
+
+        if (this.gameSim){
+            const ginfo = this.gameSim.gameInfo;
+            SQGame.setGameInfo(ginfo);
+            this.persist();
+        } else {
+            // TODO actually get the real game data
+        }
+
+        if (!SQGame.isFinal) this.$timeout(this.pollGameStatus.bind(this), 5000);
 
     }
 
     persist() {
-
         this.ogAPI.venueModel = SQGame.persistanceObject;
         this.ogAPI.saveVenueModel();
     }
 
     gameStateChangeCb( newState ) {
+
+        if (newState === _state){
+            this.$log.debug( 'State change callback with same state, ignoring. ' + _state);
+            return;
+        }
+
         this.$log.debug( 'State change callback. New state: ' + newState );
-        // this.cancelStateTimer(); // precaution
         _state = newState;
         this.persist();
-        this.ogAPI.sendMessageToAppRoom( { action: 'GAME_STATE', state: newState } );
 
         switch ( _state ) {
 
@@ -157,44 +186,17 @@ export default class SqGameService {
 
             case 'registration':
                 if ( REG_TEST_PLAYERS ) this.addTestPlayers();
+                this.$state.go(_state);
                 break;
 
-
-            case 'starting':
+            case 'gameover':
+            case 'running':
+                this.$state.go( _state );
                 break;
 
         }
     }
 
-    startStateTimer( delay, nextState ) {
-
-        if ( !ENABLE_INACTIVITY_TIMERS ) {
-            this.$log.debug( 'Inactivity timers are disabled. So no timer for you!' );
-            return;
-        }
-
-        _nextState = nextState;
-        _stateTimerDelay = delay;
-        this.stateTimerTick();
-    }
-
-    stateTimerTick() {
-        _stateTimerDelay--;
-        this.$log.debug( 'TICK on state timer. Remaining: ' + _stateTimerDelay + ' dest: ' + _nextState );
-        if ( _stateTimerDelay ) {
-            _stateTimer = this.$timeout( this.stateTimerTick.bind( this ), 1000 );
-        } else {
-            this.$log.debug( 'State timer has timed out, moving to new state: ' + _nextState );
-            SQGame.changeGameStateTo( _nextState );
-        }
-    }
-
-    cancelStateTimer() {
-        if ( _stateTimer ) {
-            this.$timeout.cancel( _stateTimer );
-            _stateTimer = null;
-        }
-    }
 
     broadcast( type, msg ) {
         this.$rootScope.$broadcast( type, msg );
@@ -221,9 +223,14 @@ export default class SqGameService {
     // TESTING
 
     addTestPlayers() {
-        _.times( NUM_TEST_PLAYERS, ()=>{
-            this.addPlayer(TestSupport.randomFirstName(), _.random(0,1000));
-        });
+
+        if (!_testPlayersRegistered){
+            _testPlayersRegistered = true;
+            _.times( NUM_TEST_PLAYERS, () => {
+                this.addPlayer( TestSupport.randomFirstName(), _.random( 0, 1000 ) );
+            } );
+        }
+
     }
 
     get gameState() {
@@ -244,6 +251,6 @@ export default class SqGameService {
 
     // injection here
     static get $inject() {
-        return [ '$log', 'ogAPI', '$rootScope', '$timeout' ];
+        return [ '$log', 'ogAPI', '$rootScope', '$timeout', '$state' ];
     }
 }

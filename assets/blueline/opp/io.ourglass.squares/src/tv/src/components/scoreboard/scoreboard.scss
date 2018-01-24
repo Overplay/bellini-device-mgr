@@ -1,0 +1,19 @@
+@import "../../assets/ogcolors";
+
+.scoreboard-holder {
+  width: 100%;
+  background-color: $og-lightgray;
+  padding: 5%;
+
+  h1 {
+    font-size: 1.5rem;
+    text-align: center;
+    color: $og-blue;
+    margin-top: 0;
+  }
+
+  p {
+    text-align: center;
+    font-size: 1.5rem;
+  }
+}

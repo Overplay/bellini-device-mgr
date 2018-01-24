@@ -1,0 +1,25 @@
+@import "../../assets/ogcolors";
+
+.openspots {
+  font-size: 4rem;
+  background-color: $og-red;
+  color: white;
+  padding: 10%;
+  margin-top: 4vh;
+
+  .num-spots {
+    text-align: center;
+  }
+
+}
+
+.matchup {
+
+  margin-top: 4vh;
+
+  p {
+    margin: 1vh 0;
+  }
+
+}
+

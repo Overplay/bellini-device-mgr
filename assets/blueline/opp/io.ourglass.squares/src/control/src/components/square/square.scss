@@ -1,0 +1,33 @@
+@import "../../assets/ogcolors";
+
+
+
+.square-holder {
+  width: 33vw;
+  //height: 10vh;
+  border: 2px solid white;
+  float: left;
+  margin: 5px;
+
+  .team {
+    font-size: 1rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  .digit {
+    font-size: 1.4rem;
+    width: 100%;
+    text-align: center;
+  }
+
+
+}
+
+.bottom-half {
+  background-color: #7D93B2;
+}
+
+.top-half {
+  background-color: #697f9d;
+}

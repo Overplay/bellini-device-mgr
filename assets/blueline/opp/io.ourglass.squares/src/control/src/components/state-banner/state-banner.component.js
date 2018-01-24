@@ -1,11 +1,11 @@
 require( './state.scss' );
 
 class SBController {
-    constructor( $log, cahControl, $rootScope) {
+    constructor( $log, sqControl, $rootScope) {
 
         this.$log = $log;
         this.$log.debug( 'loaded State Banner Controller.' );
-        this.cahControl = cahControl;
+        this.sqControl = sqControl;
         //this.$timeout = $timeout;
         //this.$state = $state;
         //this.uibHelper = uibHelper;
@@ -25,13 +25,13 @@ class SBController {
     }
 
     getMessage(){
-        return this.cahControl.upstreamGameState;
+        return this.sqControl.upstreamGameState;
     }
 
 
     // injection here
     static get $inject() {
-        return [ '$log', 'cahControlService', '$rootScope'];
+        return [ '$log', 'SqControlService', '$rootScope'];
     }
 }
 

@@ -13,6 +13,8 @@ import rootComponent from './components/root/root.component'
 import regComponent from './components/registration/registration.component'
 import routing from './sqtvapp.routing';
 import SqGameService from './services/sqgame.service'
+import RunningComponent from './components/running/running.component'
+import GameOverComponent from './components/gameover/gameover.component'
 
 const ngModule = angular.module( 'ngApp', [ uirouter, ourglassAPI ] );
 
@@ -20,6 +22,8 @@ const ngModule = angular.module( 'ngApp', [ uirouter, ourglassAPI ] );
 
 ngModule.component( rootComponent.$name$, rootComponent );
 ngModule.component( regComponent.$name$, regComponent );
+ngModule.component( RunningComponent.$name$, RunningComponent);
+ngModule.component( GameOverComponent.$name$, GameOverComponent);
 
 ngModule.service( SqGameService.serviceName, SqGameService );
 

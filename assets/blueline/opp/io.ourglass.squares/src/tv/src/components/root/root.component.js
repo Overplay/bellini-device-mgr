@@ -1,4 +1,4 @@
-require( '../../assets/sqtv.scss' );
+require( './sqtv.scss' );
 
 
 class RootController {
@@ -9,7 +9,6 @@ class RootController {
         this.ogAPI = ogAPI;
         this.$rootScope = $rootScope;
         this.gameService = sqGameService;
-
 
     }
 
@@ -39,11 +38,14 @@ const Component = {
     controllerAs: '$ctrl',
     template:     `
 <div class="applet">
-    <div class="apphdr">SQUARES</div>
-         <ui-view></ui-view> 
-         <div class="ad-holder">
+    <div class="top-wrapper">
+        <div class="apphdr">SQUARES</div>
+        <!--<div class="appsubhdr">SPORTS EDITION</div>    -->
+   </div>
+   <ui-view></ui-view> 
+   <div class="ad-holder">
         <og-advert-xfade type="widget"></og-advert-xfade>
-    </div>
+   </div>
 </div>
       `
 };

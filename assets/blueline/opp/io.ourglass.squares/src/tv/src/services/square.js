@@ -2,17 +2,17 @@
 
 export default class Square {
 
-    constructor( player, awayDigit, homeDigit ) {
+    constructor( player, team1digit, team2digit ) {
         this.player = player;
-        this.awayDigit = awayDigit;
-        this.homeDigit = homeDigit;
+        this.team1digit = team1digit;
+        this.team2digit = team2digit;
     }
 
-    checkIfWinner( homeScore, awayScore ) {
+    checkIfWinner( team1score, team2score ) {
 
-        const homeLast = homeScore % 10;
-        const awayLast = awayScore % 10;
-        return (this.awayDigit === awayLast ) && ( this.homeDigit === homeLast);
+        const team1last = team1score % 10;
+        const team2last = team2score % 10;
+        return (this.team1digit === team1last ) && ( this.team2digit === team2last);
 
     }
 

@@ -1,29 +1,28 @@
 require( './reg.scss' );
 
 import {name as lobbyState} from '../lobby/lobby.component'
-import { name as dealState } from '../gameplay-dealing/gp-deal.component'
 import _ from 'lodash'
 
 let _broadcastListeners = [];
 
-let AUTO_REG = true;
+let AUTO_REG = false;
 
-function randomName(){
+function randomName() {
 
-    let rval = _.sample(['A','B','C','D','E','F','G']);
-    rval += _.sample(['a', 'e', 'i', 'o', 'u', 'y', 'h']);
+    let rval = _.sample( [ 'A', 'B', 'C', 'D', 'E', 'F', 'G' ] );
+    rval += _.sample( [ 'a', 'e', 'i', 'o', 'u', 'y', 'h' ] );
     rval += _.sample( [ 'b', 'c', 'd', 'k', 'l', 'z', 'x' ] );
-    rval += _.random(1,100);
+    rval += _.random( 1, 100 );
     return rval;
 
 }
 
 class RegController {
-    constructor( $log, cahControl, $rootScope, $timeout, uibHelper, $state ) {
+    constructor( $log, SqControlService, $rootScope, $timeout, uibHelper, $state ) {
 
         this.$log = $log;
         this.$log.debug( 'loaded RegController' );
-        this.cahControl = cahControl;
+        this.sqControl = SqControlService;
         this.$timeout = $timeout;
         this.uibHelper = uibHelper;
 
@@ -41,32 +40,36 @@ class RegController {
 
     }
 
-    registerBroadcastListeners(){
+    gotoRegisteredMode() {
+        this.isRegistered = true;
+        this.header = "WAITING FOR START";
+        this.showNameInput = false;
+        this.showRegButton = false;
+        this.showBagButton = true;
+    }
+
+    registerBroadcastListeners() {
         this.bcastListeners = [];
 
         const regsuc = this.$rootScope.$on( 'REGISTRATION_SUCCESS', ( ev, data ) => {
             this.$log.debug( "Got REGISTRATION_SUCCESS notice in RegController" );
-            this.isRegistered = true;
-            this.header = "WAITING FOR START";
-            this.showNameInput = false;
-            this.showRegButton = false;
-            this.showBagButton = true;
+            this.gotoRegisteredMode();
         } );
         this.bcastListeners.push( regsuc );
 
         const regfail = this.$rootScope.$on( 'REGISTRATION_FAILURE', ( ev, data ) => {
             this.$log.debug( "Got REGISTRATION_FAILURE notice in RegController" );
-            if (!this.isRegistered || data.name !== this.name ) // don't want to show for every one
+            if ( !this.isRegistered || data.name !== this.name ) // don't want to show for every one
                 this.uibHelper.headsupModal( "Registration FAILED!", data.msg );
         } );
         this.bcastListeners.push( regfail );
 
-        const starttimer = this.$rootScope.$on('ENOUGH_PLAYERS_TO_START', (ev, data) => {
+        const starttimer = this.$rootScope.$on( 'ENOUGH_PLAYERS_TO_START', ( ev, data ) => {
 
-            if (data.timeout < 0){
-                this.$log.debug('Someone bailed and put us below timeout thresh.');
+            if ( data.timeout < 0 ) {
+                this.$log.debug( 'Someone bailed and put us below timeout thresh.' );
                 this.enuf2start = false;
-                this.$timeout.cancel(this.regtimer);
+                this.$timeout.cancel( this.regtimer );
                 this.regtimer = null;
             } else {
                 this.regTimerSec = data.timeout;
@@ -76,14 +79,14 @@ class RegController {
                 this.enuf2start = true;
             }
 
-        });
+        } );
         this.bcastListeners.push( starttimer );
 
     }
 
-    regTimerTick(){
+    regTimerTick() {
         this.regTimerSec--;
-        if (this.regTimerSec === 0 ) return;
+        if ( this.regTimerSec === 0 ) return;
         this.regtimer = this.$timeout( this.regTimerTick.bind( this ), 1000 );
     }
 
@@ -91,21 +94,21 @@ class RegController {
         if ( !this.name || this.name.length < 3 ) {
             this.uibHelper.headsupModal( "Yeah, that's not gonna work", 'Name or nickname needs to be at least 3 characters. Try a little creativity.' );
         } else {
-            this.cahControl.register( this.name );
+            this.sqControl.register( this.name );
         }
     }
 
-    bag(){
+    bag() {
 
-        this.uibHelper.confirmModal("Really Bail?",
+        this.uibHelper.confirmModal( "Really Bail?",
             "Do you really want to unregister from this game and miss out on what will probably be one of the highlights of your life?", true )
-            .then((answer)=>{
-                if (answer) {
-                    this.cahControl.unregister();
-                    this.uibHelper.dryToast("Rehab is for quitters...");
+            .then( ( answer ) => {
+                if ( answer ) {
+                    this.sqControl.unregister();
+                    this.uibHelper.dryToast( "Rehab is for quitters..." );
                     this.$state.go( lobbyState );
                 }
-            })
+            } )
 
     }
 
@@ -114,7 +117,11 @@ class RegController {
         this.$log.debug( 'In $onInit' );
         this.registerBroadcastListeners();
 
-        if (AUTO_REG){
+        if ( this.sqControl.myPlayer ) this.gotoRegisteredMode();
+
+        this.name = this.sqControl.user.user.firstName + ' ' + this.sqControl.user.user.lastName.charAt( 0 );
+
+        if ( AUTO_REG ) {
             this.name = randomName();
             this.register();
         }
@@ -123,8 +130,8 @@ class RegController {
 
     $onDestroy() {
         this.$log.debug( 'In $onDestroy' );
-        this.bcastListeners.forEach( (ureg) => ureg() );
-        this.$timeout.cancel(this.regtimer);
+        this.bcastListeners.forEach( ( ureg ) => ureg() );
+        this.$timeout.cancel( this.regtimer );
     }
 
     exit() {
@@ -133,7 +140,7 @@ class RegController {
 
     // injection here
     static get $inject() {
-        return [ '$log', 'cahControlService', '$rootScope', '$timeout', 'uibHelper', '$state' ];
+        return [ '$log', 'SqControlService', '$rootScope', '$timeout', 'uibHelper', '$state' ];
     }
 }
 

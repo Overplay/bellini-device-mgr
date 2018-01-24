@@ -1,0 +1,36 @@
+@import "../../assets/ogcolors";
+
+.scoreboard-holder {
+  width: 100%;
+  background-color: $og-lightgray;
+  padding: 5%;
+
+  h1 {
+    font-size: 1.5rem;
+    text-align: center;
+    color: $og-blue;
+    margin-top: 0;
+  }
+
+  p {
+    text-align: center;
+    font-size: 1.5rem;
+  }
+}
+
+.score-entry {
+
+  display: flex;
+
+  .team {
+    flex-grow: 4;
+    text-align: left;
+  }
+
+  .score {
+    flex-grow: 2;
+    text-align: center;
+  }
+
+
+}
