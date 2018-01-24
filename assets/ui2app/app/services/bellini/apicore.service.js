@@ -103,7 +103,11 @@ app.factory( "sailsCoreModel", function ( sailsApi ) {
 
     CoreModel.prototype.create = function () {
         var _this = this;
-        return sailsApi.createModel( this.modelType, this.getPostObj() );
+        return sailsApi.createModel( this.modelType, this.getPostObj() )
+            .then( function(savedModel){
+                _this = _.defaultsDeep(savedModel, _this); // merge in new props, usually just id, uuid.
+                return _this;
+            });
     }
 
     CoreModel.prototype.delete = function () {

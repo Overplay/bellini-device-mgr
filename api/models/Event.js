@@ -1,9 +1,11 @@
 /**
- * OGLog.js
+ * Event.js
  *
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
+
+var uuid = require( 'uuid/v4' );
 
 module.exports = {
 
@@ -11,11 +13,25 @@ module.exports = {
 
     attributes: {
 
-        eventName: {
+        name: {
             type: "string",
-            //enum: ['impression', 'heartbeat', 'alert', 'channel', 'placement', 'other']
         },
-        
+
+        description: {
+            type: 'string'
+        },
+
+        type: {
+            type: 'string'
+        },
+
+        date: {
+            type: 'date'
+        },
+
+        uuid: {
+            type: 'string'
+        },
 
         data: {
             type: 'json'
@@ -23,13 +39,15 @@ module.exports = {
 
     },
 
-    beforeUpdate: function (valuesToUpdate, cb) {
-//        if (valuesToUpdate.loggedAt)
-//            delete valuesToUpdate.loggedAt;
-        cb();//TODO test this doesn't remove the record or whatever
+    beforeCreate: function ( values, cb ) {
+
+        if ( !values.uuid ) {
+            values.uuid = uuid();
+        }
+
+        cb();
+
     }
 
-    //TODO before update prevention of changing loggedAT
-    //TODO potential before create Date parsing of loggedAt
 };
 

@@ -54,6 +54,7 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
                 { label: "Network", sref: "network.dashboard", icon: "arrows-alt" },
                 { label: "Venues", sref: "venues.list", icon: "globe" },
                 { label: "Users", sref: "admin.userlist", icon: "users" },
+                { label: "Events", sref: "events.list", icon: "calendar"},
                 { label: "Maintenance", sref: "admin.maint", icon: "gears" }
             ],
             resolve: {
@@ -263,6 +264,46 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             resolve:    {
                 app:    function ( sailsApps, $stateParams ) {
                     return sailsApps.get( $stateParams.id );
+                }
+            }
+
+        } )
+
+        .state( 'events', {
+            abstract: true,
+            url:      '/events',
+            views:    buildCompleteView( { template: '<ui-view></ui-view>', } )
+
+        } )
+
+        .state( 'events.list', {
+            url:         '/list',
+            templateUrl: '/ui2app/app/components/events/eventlist.partial.html',
+            controller:  'eventListController',
+            sideMenu:    [
+                { label: "Home", sref: "welcome", icon: "home" },
+                { label: "Add Event", sref: "events.edit({id: 'new'})", icon: "calendar-plus-o" }
+            ],
+            resolve:     {
+                events: function ( sailsEvents ) {
+                    return sailsEvents.getAll();
+                }
+            }
+
+        } )
+
+        .state( 'events.edit', {
+            url:         '/edit/:id',
+            templateUrl: '/ui2app/app/components/events/eventedit.partial.html',
+            controller:  'eventEditController',
+            sideMenu:    [
+                { label: "Home", sref: "welcome", icon: "home" },
+                { label: "Events", sref: "events.list", icon: "calendar" },
+                { label: "Add Event", sref: "events.edit({id: 'new'})", icon: "calendar-plus-o" }
+            ],
+            resolve:     {
+                event: function ( sailsEvents, $stateParams ) {
+                    return sailsEvents.get( $stateParams.id );
                 }
             }
 

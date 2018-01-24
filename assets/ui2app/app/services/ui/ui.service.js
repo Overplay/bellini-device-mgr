@@ -58,6 +58,11 @@ app.factory( 'navService', function ( $rootScope, userAuthService ) {
             { label: "Home", sref: "dashboard", icon: "home" },
             { label: "All Apps", sref: "apps.list", icon: "gears" },
             { label: "Add App", sref: "apps.edit({id: 'new'})", icon: "gear" }
+        ],
+        eventsMenu:    [
+            { label: "Home", sref: "dashboard", icon: "home" },
+            { label: "All Events", sref: "events.list", icon: "calendar" },
+            { label: "Add Event", sref: "events.edit({id: 'new'})", icon: "calendar-plus-o" }
         ]
     };
 

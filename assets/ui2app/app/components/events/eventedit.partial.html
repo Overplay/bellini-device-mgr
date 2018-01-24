@@ -1,0 +1,47 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-lg-10 material-panel">
+            <h2><i class="fa fa-cog" aria-hidden="true" style="color: #999999; margin-right: 5px;"></i>
+                <span class="text-muted"> Edit Event: </span>{{ event.name }} on {{ event.date }}</h2>
+            <table class="table table-striped table-bordered top15">
+                <tr>
+                    <td>Name</td>
+                    <td>{{ event.name }}
+                        <i class="fa fa-pencil-square-o ibut pull-right" aria-hidden="true"
+                           ng-click="changeStringField('name', 'Edit Name')"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <td>{{ event.description }}
+                        <i class="fa fa-pencil-square-o ibut pull-right" aria-hidden="true"
+                           ng-click="changeStringField('description', 'Edit Description', true)"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Type</td>
+                    <td>{{ event.type }}
+                        <i class="fa fa-pencil-square-o ibut pull-right" aria-hidden="true"
+                           ng-click="changeStringField('type', 'Edit Event Type', true)"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td>{{ event.date }} - TBD EDIT
+                        <!--<i class="fa fa-pencil-square-o ibut pull-right" aria-hidden="true"-->
+                           <!--ng-click="changeStringField('date', 'Edit app icon name', true)"></i>-->
+                    </td>
+                </tr>
+                <tr>
+                    <td>Data</td>
+                    <td>{{ event.date }}
+                        <!--<i class="fa fa-pencil-square-o ibut pull-right" aria-hidden="true"-->
+                           <!--ng-click="changeStringField('appWidth', 'Edit appWidth in % of screen width. Must be integer only.', true)"></i>-->
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+</div>
+

@@ -54,6 +54,7 @@
     "twitter": "^1.7.0",
     "url": "^0.11.0",
     "util": "^0.10.3",
+    "uuid": "^3.2.1",
     "verror": "^1.6.1",
     "waterlock": "github:overplay/waterlock",
     "waterlock-facebook-auth": "github:overplay/waterlock-facebook-auth",

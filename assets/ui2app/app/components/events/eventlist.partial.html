@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-lg-10 material-panel">
+            <h1><i class="fa fa-gears" aria-hidden="true" style="color: #999999"></i>&nbsp;&nbsp;All Events</h1>
+            <div ng-if="events.length">
+                <input type="text" ng-model="searchTerm" class="form-control" placeholder="event...">
+                <div style="overflow-y: scroll; height: 100vh; margin-top: 10px;">
+                    <table class="table table-striped" ng-if="events.length">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>UUID</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="e in events | orderBy: 'e.date' | filter:searchTerm" class="table-hilite">
+                            <!--<td><img style="width: 40px;" ng-src="/media/download/{{ v.logoId }}"></td>-->
+                            <td>{{ e.date }}</td>
+                            <td>{{ e.name }}</td>
+                            <td>{{ e.type }}</td>
+                            <td>{{ e.description }}</td>
+                            <td>{{ e.uuid }}</td>
+                            <td>
+                                <button ui-sref="events.edit({id: e.id})" class="tbtn tbtn-blue">edit</button>
+                                <button ng-click="delete(e)" class="tbtn tbtn-red">delete</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <h3 ng-if="!events.length" style="text-align: center; padding-bottom: 10px;">No Events in Database</h3>
+
+        </div>
+    </div>
+</div>
+
