@@ -2,7 +2,12 @@ require( './wfr.scss' );
 
 import _ from 'lodash'
 
-
+const WINNING_MESSAGES = [
+    'WINNER WINNER CHICKEN DINNER',
+    'CHECK OUT THE BIG BRAIN ON BRAD!',
+    'YOU\'RE A VERY STABLE GENIUS!',
+    '#WINNING'
+];
 
 class WFRController {
     constructor( $log, cahControl, $rootScope, $timeout ) {
@@ -18,6 +23,11 @@ class WFRController {
             this.$log.debug("Winner picked! "+data.card.prompt);
             this.winner = data.card;
             this.cahControl.killRoundTimer();
+            if (this.winner.id === this.cahControl.myPlayedCard.id){
+                this.$log.debug('I won!');
+                this.iwon = true;
+                this.$timeout(()=>{this.iwon=false}, 3000);
+            }
 
         } );
 
@@ -47,6 +57,10 @@ class WFRController {
         this.cahControl.killRoundTimer();
     }
 
+    wonmessage(){
+        return _.sample(WINNING_MESSAGES);
+    }
+
 
     // injection here
     static get $inject() {
@@ -62,13 +76,13 @@ const Component = {
     controller:   WFRController,
     controllerAs: '$ctrl',
     template:     `
+        <div class="winner-winner" ng-class="{ 'pop-down': $ctrl.iwon }"><div class="inner">{{ $ctrl.wonmessage() }}</div> </div>
         <div class="black-top">
             <!--<h1>BLACK CARD</h1>-->
             <div class="prompt" ng-bind-html="$ctrl.cahControl.blackCardPrompt"></div>
             <div class="judge">Card Czar: {{$ctrl.cahControl.judgeName}}</div>
         </div>
         <div class="round-timer" ng-if="!$ctrl.winner">{{ $ctrl.cahControl.roundTimerSec | minsec }}</div>
-        
         <div class="hand-holder">
             <div class="centered">
                 <aoc-component cards="$ctrl.playedWhiteCards" winner="$ctrl.winner"></aoc-component>

@@ -25,13 +25,29 @@ class SBController {
     }
 
     getMessage(){
+
+        switch (this.cahControl.upstreamGameState){
+            case 'lobby':
+                return '';
+
+            case 'registration':
+                return 'REGISTRATION';
+
+            case 'autojudging':
+            case 'judging':
+            case 'pick':
+                return 'Hand ' + (this.cahControl.venueModel.handNum + 1) + ' of ' + this.cahControl.venueModel.players.length;
+
+            case 'gameover':
+                return 'GAME OVER';
+
+        }
+
         return this.cahControl.upstreamGameState;
     }
 
     getLeftMsg(){
-        if (this.cahControl.venueModel && this.cahControl.venueModel.players){
-            return 'Hand ' + (this.cahControl.venueModel.handNum+1) + ' of ' + this.cahControl.venueModel.players.length;
-        }
+
         return "";
     }
 

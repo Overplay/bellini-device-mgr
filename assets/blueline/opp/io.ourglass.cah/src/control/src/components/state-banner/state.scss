@@ -6,25 +6,31 @@
   color: white;
   padding: 2%;
   margin-top: -5px;
-  display: flex;
+  //display: flex;
 
   .left-ban {
-    flex-grow: 1;
+    //flex-grow: 1;
     text-align: left;
+    width: 20vw;
+    display: inline-block;
     //border: 1px solid red;
 
   }
 
   .right-ban {
-    flex-grow: 1;
+    //flex-grow: 1;
     text-align: right;
+    width: 20vw;
+    display: inline-block;
     //border: 1px solid red;
 
   }
 
   .center-ban {
-    flex-grow: 5;
+    //flex-grow: 5;
     text-align: center;
+    display: inline-block;
+    width: 50vw;
     //border: 1px solid deepskyblue;
 
   }

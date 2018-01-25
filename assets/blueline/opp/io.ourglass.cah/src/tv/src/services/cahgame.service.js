@@ -240,7 +240,11 @@ export default class CahGameService {
             case 'judging':
                 this.cancelStateTimer();
                 this.$log.debug( 'OK, time to judge setting an alarm for 2 min.' );
-                this.startStateTimer( 120, 'autojudge' );
+                this.startStateTimer( 125, 'autojudge' );
+                break;
+
+            case 'autojudge':
+                CAHGame.autojudge();
                 break;
 
             case 'gameover':

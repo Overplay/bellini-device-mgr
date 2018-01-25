@@ -1,0 +1,32 @@
+@import "../../assets/ogcolors";
+
+.winner-winner {
+  width: 100vw;
+  height: 25vh;
+  position: absolute;
+  top: -50vh;
+  left: 0;
+  font-size: 3rem;
+  -webkit-transition: all 250ms;
+  transition: all 250ms;
+  opacity: 0;
+  z-index: 1000;
+
+  .inner {
+    margin: 0 auto;
+    background-color: $og-red;
+    border-radius: 5%;
+    color: white;
+    padding: 10%;
+    text-align: center;
+    margin: 10%;
+  }
+
+}
+
+.pop-down {
+  top: 20vh;
+  opacity: 1;
+  -webkit-transition: all 1250ms;
+  transition: all 1250ms;
+}

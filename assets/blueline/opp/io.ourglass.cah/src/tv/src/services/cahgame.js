@@ -255,5 +255,10 @@ export default class CAHGame{
         _players.forEach((p)=>p.checkIfWinner(card));
     }
 
+    static autojudge(){
+        console.log('Autopicking winner...');
+        CAHGame.pickWinner(_.sample(CAHGame.playedWhiteCards));
+    }
+
 
 }

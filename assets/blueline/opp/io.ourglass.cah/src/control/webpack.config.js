@@ -14,7 +14,7 @@ module.exports = {
         path:     path.resolve( __dirname, '../../app/control' ),
         filename: 'app.bundle.js'
     },
-    //devtool:   'inline-source-map',
+    devtool:   'inline-source-map',
     module:    {
         rules: [
             // Javascript goes thru babel
@@ -64,10 +64,10 @@ module.exports = {
                 template: './src/index.ejs',
                 chunks: [ 'app' ],
         }),
-        new UglifyJSPlugin( {
-            sourceMap:     true,
-            uglifyOptions: { mangle: false }
-        } )
+        // new UglifyJSPlugin( {
+        //     sourceMap:     true,
+        //     uglifyOptions: { mangle: false }
+        // } )
     ],
     resolve: {
         alias: {

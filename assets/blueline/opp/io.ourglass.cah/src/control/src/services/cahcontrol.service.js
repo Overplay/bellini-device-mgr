@@ -365,6 +365,7 @@ export default class CahControlService {
 
     playCard( card ) {
         _.pullAllWith( this.myHand, [ card ], _.isEqual );
+        this.myPlayedCard = card;
         return this.ogAPI.sendMessageToAppRoom( { action: 'PLAY_WHITE_CARD', player: this.myPlayer, card: card } );
     }
 
@@ -379,6 +380,10 @@ export default class CahControlService {
     get blackCardPrompt(){
         return this.$sce.trustAsHtml( this.blackCard.prompt.replace( '_', '<span class="blank">' +
             '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' ) );
+    }
+
+    get gameInProgress(){
+        return this.upstreamGameState === 'picking' || this.upstreamGameState === 'judging';
     }
 
     /**
