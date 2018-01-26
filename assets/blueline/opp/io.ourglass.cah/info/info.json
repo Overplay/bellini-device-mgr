@@ -1,0 +1,14 @@
+{
+	"appId": "io.ourglass.cah",
+	"displayName": "Cards Against Humanity",
+	"icon": "cahicon.png",
+	"defaultModel": {},
+	"appType": "widget",
+	"appWidth": 10,
+	"appHeight": 60,
+	"patronControllable": true,
+	"releaseLevel": "dev",
+	"isVirtual": false,
+	"iconPath": "/blueline/opp/io.ourglass.cah/assets/icons/cahicon.png"
+}
+

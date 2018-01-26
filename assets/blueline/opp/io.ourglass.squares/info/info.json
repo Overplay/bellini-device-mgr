@@ -1,0 +1,14 @@
+{
+	"appId": "io.ourglass.squares",
+	"displayName": "Squares",
+	"icon": "sqicon.png",
+	"defaultModel": {},
+	"appType": "widget",
+	"appWidth": 10,
+	"appHeight": 60,
+	"patronControllable": true,
+	"releaseLevel": "dev",
+	"isVirtual": false,
+	"iconPath": "/blueline/opp/io.ourglass.sqaures/assets/icons/sqicon.png"
+}
+
