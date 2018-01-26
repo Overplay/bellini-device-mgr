@@ -14,7 +14,7 @@ module.exports = {
         path:     path.resolve( __dirname, '../../app/tv' ),
         filename: 'app.bundle.js'
     },
-    devtool:   'inline-source-map',
+    //devtool:   'inline-source-map',
     module:    {
         rules: [
             // Javascript goes thru babel
