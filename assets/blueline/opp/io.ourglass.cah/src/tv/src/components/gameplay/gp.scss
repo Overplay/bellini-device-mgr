@@ -4,8 +4,9 @@
   margin: 0;
   background-color: black;
   padding: 8%;
-  font-size: 0.8rem;
-  line-height: 1.2rem;
+  //font-size: 0.8rem;
+  //line-height: 1.2rem;
+  height: 40vh;
 
   .blank {
     margin-left: 5px;
@@ -18,7 +19,10 @@
 
 .white-card-holder {
   position: relative;
-  height: 25vh;
+  height: 40vh;
+
+
+
 }
 
 
@@ -26,17 +30,24 @@
   //margin: 3%;
   margin-top: 3px;
   background-color: white;
-  color: black;
+  color: #697f9d;
   padding: 8%;
-  font-size: 0.8rem;
+  //font-size: 0.8rem;
   //border-radius: 5%;
   position: absolute;
   top: 0;
   left: 200vw;
-  width: 90%;
-  height: 25vh;
-  text-align: center;
+  width: 100%;
+  height: 100%;
 
+}
+
+.winner {
+  position: absolute;
+  bottom: 3vh;
+  left: 40vw;
+  font-size: 5rem;
+  color: $og-green;
 }
 
 .wc-in {
@@ -56,6 +67,7 @@
   -webkit-transition: background-color 2s;
   transition: background-color 2s;
 }
+
 
 
 //.black-card {

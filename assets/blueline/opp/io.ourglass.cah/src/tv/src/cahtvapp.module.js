@@ -5,6 +5,7 @@
  *
  * */
 
+require ('./assets/styles/og.css');
 
 import angular from 'angular';
 import uirouter from '@uirouter/angularjs';

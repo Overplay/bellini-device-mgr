@@ -37,16 +37,16 @@ const Component = {
     bindings:     {},
     controller:   RootController,
     controllerAs: '$ctrl',
-    template:     `
-<div class="applet">
+    template:     `<div class="applet">
     <div class="top-wrapper">
         <div class="apphdr">Cards Against Humanity</div>
         <div class="appsubhdr">SPORTS EDITION</div>    
    </div>
    <ui-view></ui-view> 
-   <div class="ad-holder">
-        <og-advert-xfade type="widget"></og-advert-xfade>
-   </div>
+   <!-- ads disabled until we figure out legal -->
+   <!--<div class="ad-holder">-->
+        <!--<og-advert-xfade type="widget"></og-advert-xfade>-->
+   <!--</div>-->
 </div>
       `
 };

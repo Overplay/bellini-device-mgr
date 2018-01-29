@@ -5,6 +5,7 @@
  *
  * */
 
+require('./assets/styles/og.css');
 require( './assets/cahcontrol.scss' );
 
 import angular from 'angular';

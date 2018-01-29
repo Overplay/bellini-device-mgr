@@ -106,11 +106,15 @@ const Component = {
         <h1>{{ $ctrl.getHeader() }}</h1>
         <p ng-if="$ctrl.gameService.stateTimerRunning && !$ctrl.showWinner">{{$ctrl.gameService.stateTimerValue | minsec }}</p>
         <div class="black-card" ng-bind-html="$ctrl.blackCardPrompt"></div>
-        <h1 class="winner" ng-if="$ctrl.showWinner">WINNER!</h1>
         <div class="white-card-holder">
          <div class="white-card" 
-            ng-class="{ 'wc-in': $ctrl.whiteCardCSS.in, 'wc-out': $ctrl.whiteCardCSS.out, 'wc-winner': $ctrl.showWinner }">{{$ctrl.whiteCardToShow.prompt}}</div>
+            ng-class="{ 'wc-in': $ctrl.whiteCardCSS.in, 'wc-out': $ctrl.whiteCardCSS.out, 'wc-winner': $ctrl.showWinner }">{{$ctrl.whiteCardToShow.prompt}}
+         </div>
+            <!--<div class="winner" ng-if="$ctrl.showWinner">-->
+                <!--<span class="glyphicon glyphicon-thumbs-up winner"></span>-->
+            <!--</div> -->
         </div>
+
        
 `
 };
