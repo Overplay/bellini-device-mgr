@@ -36,7 +36,7 @@ html, body {
   }
 
   .apphdr {
-    //font-size: 1vw;
+    font-size: 7vw;
     height: 2vh;
     //line-height: 2vh;
     text-align: center;
@@ -44,7 +44,7 @@ html, body {
   }
 
   .appsubhdr{
-    font-size: 1.5rem;
+    font-size: 8vw;
     height: 2vh;
     //line-height: 2vh;
     //padding-top: 1vh;
@@ -68,7 +68,7 @@ html, body {
   }
 
   h1 {
-    font-size: 2rem;
+    font-size: 12vw;
     text-align: center;
     color: lighten($og-blue, 20%);
   }
