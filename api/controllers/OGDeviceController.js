@@ -630,10 +630,15 @@ module.exports = {
         if ( !params.deviceUDID )
             return res.badRequest( { error: "Missing UDID" } );
 
-        var preconditions = {
+
+        let appFindPred = { 'appType': [ 'widget', 'crawler' ], isVirtual: false };
+        if ( params.hidden)
+            appFindPred.hidden = true;
+
+        const preconditions = {
             device: OGDevice.findOne( { deviceUDID: params.deviceUDID } ),
             // Only return apps we can actually control via mobile app
-            apps:   App.find( { 'appType': [ 'widget', 'crawler' ], isVirtual: false } )
+            apps:   App.find( appFindPred  )
         }
 
         Promise.props( preconditions )
@@ -663,7 +668,7 @@ module.exports = {
     //TODO needs a refactor. A lot of the actions have replicated code!
     commandack: function ( req, res ) {
 
-        if ( req.method != 'POST' )
+        if ( req.method !== 'POST' )
             return res.badRequest( { error: "Bad verb" } );
 
         //OK, we need a deviceUDID
