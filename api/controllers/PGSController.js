@@ -129,6 +129,13 @@ module.exports = {
             })
 
 
+    },
+
+    serverTime: function ( req, res ) {
+
+        const d = new Date();
+
+        return res.ok({ date: d, ms1970: d.getTime() });
     }
 
 
