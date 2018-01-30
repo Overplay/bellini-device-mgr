@@ -22,7 +22,7 @@ module.exports = function appInfoJsonHook(sails) {
 
 		initialize: function (cb) {
 			if (!config.hookEnabled)
-				return;
+				return cb();
 
 			sails.log.debug('info.json(s) will sync every ' + config.syncDelay / 1000 + ' seconds.');
 			setTimeout(sails.hooks.appinfojsonhook.sync, config.syncDelay);
