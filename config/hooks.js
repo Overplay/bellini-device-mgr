@@ -15,8 +15,10 @@ module.exports.hooks = {
         hookEnabled: true,
         cleanDelay: 1000 * 60 * 60, //1 hour
     },
+    // Syncs the appinfo from /assets/blueline/opp to the DB, but it seems broken in that it does not respect the file
+    // date correctly.
     infoJsonSync: {
-        hookEnabled: true,
+        hookEnabled: false,
         syncDelay: 1000 * 10 * 5 , //5 minutes
     },
     
