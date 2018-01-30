@@ -39,8 +39,8 @@ const Component = {
     controllerAs: '$ctrl',
     template:     `<div class="applet">
     <div class="top-wrapper">
-        <div class="apphdr">Cards Against Humanity</div>
-        <div class="appsubhdr">SPORTS EDITION</div>    
+        <div class="apphdr">SPORTS AGAINST HUMANITY</div>
+        <!--<div class="appsubhdr">SPORTS EDITION</div>    -->
    </div>
    <ui-view></ui-view> 
    <!-- ads disabled until we figure out legal -->
