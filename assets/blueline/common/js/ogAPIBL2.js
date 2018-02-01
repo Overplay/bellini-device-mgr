@@ -623,6 +623,12 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 if ( !_sysMsgCb )
                     $log.warn( "You didn't specify a sysMsgCallback, so you won't get one!" );
 
+                // Used to impersonate a real device in the database
+                if (params.mock){
+                    _venueUUID = mock.venueUUID;
+                    _deviceUDID = mock.deviceUDID;
+                }
+
                 return $http.post( '/appmodel/initialize', { appid: _appId, deviceUDID: _deviceUDID } )
                     .then( stripData )
                     .then( function ( model ) {
