@@ -200,7 +200,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              */
             service.getCurrentAd = function () {
                 return $q( function ( resolve, reject ) {
-                    resolve( { "currentAds": [] } );
+                    resolve( { "textAds": _adRotation[_adIndex].advert.text } );
                 } );
             };
 
