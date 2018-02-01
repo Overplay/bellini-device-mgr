@@ -93,7 +93,7 @@ app.controller( "crawlerController",
 
             $log.debug( "Grabbing tweets" );
             // Venuetweets is a hack, for now
-            return $q.all( [ ogAPI.getVenueTweets(), ogAPI.getChannelTweets() ] )
+            return $q.all( [ ogAPI.getTweets(true), ogAPI.getChannelTweets() ] )
                 .then( function ( tweets ) {
 
                     $log.debug( "HideTVTweets is " + (ogAPI.model.hideTVTweets ? "on" : "off") );
@@ -213,22 +213,22 @@ app.controller( "crawlerController",
                 .then( function ( data ) {
                     $log.debug( "crawler: init complete" );
 
-                    _useVenueData = data.device && data.device.useVenueData;
+                    _useVenueData = true; //data.device && data.device.useVenueData;
                     _venueData = data.venue;
                     _deviceData = data.device;
 
                     updateDisplay();
 
-                    if ( data.twitterQueries ) {
-                        // TODO This is gross because it runs a tweet grab immediately
-                        ogAPI.updateTwitterQuery( _sourceData.twitterQueries )
-                            .then( function ( d ) {
-                                $log.debug( "Successfully updated twitter queries" );
-                            } )
-                            .catch( function ( e ) {
-                                $log.error( e.message );
-                            } )
-                    }
+                    // if ( data.twitterQueries ) {
+                    //     // TODO This is gross because it runs a tweet grab immediately
+                    //     ogAPI.updateTwitterQuery( _sourceData.twitterQueries )
+                    //         .then( function ( d ) {
+                    //             $log.debug( "Successfully updated twitter queries" );
+                    //         } )
+                    //         .catch( function ( e ) {
+                    //             $log.error( e.message );
+                    //         } )
+                    // }
                 } )
                 .catch( function ( err ) {
                     $log.error( "crawler: something bad happened: " + err );

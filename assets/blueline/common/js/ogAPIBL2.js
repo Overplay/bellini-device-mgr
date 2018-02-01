@@ -776,22 +776,13 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              *
              * @returns {Promise<Object>} Data from socialscrape result
              */
-            service.getTweets = function () {
-                return $http.get( '/socialscrape/result?deviceUDID=' + _deviceUDID + '&appId=' + _appId )
+            service.getTweets = function (venueWide) {
+                var ep = '/socialscrape/result?deviceUDID=' + _deviceUDID + '&appId=' + _appId;
+                if (venueWide) ep = ep + '&venueWide=true';
+                return $http.get(  ep  )
                     .then( stripData );
             };
 
-
-            /**
-             * Queries the socialscrape result controller for information about social scraping
-             *
-             * @returns {Promise<Object>} Data from socialscrape result
-             */
-             // HACKALACK
-            service.getVenueTweets = function () {
-                return $http.get( '/socialscrape/resultforvenue?venueUUID=' + _venueUUID + '&appId=' + _appId )
-                    .then( stripData );
-            };
 
 
             /**
@@ -810,24 +801,16 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              * @param {any} paramsArr
              * @returns {Promise} promiseResolveReject
              */
-            service.updateTwitterQuery = function ( paramsArr ) {
+            service.updateTwitterQuery = function ( paramsArr, venueWide ) {
                 var query = paramsArr.join( '+OR+' );
                 return $http.post( '/socialscrape/add', {
                     queryString: query,
                     deviceUDID:  _deviceUDID,
                     appId:       _appId,
-                    venueUUID:   _venueUUID
+                    venueWide:    venueWide
                 } );
             };
 
-            service.updateVenueTwitterQuery = function ( paramsArr ) {
-                var query = paramsArr.join( '+OR+' );
-                return $http.post( '/socialscrape/addvenue', {
-                    queryString: query,
-                    appId:       _appId,
-                    venueUUID:   _venueUUID
-                } );
-            };
 
 
             // updated for BlueLine

@@ -34,10 +34,19 @@ module.exports = {
             .then( function ( results ) {
                 // If we get here, then the App and the Device are real
 
-                if ( results.apps && results.device )
-                    return SocialScrape.findOrCreate( { forDeviceUDID: params.deviceUDID, forAppId: params.appId } )
+                if ( results.apps && results.device ){
+                    // so we've met the precogs
+                    if ( params.venueWide ){
+                        // Venue scrape
+                        return SocialScrape.findOrCreate( { forVenueUUID: results.device.atVenueUUID, forAppId: params.appId } )
+                    } else {
+                        return SocialScrape.findOrCreate( { forDeviceUDID: params.deviceUDID, forAppId: params.appId } )
+                    }
 
-                throw new Error( "No such device or app in system" );
+                } else {
+                    throw new Error( "No such device or app in system" );
+                }
+
 
             } )
             .then( function ( ss ) {
@@ -118,15 +127,23 @@ module.exports = {
         if ( !params.appId )
             return res.badRequest( { error: "Missing appId" } );
 
-        let query;
+        OGDevice.findOne( { deviceUDID: params.deviceUDID } )
+            .then( function(device){
 
-        if (!params.venueUUID){
-            query = { forDeviceUDID: params.deviceUDID, forAppId: params.appId };
-        } else {
-            query = { forVenueUUID: params.venueUUID, forAppId: params.appId }
-        }
+                if (!device)
+                    throw new Error( "No such device in system" );
 
-        SocialScrape.findOne( query )
+                let query;
+
+                if ( !params.venueWide ) {
+                    query = { forDeviceUDID: params.deviceUDID, forAppId: params.appId };
+                } else {
+                    query = { forVenueUUID: params.venueUUID, forAppId: params.appId }
+                }
+
+                return SocialScrape.findOne( query );
+
+            })
             .then( function ( scrape ) {
 
                 if ( !scrape )
@@ -144,66 +161,7 @@ module.exports = {
     },
 
 
-    /*
-    NEW SHIT, BAD SHIT
-     */
 
-    addvenue: function ( req, res ) {
-
-        if ( req.method != 'POST' )
-            return res.badRequest( { error: "Bad verb" } );
-
-        //OK, we need a deviceUDID
-        var params = req.allParams();
-
-        if ( !params.venueUUID )
-            return res.badRequest( { error: "Missing venue" } );
-
-        if ( !params.appId )
-            return res.badRequest( { error: "Missing appId" } );
-
-        SocialScrape.findOrCreate( { forVenueUUID: params.venueUUID, forAppId: params.appId } )
-            .then( function ( ss ) {
-                sails.log.debug( ss );
-                ss.queryString = params.queryString || '@ourglassTV';
-                ss.save();
-                TwitterService.runScrape( ss );
-                return res.ok( ss );
-
-            } )
-            .catch( function ( err ) {
-                return res.badRequest( { error: err.message } );
-            } )
-
-
-    },
-
-    resultforvenue: function ( req, res ) {
-
-        if ( req.method != 'GET' )
-            return res.badRequest( { error: "Bad verb" } );
-
-        //OK, we need a deviceUDID
-        var params = req.allParams();
-
-        if ( !params.venueUUID  )
-            return res.badRequest( { error: "Missing  venue" } );
-
-        if ( !params.appId )
-            return res.badRequest( { error: "Missing appId" } );
-
-        let query = { forDeviceUDID: params.deviceUDID, forAppId: params.appId };
-
-        SocialScrape.findOne( query )
-            .then( function ( scrape ) {
-
-                if ( !scrape )
-                    return res.notFound( { error: 'no such appId, venue combo' } );
-
-                return res.ok( scrape.lastResult );
-            } )
-            .catch( res.serverError );
-    }
 
 };
 

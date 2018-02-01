@@ -97,7 +97,7 @@ app.factory('dataModel', function( $log, ogAPI, $rootScope ){
             ogAPI.model.twitterQueries = queryArray;
         }
 
-        ogAPI.updateVenueTwitterQuery( queryArray );
+        ogAPI.updateTwitterQuery( queryArray, true );  // true = venueWide
     };
 
     service.setHideTVTweets = function ( shouldHide ) {
