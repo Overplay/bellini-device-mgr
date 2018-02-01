@@ -625,8 +625,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 // Used to impersonate a real device in the database
                 if (params.mock){
-                    _venueUUID = mock.venueUUID;
-                    _deviceUDID = mock.deviceUDID;
+                    _venueUUID = params.mock.venueUUID;
+                    _deviceUDID = params.mock.deviceUDID;
                 }
 
                 return $http.post( '/appmodel/initialize', { appid: _appId, deviceUDID: _deviceUDID } )
