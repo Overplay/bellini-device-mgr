@@ -39,25 +39,25 @@ app.factory( "sailsUsers", [ 'sailsApi', 'sailsCoreModel', 'sailsAuth', function
             this.ring = this.auth && this.auth.ring || 10;
 
             this.isAdmin = this.ring === 1;
-            this.isOwner = (this.ring === 3) && this.ownedVenues.length > 0;
-            this.isManager = this.ring === 3 && this.managedVenues.length > 0;
-            this.isAdvertiser = this.ring === 4;
+            // these aren't used in device manager
+            // this.isOwner = (this.ring === 3) && this.ownedVenues.length > 0;
+            // this.isManager = this.ring === 3 && this.managedVenues.length > 0;
+            // this.isAdvertiser = this.ring === 4;
 
             this.parseCore( json );
         };
 
         this.getPostObj = function () {
-            var fields = ['firstName', 'lastName', 'metadata', 'mobilePhone', 'legal', 'address',
-                'demographics', 'roles' ];
+            var fields = ['firstName', 'lastName', 'metadata', 'mobilePhone', 'legal', 'address'];
             return this.cloneUsingFields(fields);
         };
 
         this.parseInbound( json );
 
-        // Array of objects but each object must have an id field
-        this.updateRoles = function(newRoleArray){
-            this.roles = _.map(newRoleArray, 'id');
-        }
+        // // Array of objects but each object must have an id field
+        // this.updateRoles = function(newRoleArray){
+        //     this.roles = _.map(newRoleArray, 'id');
+        // }
 
         this.updateBlocked = function(){
             this.auth.blocked = !!this.blocked;
@@ -74,42 +74,42 @@ app.factory( "sailsUsers", [ 'sailsApi', 'sailsCoreModel', 'sailsAuth', function
                 } );
         }
 
-        // TODO: lots of replicated code below
-        this.attachToVenue = function( venue, asType ){
-
-            if ( !_.includes( [ 'manager', 'owner' ], asType ) ) {
-                throw new Error( 'Type must be owner or manager' );
-            }
-
-            var params = {
-                venueId: sailsApi.idFromIdOrObj(venue),
-                userId: this.id,
-                userType: asType
-            };
-
-            return sailsApi.apiPost('/user/attachUserToVenue', params )
-                .then(function(updatedUser){
-                    return newUser(updatedUser);
-                });
-        }
-
-        this.removeFromVenue = function ( venue, asType ) {
-
-            if ( !_.includes( [ 'manager', 'owner' ], asType ) ) {
-                throw new Error( 'Type must be owner or manager' );
-            }
-
-            var params = {
-                venueId:  sailsApi.idFromIdOrObj( venue ),
-                userId:   this.id,
-                userType: asType
-            };
-
-            return sailsApi.apiPost( '/user/removeUserFromVenue', params )
-                .then( function ( updatedUser ) {
-                    return newUser( updatedUser );
-                } );
-        }
+        // // TODO: lots of replicated code below
+        // this.attachToVenue = function( venue, asType ){
+        //
+        //     if ( !_.includes( [ 'manager', 'owner' ], asType ) ) {
+        //         throw new Error( 'Type must be owner or manager' );
+        //     }
+        //
+        //     var params = {
+        //         venueId: sailsApi.idFromIdOrObj(venue),
+        //         userId: this.id,
+        //         userType: asType
+        //     };
+        //
+        //     return sailsApi.apiPost('/user/attachUserToVenue', params )
+        //         .then(function(updatedUser){
+        //             return newUser(updatedUser);
+        //         });
+        // }
+        //
+        // this.removeFromVenue = function ( venue, asType ) {
+        //
+        //     if ( !_.includes( [ 'manager', 'owner' ], asType ) ) {
+        //         throw new Error( 'Type must be owner or manager' );
+        //     }
+        //
+        //     var params = {
+        //         venueId:  sailsApi.idFromIdOrObj( venue ),
+        //         userId:   this.id,
+        //         userType: asType
+        //     };
+        //
+        //     return sailsApi.apiPost( '/user/removeUserFromVenue', params )
+        //         .then( function ( updatedUser ) {
+        //             return newUser( updatedUser );
+        //         } );
+        // }
 
     }
 

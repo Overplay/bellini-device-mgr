@@ -8,7 +8,8 @@
  *
  */
 module.exports = function(req, res, next) {
-  
+
+
   if ( sails.config.policies.wideOpen )
     return next();
 

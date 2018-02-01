@@ -72,7 +72,11 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
                 users: function ( sailsUsers ) {
                     return sailsUsers.getAll();
                 }
-            }
+            },
+            sideMenu: [
+                { label: 'Home', sref: "welcome", icon: "home" },
+                { label: "Add User", sref: "admin.edituser({id: 'new'})", icon: "user" }
+            ]
         } )
 
         .state( 'admin.edituser', {
@@ -83,7 +87,10 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
                 user2edit: function ( sailsUsers, $stateParams ) {
                     return sailsUsers.get( $stateParams.id );
                 }
-            }
+            },
+            sideMenu: [
+                { label: "Users", sref: "admin.userlist", icon: "users" }
+            ]
 
         } )
 

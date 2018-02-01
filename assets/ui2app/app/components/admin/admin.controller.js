@@ -35,7 +35,7 @@ app.controller( 'adminUserEditController', function ( $scope, user2edit, $log, u
                                                       $state, userAuthService, sailsUsers, dialogService ) {
 
     $log.debug( "Loading adminUserEditController" );
-    $scope.user = user;
+    $scope.user = user2edit;
     var _newUser;
 
 
@@ -118,7 +118,7 @@ app.controller( 'adminUserEditController', function ( $scope, user2edit, $log, u
 
     }
 
-    if ( !user.email ) {
+    if ( !user2edit.email ) {
         createBrandNewUser();
     }
 

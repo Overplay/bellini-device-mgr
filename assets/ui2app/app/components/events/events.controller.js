@@ -59,6 +59,21 @@ app.controller( 'eventEditController', function ( $scope, event, $log, uibHelper
 
     }
 
+    $scope.changeDate = function(){
+
+        uibHelper.dateModal("Set Date", "", $scope.event.date)
+            .then( function(newDate){
+                $log.debug("New Date chosen..."+newDate);
+                $scope.event.date = newDate;
+                return $scope.event.save().then( function ( event ) {
+                    $scope.event = event; // pick up changes
+                    toastr.success( "Field changed" );
+                } )
+                    .catch( terror );;
+            })
+
+    }
+
     // $scope.selectStringField = function ( field, prompt ) {
     //
     //     var selections;

@@ -47,7 +47,7 @@ const Component = {
        <h1>Overall Winner</h1>
        <p class="winner">{{ $ctrl.SQGame.currentLeader.name }}</p> 
        <div ng-if="$ctrl.SQGame.currentQuarter>1">
-            <h1>Per Quarter Winners</h1>
+            <h1>Per Qtr Winners</h1>
             <div class="qwinner-holder">
                <p>1st Q: {{ $ctrl.SQGame.gameInfo.perQscores.q1.winner.player.name }}</p>
             </div>

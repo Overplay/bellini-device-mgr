@@ -24,8 +24,8 @@ module.exports.bootstrap = function ( cb ) {
                 metadata:  { preinstall: true }
             },
             auth: {
-                email:    'admin@test.com',
-                password: 'beerchugs'
+                email:    'topog@ourglass.tv',
+                password: '_b33rh@t!'
             }
         },
         {
@@ -62,7 +62,7 @@ module.exports.bootstrap = function ( cb ) {
                     .catch( function () { sails.log.warn( "Admin user NOT created. Probably already existed." )} );
             })
 
-            parr.push( AdminService.addUserAtRing('jonny@lowstatus.com','password', 3, { firstName: 'Jonnie', lastName: 'looser '}));
+            //parr.push( AdminService.addUserAtRing('jonny@lowstatus.com','password', 3, { firstName: 'Jonnie', lastName: 'looser '}));
 
             return Promise.all(parr)
                 .catch(function(err){

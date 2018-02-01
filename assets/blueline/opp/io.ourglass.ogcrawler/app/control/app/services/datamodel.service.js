@@ -3,9 +3,12 @@
  */
 
 
+
 app.factory('dataModel', function( $log, ogAPI, $rootScope ){
 
     $log.debug("loading dataModel");
+
+    var ALWAYS_VENUE = true;
 
     var service = {};
     var _useVenueData;
@@ -15,8 +18,8 @@ app.factory('dataModel', function( $log, ogAPI, $rootScope ){
         ogAPI.init( {
             appType:             'mobile',
             appName:             "io.ourglass.ogcrawler",
-            endpoint:            "control",
-            deviceUDID:          "test",
+            // endpoint:            "control",
+            // deviceUDID:          "test",
             deviceModelCallback: deviceModelUpdate,
             venueModelCallback:  venueModelUpdate,
             messageCallback:     inboundMessage
@@ -26,7 +29,6 @@ app.factory('dataModel', function( $log, ogAPI, $rootScope ){
                 // deviceModelUpdate(data);
                 venueModelUpdate(data.venue);
                 deviceModelUpdate(data.device);
-
             } )
             .catch( function ( err ) {
                 $log.error( "crawler controller: something bad happened: " + err );
@@ -35,15 +37,14 @@ app.factory('dataModel', function( $log, ogAPI, $rootScope ){
 
     function deviceModelUpdate( data ) {
         $log.debug("Inbound device data model change.");
-        if (_useVenueData !== data.useVenueData)
-            $rootScope.$broadcast('DATA_SOURCE_CHANGED');
 
         _useVenueData = data.useVenueData;
+        $rootScope.$broadcast( 'REFRESH_DATA' );
     }
 
     function venueModelUpdate( data ) {
         $log.debug( "Inbound venue data model change." );
-
+        $rootScope.$broadcast( 'REFRESH_DATA' );
     }
 
     function inboundMessage( msg ) {
@@ -51,7 +52,9 @@ app.factory('dataModel', function( $log, ogAPI, $rootScope ){
     }
 
     service.getData = function(){
-        if (_useVenueData) {
+
+
+        if (ALWAYS_VENUE || _useVenueData) {
             return ogAPI.venueModel;
         } else {
             return ogAPI.model;
@@ -70,7 +73,7 @@ app.factory('dataModel', function( $log, ogAPI, $rootScope ){
     };
 
     service.addHzMessage = function(message){
-        if ( _useVenueData ) {
+        if ( ALWAYS_VENUE || _useVenueData ) {
             ogAPI.venueModel.messages.push(message);
         } else {
             ogAPI.model.messages.push( message );
@@ -78,7 +81,7 @@ app.factory('dataModel', function( $log, ogAPI, $rootScope ){
     };
 
     service.setHzMessages = function(msgArray){
-        if ( _useVenueData ) {
+        if ( ALWAYS_VENUE || _useVenueData ) {
             ogAPI.venueModel.messages = msgArray;
         } else {
             ogAPI.model.messages = msgArray;
@@ -87,7 +90,7 @@ app.factory('dataModel', function( $log, ogAPI, $rootScope ){
 
 
     service.setTwitterQueries = function ( queryArray ) {
-        if ( _useVenueData ) {
+        if ( ALWAYS_VENUE || _useVenueData ) {
             ogAPI.venueModel.twitterQueries = queryArray;
         } else {
             ogAPI.model.twitterQueries = queryArray;
@@ -96,7 +99,7 @@ app.factory('dataModel', function( $log, ogAPI, $rootScope ){
     };
 
     service.setHideTVTweets = function ( shouldHide ) {
-        if ( _useVenueData ) {
+        if ( ALWAYS_VENUE || _useVenueData ) {
             ogAPI.venueModel.hideTVTweets = shouldHide;
         } else {
             ogAPI.model.hideTVTweets = shouldHide;

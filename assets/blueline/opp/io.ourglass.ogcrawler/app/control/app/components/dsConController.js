@@ -14,15 +14,17 @@ app.controller("dsConController",
 
         $scope.tabs = [ 'Messages', 'Coming Up', 'Twitter' ];
 
-        $scope.$on('DATA_SOURCE_CHANGED', function(){
+        $scope.$on('REFRESH_DATA', function(){
             $log.debug("Received inbound source change message");
+            refreshData();
+        });
+
+        function refreshData(){
             var d = dataModel.getData();
             $scope.messages = d.messages;
             $scope.twitterQueries = d.twitterQueries;
             $scope.hideTVTweets = d.hideTVTweets;
-
-        });
-
+        }
 
 
         $scope.getSelectedTabTitle = function () {
@@ -93,5 +95,6 @@ app.controller("dsConController",
             dataModel.setHideTVTweets($scope.hideTVTweets);
         };
 
+        refreshData();
 
     });
