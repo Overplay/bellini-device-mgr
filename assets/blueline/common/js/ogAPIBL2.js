@@ -781,6 +781,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( stripData );
             };
 
+
             /**
              * Queries the socialscrape result controller for information about social scraping
              *
@@ -788,7 +789,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
              */
              // HACKALACK
             service.getVenueTweets = function () {
-                return $http.get( '/socialscrape/result?venueUUID=' + _venueUUID + '&appId=' + _appId )
+                return $http.get( '/socialscrape/resultforvenue?venueUUID=' + _venueUUID + '&appId=' + _appId )
                     .then( stripData );
             };
 
@@ -814,6 +815,15 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return $http.post( '/socialscrape/add', {
                     queryString: query,
                     deviceUDID:  _deviceUDID,
+                    appId:       _appId,
+                    venueUUID:   _venueUUID
+                } );
+            };
+
+            service.updateVenueTwitterQuery = function ( paramsArr ) {
+                var query = paramsArr.join( '+OR+' );
+                return $http.post( '/socialscrape/addvenue', {
+                    queryString: query,
                     appId:       _appId,
                     venueUUID:   _venueUUID
                 } );

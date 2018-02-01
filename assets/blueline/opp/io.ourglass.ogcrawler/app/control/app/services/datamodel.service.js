@@ -97,7 +97,7 @@ app.factory('dataModel', function( $log, ogAPI, $rootScope ){
             ogAPI.model.twitterQueries = queryArray;
         }
 
-        ogAPI.updateTwitterQuery( queryArray );
+        ogAPI.updateVenueTwitterQuery( queryArray );
     };
 
     service.setHideTVTweets = function ( shouldHide ) {

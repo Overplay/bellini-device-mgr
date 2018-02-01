@@ -112,13 +112,21 @@ module.exports = {
         //OK, we need a deviceUDID
         var params = req.allParams();
 
-        if ( !params.deviceUDID )
-            return res.badRequest( { error: "Missing UDID" } );
+        if ( !( params.deviceUDID || params.venueUUID ) )
+            return res.badRequest( { error: "Missing device or venue" } );
 
         if ( !params.appId )
             return res.badRequest( { error: "Missing appId" } );
 
-        SocialScrape.findOne( { forDeviceUDID: params.deviceUDID, forAppId: params.appId } )
+        let query;
+
+        if (!params.venueUUID){
+            query = { forDeviceUDID: params.deviceUDID, forAppId: params.appId };
+        } else {
+            query = { forVenueUUID: params.venueUUID, forAppId: params.appId }
+        }
+
+        SocialScrape.findOne( query )
             .then( function ( scrape ) {
 
                 if ( !scrape )
@@ -133,6 +141,69 @@ module.exports = {
     // for now, respond with nothing
     channeltweets: function (req, res ){
         res.ok([]);
+    },
+
+
+    /*
+    NEW SHIT, BAD SHIT
+     */
+
+    addvenue: function ( req, res ) {
+
+        if ( req.method != 'POST' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.venueUUID )
+            return res.badRequest( { error: "Missing venue" } );
+
+        if ( !params.appId )
+            return res.badRequest( { error: "Missing appId" } );
+
+        SocialScrape.findOrCreate( { forVenueUUID: params.venueUUID, forAppId: params.appId } )
+            .then( function ( ss ) {
+                sails.log.debug( ss );
+                ss.queryString = params.queryString || '@ourglassTV';
+                ss.save();
+                TwitterService.runScrape( ss );
+                return res.ok( ss );
+
+            } )
+            .catch( function ( err ) {
+                return res.badRequest( { error: err.message } );
+            } )
+
+
+    },
+
+    resultforvenue: function ( req, res ) {
+
+        if ( req.method != 'GET' )
+            return res.badRequest( { error: "Bad verb" } );
+
+        //OK, we need a deviceUDID
+        var params = req.allParams();
+
+        if ( !params.venueUUID  )
+            return res.badRequest( { error: "Missing  venue" } );
+
+        if ( !params.appId )
+            return res.badRequest( { error: "Missing appId" } );
+
+        let query = { forDeviceUDID: params.deviceUDID, forAppId: params.appId };
+
+        SocialScrape.findOne( query )
+            .then( function ( scrape ) {
+
+                if ( !scrape )
+                    return res.notFound( { error: 'no such appId, venue combo' } );
+
+                return res.ok( scrape.lastResult );
+            } )
+            .catch( res.serverError );
     }
+
 };
 
