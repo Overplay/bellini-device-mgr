@@ -92,7 +92,8 @@ app.controller( "crawlerController",
         function reloadTweets() {
 
             $log.debug( "Grabbing tweets" );
-            return $q.all( [ ogAPI.getTweets(), ogAPI.getChannelTweets() ] )
+            // Venuetweets is a hack, for now
+            return $q.all( [ ogAPI.getVenueTweets(), ogAPI.getChannelTweets() ] )
                 .then( function ( tweets ) {
 
                     $log.debug( "HideTVTweets is " + (ogAPI.model.hideTVTweets ? "on" : "off") );

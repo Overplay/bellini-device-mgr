@@ -95,6 +95,7 @@ app.factory('dataModel', function( $log, ogAPI, $rootScope ){
         } else {
             ogAPI.model.twitterQueries = queryArray;
         }
+
         ogAPI.updateTwitterQuery( queryArray );
     };
 

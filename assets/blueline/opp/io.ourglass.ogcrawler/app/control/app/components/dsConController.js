@@ -47,7 +47,7 @@ app.controller("dsConController",
 
         $scope.newTwitterQuery = function () {
             $scope.twitterQueries.push("");
-            //$scope.update();
+            $scope.update();
         };
 
         $scope.delMessage = function (index) {

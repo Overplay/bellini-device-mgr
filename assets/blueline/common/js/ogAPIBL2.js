@@ -775,6 +775,17 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( stripData );
             };
 
+            /**
+             * Queries the socialscrape result controller for information about social scraping
+             *
+             * @returns {Promise<Object>} Data from socialscrape result
+             */
+             // HACKALACK
+            service.getVenueTweets = function () {
+                return $http.get( '/socialscrape/result?venueUUID=' + _venueUUID + '&appId=' + _appId )
+                    .then( stripData );
+            };
+
 
             /**
              * Queries the socialscrape channeltweets controller for information about a channel's tweets
@@ -797,7 +808,8 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 return $http.post( '/socialscrape/add', {
                     queryString: query,
                     deviceUDID:  _deviceUDID,
-                    appId:       _appId
+                    appId:       _appId,
+                    venueUUID:   _venueUUID
                 } );
             };
 

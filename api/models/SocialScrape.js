@@ -11,7 +11,12 @@ module.exports = {
 
     forDeviceUDID: {
       type: 'string',
-      required: 'true'
+      required: false
+    },
+
+    forVenueUUID: {
+      type: 'string',
+      required: false
     },
 
     forAppId: {
