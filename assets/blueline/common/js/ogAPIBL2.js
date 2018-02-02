@@ -1114,6 +1114,18 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
             };
 
+            service.getGridForCurrentChannelOld = function () {
+
+                return this.getCurrentProgram()
+                    .then( function ( program ) {
+                        var channel = program.channelNumber; // could be undefined
+                        if ( !channel ) return $q.when(); // dump out a bag of undef
+                        return service.getGridForChannel( channel );
+                    } );
+
+
+            };
+
             /**
              * Gets the grid for a channel
              * Does an http call to listingsforchannel and strips the data
@@ -1125,6 +1137,19 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 return $http.get( '/pgs/listingsforchannel?deviceUDID=' + _deviceUDID
                     + '&channel=' + channelNum )
+                    .then( stripData );
+
+            };
+
+            /**
+             * Gets the grid for a device
+             * Does an http call to listingsforchannel and strips the data
+             *
+             * @returns {Object} channel listings for current channel on server
+             */
+            service.getGridForDevice = function () {
+
+                return $http.get( '/pgs/listingsforchannel2?deviceUDID=' + _deviceUDID )
                     .then( stripData );
 
             };

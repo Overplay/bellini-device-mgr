@@ -148,7 +148,7 @@ app.controller( "crawlerController",
 
         function getTVGrid() {
 
-            return ogAPI.getGridForCurrentChannel()
+            return ogAPI.getGridForDevice()
                 .then( function ( grid ) {
                     // { nowPlaying: 'Title', grid: { channel: <channel>, lisitings: [ <listingobjects> ] }
                     $log.debug( "Got the grid" );
