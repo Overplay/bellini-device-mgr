@@ -148,8 +148,9 @@ module.exports = {
             .then( ( device ) => {
                 if ( !device ) throw new ResponseError( 'No such device', res.notFound, { error: 'no such device' } );
 
+                let channel;
                 try {
-                    const channel = device.currentProgram.channelNumber;
+                    channel = device.currentProgram.channelNumber;
                 } catch ( err ) {
                     throw new ResponseError( 'Device has no channel info', res.badRequest, { error: 'device has no TV info' } );
                 }
