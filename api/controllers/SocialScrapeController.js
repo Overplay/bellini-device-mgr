@@ -138,7 +138,7 @@ module.exports = {
                 if ( !params.venueWide ) {
                     query = { forDeviceUDID: params.deviceUDID, forAppId: params.appId };
                 } else {
-                    query = { forVenueUUID: params.venueUUID, forAppId: params.appId }
+                    query = { forVenueUUID: device.venueUUID, forAppId: params.appId }
                 }
 
                 return SocialScrape.findOne( query );
