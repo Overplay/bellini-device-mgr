@@ -205,10 +205,10 @@ app.controller( "crawlerController",
                 venueModelCallback:  venueModelUpdate,
                 appMsgCallback:      inboundAppMessage,
                 sysMsgCallback:      inboundSysMessage,
-                mock: {
-                    deviceUDID: 'c18597f5-e942-47f7-840c-2ce3a4a8aacc',
-                    venueUUID:  '1bb1793e-43cb-4c78-b3c2-40bbfc86e71d'
-                }
+                // mock: {
+                //     deviceUDID: 'c18597f5-e942-47f7-840c-2ce3a4a8aacc',
+                //     venueUUID:  '1bb1793e-43cb-4c78-b3c2-40bbfc86e71d'
+                // }
             } )
                 .then( function ( data ) {
                     $log.debug( "crawler: init complete" );
