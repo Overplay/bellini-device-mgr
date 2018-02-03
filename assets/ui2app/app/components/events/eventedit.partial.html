@@ -3,6 +3,7 @@
         <div class="col-sm-10 col-lg-10 material-panel">
             <h2><i class="fa fa-cog" aria-hidden="true" style="color: #999999; margin-right: 5px;"></i>
                 <span class="text-muted"> Edit Event: </span>{{ event.name }} on {{ event.date }}</h2>
+            <button class="btn btn-success" style="width: 100%" ng-click="save()">SAVE</button>
             <table class="table table-striped table-bordered top15">
                 <tr>
                     <td>Name</td>
@@ -34,13 +35,111 @@
                 </tr>
                 <tr>
                     <td>Data</td>
-                    <td>{{ event.date }}
+                    <td><pre>{{ event.data | json }}</pre>
                         <!--<i class="fa fa-pencil-square-o ibut pull-right" aria-hidden="true"-->
                            <!--ng-click="changeStringField('appWidth', 'Edit appWidth in % of screen width. Must be integer only.', true)"></i>-->
                     </td>
                 </tr>
 
             </table>
+
+            <h3>TEAMS</h3>
+            <form>
+                <div class="form-group">
+                    <label for="team1name">Team 1 Name</label>
+                    <input type="text" class="form-control" id="team1name"
+                           placeholder="Team 1 name" ng-model="event.data.team1.name">
+                </div>
+                <div class="form-group">
+                    <label for="team2name">Team 1 Name</label>
+                    <input type="text" class="form-control" id="team2name"
+                           placeholder="Team 2 name" ng-model="event.data.team2.name">
+                </div>
+                <h3>Current Score</h3>
+                <div class="form-group">
+                    <label for="cq">Current Quarter</label>
+                    <input type="number" class="form-control" id="cq"
+                           placeholder="Quarter" ng-model="event.data.quarter">
+                </div>
+                <div class="form-group">
+                    <label for="team1score">{{ event.data.team1.name || 'Team 1'}} Score</label>
+                    <input type="number" class="form-control" id="team1score"
+                           placeholder="0" ng-model="event.data.team1.score">
+                </div>
+                <div class="form-group">
+                    <label for="team2score">{{ event.data.team2.name || 'Team 2'}} Score</label>
+                    <input type="number" class="form-control" id="team2score"
+                           placeholder="0" ng-model="event.data.team2.score">
+                </div>
+
+                <h3>Per Quarter Scores</h3>
+                <h4>Q1</h4>
+                <div class="form-group">
+                    <label for="fq1">{{ event.data.team1.name}} First Quarter</label>
+                    <input type="number" class="form-control" id="fq1"
+                           placeholder="-" ng-model="event.data.perQscores.q1.team1score">
+                </div>
+                <div class="form-group">
+                    <label for="fq2">{{ event.data.team2.name}} First Quarter</label>
+                    <input type="number" class="form-control" id="fq2"
+                           placeholder="-" ng-model="event.data.perQscores.q1.team2score">
+                </div>
+
+                <h4>Q2</h4>
+                <div class="form-group">
+                    <label for="2q1">{{ event.data.team1.name}} 2nd Quarter</label>
+                    <input type="number" class="form-control" id="2q1"
+                           placeholder="-" ng-model="event.data.perQscores.q2.team1score">
+                </div>
+                <div class="form-group">
+                    <label for="2q2">{{ event.data.team2.name}} 2nd Quarter</label>
+                    <input type="number" class="form-control" id="2q2"
+                           placeholder="-" ng-model="event.data.perQscores.q2.team2score">
+                </div>
+
+                <h4>Q3</h4>
+                <div class="form-group">
+                    <label for="3q1">{{ event.data.team1.name}} 3rd Quarter</label>
+                    <input type="number" class="form-control" id="3q1"
+                           placeholder="-" ng-model="event.data.perQscores.q3.team1score">
+                </div>
+                <div class="form-group">
+                    <label for="3q2">{{ event.data.team2.name}} 3rd Quarter</label>
+                    <input type="number" class="form-control" id="3q2"
+                           placeholder="-" ng-model="event.data.perQscores.q3.team2score">
+                </div>
+
+                <h4>Q4</h4>
+                <div class="form-group">
+                    <label for="4q1">{{ event.data.team1.name}} 4th Quarter</label>
+                    <input type="number" class="form-control" id="4q1"
+                           placeholder="-" ng-model="event.data.perQscores.q4.team1score">
+                </div>
+                <div class="form-group">
+                    <label for="4q2">{{ event.data.team2.name}} 4th Quarter</label>
+                    <input type="number" class="form-control" id="4q2"
+                           placeholder="-" ng-model="event.data.perQscores.q4.team2score">
+                </div>
+
+                <h4>FINAL/OT</h4>
+                <div class="form-group">
+                    <label for="5q1">{{ event.data.team1.name}} FINAL</label>
+                    <input type="number" class="form-control" id="5q1"
+                           placeholder="-" ng-model="event.data.perQscores.final.team1score">
+                </div>
+                <div class="form-group">
+                    <label for="5q2">{{ event.data.team2.name}} FINAL</label>
+                    <input type="number" class="form-control" id="5q2"
+                           placeholder="-" ng-model="event.data.perQscores.final.team2score">
+                </div>
+
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" ng-model="event.data.final">
+                        Game is FINAL
+                    </label>
+                </div>
+
         </div>
     </div>
 </div>

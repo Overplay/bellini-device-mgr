@@ -2,8 +2,9 @@ import SQGame from '../services/sqgame'
 import * as TestSupport from './testsupport'
 import GameSim from './gamesim'
 
+const EVENT_UUID = '0c92abd0-89d5-4e5c-a172-968090f690aa';
 
-const SIMULATE_AFTER = 5; // start simulation 15 seconds after inbound reg, set to 0 to disable
+//const SIMULATE_AFTER = 5; // start simulation 15 seconds after inbound reg, set to 0 to disable
 
 const ENABLE_INACTIVITY_TIMERS = false;
 const NUM_TEST_PLAYERS = 30;
@@ -23,13 +24,14 @@ let _testPlayersRegistered = false;
 
 export default class SqGameService {
 
-    constructor( $log, ogAPI, $rootScope, $timeout, $state ) {
+    constructor( $log, ogAPI, $rootScope, $timeout, $state, $http ) {
         $log.debug( "Constructing SqGameService" );
         this.$log = $log;
         this.ogAPI = ogAPI;
         this.$rootScope = $rootScope;
         this.$timeout = $timeout;
         this.$state = $state;
+        this.$http = $http;
 
         SQGame.init( { stateChangeCb: this.gameStateChangeCb.bind( this ),
                         persistCb: this.persist.bind(this) } );
@@ -69,6 +71,13 @@ export default class SqGameService {
 
     }
 
+    fetchGameDataFromCloud() {
+
+        return this.$http.get('/event?uuid=' + EVENT_UUID)
+            .then((resp) => {
+                return resp.data.data;
+            });
+    }
 
     deviceModelUpdate( model ) {
         this.deviceModel = model;
@@ -154,6 +163,13 @@ export default class SqGameService {
             this.persist();
         } else {
             // TODO actually get the real game data
+            this.$http.get('/event?uuid='+EVENT_UUID)
+                .then((resp)=>{
+                    const event = resp.data;
+                    const ginfo = event.data;
+                    SQGame.setGameInfo(ginfo);
+                    this.persist();
+                })
         }
 
         if (!SQGame.isFinal) this.$timeout(this.pollGameStatus.bind(this), 5000);

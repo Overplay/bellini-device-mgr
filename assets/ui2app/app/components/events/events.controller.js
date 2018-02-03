@@ -49,12 +49,7 @@ app.controller( 'eventEditController', function ( $scope, event, $log, uibHelper
             .then( function ( newString ) {
                 $log.debug( 'String for ' + field + ' changed to: ' + newString );
                 $scope.event[ field ] = newString;
-                $scope.event.save()
-                    .then( function (event) {
-                        $scope.event = event; // pick up changes
-                        toastr.success( "Field changed" );
-                    } )
-                    .catch( terror );
+                toastr.success("Don't forget to click SAVE!");
             } );
 
     }
@@ -65,63 +60,22 @@ app.controller( 'eventEditController', function ( $scope, event, $log, uibHelper
             .then( function(newDate){
                 $log.debug("New Date chosen..."+newDate);
                 $scope.event.date = newDate;
-                return $scope.event.save().then( function ( event ) {
-                    $scope.event = event; // pick up changes
-                    toastr.success( "Field changed" );
-                } )
-                    .catch( terror );;
-            })
+                toastr.success( "Don't forget to click SAVE!" );
+
+            } )
+            .catch( terror );
 
     }
 
-    // $scope.selectStringField = function ( field, prompt ) {
-    //
-    //     var selections;
-    //
-    //     switch ( field ) {
-    //         case 'releaseLevel':
-    //             selections = sailsApps.selections.releaseLevel;
-    //             break;
-    //     }
-    //
-    //     uibHelper.selectListModal( prompt, '', selections, $scope.app[ field ] )
-    //         .then( function ( idx ) {
-    //             $log.debug( 'String for ' + field + ' changed to: ' + selections[ idx ] );
-    //             $scope.app[ field ] = selections[ idx ];
-    //             $scope.app.save()
-    //                 .then( function () {
-    //                     toastr.success( "Field changed" );
-    //                 } )
-    //                 .catch( function () {
-    //                     toastr.error( "Problem changing field!" );
-    //                 } );
-    //         } );
-    //
-    //
-    // }
+    $scope.save = function(){
+        $scope.event.save()
+            .then( function ( event ) {
+                $scope.event = event; // pick up changes
+                toastr.success( "Event saved" );
+            } )
+            .catch( terror );
 
-
-    // $scope.boolChanged = function(){
-    //     $scope.app.save()
-    //         .then( function ( w ) {
-    //             toastr.success( 'Field updated' )
-    //         } )
-    //         .catch( terror );
-    // }
-
-
-    // if ( app.appId === 'new.app' ) {
-    //     uibHelper.stringEditModal('New App Id?', "Please enter an app id in reverse domain notation (e.g. io.ourglass.coolapp).", $scope.app.appId)
-    //         .then( function(newId){
-    //             // TODO validate!
-    //             $scope.app.appId = newId;
-    //             return $scope.app.save();
-    //         })
-    //         .catch( function ( err ) {
-    //             $state.go( $rootScope.lastUiState.state, $rootScope.lastUiState.params );
-    //         } )
-    //
-    // }
+    }
 
 
 });
