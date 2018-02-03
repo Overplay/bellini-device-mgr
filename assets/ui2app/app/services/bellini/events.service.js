@@ -41,6 +41,14 @@ app.factory( "sailsEvents", function ( sailsApi, sailsCoreModel ) {
             return this.cloneUsingFields( fields );
         };
 
+        this.save = function(){
+
+            return CoreModel.prototype.save.call(this)
+                .then(function(eventraw){
+                    return new ModelEventObject(eventraw);
+                })
+        }
+
     }
 
     ModelEventObject.prototype = Object.create( CoreModel.prototype );

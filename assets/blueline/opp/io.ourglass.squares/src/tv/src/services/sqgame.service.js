@@ -2,12 +2,12 @@ import SQGame from '../services/sqgame'
 import * as TestSupport from './testsupport'
 import GameSim from './gamesim'
 
-const EVENT_UUID = '0c92abd0-89d5-4e5c-a172-968090f690aa';
+const EVENT_UUID = '0c92abd0-89d5-4e5c-a172-968090f690aa'; //localhost
+//const EVENT_UUID = '5d1fdd9d-9c2f-461a-af4e-febfba484d88'; //cloud-dm
 
-//const SIMULATE_AFTER = 5; // start simulation 15 seconds after inbound reg, set to 0 to disable
+const SIMULATE_AFTER = 0; // start simulation 15 seconds after inbound reg, set to 0 to disable
 
 const ENABLE_INACTIVITY_TIMERS = false;
-const NUM_TEST_PLAYERS = 30;
 
 const REG_TIME_WINDOW = 60; // 1 minute
 const PICK_TIME_LIMIT = 120; // 2 minutes
@@ -19,8 +19,24 @@ let _stateTimer;
 let _stateTimerDelay;
 let _nextState;
 
-const REG_TEST_PLAYERS = true;
+const REG_TEST_PLAYERS = false;
 let _testPlayersRegistered = false;
+const NUM_TEST_PLAYERS = 30;
+
+
+const GAME_INFO_DEFAULTS = {
+    team1: { name: '---', score: 0},
+    team2: { name: '***', score: 0 },
+    quarter: 0,
+    final: false,
+    perQscores: {
+        q1:    { team1score: 0, team2score: 0 },
+        q2:    { team1score: 0, team2score: 0 },
+        q3:    { team1score: 0, team2score: 0 },
+        q4:    { team1score: 0, team2score: 0 },
+        final: { team1score: 0, team2score: 0 }
+    }
+}
 
 export default class SqGameService {
 
@@ -165,9 +181,11 @@ export default class SqGameService {
             // TODO actually get the real game data
             this.$http.get('/event?uuid='+EVENT_UUID)
                 .then((resp)=>{
-                    const event = resp.data;
-                    const ginfo = event.data;
-                    SQGame.setGameInfo(ginfo);
+                    const events = resp.data;
+                    if (!events.length) throw new Error("No event for that UUID");
+                    const ginfo = events[0].data;
+                    const ginfoClean = _.defaultsDeep(ginfo, GAME_INFO_DEFAULTS);
+                    SQGame.setGameInfo( ginfoClean );
                     this.persist();
                 })
         }
@@ -267,6 +285,6 @@ export default class SqGameService {
 
     // injection here
     static get $inject() {
-        return [ '$log', 'ogAPI', '$rootScope', '$timeout', '$state' ];
+        return [ '$log', 'ogAPI', '$rootScope', '$timeout', '$state', '$http' ];
     }
 }
