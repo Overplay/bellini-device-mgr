@@ -2,8 +2,8 @@ import SQGame from '../services/sqgame'
 import * as TestSupport from './testsupport'
 import GameSim from './gamesim'
 
-const EVENT_UUID = '0c92abd0-89d5-4e5c-a172-968090f690aa'; //localhost
-//const EVENT_UUID = '5d1fdd9d-9c2f-461a-af4e-febfba484d88'; //cloud-dm
+//const EVENT_UUID = '0c92abd0-89d5-4e5c-a172-968090f690aa'; //localhost
+const EVENT_UUID = '5d1fdd9d-9c2f-461a-af4e-febfba484d88'; //cloud-dm
 
 const SIMULATE_AFTER = 0; // start simulation 15 seconds after inbound reg, set to 0 to disable
 
