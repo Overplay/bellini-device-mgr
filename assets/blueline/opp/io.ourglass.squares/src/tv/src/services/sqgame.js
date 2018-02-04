@@ -63,6 +63,7 @@ export default class SQGame {
                 return new Square(player4square, sqjson.team1digit, sqjson.team2digit );
             });
 
+
             _gameState = model.state;
             _team1score = model.gameInfo.team1.score;
             _team2score = model.gameInfo.team2.score;
@@ -193,8 +194,8 @@ export default class SQGame {
         if ( _players.length > MAX_SQUARES )
             throw new Error( "Game is full." );
 
-        if ( _gameState !== 'registration' )
-            throw new Error( "Registration is closed, sorry!" );
+        if ( _currentQuarter != 0 )
+            throw new Error( "Registration is closed, game is in progress!" );
 
         const hasName = _.find( _players, { name: playerName } );
         if ( hasName )
