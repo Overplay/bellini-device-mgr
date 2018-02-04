@@ -68,6 +68,12 @@ app.controller( 'eventEditController', function ( $scope, event, $log, uibHelper
     }
 
     $scope.save = function(){
+        if ($scope.event.data.forceReset){
+            $scope.event.data.quarter = 0;
+            $scope.event.data.team1.score = 0;
+            $scope.event.data.team2.score = 0;
+        }
+
         $scope.event.save()
             .then( function ( event ) {
                 $scope.event = event; // pick up changes

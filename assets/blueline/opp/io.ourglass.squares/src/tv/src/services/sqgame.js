@@ -51,8 +51,18 @@ export default class SQGame {
 
     static restoreFrom( model ) {
 
-        if ( model.eventId && !FORCE_RESTART ) {
-            _squares = model.squares;
+        if ( !FORCE_RESTART ) {
+            // Rebuild players array
+            _players = model.players.map((pjson)=>{
+                return new Player(pjson.name, pjson.uuid);
+            });
+
+            // Now rebuild squares (if any)
+            _squares = model.squares.map((sqjson)=>{
+                const player4square = _.find(_players, { uuid: sqjson.player.uuid });
+                return new Square(player4square, sqjson.team1digit, sqjson.team2digit );
+            });
+
             _gameState = model.state;
             _team1score = model.gameInfo.team1.score;
             _team2score = model.gameInfo.team2.score;
@@ -60,7 +70,6 @@ export default class SQGame {
             _team2name = model.gameInfo.team2.name;
             _currentQuarter = model.gameInfo.currentQuarter;
             _eventId = model.eventId;
-            _players = model.players;
             _final = model.final;
 
         } else {
@@ -116,9 +125,9 @@ export default class SQGame {
     }
 
     // Called from service polling
-    static setGameInfo( { team1, team2, final, quarter, perQscores, hardReset } ) {
+    static setGameInfo( { team1, team2, final, quarter, perQscores, forceReset } ) {
 
-        if (hardReset) SQGame.resetGame();
+        if ( forceReset) SQGame.resetGame();
 
         _team1score = team1.score;
         _team2score = team2.score;
