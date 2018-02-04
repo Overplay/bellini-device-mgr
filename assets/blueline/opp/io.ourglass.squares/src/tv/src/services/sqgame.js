@@ -127,7 +127,10 @@ export default class SQGame {
     // Called from service polling
     static setGameInfo( { team1, team2, final, quarter, perQscores, forceReset } ) {
 
-        if ( forceReset) SQGame.resetGame();
+        if ( forceReset) {
+            SQGame.resetGame();
+            SQGame.changeGameStateTo( 'registration' );
+        }
 
         _team1score = team1.score;
         _team2score = team2.score;
