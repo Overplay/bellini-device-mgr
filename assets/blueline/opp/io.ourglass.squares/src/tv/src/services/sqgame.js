@@ -15,7 +15,7 @@ const FORCE_EVENT = {
     eventId:   'SUPERBOWL2018'
 };
 
-const FORCE_RESTART = true; // only for testing!
+const FORCE_RESTART = false; // only for testing!
 
 let _team1name;
 let _team1score = 0;
