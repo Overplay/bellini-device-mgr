@@ -168,9 +168,6 @@ module.exports = require('waterlock').actions.user({
             })
             .catch(res.serverError);
 
-
-
-
     }
 
 
