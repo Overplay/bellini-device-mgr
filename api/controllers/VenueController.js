@@ -5,16 +5,16 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-var Yelp = require( 'yelp' );
+const Yelp = require( 'yelp' );
 
-var yelp = new Yelp( {
+const yelp = new Yelp( {
     consumer_key:    "BAos8_zEjNvVuptYHO8tyA",
     consumer_secret: "lU4QHPKu7XdO-8IRIdH-1gpgWxg",
     token:           "4zCE_xN7zdbdrGgxiM-_kuFER25FWLEh",
     token_secret:    "WLHkoScUyrkJCW1WS7c_fXe_ekI"
 } );
 
-var USE_BC_VENUES = true;
+const USE_BC_VENUES = true;
 
 module.exports = {
 
@@ -132,7 +132,7 @@ module.exports = {
     // replaces blueprint, easier to secure
     all: function ( req, res ) {
 
-        if ( req.method != 'GET' )
+        if ( req.method !== 'GET' )
             return res.badRequest( { error: "Bad Verb" } );
 
         // With an existing database this is an ass-painer becuase some have virtual as undefined
@@ -155,8 +155,8 @@ module.exports = {
 
         }
 
+    },
 
-    }
-}
-;
+
+};
 

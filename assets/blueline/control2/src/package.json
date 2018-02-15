@@ -1,0 +1,43 @@
+{
+  "name": "io.ourglass.squares",
+  "version": "2.0.0",
+  "description": "Second gen Squares (Control Side)",
+  "main": "webpack.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@uirouter/angularjs": "^1.0.15",
+    "angular": "^1.6.9",
+    "angular-animate": "^1.6.9",
+    "angular-sanitize": "^1.6.9",
+    "angular-touch": "^1.6.9",
+    "animate.css": "^3.5.2",
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
+    "clean-webpack-plugin": "^0.1.17",
+    "css-loader": "^0.28.7",
+    "expose-loader": "^0.7.3",
+    "file-loader": "^1.1.5",
+    "html-loader": "^0.5.1",
+    "html-webpack-plugin": "^2.30.1",
+    "image-webpack-loader": "^3.4.2",
+    "ng-annotate-loader": "^0.6.1",
+    "ngtemplate-loader": "^2.0.1",
+    "ogapi-es6": "^0.1.16",
+    "oguimobile-es6": "^0.1.0",
+    "sass-loader": "^6.0.6",
+    "script-loader": "^0.7.2",
+    "style-loader": "^0.19.0",
+    "uglifyjs-webpack-plugin": "^1.1.2",
+    "ui-bootstrap": "^0.1.10",
+    "webpack": "^3.10.0",
+    "webpack-merge": "^4.1.1"
+  }
+}

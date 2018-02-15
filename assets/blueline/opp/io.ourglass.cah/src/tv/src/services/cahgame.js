@@ -4,7 +4,9 @@ import Player from './player';
 import _ from 'lodash';
 
 //const cardJson = require('../assets/cards.json');
-const cardJson = require('../assets/footballcards.json');
+//const cardJson = require('../assets/footballcards.json');
+const cardJson = require( '../assets/football4.json' );
+
 
 // Decks are array of Card objects with a few methods on it like draw()
 let _blackDeck, _whiteDeck;

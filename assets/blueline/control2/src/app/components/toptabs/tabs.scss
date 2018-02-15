@@ -1,0 +1,43 @@
+
+
+@import "../../assets/styles/ogcolors";
+
+.og-tab-bar {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.25);
+  //border: 1px solid deeppink;
+  height: 5vh;
+
+  .ttab {
+    width: 49vw;
+    background-color: $og-green;
+    color: white;
+    text-align: center;
+    padding: 2vh;
+    font-size: 2vw;
+  }
+}
+
+.tabon {
+  border-bottom: 2px solid white;
+}
+
+.og-bottom-banner {
+  width: 100%;
+  padding: 5px;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.hide-tabs {
+  opacity: 0.5;
+}
+
+.hide-footer {
+  opacity: 0.5;
+}

@@ -1,0 +1,51 @@
+.og-secondary-tab-bar {
+  width: 100%;
+  margin-top: -3px;
+  margin-bottom: 5px;
+  display: flex;
+}
+
+.og-secondary-tab-bar .btn {
+  width: 50vw;
+  background-color: rgba(12, 184, 215, 0.76);
+  color: #d0d0d0;
+  flex-grow: 1;
+  margin: 0 1px 0 1px;
+}
+
+.scroll-area {
+  /*The height must be manually updated determined by the screen size*/
+  height: 66vh;
+  /*height: 65vh;*/
+  /*background-color: green;*/
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+.current-channel {
+  margin-top: 1vh;
+  /*border: 1px solid hotpink;*/
+}
+
+.search-box {
+  margin-top: 1vh;
+  margin-bottom: 0;
+  /*border: 1px solid red;*/
+}
+
+.sports-bar {
+  margin-top: -1vh;
+  margin-bottom: 1vh;
+  /*background-color: lightcoral;*/
+  height: 5vh;
+  width: 100%;
+  text-align: center;
+}
+
+.sports-logo {
+  display: inline-block;
+  height: 5vh;
+  width: 5vh;
+  background: white;
+  border-radius: 2px;
+}

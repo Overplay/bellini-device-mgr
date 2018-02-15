@@ -621,11 +621,11 @@ module.exports = {
 
     appstatus: function ( req, res ) {
 
-        if ( req.method != 'GET' )
+        if ( req.method !== 'GET' )
             return res.badRequest( { error: "Bad verb" } );
 
         //OK, we need a deviceUDID
-        var params = req.allParams();
+        let params = req.allParams();
 
         if ( !params.deviceUDID )
             return res.badRequest( { error: "Missing UDID" } );
@@ -646,8 +646,8 @@ module.exports = {
                 if ( !results.device )
                     return res.badRequest( { error: "no such device" } );
 
-                var runningApps = results.device.runningApps || [];
-                var runningAppIds = runningApps.map( function ( a ) { return a.appId; } );
+                let runningApps = results.device.runningApps || [];
+                let runningAppIds = runningApps.map( function ( a ) { return a.appId; } );
                 _.remove( results.apps, function ( app ) {
                     return runningAppIds.indexOf( app.appId ) > -1;
                 } );
@@ -672,7 +672,7 @@ module.exports = {
             return res.badRequest( { error: "Bad verb" } );
 
         //OK, we need a deviceUDID
-        var params = req.allParams();
+        let params = req.allParams();
 
         if ( !params.deviceUDID )
             return res.badRequest( { error: "Missing UDID" } );

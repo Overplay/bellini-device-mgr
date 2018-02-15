@@ -1,0 +1,104 @@
+.station-cell { /* class is required by ng-class */
+  width: 92vw;
+  position: relative;
+  /*border: 1px solid lightblue;*/
+  padding-bottom: 1.5vh;
+  /*padding-bottom: 10px;*/
+  padding-top: 1.5vh;
+  /*padding-top: 10px;*/
+  margin-top: .75vh;
+  /*margin-top: 5px;*/
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  display: flex;
+  overflow: hidden;
+}
+
+.now-playing { /* class is required by ng-class */
+  width: 92vw;
+  position: relative;
+  /*border: 1px solid lightblue;*/
+  padding-bottom: 1.5vh;
+  /*padding-bottom: 10px;*/
+  padding-top: 1.5vh;
+  /*padding-top: 10px;*/
+  margin-top: 0;
+  display: flex;
+
+  overflow: hidden;
+}
+
+.station-left-col {
+  flex: 0 0 .2vw;
+  /*flex: 0 0 74px;*/
+  /*border: 1px solid yellow;*/
+}
+
+.station-right-col {
+  flex: 3;
+  /*border: 1px solid #f820ff;*/
+}
+
+.station-logo-holder {
+  background-color: white;
+  margin-right: 3vw;
+  border-radius: 5px;
+  height: 9vh;
+  /*height: 60px;*/
+  width: 9vh;
+  /*width: 60px;*/
+}
+
+.station-icon {
+  height: 9vh;
+  /*height: 60px;*/
+  width: 9vh;
+  /*width: 60px;*/
+  padding: 5px;
+  /*padding: 5px;*/
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.channel-name {
+  font-weight: 400;
+  font-size: 3vh;
+  text-align: left;
+  /*margin-top: 7vw;*/
+  overflow: hidden;
+  width: 60vw;
+  /*border: 1px solid orange;*/
+
+}
+
+.listing-time {
+  text-align: left;
+  /*border: 1px solid purple;*/
+  color: #969696;
+  font-weight: 200;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.listing-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+  flex: 3;
+  /*border: 1px solid red;*/
+}
+
+.favorites-box {
+  text-align: left;
+  font-size: 5vh;
+  /*width: 1.5vh;*/
+  width: 10vw;
+  /*height: 1.5vh;*/
+  height: 10vw;
+  /*border: 1px solid hotpink;*/
+}

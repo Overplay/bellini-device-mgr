@@ -38,6 +38,8 @@ ngModule.component( SquareCOmponent.$name$, SquareCOmponent );
 
 
 // Configure routing
+
+
 ngModule.config( routing );
 
 ngModule.run( [ '$log', SQControlService.serviceName,

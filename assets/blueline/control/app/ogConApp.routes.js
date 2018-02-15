@@ -48,7 +48,7 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
                 }
             },
 
-        } )
+        })
 
         .state( 'top.settings', {
             url:         '/settings',
