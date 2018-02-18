@@ -83,20 +83,20 @@ app.factory( 'ogNet', function ( $log, $http, $q, ogAPI, $rootScope, uibHelper )
         appType:             'mobile'
     } ).then( function ( resp ) {
         $log.debug( "Init complete" );
-        if (resp.venue && resp.venue.usebeta){
-            window.location.replace(getBetaLink());
-        } else {
-            uibHelper.confirmModal('Try Beta?', "There's a new Beta version of the control app with better search and support for favorite channels. Would you like to try it?", true)
-                .then( function(){
-                    ogAPI.venueModel.usebeta = true;
-                    ogAPI.saveVenueModel()
-                        .then( function(){
-                            window.location.replace(getBetaLink());
-                        })
-                })
-                .catch( function(){
-                });
-        }
+        // if (resp.venue && resp.venue.usebeta){
+        //     window.location.replace(getBetaLink());
+        // } else {
+        //     uibHelper.confirmModal('Try Beta?', "There's a new Beta version of the control app with better search and support for favorite channels. Would you like to try it?", true)
+        //         .then( function(){
+        //             ogAPI.venueModel.usebeta = true;
+        //             ogAPI.saveVenueModel()
+        //                 .then( function(){
+        //                     window.location.replace(getBetaLink());
+        //                 })
+        //         })
+        //         .catch( function(){
+        //         });
+        // }
         _deviceUDID = ogAPI.getDeviceUDID();
         return resp
     } );
