@@ -609,7 +609,7 @@ module.exports = {
                     room,
                     {
                         action:  'new-program',
-                        program: JSON.parse( params.tvShow ),
+                        program: params.tvShow,
                         ts:      new Date().getTime() // hack for multiples
                     } );
 

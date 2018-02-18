@@ -1,16 +1,17 @@
 .og-secondary-tab-bar {
   width: 100%;
-  margin-top: -3px;
-  margin-bottom: 5px;
+  //margin-top: -3px;
+  margin-bottom: 3vh;
   display: flex;
 }
 
 .og-secondary-tab-bar .btn {
   width: 50vw;
   background-color: rgba(12, 184, 215, 0.76);
-  color: #d0d0d0;
+  color: #ffffff;
   flex-grow: 1;
   margin: 0 1px 0 1px;
+  font-size: 3vw;
 }
 
 .scroll-area {

@@ -787,7 +787,9 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                     .then( stripData );
             };
 
-
+            service.getJwt = function(){
+                return _jwt;
+            };
 
             /**
              * Queries the socialscrape channeltweets controller for information about a channel's tweets

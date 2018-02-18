@@ -9,6 +9,8 @@
 
  **********************************/
 
+import _ from 'lodash';
+
 require( './guide.scss' );
 
 // Let the ngTemplate-loader deal with the required images automatically, rather than requiring every one.
@@ -19,7 +21,7 @@ const WINDOW_SIZE = 30; //Predefined window size that does not change
 
 
 class GuideController {
-    constructor( $log, $rootScope, uibHelper, $timeout, $state, ogAPI, $filter ) {
+    constructor( $log, $rootScope, uibHelper, $timeout, $state, ogAPI, $filter, cappSvc ) {
         this.$log = $log;
         this.$log.debug( 'loaded GuideController' );
         this.$rootScope = $rootScope;
@@ -28,85 +30,135 @@ class GuideController {
         this.$state = $state;
         this.ogAPI = ogAPI;
         this.ogSystem = this.ogAPI.getOGSystem();
-        if (TEST_MODE) this.ogSystem.isPaired = true;
+        if ( TEST_MODE ) this.ogSystem.isPaired = true;
         this.$filter = $filter;
+        this.cappSvc = cappSvc;
 
-        this.listenerUnsub = this.$rootScope.$on(
-            "NEW_PROGRAM",
-            () => {
-                this.$log.debug( "TV PROGRAM CHANGE" );
-                this.uibHelper.dismissCurtain();
-            }
-        );
+        this.filterGrid = this.filterGrid.bind(this);
+
+        this.listenerUnsubs = [
+            this.$rootScope.$on( "NEW_PROGRAM", () => this.uibHelper.dismissCurtain()),
+            this.$rootScope.$on( 'FAVS_CHANGED', () => {
+                this.filterGrid();
+            } )
+        ];
+
+        this.noresultsMsg = "No results found";
 
         // From port
-        this.ui = { loadError: false, refineSearch: 'all' };
-        // $scope.ui = { loadError: false, refineSearch: 'all', isPaired: true }; // I did this so I could get listings on my laptop
+        this.guideView = 'faves';
+        this.searchEntry = '';
+        // $scope.ui = { loadError: false, refineSearch: 'all', isPaired: true }; // I did this so I could get listings
+        // on my laptop
 
         this.slideIndex = 0; //renamed this from slideIdx so I could think about it better
         this.displayedGrid = []; //The grid we are actually displaying
-        this.scrollLimits = { top: true, bottom: false }; //Where to limit scroll, starting at top we don't want up scroll but do want down
+        this.scrollLimits = { top: true, bottom: false }; //Where to limit scroll, starting at top we don't want up
+                                                          // scroll but do want down
 
-        this.atEdge = this.atEdge.bind(this); // called from outside object
+        this.atEdge = this.atEdge.bind( this ); // called from outside object
 
     }
 
 
-
     $onInit() {
         this.$log.debug( 'In $onInit' );
+        this.nowPlayingGrid = this.cappSvc.currentProgramGrid;
         this.filterGrid();
     }
 
     $onDestroy() {
         this.$log.debug( 'In $onDestroy' );
-        this.listenerUnsub(); // unsub $on listener
+        this.listenerUnsubs.forEach(u=>u()); // unsub $on listeners
     }
 
-    refineSearchFilter( inputArray ) { //Refines our search filter
+    setGuideView( view ) {
+        this.guideView = view;
+        this.filterGrid();
+    }
 
-        switch ( this.ui.refineSearch ) { //Switch over favorites, sports, news, or all / default
 
-            // case 'favorites': //Not really implemented yet
-            //     return _.filter( inputArray, function ( gentry ) {
-            //         return gentry.channel.favorite;
-            //     } );
+    applyFiters( inputArray ) {
 
-            case 'sports': //If it's sports, filter by Sports (to get sports channels)
-                return this.$filter( 'filter' )( inputArray, 'Sports' );
+        const searchUp = this.searchEntry.toUpperCase();
 
-            case 'news': //If it's news, filter by News (to get news channels)
-                return this.$filter( 'filter' )( inputArray, 'News' );
+        const matchesChannel = _.filter( inputArray, ( test ) => test.channel.number.startsWith( this.searchEntry ) );
 
-            case 'all':
-            default:
-                return inputArray;
+        const matchesNetwork = _.filter( inputArray, ( test ) => {
+            const netUp = test.channel.network.toUpperCase();
+            const callUp = test.channel.callsign.toUpperCase();
+            return callUp.startsWith( searchUp ) || netUp.startsWith( searchUp );
+        } );
 
+        // TODO this is DIRTY
+        const matchesProgramming = _.filter( inputArray, ( test ) => {
+
+            let hit = false;
+            test.listings.some( ( l ) => {
+                const descUp = l.description.toUpperCase();
+                const showNameUp = l.showName.toUpperCase();
+                const showType = l.showType.toUpperCase();
+                const teams = (l.team1 + l.team2).toUpperCase();
+                hit = descUp.indexOf( searchUp ) > -1 ||
+                    showNameUp.indexOf( searchUp ) > -1 ||
+                    showType.indexOf( searchUp ) > -1 ||
+                    teams.indexOf( searchUp ) > -1;
+                return hit;
+            } );
+
+            return hit;
+
+        } );
+
+        return _.concat( matchesChannel, matchesNetwork, matchesProgramming );
+
+    }
+
+    filterGrid() {
+
+        let outputArray;
+
+        const processGrid = this.guideView === 'all' ? this.grid : _.filter( this.grid, ( test ) => this.cappSvc.isFavoriteChannel( test.channel.number ) );
+
+        if ( !this.searchEntry ) {
+            outputArray = processGrid;
+        } else {
+
+            outputArray = this.applyFiters( processGrid );
+
+            this.noresultsMsg = "No results";
+
+            if ( !outputArray.length && this.guideView === 'faves' ) {
+                // no results in faves, let's check all
+                if ( this.applyFiters( this.grid ).length ) {
+                    this.uibHelper.dryToast( "No results in Favorites, switched to All channels.", 10000 );
+                    this.setGuideView( 'all' );
+                }
+            }
         }
-    }
 
-    filterGrid(){
 
-        let channelFiltered = this.$filter( 'filter' )( this.grid, this.stationSearch ); //Angular's filter of the full grid when searching
-        let refineFiltered = this.refineSearchFilter( channelFiltered ); //Filter more if someone selected a certain type of filter
-        this.displayedGrid = refineFiltered.slice( this.slideIndex, WINDOW_SIZE + this.slideIndex ); //Display a section from the current index to the next 30 (+ index) items
+        // let channelFiltered = this.$filter( 'filter' )( this.grid, this.stationSearch ); //Angular's filter of the
+        // full grid when searching let refineFiltered = this.refineSearchFilter( channelFiltered ); //Filter more if
+        // someone selected a certain type of filter
+        this.displayedGrid = outputArray.slice( this.slideIndex, WINDOW_SIZE + this.slideIndex ); //Display a section
+                                                                                                  // from the current
+                                                                                                  // index to the next
+                                                                                                  // 30 (+ index) items
         this.scrollLimits.top = !this.slideIndex;  //at top when index is 0 (slideIndex is falsy at 0)
-        this.scrollLimits.bottom = ( this.slideIndex >= refineFiltered.length - WINDOW_SIZE ); //Make sure it's not at the bottom of the list
+        this.scrollLimits.bottom = ( this.slideIndex >= outputArray.length - WINDOW_SIZE ); //Make sure it's not at the
+                                                                                            // bottom of the list
 
-    }
-
-    refineSearch( searchType ) { //Changes refine search type for refineSearchFilter
-        this.ui.refineSearch = searchType; //sets refineSearchFilter's filter string to searchType
-        this.slideIndex = 0; //Sets slide index back to 0 (moving to the top)
-        this.filterGrid(); //Filter the grid based on new filter
     }
 
     imageSearch( imageSearch ) {
-        this.stationSearch = imageSearch; //Sets search to image text
+        this.searchEntry = imageSearch; //Sets search to image text
+        this.filterGrid();
     }
 
-    clearSearch () {
-        this.stationSearch = ""; //Clears search
+    clearSearch() {
+        this.searchEntry = ""; //Clears search
+        this.filterGrid();
     }
 
 
@@ -119,7 +171,8 @@ class GuideController {
             //If we aren't at the end
             if ( !this.slideIndex ) //If we are at the top of our list
                 return; //Return
-            this.slideIndex = this.slideIndex - 1; //Otherwise, we're moving up and need to keep increasing the slide index
+            this.slideIndex = this.slideIndex - 1; //Otherwise, we're moving up and need to keep increasing the slide
+                                                   // index
             if ( this.slideIndex <= 0 ) { //Unless we are now <= 0
                 this.slideIndex = 0; //Then just set it to zero
             }
@@ -132,7 +185,7 @@ class GuideController {
 
     // injection here
     static get $inject() {
-        return [ '$log', '$rootScope', 'uibHelper', '$timeout', '$state', 'ogAPI', '$filter' ];
+        return [ '$log', '$rootScope', 'uibHelper', '$timeout', '$state', 'ogAPI', '$filter', 'ControlAppService' ];
     }
 }
 
@@ -140,7 +193,7 @@ export const name = 'guideComponent';
 
 const Component = {
     $name$:       name,
-    bindings:     { grid: '<', permissions: '<', currentProgram: '<' },
+    bindings:     { grid: '<', permissions: '<' },
     controller:   GuideController,
     controllerAs: '$ctrl',
     templateUrl:  template

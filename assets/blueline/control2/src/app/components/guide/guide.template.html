@@ -17,36 +17,32 @@ This is in a template so we don't have to `require` a bunch of images in the JS.
 
         <div class="col-sm-12">
             <div class="og-secondary-tab-bar">
-                <a class="btn btn-default" ng-click="$ctrl.refineSearch('all')"
-                   ng-class="{ 'tabon': $ctrl.ui.refineSearch == 'all' }"> ALL </a>
-                <!-- <a class="btn btn-default" ng-click="refineSearch('favorites')"
-                   ng-class="{ 'tabon': $ctrl.ui.refineSearch == 'favorites' }"> FAVORITES </a> -->
-                <a class="btn btn-default" ng-click="$ctrl.refineSearch('sports')"
-                   ng-class="{ 'tabon': $ctrl.ui.refineSearch == 'sports' }"> SPORTS </a>
-                <a class="btn btn-default" ng-click="$ctrl.refineSearch('news')"
-                   ng-class="{ 'tabon': $ctrl.ui.refineSearch == 'news' }"> NEWS </a>
+                <a class="btn btn-default" ng-click="$ctrl.setGuideView('faves')"
+                   ng-class="{ 'tabon': $ctrl.guideView == 'faves' }"> FAVORITES </a>
+                <a class="btn btn-default" ng-click="$ctrl.setGuideView('all')"
+                   ng-class="{ 'tabon': $ctrl.guideView == 'all' }"> ALL </a>
             </div>
 
             <div class="current-channel">
-                <station-cell now-playing="nowPlaying" grid="currentChannel"></station-cell>
+                <station-cell now-playing="true" channel-grid="$ctrl.cappSvc.currentProgramGrid"></station-cell>
             </div>
 
             <form class="search-box" style="margin-bottom: -1vh;">
                 <div class="form-group">
                     <input type="text" class="form-control" id="inputStationName" placeholder="Search by anything..."
-                           ng-model="$ctrl.stationSearch" ng-model-options="{ debounce: 500 }">
-                    <button ng-if="$ctrl.stationSearch" style="width: 100%; margin-top: 1vh;" class="btn btn-info"
+                           ng-model="$ctrl.searchEntry" ng-model-options="{ debounce: 500 }" ng-change="$ctrl.filterGrid()">
+                    <button ng-if="$ctrl.searchEntry" style="width: 100%; margin-top: 1vh;" class="btn btn-info"
                             ng-click="$ctrl.clearSearch()">Clear Search
                     </button>
                 </div>
             </form>
 
-            <div ng-if="$ctrl.ui.refineSearch === 'sports'" class="sports-bar">
+            <div class="sports-bar">
                 <img class="sports-logo" ng-click="$ctrl.imageSearch('Warriors')" src="images/warriors.png">
-                <img class="sports-logo" ng-click="$ctrl.imageSearch('SF Giants')" src="images/sfgiants.png">
+                <img class="sports-logo" ng-click="$ctrl.imageSearch('Giants')" src="images/sfgiants.png">
                 <img class="sports-logo" ng-click="$ctrl.imageSearch('49ers')" src="images/49ers.png">
                 <img class="sports-logo" ng-click="$ctrl.imageSearch('Raiders')" src="images/raiders.png">
-                <img class="sports-logo" ng-click="$ctrl.imageSearch('SJ Sharks')" src="images/sharks.png">
+                <img class="sports-logo" ng-click="$ctrl.imageSearch('Sharks')" src="images/sharks.png">
                 <img class="sports-logo" ng-click="$ctrl.imageSearch('Oakland As')" src="images/oakland_as.png">
                 <img class="sports-logo" ng-click="$ctrl.imageSearch('Cal')" src="images/cal.png">
                 <img class="sports-logo" ng-click="$ctrl.imageSearch('SJSU')" src="images/sjsu.png">
@@ -56,11 +52,12 @@ This is in a template so we don't have to `require` a bunch of images in the JS.
             <div class="scroll-area" scroll-window window-size="30"
                  edge-callback="$ctrl.atEdge"
                  limits="$ctrl.scrollLimits">
+                <div class="no-results" ng-if="!$ctrl.displayedGrid.length">{{$ctrl.noresultsMsg}}</div>
 
                 <div id="scroller-anchor-top"></div>
 
-                <station-cell ng-repeat="grid in $ctrl.displayedGrid"
-                              channel-grid="grid" search="stationSearch"></station-cell>
+                <station-cell ng-repeat="grid in $ctrl.displayedGrid track by $index"
+                              channel-grid="grid" search="$ctrl.searchEntry"></station-cell>
 
                 <div id="scroller-anchor-bottom"></div>
             </div>

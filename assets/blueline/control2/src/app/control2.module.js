@@ -29,6 +29,7 @@ import GuideComponent from './components/guide/guide.component'
 import ScrollWindowDirective from './components/guide/scrollwindow.directive'
 import StationCellComponent from './components/stationcell/stationcell.component'
 import SmartTitleFilter from './filters/smarttitle.filter'
+import SettingsComponent from './components/settings/settings.component'
 
 // Define ngApp module
 const ngModule = angular.module( 'ngApp', [ ourglassAPI, ngAnimate, ngTouch, uirouter, uiOGMobile ] );
@@ -46,6 +47,7 @@ ngModule.directive( 'scrollWindow', [ '$log', ScrollWindowDirective ] );
 ngModule.component( GuideComponent.$name$, GuideComponent );
 ngModule.component( StationCellComponent.$name$, StationCellComponent );
 ngModule.filter( 'smartTitle', SmartTitleFilter );
+ngModule.component( SettingsComponent.$name$, SettingsComponent );
 
 
 // Configure stateProvider
@@ -60,6 +62,9 @@ ngModule.config( [ '$stateProvider', function ( $stateProvider ) {
         state.resolve = state.resolve || {};
         state.resolve.permissions = [ 'ogAPI', function ( ogAPI ) {
             return ogAPI.getPermissionsPromise();
+        } ];
+        state.resolve.initComplete = [ 'ogAPI', function ( ogAPI ) {
+            return ogAPI.initComplete;
         } ];
         return stateData;
     } );

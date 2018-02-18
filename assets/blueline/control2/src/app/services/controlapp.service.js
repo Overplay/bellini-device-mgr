@@ -14,6 +14,10 @@ import Globals from '../globals'
 import Promise from 'bluebird'
 import _ from 'lodash'
 
+// TODO: this is a hack and should be fetched from PGS for the lineup
+const DEFAULT_FAV_CHANNELS = [ 202, 206, 207, 208, 209, 212, 213, 215, 216, 217, 218, 219,
+220, 221, 277, 281, 282, 331, 355, 356, 605, 606, 614, 618, 620 ];
+
 const AUTO_LISTINGS_REFRESH_INTERVAL = 15 * 60 * 1000; // 15 minutes
 
 export default class ControlAppService {
@@ -33,6 +37,7 @@ export default class ControlAppService {
         this.appMsgCallback = this.appMsgCallback.bind( this );
         this.sysMsgCallback = this.sysMsgCallback.bind( this );
         this.venueMsgCallback = this.venueMsgCallback.bind( this );
+        this.periodicListingsRefresher = this.periodicListingsRefresher.bind(this);
 
         // use this promise to ensure initialization is done.
         this.initComplete = this.ogAPI.init( {
@@ -48,11 +53,30 @@ export default class ControlAppService {
                 this.deviceModel = modelData.device;
                 this.venueModel = modelData.venue;
                 this.user = modelData.user;
-                this.hideTabs = false;
                 this.doPeriodicRefresh = true;
                 this.periodicListingsRefresher();
-                this.$state.go( 'dash' );
+                return ogAPI.getOGDeviceModel();
             } )
+            .then( (ogdevice) => {
+                this.ogdevice = ogdevice;
+                this.currentProgram = ogdevice.currentProgram;
+                return this.fetchAllListings();
+            })
+            .then(()=>{
+                this.setCurrentProgramGrid();
+                if (!this.ogAPI.venueModel.favoriteChannels || !this.ogAPI.venueModel.favoriteChannels.length){
+                    this.ogAPI.venueModel.favoriteChannels = DEFAULT_FAV_CHANNELS;
+                    this.ogAPI.saveVenueModel();
+                    this.uibHelper.headsUpModal( "Hey There!", "We've released a new version of the control app for your viewing pleasure!\n\n This version let's you set up favorite channels and has better search features.\n\n Enjoy!" )
+                        .then( () => {} )
+                        .catch( () => {} );
+                }
+                this.hideTabs = false;
+                // Here for testing
+                // this.ogAPI.venueModel.favoriteChannels = null;
+                // this.ogAPI.saveVenueModel();
+                this.$state.go( 'dash' );
+            })
             .catch( ( err ) => {
                 this.$log.error( 'Calling init failed!' );
                 this.$log.error( err.data.error );
@@ -62,7 +86,7 @@ export default class ControlAppService {
             } );
 
         this.hideTabs = true;
-        this.hideLoDefChannels = true;
+        this.hideLoDefChannels = false;  // the data from TVMedia.ca is NOT accurate as to which are HD. Leaving the code in for later.
 
     }
 
@@ -81,7 +105,9 @@ export default class ControlAppService {
     sysMsgCallback( sysMsg ) {
         this.$log.debug( 'Got sys message' );
         if ( sysMsg.action === 'new-program' ) {
-            $rootScope.$broadcast( 'NEW_PROGRAM', sysMsg.program );
+            this.currentProgram = sysMsg.program;
+            this.setCurrentProgramGrid();
+            this.$rootScope.$broadcast( 'NEW_PROGRAM', sysMsg.program );
         }
     }
 
@@ -108,16 +134,16 @@ export default class ControlAppService {
 
         return promise.then((newGrid)=>{
 
-            let loDefChans;
+            let hdChans;
 
             if (this.hideLoDefChannels){
-                loDefChans = _.filter(newGrid, (listing)=>{
-                    let isLD = !listing.channel.stationHD;
-                    return isLD;
-                });
+                this.currentGrid = _.filter(newGrid, listing => listing.channel.stationHD );
+            } else {
+                this.currentGrid = newGrid;
             }
-            this.currentGrid = newGrid;
-            return newGrid;
+
+            this.setCurrentProgramGrid();
+            return this.currentGrid;
         });
     }
 
@@ -143,8 +169,36 @@ export default class ControlAppService {
         }
     }
 
+    setCurrentProgramGrid(){
+        const haveCurrentChannel = this.currentProgram && this.currentProgram.channelNumber;
+        if (!haveCurrentChannel) { //throw new Error('No channel number in the cloud!');
+            this.currentProgramGrid = null;
+        }
+
+        this.currentProgramGrid = _.find( this.currentGrid, { channel: { channelNumber: this.currentProgram.channelNumber } } );
+    }
+
+    toggleFavoriteChannel(channelNum){
+
+        if (this.isFavoriteChannel(channelNum)){
+            _.pull(this.ogAPI.venueModel.favoriteChannels, channelNum);
+        } else { //add
+            this.ogAPI.venueModel.favoriteChannels.push(channelNum);
+        }
+
+        this.ogAPI.venueModel.favoriteChannels.sort( ( a, b ) => a - b );
+        this.ogAPI.saveVenueModel();
+        this.$rootScope.$broadcast( 'FAVS_CHANGED' );
+
+    }
+
+    isFavoriteChannel(channelNum){
+        if (!this.ogAPI.venueModel.favoriteChannels) return false;
+        return this.ogAPI.venueModel.favoriteChannels.indexOf(parseInt(channelNum)) > -1;
+    }
+
     static get $inject() {
-        return [ 'ogAPI', '$log', '$rootScope', 'uibHelper', '$state', '$http' ];
+        return [ 'ogAPI', '$log', '$rootScope', 'uibHelper', '$state', '$http', '$timeout' ];
     }
 
     static get serviceName(){

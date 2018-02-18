@@ -3,9 +3,9 @@ import {name as oopsCompName} from './components/oops/oops.component'
 import {name as loadingCompName} from './components/loading/loading.component'
 import {name as dashCompName} from './components/dashboard/dash.component'
 import {name as guideCompName} from './components/guide/guide.component'
+import {name as settingsCompName} from './components/settings/settings.component'
 
-
-require('./assets/test/mockguide.json');
+require( './assets/test/mockguide.json' );
 
 routing.$inject = [ '$urlRouterProvider', '$locationProvider', '$stateProvider' ];
 
@@ -53,11 +53,18 @@ export default function routing( $urlRouterProvider, $locationProvider, $statePr
             url:       '/guide',
             component: guideCompName,
             resolve:   {
-                grid:           function ( ControlAppService ) {
+                grid: function ( ControlAppService ) {
                     return ControlAppService.getAllListings();
-                },
-                currentProgram: function ( ogAPI ) {
-                    return ogAPI.getCurrentProgram();
+                }
+            }
+        } )
+
+        .state( 'settings', {
+            url:       '/settings',
+            component: settingsCompName,
+            resolve:   {
+                ogDevice: function ( ogAPI ) {
+                    return ogAPI.getOGDevice();
                 }
             }
         } )

@@ -9,27 +9,20 @@
 
  **********************************/
 
+import moment from 'moment'
+
 require( './stationcell.scss' );
 require( './default_station_logo.png');
 
 
 class StationCellController {
-    constructor( $log, ogAPI ) {
+    constructor( $log, ogAPI, cntrlSvc, uibHelper ) {
 
         this.$log = $log;
         this.$log.debug( 'loaded StationCellController' );
         this.ogAPI = ogAPI;
-
-    }
-
-
-    $onInit() {
-        this.$log.debug( 'In $onInit' );
-
-    }
-
-    $onDestroy() {
-        this.$log.debug( 'In $onDestroy' );
+        this.cntrlSvc = cntrlSvc;
+        this.uibHelper = uibHelper;
 
     }
 
@@ -43,10 +36,35 @@ class StationCellController {
 
     }
 
+    // timeStr is utc time, so we need to add the proper offset for our TZ
+    // For now, we'll just hack it
+    displayTime( timeStr ) {
+        //var parsedTimeStr = moment(timeStr); //Use Moment.js to parse
+        const parsedTimeStr = moment( timeStr + 'Z' ); // make UTC since it comes with no TZ info
+        const date = parsedTimeStr.toDate();
+        const hour = (date.getHours() > 12 ? date.getHours() - 12 : date.getHours());
+        const min = date.getMinutes();
+
+        if ( isNaN( hour ) ) return "On Later";
+        return hour + ':' + (min < 10 ? '0' + min : min);
+    };
+
+    favoriteChannel(){
+
+        if (this.cntrlSvc.isFavoriteChannel( this.channelGrid.channel.number )){
+            this.uibHelper.confirmModal("Are you sure?", "Do you want to remove this channel from favorites?", true)
+                .then(()=> this.cntrlSvc.toggleFavoriteChannel( parseInt( this.channelGrid.channel.channelNumber ) ))
+                .catch(()=> this.uibHelper.dryToast("Just checking....", 1000))
+        } else {
+            this.cntrlSvc.toggleFavoriteChannel( parseInt( this.channelGrid.channel.channelNumber ) );
+        }
+
+    }
+
 
     // injection here
     static get $inject() {
-        return [ '$log', 'ogAPI', 'ControlAppService' ];
+        return [ '$log', 'ogAPI', 'ControlAppService', 'uibHelper' ];
     }
 }
 
@@ -65,6 +83,7 @@ const Component = {
             <img class="station-icon" og-fallback-img="images/default_station_logo.png"
                  ng-src="{{$ctrl.channelGrid.channel.logoUrl}}"/>
         </div>
+        <!--<p>{{$ctrl.search}}</p>-->
     </div>
 
     <div class="station-right-col">
@@ -79,10 +98,10 @@ const Component = {
                 {{ $ctrl.channelGrid.channel.channelNumber}}
             </div>
 
-            <!-- <div ng-hide="nowPlaying" class="favorites-box" ng-click="favoriteChannel( grid.channel ); $event.stopPropagation();">
-                <i ng-if="grid.channel.favorite" class="glyphicon glyphicon-heart"></i>
-                <i ng-if="!grid.channel.favorite" class="glyphicon glyphicon-heart-empty"></i>
-            </div> -->
+            <div ng-if="!$ctrl.nowPlaying" class="favorites-box" ng-click="$ctrl.favoriteChannel(); $event.stopPropagation();">
+                <i ng-if="$ctrl.cntrlSvc.isFavoriteChannel($ctrl.channelGrid.channel.number)" class="glyphicon glyphicon-heart"></i>
+                <i ng-if="!$ctrl.cntrlSvc.isFavoriteChannel($ctrl.channelGrid.channel.number)" class="glyphicon glyphicon-heart-empty"></i>
+            </div>
 
         </div>
         <div class="flex flex-col">
@@ -98,7 +117,7 @@ const Component = {
                     {{ $ctrl.channelGrid.listings[0] | smartTitle }}
                 </div>
             </div>
-            <div class="flex" ng-if="search" ng-repeat="listing in $ctrl.channelGrid.listings | filter: $ctrl.search">
+            <div class="flex" ng-if="$ctrl.search" ng-repeat="listing in $ctrl.channelGrid.listings | filter: $ctrl.search">
                 <div class="listing-time">
                     {{ $ctrl.displayTime(listing.listDateTime) }}
                 </div>
