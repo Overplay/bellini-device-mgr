@@ -101,6 +101,8 @@ app.factory( 'ogNet', function ( $log, $http, $q, ogAPI, $rootScope, uibHelper )
         return resp
     } );
 
+    //hoopdihoo
+
     initter.then( function ( models ) {
         $log.debug( 'Init really complete' );
     } );
