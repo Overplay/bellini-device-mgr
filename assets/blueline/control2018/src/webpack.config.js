@@ -10,7 +10,8 @@ const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 module.exports = {
     entry:     { app: [ './app/control2.module.js'] },
     output:    {
-        path:     path.resolve( __dirname, '../dist' ),
+        path:     path.resolve( __dirname, '../../control' ),
+        //path: path.resolve( __dirname, '../dist' ),
         filename: 'app.bundle.js'
     },
     devtool:   'inline-source-map',
