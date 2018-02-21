@@ -129,7 +129,7 @@ export default class ControlAppService {
         if ( Globals.mockProgramGuide ) {
             promise = this.$http.get( 'json/mockguide.json' ).then( ( data ) => data.data );
         } else {
-            promise = this.ogAPI.getGridForDevice();
+            promise = this.ogAPI.getGrid();
         }
 
         return promise.then((newGrid)=>{
