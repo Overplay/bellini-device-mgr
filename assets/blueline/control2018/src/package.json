@@ -31,7 +31,7 @@
     "moment": "^2.20.1",
     "ng-annotate-loader": "^0.6.1",
     "ngtemplate-loader": "^2.0.1",
-    "ogapi-es6": "^0.1.17",
+    "ogapi-es6": "^0.1.18",
     "oguimobile-es6": "^0.1.0",
     "sass-loader": "^6.0.6",
     "script-loader": "^0.7.2",

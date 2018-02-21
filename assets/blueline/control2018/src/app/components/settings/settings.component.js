@@ -94,9 +94,9 @@ const Component = {
                 <!--REGISTER WITH VENUE-->
             <!--</a>-->
             
-            <h3>BETA SOFFTWARE</h3>
-            <p>You are currently using the latest beta version of the Ourglass Control App. If you would like to switch to the old version, click below.</p>
-            <p class="btn btn-danger" style="width: 100%;" ng-click="$ctrl.abandonBeta()">SWITCH BACK TO OLD VERSION</p>
+            <!--<h3>BETA SOFFTWARE</h3>-->
+            <!--<p>You are currently using the latest beta version of the Ourglass Control App. If you would like to switch to the old version, click below.</p>-->
+            <!--<p class="btn btn-danger" style="width: 100%;" ng-click="$ctrl.abandonBeta()">SWITCH BACK TO OLD VERSION</p>-->
 
         </div>
 

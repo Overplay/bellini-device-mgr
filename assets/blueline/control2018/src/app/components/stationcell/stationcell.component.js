@@ -14,7 +14,7 @@ import moment from 'moment'
 require( './stationcell.scss' );
 require( './default_station_logo.png');
 
-const SAFETY_HUD_DISMISS_DELAY = 500;
+const SAFETY_HUD_DISMISS_DELAY = 5000;
 
 class StationCellController {
     constructor( $log, ogAPI, cntrlSvc, uibHelper, $timeout ) {
