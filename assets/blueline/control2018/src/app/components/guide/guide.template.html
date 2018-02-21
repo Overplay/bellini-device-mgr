@@ -16,28 +16,29 @@ This is in a template so we don't have to `require` a bunch of images in the JS.
     <div class="row" ng-show="$ctrl.ogSystem.isPaired">
 
         <div class="col-sm-12">
-            <div class="og-secondary-tab-bar">
+            <div class="og-secondary-tab-bar" ng-hide="$ctrl.searching">
                 <a class="btn btn-default" ng-click="$ctrl.setGuideView('faves')"
                    ng-class="{ 'tabon': $ctrl.guideView == 'faves' }"> FAVORITES </a>
                 <a class="btn btn-default" ng-click="$ctrl.setGuideView('all')"
                    ng-class="{ 'tabon': $ctrl.guideView == 'all' }"> ALL </a>
             </div>
 
-            <div class="current-channel">
-                <station-cell now-playing="true" channel-grid="$ctrl.cappSvc.currentProgramGrid" search="$ctrl.searchEntry"></station-cell>
+            <div class="current-channel" ng-hide="$ctrl.searching">
+                <station-cell now-playing="true" channel-grid="$ctrl.cappSvc.currentProgramGrid"></station-cell>
             </div>
 
             <form class="search-box" style="margin-bottom: -1vh;">
                 <div class="form-group">
                     <input type="text" class="form-control" id="inputStationName" placeholder="Search by anything..."
-                           ng-model="$ctrl.searchEntry" ng-model-options="{ debounce: 500 }" ng-change="$ctrl.filterGrid()">
+                           ng-model="$ctrl.searchEntry" ng-model-options="{ debounce: 500 }" ng-change="$ctrl.filterGrid()"
+                           ng-focus="$ctrl.searching=true" ng-blur="$ctrl.searching=false">
                     <button ng-if="$ctrl.searchEntry" style="width: 100%; margin-top: 1vh;" class="btn btn-info"
                             ng-click="$ctrl.clearSearch()">Clear Search
                     </button>
                 </div>
             </form>
 
-            <div class="sports-bar">
+            <div class="sports-bar" ng-hide="$ctrl.searching">
                 <img class="sports-logo" ng-click="$ctrl.imageSearch('Warriors')" src="images/warriors.png">
                 <img class="sports-logo" ng-click="$ctrl.imageSearch('Giants')" src="images/sfgiants.png">
                 <img class="sports-logo" ng-click="$ctrl.imageSearch('49ers')" src="images/49ers.png">
