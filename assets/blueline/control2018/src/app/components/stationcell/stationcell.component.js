@@ -69,7 +69,7 @@ class StationCellController {
 
     // injection here
     static get $inject() {
-        return [ '$log', 'ogAPI', 'ControlAppService', 'uibHelper' ];
+        return [ '$log', 'ogAPI', 'ControlAppService', 'uibHelper', '$timeout' ];
     }
 }
 
