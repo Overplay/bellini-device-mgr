@@ -30,6 +30,7 @@ class StationCellController {
 
     changeChannel() {
 
+        if (this.nowPlaying) return; // this is the now playing header.
         // This is dismissed when the channel change is picked up by the cloud and fed back down through sockeio,
         // or the safety timer goes.
         const hud = this.uibHelper.curtainModal( 'Changing...' );
@@ -81,7 +82,7 @@ const Component = {
     controller:   StationCellController,
     controllerAs: '$ctrl',
     template:     `
-<div ng-class="$ctrl.nowPlaying ? 'now-playing' : 'station-cell'" ng-click="$ctrl.changeChannel()">
+<div ng-class="$ctrl.nowPlaying ? 'now-playing' : 'station-cell'" ng-click="$ctrl.changeChannel()" ng-hide="$ctrl.nowPlaying && $ctrl.search">
 
     <div class="station-left-col">
         <div class="station-logo-holder">
