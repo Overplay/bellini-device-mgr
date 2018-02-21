@@ -1,6 +1,6 @@
 
 
-const MOCK_PROGRAM_GUIDE = true;
+const MOCK_PROGRAM_GUIDE = false;
 
 export default class Globals{
 
