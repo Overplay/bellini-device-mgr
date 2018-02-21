@@ -63,9 +63,9 @@ ngModule.config( [ '$stateProvider', function ( $stateProvider ) {
         state.resolve.permissions = [ 'ogAPI', function ( ogAPI ) {
             return ogAPI.getPermissionsPromise();
         } ];
-        state.resolve.initComplete = [ 'ogAPI', function ( ogAPI ) {
-            return ogAPI.initComplete;
-        } ];
+        // state.resolve.initComplete = [ 'ogAPI', function ( ogAPI ) {
+        //     return ogAPI.initComplete;
+        // } ];
         return stateData;
     } );
 
