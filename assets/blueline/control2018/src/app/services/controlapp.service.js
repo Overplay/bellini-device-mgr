@@ -133,15 +133,7 @@ export default class ControlAppService {
         }
 
         return promise.then((newGrid)=>{
-
-            let hdChans;
-
-            if (this.hideLoDefChannels){
-                this.currentGrid = _.filter(newGrid, listing => listing.channel.stationHD );
-            } else {
-                this.currentGrid = newGrid;
-            }
-
+            this.currentGrid = newGrid;
             this.setCurrentProgramGrid();
             return this.currentGrid;
         });
@@ -173,9 +165,10 @@ export default class ControlAppService {
         const haveCurrentChannel = this.currentProgram && this.currentProgram.channelNumber;
         if (!haveCurrentChannel) { //throw new Error('No channel number in the cloud!');
             this.currentProgramGrid = null;
+        } else {
+            this.currentProgramGrid = _.find( this.currentGrid, { channel: { channelNumber: this.currentProgram.channelNumber } } );
         }
 
-        this.currentProgramGrid = _.find( this.currentGrid, { channel: { channelNumber: this.currentProgram.channelNumber } } );
     }
 
     toggleFavoriteChannel(channelNum){
