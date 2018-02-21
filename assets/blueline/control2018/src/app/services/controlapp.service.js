@@ -62,7 +62,7 @@ export default class ControlAppService {
                 return this.fetchAllListings();
             })
             .then(()=>{
-                this.setCurrentProgramGrid();
+
                 if (!this.ogAPI.venueModel.favoriteChannels || !this.ogAPI.venueModel.favoriteChannels.length){
                     this.ogAPI.venueModel.favoriteChannels = DEFAULT_FAV_CHANNELS;
                     this.ogAPI.saveVenueModel();
