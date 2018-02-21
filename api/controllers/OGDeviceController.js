@@ -532,8 +532,7 @@ module.exports = {
             } )
             .catch( res.serverError );
 
-    }
-    ,
+    },
 
     changechannel: function ( req, res ) {
 

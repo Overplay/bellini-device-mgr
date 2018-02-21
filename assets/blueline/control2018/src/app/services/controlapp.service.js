@@ -106,7 +106,7 @@ export default class ControlAppService {
     sysMsgCallback( sysMsg ) {
         this.$log.debug( 'Got sys message' );
         if ( sysMsg.action === 'new-program' ) {
-            this.currentProgram = sysMsg.program;
+            this.currentProgram = JSON.parse(sysMsg.program);
             this.setCurrentProgramGrid();
             this.$rootScope.$broadcast( 'NEW_PROGRAM', sysMsg.program );
         }
