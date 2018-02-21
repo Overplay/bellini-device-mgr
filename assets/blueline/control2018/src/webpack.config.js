@@ -65,10 +65,10 @@ module.exports = {
                 template: './index.ejs',
                 chunks: [ 'app' ],
         } ),
-        new UglifyJSPlugin( {
-            sourceMap:     true,
-            uglifyOptions: { mangle: false }
-        } )
+        // new UglifyJSPlugin( {
+        //     sourceMap:     true,
+        //     uglifyOptions: { mangle: false }
+        // } )
     ],
     // Left here as an example of how to alias imports
     resolve: {

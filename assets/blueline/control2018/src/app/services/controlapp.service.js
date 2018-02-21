@@ -168,11 +168,15 @@ export default class ControlAppService {
     }
 
     setCurrentProgramGrid(){
+        console.log("Setting currentProgramGrid");
         const haveCurrentChannel = this.currentProgram && this.currentProgram.channelNumber;
+        console.log("haveCurrentChannel is "+haveCurrentChannel);
         if (!haveCurrentChannel) { //throw new Error('No channel number in the cloud!');
+            console.error("Nulling currentProgramGrid");
             this.currentProgramGrid = null;
         } else {
             this.currentProgramGrid = _.find( this.currentGrid, { channel: { channelNumber: this.currentProgram.channelNumber } } );
+            console.log( "Set currentProgramGrid to: " + this.currentProgramGrid );
         }
 
     }
