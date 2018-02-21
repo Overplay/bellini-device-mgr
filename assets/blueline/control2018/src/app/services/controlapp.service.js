@@ -175,7 +175,7 @@ export default class ControlAppService {
             console.error("Nulling currentProgramGrid");
             this.currentProgramGrid = null;
         } else {
-            this.currentProgramGrid = _.find( this.currentGrid, { channel: { channelNumber: this.currentProgram.channelNumber } } );
+            this.currentProgramGrid = _.find( this.currentGrid, { channel: { channelNumber: haveCurrentChannel } } );
             console.log( "Set currentProgramGrid to: " + this.currentProgramGrid );
         }
 
