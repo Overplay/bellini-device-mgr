@@ -37,7 +37,10 @@ class GuideController {
         this.filterGrid = this.filterGrid.bind(this);
 
         this.listenerUnsubs = [
-            this.$rootScope.$on( "NEW_PROGRAM", () => this.uibHelper.dismissCurtain()),
+            this.$rootScope.$on( "NEW_PROGRAM", () => {
+                this.uibHelper.dismissCurtain();
+                this.clearSearch();
+            }),
             this.$rootScope.$on( 'FAVS_CHANGED', () => {
                 this.filterGrid();
             } )
