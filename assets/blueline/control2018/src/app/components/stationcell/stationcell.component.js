@@ -28,7 +28,7 @@ class StationCellController {
 
     changeChannel() {
 
-        const hud = uibHelper.curtainModal( 'Changing...' );
+        const hud = this.uibHelper.curtainModal( 'Changing...' );
         this.$log.debug( "Changing channel to: " + this.channelGrid.channel.channelNumber );
         this.ogAPI.changeChannel( this.channelGrid.channel.channelNumber );
         //$rootScope.currentChannel = scope.grid;
