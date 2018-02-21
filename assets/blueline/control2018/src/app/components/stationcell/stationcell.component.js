@@ -14,21 +14,26 @@ import moment from 'moment'
 require( './stationcell.scss' );
 require( './default_station_logo.png');
 
+const SAFETY_HUD_DISMISS_DELAY = 500;
 
 class StationCellController {
-    constructor( $log, ogAPI, cntrlSvc, uibHelper ) {
+    constructor( $log, ogAPI, cntrlSvc, uibHelper, $timeout ) {
 
         this.$log = $log;
         this.$log.debug( 'loaded StationCellController' );
         this.ogAPI = ogAPI;
         this.cntrlSvc = cntrlSvc;
         this.uibHelper = uibHelper;
+        this.$timeout = $timeout;
 
     }
 
     changeChannel() {
 
+        // This is dismissed when the channel change is picked up by the cloud and fed back down through sockeio,
+        // or the safety timer goes.
         const hud = this.uibHelper.curtainModal( 'Changing...' );
+        this.$timeout(()=>hud.dismiss(), SAFETY_HUD_DISMISS_DELAY);
         this.$log.debug( "Changing channel to: " + this.channelGrid.channel.channelNumber );
         this.ogAPI.changeChannel( this.channelGrid.channel.channelNumber );
         //$rootScope.currentChannel = scope.grid;
