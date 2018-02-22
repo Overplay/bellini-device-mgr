@@ -1,4 +1,5 @@
 .app-scroll {
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
+  height: 100vh; // must be here for scroll to work ffs
 }
