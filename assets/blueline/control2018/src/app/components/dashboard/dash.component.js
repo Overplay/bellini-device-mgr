@@ -91,7 +91,7 @@ const Component = {
     </div>
     <div class="row" ng-if="$ctrl.permissions.anymanager && !$ctrl.cntrlSvc.isMasqueradingAsPatron">
         <div class="col-sm-12">
-            <h4 class="text-og-orange">AVAILABLE APPS</h4>
+            <h4 class="text-og-orange">AVAILABLE APPS Bitches!</h4>
             <p class="no-apps" ng-show="$ctrl.apps.available.length < 1">There are no available apps.</p>
             <app-cell ng-repeat="app in $ctrl.apps.available | orderBy: 'displayName' track by $index"
                 app="app" permissions="$ctrl.permissions"></app-cell>
