@@ -10,16 +10,18 @@
  **********************************/
 
 require( './dash.scss' );
+import _ from 'lodash';
 
 
 class DashController {
-    constructor( $log, $rootScope, uibHelper, $timeout, $state ) {
+    constructor( $log, $rootScope, uibHelper, $timeout, $state, cntrlSvc ) {
         this.$log = $log;
         this.$log.debug( 'loaded ManagerDashController' );
         this.$rootScope = $rootScope;
         this.uibHelper = uibHelper;
         this.$timeout = $timeout;
         this.$state = $state;
+        this.cntrlSvc = cntrlSvc;
 
         this.listenerUnsub = this.$rootScope.$on(
             "$app_state_change",
@@ -40,6 +42,12 @@ class DashController {
 
     $onInit() {
         this.$log.debug( 'In $onInit' );
+        if (!this.permissions.anymanager || this.cntrlSvc.isMasqueradingAsPatron){
+            // need to filter the running apps
+            _.remove( this.apps.running, function ( app ) {
+                return !app.patronControllable;
+            } );
+        }
     }
 
     $onDestroy() {
@@ -53,7 +61,7 @@ class DashController {
 
     // injection here
     static get $inject() {
-        return [ '$log', '$rootScope', 'uibHelper', '$timeout', '$state' ];
+        return [ '$log', '$rootScope', 'uibHelper', '$timeout', '$state', 'ControlAppService' ];
     }
 }
 
@@ -81,7 +89,7 @@ const Component = {
         </div>
 
     </div>
-    <div class="row">
+    <div class="row" ng-if="$ctrl.permissions.anymanager && !$ctrl.cntrlSvc.isMasqueradingAsPatron">
         <div class="col-sm-12">
             <h4 class="text-og-orange">AVAILABLE APPS</h4>
             <p class="no-apps" ng-show="$ctrl.apps.available.length < 1">There are no available apps.</p>

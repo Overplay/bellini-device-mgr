@@ -15,12 +15,17 @@ require( './tabs.scss' );
 let _broadcastListeners = [];
 
 class TopTabsController {
-    constructor( $log, ogAPI, capSvc ) {
+    constructor( $log, ogAPI, capSvc, $rootScope ) {
 
         this.$log = $log;
         this.$log.debug( 'loaded TopTabsController' );
         this.ogAPI = ogAPI;
         this.capSvc = capSvc;
+
+        this.listener = $rootScope.$on( 'MASQUERADE_MODE_CHANGE', ( ev, data ) => {
+            $log.debug( "Masquerade mode changed to: " + data.isMasquerading );
+            this.permissions.isMaqueradingAsPatron = data.isMasquerading;
+        } );
 
     }
 
@@ -35,13 +40,16 @@ class TopTabsController {
 
     $onDestroy() {
         this.$log.debug( 'In $onDestroy' );
-
+        this.listener();
     }
 
+    toggleMasqMode() {
+        this.capSvc.toggleMasquerade();
+    }
 
     // injection here
     static get $inject() {
-        return [ '$log', 'ogAPI', 'ControlAppService' ];
+        return [ '$log', 'ogAPI', 'ControlAppService', '$rootScope' ];
     }
 }
 
@@ -54,15 +62,15 @@ const Component = {
     controllerAs: '$ctrl',
     template:     `
     <!-- Manager Mode -->
-<div class="og-tab-bar" ng-if="$ctrl.permissions.anymanager" ng-class="{'hide-tabs': $ctrl.capSvc.hideTabs }">
+<div class="og-tab-bar" ng-if="$ctrl.permissions.anymanager && !$ctrl.permissions.isMaqueradingAsPatron" ng-class="{'hide-tabs': $ctrl.capSvc.hideTabs }">
     <a class="ttab" ui-sref="dash" ui-sref-active="tabon">APPS</a>
     <a class="ttab" ui-sref="guide" ui-sref-active="tabon">TV</a>
     <a class="ttab" ui-sref="settings" ui-sref-active="tabon">SETTINGS</a>
 </div>
 <!-- PATRON MODE -->
-<div class="ttab" ng-if="!$ctrl.permissions.anymanager" ng-class="{'hide-tabs': $ctrl.capSvc.hideTabs }">
+<div class="og-tab-bar" ng-if="!$ctrl.permissions.anymanager || $ctrl.permissions.isMaqueradingAsPatron" ng-class="{'hide-tabs': $ctrl.capSvc.hideTabs }">
     <a class="ttab" ui-sref="dash" ui-sref-active="tabon">APPS</a>
-    <a class="ttab" ui-sref="patrontv" ui-sref-active="tabon">TV</a>
+    <a class="ttab" ui-sref="guide" ui-sref-active="tabon">TV</a>
 </div>
 
 

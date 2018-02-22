@@ -31,6 +31,16 @@ class StationCellController {
     changeChannel() {
 
         if (this.nowPlaying) return; // this is the now playing header.
+
+        if (!this.permissions || (this.permissions && !this.permissions.anymanager) || ( this.cntrlSvc.isMasqueradingAsPatron )){
+            this.uibHelper.headsupModal("Sorry!", "You can't change the channels yourself. Please ask your server.")
+                .finally(()=>{
+                    this.$log.debug("Doink");
+                });
+            return;
+
+        }
+
         // This is dismissed when the channel change is picked up by the cloud and fed back down through sockeio,
         // or the safety timer goes.
         const hud = this.uibHelper.curtainModal( 'Changing...' );
@@ -78,7 +88,7 @@ export const name = 'stationCell';
 
 const Component = {
     $name$:       name,
-    bindings:     { nowPlaying: '<', channelGrid: '<', search: '<' },
+    bindings:     { nowPlaying: '<', channelGrid: '<', search: '<', permissions: '<' },
     controller:   StationCellController,
     controllerAs: '$ctrl',
     template:     `

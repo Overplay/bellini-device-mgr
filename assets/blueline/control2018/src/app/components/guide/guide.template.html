@@ -58,7 +58,7 @@ This is in a template so we don't have to `require` a bunch of images in the JS.
                 <div id="scroller-anchor-top"></div>
 
                 <station-cell ng-repeat="grid in $ctrl.displayedGrid track by $index"
-                              channel-grid="grid" search="$ctrl.searchEntry"></station-cell>
+                              channel-grid="grid" search="$ctrl.searchEntry" permissions="$ctrl.permissions"></station-cell>
 
                 <div id="scroller-anchor-bottom"></div>
             </div>

@@ -86,11 +86,11 @@ const Component = {
         </div>
         <div class="app-cell-buttons">
             <button class="btn btn-warning" style="float: left;" ng-click="$ctrl.control()">
-                {{ $ctrl.permissions.anymanager ? 'CONTROL' : 'PLAY' }}</button>
+                {{ $ctrl.permissions.anymanager && !$ctrl.capSvc.isMasqueradingAsPatron ? 'CONTROL' : 'PLAY' }}</button>
             <button class="btn btn-primary" style="float: left;" ng-click="$ctrl.move()" 
-                ng-if="$ctrl.permissions.anymanager">MOVE</button>
+                ng-if="$ctrl.permissions.anymanager && !$ctrl.capSvc.isMasqueradingAsPatron">MOVE</button>
             <button class="btn btn-danger pull-right" style="" ng-click="$ctrl.kill()" 
-                ng-if="$ctrl.permissions.anymanager">X</button>
+                ng-if="$ctrl.permissions.anymanager && !$ctrl.capSvc.isMasqueradingAsPatron">X</button>
         </div>
     </div>
 

@@ -120,6 +120,8 @@ export default class ControlAppService {
     toggleMasquerade() {
         this.isMasqueradingAsPatron = !this.isMasqueradingAsPatron;
         this.$rootScope.$broadcast( 'MASQUERADE_MODE_CHANGE', { isMasquerading: this.isMasqueradingAsPatron } );
+        this.$state.go( "dash", {}, { reload: true } ); // start again
+
         return this.isMasqueradingAsPatron;
     }
 

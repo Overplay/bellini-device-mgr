@@ -3,13 +3,14 @@
 @import "../../assets/styles/ogcolors";
 
 .og-tab-bar {
-  width: 100%;
+  width: 100vw;
   position: fixed;
   top: 0;
   z-index: 1000;
   background-color: rgba(0, 0, 0, 0.25);
   //border: 1px solid deeppink;
   height: 5vh;
+  display: flex;
 
   .ttab {
     width: 49vw;
@@ -20,6 +21,8 @@
     font-size: 3vw;
     font-family: Poppins, Arial, SansSerif;
     font-weight: bold;
+    flex-grow: 1;
+    border-right: 1px solid #333333;
   }
 
   a {
