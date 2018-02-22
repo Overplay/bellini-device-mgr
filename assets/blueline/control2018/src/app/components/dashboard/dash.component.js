@@ -73,7 +73,7 @@ const Component = {
     controller:   DashController,
     controllerAs: '$ctrl',
     template:     `
-<div class="container">
+<div class="container app-scroll">
     <div class="row">
         <div class="col-sm-12">
             <div class="row">
