@@ -14,7 +14,7 @@ import _ from 'lodash';
 
 
 class DashController {
-    constructor( $log, $rootScope, uibHelper, $timeout, $state, cntrlSvc ) {
+    constructor( $log, $rootScope, uibHelper, $timeout, $state, cntrlSvc, ogAPI ) {
         this.$log = $log;
         this.$log.debug( 'loaded ManagerDashController' );
         this.$rootScope = $rootScope;
@@ -22,6 +22,7 @@ class DashController {
         this.$timeout = $timeout;
         this.$state = $state;
         this.cntrlSvc = cntrlSvc;
+        this.ogAPI = ogAPI;
 
         this.listenerUnsub = this.$rootScope.$on(
             "$app_state_change",
@@ -61,7 +62,7 @@ class DashController {
 
     // injection here
     static get $inject() {
-        return [ '$log', '$rootScope', 'uibHelper', '$timeout', '$state', 'ControlAppService' ];
+        return [ '$log', '$rootScope', 'uibHelper', '$timeout', '$state', 'ControlAppService', 'ogAPI' ];
     }
 }
 
