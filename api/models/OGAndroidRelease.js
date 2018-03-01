@@ -33,6 +33,11 @@ module.exports = {
         type: 'string',
         enum: ['archive', 'alpha', 'beta', 'release'],
         defaultsTo: 'archive'
+    },
+
+    notes: {
+        type: 'string',
+        defaultsTo: ''
     }
 
   }

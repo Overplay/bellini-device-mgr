@@ -34,7 +34,7 @@ module.exports = function appInfoJsonHook(sails) {
 		sync: function () {
 			//sails.log.silly("RUNNING APP INFO JSON HOOK")
 
-			glob("./assets/blueline/**/info.json", function (err, matches) {
+			glob("./assets/blueline/opp/**/info.json", function (err, matches) {
 
 				for (var i = 0; i < matches.length; i++) {
 					sails.hooks.appinfojsonhook.process(matches[i]);

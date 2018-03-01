@@ -46,7 +46,7 @@ function processLineup( lineup ) {
 }
 
 
-function lineupForDevice( deviceUDID, searchQuery ) {
+function lineupForDevice( deviceUDID, searchQuery, dontCleanseUnused ) {
     return OGDevice.findOne( { deviceUDID: deviceUDID } )
         .then( function ( dev ) {
 
@@ -73,8 +73,16 @@ function lineupForDevice( deviceUDID, searchQuery ) {
                             var now = moment().utcOffset( 0 );
                             var isOver = showEndsAt.isBefore( now );
                             return isOver;
-
                         } );
+
+                        // to implement a param if we ever need it all
+                        if (!dontCleanseUnused){
+                            chanLup.channel = _.omit(chanLup.channel, ["subChannelNumber","stationType","NTSC_TSID","DTV_TSID","webLink"]);
+                            chanLup.listings = chanLup.listings.map((l)=>{
+                                return _.pick(l, ["listingID","listDateTime","duration","showID","showName","episodeTitle","showType",
+                                "league","team1","team2"]);
+                            })
+                        }
 
                         if ( searchQuery ) {
                             _.remove( chanLup.channel, function ( channel ) { //This should remove all channels that aren't in the search.
