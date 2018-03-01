@@ -111,7 +111,7 @@ module.exports = {
         if ( !params.deviceUDID )
             return res.badRequest( { error: 'no udid' } );
 
-        lineupForDevice( params.deviceUDID )
+        lineupForDevice( params.deviceUDID, false, false )
             .then( res.ok )
             .catch( res.serverError );
 
