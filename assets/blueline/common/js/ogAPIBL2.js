@@ -480,6 +480,15 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 } );
 
+                io.socket.on( "mute", ( data ) => {
+
+                    $log.debug( 'Got a mute message' );
+                    $rootScope.$broadcast('MUTE_APP', data);
+
+
+
+                } );
+
                 return $q( function ( resolve, reject ) {
 
                     io.socket.post( '/socket/join', {
@@ -986,6 +995,30 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                         $rootScope.$broadcast( '$app_state_change_failure', { action: 'kill', appId: appid } );
                         throw err; // Rethrow
                     } );
+            };
+
+
+            /**
+             *
+             * @param appid
+             * @param isMuted
+             */
+            service.mute = function( appid, isMuted )
+            {
+
+                //should be able to return the promise object and act on it
+                return $http.post( '/ogdevice/mute', { deviceUDID: _deviceUDID, appId: appid, isMuted: isMuted } )
+                    .then( stripData )
+                    .then( ( d ) => {
+                        //this.$rootScope.$broadcast( '$app_state_change', { action: 'mute', appId: appid } );
+                        return d;
+                    } )
+                    .catch( ( err ) => {
+                        $log.info( "App mute FAILED for: " + appid );
+                        //this.$rootScope.$broadcast( '$app_state_change_failure', { action: 'mute', appId: appid } );
+                        throw err; // Rethrow
+                    } );
+
             };
 
             /**

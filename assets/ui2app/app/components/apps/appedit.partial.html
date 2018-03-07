@@ -7,8 +7,8 @@
                 <tr>
                     <td>App Id</td>
                     <td>{{ app.appId }}
-                        <i class="fa fa-pencil-square-o ibut pull-right" aria-hidden="true"
-                           ng-click="changeStringField('appId', 'Edit app ID')"></i>
+                        <!--<i class="fa fa-pencil-square-o ibut pull-right" aria-hidden="true"-->
+                           <!--ng-click="changeStringField('appId', 'Edit app ID')"></i>-->
                     </td>
                 </tr>
                 <tr>
@@ -75,7 +75,7 @@
                 </tr>
 
                 <tr>
-                    <td>Virtual App (Won't Show in Launcher)</td>
+                    <td>Virtual App (Won't Show in Launcher, but this is an old idea?)</td>
                     <td>
                         <div class="checkbox" style="margin: 0;">
                             <label>
@@ -86,7 +86,32 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <td>Hidden App (Won't Show in Launcher for OG Non-Employees)</td>
+                    <td>
+                        <div class="checkbox" style="margin: 0;">
+                            <label>
+                                <input type="checkbox" ng-model="app.hidden"
+                                       ng-change="boolChanged()">
+                                Is hidden (normally false, true for apps only OG employees should use)
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Pausable (Supports App Pause)</td>
+                    <td>
+                        <div class="checkbox" style="margin: 0;">
+                            <label>
+                                <input type="checkbox" ng-model="app.pausable"
+                                       ng-change="boolChanged()">
+                                Supports 2 hour app pausing.
+                            </label>
+                        </div>
+                    </td>
+                </tr>
             </table>
+            <!--<button class="btn btn-danger" ng-click="refreshFromJson()">RELOAD FROM INFO.JSON</button>-->
         </div>
     </div>
 </div>

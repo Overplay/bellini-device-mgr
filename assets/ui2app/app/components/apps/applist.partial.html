@@ -12,7 +12,7 @@
                             <th>Display Name</th>
                             <th>Type</th>
                             <th>Description</th>
-                            <th>Virtual</th>
+                            <th>Attribs</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -23,7 +23,10 @@
                             <td>{{ a.displayName }}</td>
                             <td>{{ a.appType }}</td>
                             <td>{{ a.description }}</td>
-                            <td>{{ a.isVirtual ? 'X' : '' }}</td>
+                            <td>{{ a.isVirtual ? 'Virtual' : '' }}<br>
+                                {{ a.hidden ? 'Hidden' : '' }}<br>
+                                {{ a.pausable ? 'Pausable' : '' }}<br>
+                            </td>
                             <td>
                                 <button ui-sref="apps.edit({id: a.id})" class="tbtn tbtn-blue">edit</button>
                                 <button ng-click="delete(a)" class="tbtn tbtn-red">delete</button>

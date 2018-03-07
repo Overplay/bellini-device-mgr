@@ -56,11 +56,11 @@ module.exports.bootstrap = function ( cb ) {
     chain = chain
         .then( function () {
 
-            var parr = coreAdmins.map( function(admin){
+            const parr = coreAdmins.map( function(admin){
                 return AdminService.addUserAtRing( admin.auth.email, admin.auth.password, 1, admin.user, false )
                     .then( function () { sails.log.debug( "Admin user created." )} )
                     .catch( function () { sails.log.warn( "Admin user NOT created. Probably already existed." )} );
-            })
+            });
 
             //parr.push( AdminService.addUserAtRing('jonny@lowstatus.com','password', 3, { firstName: 'Jonnie', lastName: 'looser '}));
 

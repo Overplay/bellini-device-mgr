@@ -13,12 +13,15 @@ require( './appcell.scss' );
 
 
 class AppCellController {
-    constructor( $log, ogAPI, capSvc ) {
+    constructor( $log, ogAPI, capSvc, $rootScope ) {
 
         this.$log = $log;
         this.$log.debug( 'loaded AppCellController' );
         this.ogAPI = ogAPI;
         this.capSvc = capSvc;
+        this.$rootScope = $rootScope;
+
+        this.muted = false;
 
     }
 
@@ -57,6 +60,15 @@ class AppCellController {
             .catch( this.$log.error )
     }
 
+    mute() {
+        this.muted =!this.muted;
+        this.ogAPI.mute( this.app.appId, this.muted )
+            .then( () => {
+                this.$log.debug( 'Mute was ok' );
+            } )
+            .catch( this.$log.error );
+    }
+
     control() {
         this.ogAPI.relocToControlApp( this.app )
     }
@@ -64,7 +76,7 @@ class AppCellController {
 
     // injection here
     static get $inject() {
-        return [ '$log', 'ogAPI', 'ControlAppService' ];
+        return [ '$log', 'ogAPI', 'ControlAppService', '$rootScope' ];
     }
 }
 
@@ -89,6 +101,8 @@ const Component = {
                 {{ $ctrl.permissions.anymanager && !$ctrl.capSvc.isMasqueradingAsPatron ? 'CONTROL' : 'PLAY' }}</button>
             <button class="btn btn-primary" style="float: left;" ng-click="$ctrl.move()" 
                 ng-if="$ctrl.permissions.anymanager && !$ctrl.capSvc.isMasqueradingAsPatron">MOVE</button>
+            <button class="btn btn-danger" style="float: left;" ng-click="$ctrl.mute()" 
+                ng-if="$ctrl.app.pausable && $ctrl.permissions.anymanager && !$ctrl.capSvc.isMasqueradingAsPatron">{{ $ctrl.muted ? "UNMUTE": "MUTE 2HRS" }}</button>
             <button class="btn btn-danger pull-right" style="" ng-click="$ctrl.kill()" 
                 ng-if="$ctrl.permissions.anymanager && !$ctrl.capSvc.isMasqueradingAsPatron">X</button>
         </div>

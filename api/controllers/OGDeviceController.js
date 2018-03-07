@@ -380,7 +380,7 @@ module.exports = {
     move: function ( req, res ) {
 
 
-        if ( req.method != 'POST' )
+        if ( req.method !== 'POST' )
             return res.badRequest( { error: "That's not how to message, sparky!" } );
 
         //OK, we need a deviceUDID
@@ -402,6 +402,38 @@ module.exports = {
             {
                 action: 'move',
                 appId:  params.appId,
+                ts:     new Date().getTime() // hack for multiples
+            },
+            req );
+
+        return res.ok( { status: "ok" } );
+    },
+
+    mute: function ( req, res ) {
+
+
+        if ( req.method !== 'POST' )
+            return res.badRequest( { error: "That's not how to message, sparky!" } );
+
+        //OK, we need a deviceUDID
+        const params = req.allParams();
+
+        if ( !params.deviceUDID )
+            return res.badRequest( { error: "Missing UDID" } );
+
+        if ( !params.appId )
+            return res.badRequest( { error: "Missing app ID" } );
+
+        // sails.log.silly( "Mute called at: " + new Date() + " by IP: " + req.ip );
+        // sails.log.silly( "------ Subs in Room -------" );
+        // const subs = sails.sockets.subscribers( "device_" + params.deviceUDID );
+        // sails.log.silly( "SUBS: " + util.inspect( subs ) );
+
+        sails.sockets.broadcast( params.appId + ':' + params.deviceUDID,
+            'mute',
+            {
+                appId:  params.appId,
+                isMuted: params.isMuted,
                 ts:     new Date().getTime() // hack for multiples
             },
             req );

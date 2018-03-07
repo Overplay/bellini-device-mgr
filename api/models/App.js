@@ -70,8 +70,14 @@ module.exports = {
       defaultsTo: false
     },
 
+    pausable: {
+      type: 'boolean',
+      defaultsTo: false
+    },
+
+
     toJSON: function () {
-      var obj = this.toObject();
+      const obj = this.toObject();
       obj.iconPath = '/blueline/opp/' + obj.appId + '/assets/icons/' + obj.icon;
       return obj;
     }

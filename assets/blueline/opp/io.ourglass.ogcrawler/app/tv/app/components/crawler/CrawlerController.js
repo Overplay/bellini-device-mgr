@@ -34,6 +34,21 @@ app.controller( "crawlerController",
         var _deviceData;
         var _useVenueData;
 
+        $scope.ui = { appMuted: false };
+
+        $scope.$on("MUTE_APP", function(ev, data){
+            $scope.$apply(function(){
+                $scope.ui.appMuted = data.isMuted;
+                if ($scope.ui.appMuted){
+                    $timeout(function(){ $scope.ui.appMuted = false; }, 1000 * 60 * 60 * 2);
+                }
+            });
+        });
+
+        $scope.hideMe = function(){
+            $scope.appMuted = !$scope.appMuted;
+        }
+
         //function to set the display messages to the randomized concatenation of user and twitter messages
         //and coming up
         function updateDisplay() {

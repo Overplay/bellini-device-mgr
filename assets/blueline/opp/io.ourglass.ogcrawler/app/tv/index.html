@@ -36,13 +36,13 @@
 <!--<vert-msg-box msg-blocks="vertMessages"></vert-msg-box>-->
 <!--<pub-crawler-xs og-model="crawlerModel"></pub-crawler-xs>-->
 
-<div class="left-scroller-holder">
+<div class="left-scroller-holder"  ang-click="hideMe()" ng-class="{ 'transparent': ui.appMuted }">
 
 
-    <vert-msg-box msg-blocks="vertMessages"></vert-msg-box>
-    <hz-crawler messages="crawlerMessages" speed="90" mode="mode"></hz-crawler>
+    <vert-msg-box msg-blocks="vertMessages" ng-hide="ui.appMuted"></vert-msg-box>
+    <hz-crawler messages="crawlerMessages" speed="90" mode="mode" ng-hide="ui.appMuted"></hz-crawler>
 
-    <div class="advert-holder">
+    <div class="advert-holder" ng-class="{ 'shrunken' : ui.appMuted }">
         <!--<img class="advert-holder-img" src="assets/img/OG_LOGO.png"/>-->
         <og-advert-xfade type="crawler" interval="10000"></og-advert-xfade>
     </div>

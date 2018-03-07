@@ -103,15 +103,15 @@ module.exports = {
 
     grid: function ( req, res ) {
 
-        if ( req.method != 'GET' )
+        if ( req.method !== 'GET' )
             return res.badRequest( { error: 'bad verb' } );
 
-        var params = req.allParams();
+        const params = req.allParams();
 
         if ( !params.deviceUDID )
             return res.badRequest( { error: 'no udid' } );
 
-        lineupForDevice( params.deviceUDID, false, false )
+        lineupForDevice( params.deviceUDID, false, params.noprune )
             .then( res.ok )
             .catch( res.serverError );
 

@@ -124,7 +124,7 @@ var stockApps = [
 
 var self = module.exports.stockapps = {
 
-    installStockApps: true,
+    installStockApps: false,
     eraseOldApps: false,
 
     install: function () {
