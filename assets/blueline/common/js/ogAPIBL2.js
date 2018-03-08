@@ -1009,11 +1009,11 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
                 //should be able to return the promise object and act on it
                 return $http.post( '/ogdevice/mute', { deviceUDID: _deviceUDID, appId: appid, isMuted: isMuted } )
                     .then( stripData )
-                    .then( ( d ) => {
+                    .then( function ( d )  {
                         //this.$rootScope.$broadcast( '$app_state_change', { action: 'mute', appId: appid } );
                         return d;
                     } )
-                    .catch( ( err ) => {
+                    .catch( function( err )  {
                         $log.info( "App mute FAILED for: " + appid );
                         //this.$rootScope.$broadcast( '$app_state_change_failure', { action: 'mute', appId: appid } );
                         throw err; // Rethrow
