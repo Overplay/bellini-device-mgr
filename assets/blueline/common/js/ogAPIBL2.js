@@ -480,7 +480,7 @@ function SET_SYSTEM_GLOBALS_JSON( jsonString ) {
 
                 } );
 
-                io.socket.on( "mute", ( data ) => {
+                io.socket.on( "mute", function ( data ) {
 
                     $log.debug( 'Got a mute message' );
                     $rootScope.$broadcast('MUTE_APP', data);
