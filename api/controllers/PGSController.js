@@ -76,13 +76,13 @@ function lineupForDevice( deviceUDID, searchQuery, dontCleanseUnused ) {
                         } );
 
                         // to implement a param if we ever need it all
-                        if (!dontCleanseUnused){
-                            chanLup.channel = _.omit(chanLup.channel, ["subChannelNumber","stationType","NTSC_TSID","DTV_TSID","webLink"]);
-                            chanLup.listings = chanLup.listings.map((l)=>{
-                                return _.pick(l, ["listingID","listDateTime","duration","showID","showName","episodeTitle","showType",
-                                "league","team1","team2"]);
-                            })
-                        }
+                        // if (false) { //!dontCleanseUnused){
+                        //     chanLup.channel = _.omit(chanLup.channel, ["subChannelNumber","stationType","NTSC_TSID","DTV_TSID","webLink"]);
+                        //     chanLup.listings = chanLup.listings.map((l)=>{
+                        //         return _.pick(l, ["listingID","listDateTime","duration","showID","showName","episodeTitle","showType",
+                        //         "league","team1","team2"]);
+                        //     })
+                        // }
 
                         if ( searchQuery ) {
                             _.remove( chanLup.channel, function ( channel ) { //This should remove all channels that aren't in the search.
@@ -111,7 +111,9 @@ module.exports = {
         if ( !params.deviceUDID )
             return res.badRequest( { error: 'no udid' } );
 
-        lineupForDevice( params.deviceUDID, false, params.noprune )
+        // lineupForDevice( params.deviceUDID, false, params.noprune )
+        // temp for search issue
+        lineupForDevice( params.deviceUDID, false, true )
             .then( res.ok )
             .catch( res.serverError );
 
