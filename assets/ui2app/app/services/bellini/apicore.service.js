@@ -105,7 +105,7 @@ app.factory( "sailsCoreModel", function ( sailsApi ) {
         var _this = this;
         return sailsApi.createModel( this.modelType, this.getPostObj() )
             .then( function(savedModel){
-                _this = _.defaultsDeep(savedModel, _this); // merge in new props, usually just id, uuid.
+                _this = _.defaultsDeep( _this, savedModel ); // merge in new props, usually just id, uuid.
                 return _this;
             });
     }

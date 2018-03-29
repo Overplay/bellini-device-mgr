@@ -52,7 +52,7 @@ app.factory( "sailsOGAndroidRelease", function ( sailsApi, sailsCoreModel ) {
 
     var get = function ( id ) {
         if ( id === 'new' )
-            return newRelease();
+            return newRelease({ majorRev: 0, minorRev: 0, versionCode: 0, releaseLevel: 'alpha'});
         return sailsApi.getModel( 'ogandroidrelease', id )
             .then( newRelease );
     };

@@ -95,11 +95,11 @@ app.controller('editOGReleasesController', function ( $scope, release, $log, uib
         };
 
 
-        if ( app.appId === 'new.release' ) {
-            uibHelper.stringEditModal('New Release?', "Please enter the following", $scope.release.filename)
+        if ( !release.id ) {
+            uibHelper.stringEditModal('New Release?', "Please enter the release's filename.", "")
                 .then(function (newfilename) {
                     // TODO validate!
-                    $scope.release.release.filename = newfilename;
+                    $scope.release.filename = newfilename;
                     return $scope.release.save();
                 })
                 .catch(function (err) {
